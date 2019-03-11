@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C7B4979C-84C0-4DC8-BA40-7D123C223989}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GuoGuoCommunity.Domain</RootNamespace>
+    <AssemblyName>GuoGuoCommunity.Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.4.5.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SqlClient, Version=4.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SqlClient.4.6.0\lib\net461\System.Data.SqlClient.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.3.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.5.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Interactive.Async, Version=3.2.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Interactive.Async.3.2.0\lib\net46\System.Interactive.Async.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.2\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Abstractions\ICityService.cs" />
+    <Compile Include="Abstractions\ICommunityService.cs" />
+    <Compile Include="Abstractions\IMenuService.cs" />
+    <Compile Include="Abstractions\IRoleMenuService.cs" />
+    <Compile Include="Abstractions\IRoleService.cs" />
+    <Compile Include="Abstractions\ISmallDistrictService.cs" />
+    <Compile Include="Abstractions\IStreetOfficeService.cs" />
+    <Compile Include="Abstractions\ITestService.cs" />
+    <Compile Include="Abstractions\IUserService.cs" />
+    <Compile Include="Abstractions\Models\ICreateOperation.cs" />
+    <Compile Include="Abstractions\Models\IDeleted.cs" />
+    <Compile Include="Abstractions\Models\ILastOperation.cs" />
+    <Compile Include="Dto\CommunityDto.cs" />
+    <Compile Include="Dto\RegionDto.cs" />
+    <Compile Include="Dto\CityDto.cs" />
+    <Compile Include="Dto\MenuDto.cs" />
+    <Compile Include="Dto\RoleDto.cs" />
+    <Compile Include="Dto\RoleMenuDto.cs" />
+    <Compile Include="Dto\SmallDistrictDto.cs" />
+    <Compile Include="Dto\StreetOfficeDto.cs" />
+    <Compile Include="Dto\UserDto.cs" />
+    <Compile Include="GuoGuoCommunityContext.cs" />
+    <Compile Include="Migrations\201903060515308_role.cs" />
+    <Compile Include="Migrations\201903060515308_role.Designer.cs">
+      <DependentUpon>201903060515308_role.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903070143283_roleMenu-isDisplayed.cs" />
+    <Compile Include="Migrations\201903070143283_roleMenu-isDisplayed.Designer.cs">
+      <DependentUpon>201903070143283_roleMenu-isDisplayed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903070301539_user-update.cs" />
+    <Compile Include="Migrations\201903070301539_user-update.Designer.cs">
+      <DependentUpon>201903070301539_user-update.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903090112184_userToken.cs" />
+    <Compile Include="Migrations\201903090112184_userToken.Designer.cs">
+      <DependentUpon>201903090112184_userToken.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903090203263_streetOffice.cs" />
+    <Compile Include="Migrations\201903090203263_streetOffice.Designer.cs">
+      <DependentUpon>201903090203263_streetOffice.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903090222138_streetOfficeTime.cs" />
+    <Compile Include="Migrations\201903090222138_streetOfficeTime.Designer.cs">
+      <DependentUpon>201903090222138_streetOfficeTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903110202591_Add-Community.cs" />
+    <Compile Include="Migrations\201903110202591_Add-Community.Designer.cs">
+      <DependentUpon>201903110202591_Add-Community.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903110208520_up-community.cs" />
+    <Compile Include="Migrations\201903110208520_up-community.Designer.cs">
+      <DependentUpon>201903110208520_up-community.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903110802545_add-SmallDistrict.cs" />
+    <Compile Include="Migrations\201903110802545_add-SmallDistrict.Designer.cs">
+      <DependentUpon>201903110802545_add-SmallDistrict.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Community.cs" />
+    <Compile Include="Models\Menu.cs" />
+    <Compile Include="Models\Role_Menu.cs" />
+    <Compile Include="Models\SmallDistrict.cs" />
+    <Compile Include="Models\StreetOffice.cs" />
+    <Compile Include="Models\Test.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\User_Role.cs" />
+    <Compile Include="Payload.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\CityService.cs" />
+    <Compile Include="Service\CommunityService.cs" />
+    <Compile Include="Service\MenuService.cs" />
+    <Compile Include="Service\RoleMenuService.cs" />
+    <Compile Include="Service\RoleService.cs" />
+    <Compile Include="Service\SmallDistrictService.cs" />
+    <Compile Include="Service\StreetOfficeService.cs" />
+    <Compile Include="Service\TestService.cs" />
+    <Compile Include="Service\UserService.cs" />
+    <Compile Include="Token.cs" />
+    <Compile Include="TokenCrypto.cs" />
+    <Compile Include="TokenManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201903060515308_role.resx">
+      <DependentUpon>201903060515308_role.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903070143283_roleMenu-isDisplayed.resx">
+      <DependentUpon>201903070143283_roleMenu-isDisplayed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903070301539_user-update.resx">
+      <DependentUpon>201903070301539_user-update.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903090112184_userToken.resx">
+      <DependentUpon>201903090112184_userToken.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903090203263_streetOffice.resx">
+      <DependentUpon>201903090203263_streetOffice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903090222138_streetOfficeTime.resx">
+      <DependentUpon>201903090222138_streetOfficeTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903110202591_Add-Community.resx">
+      <DependentUpon>201903110202591_Add-Community.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903110208520_up-community.resx">
+      <DependentUpon>201903110208520_up-community.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903110802545_add-SmallDistrict.resx">
+      <DependentUpon>201903110802545_add-SmallDistrict.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Models\city\Area_List.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
