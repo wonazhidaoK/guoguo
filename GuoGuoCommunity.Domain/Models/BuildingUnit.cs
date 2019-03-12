@@ -24,15 +24,15 @@ namespace GuoGuoCommunity.Domain.Models
         public string  UnitName { get; set; }
 
         /// <summary>
+        /// 层数
+        /// </summary>
+        public string NumberOfLayers { get; set; }
+
+        /// <summary>
         /// 楼宇Id
         /// </summary>
         [Required]
         public string BuildingId { get; set; }
-
-        /// <summary>
-        /// 层数
-        /// </summary>
-        public string NumberOfLayers { get; set; }
 
         public string LastOperationUserId { get; set; }
 

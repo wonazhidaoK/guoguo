@@ -26,5 +26,15 @@ namespace GuoGuoCommunity.Domain
         public DbSet<Community> Communities { get; set; }
 
         public DbSet<SmallDistrict> SmallDistricts { get; set; }
+
+        public DbSet<VipOwnerStructure> VipOwnerStructures { get; set; }
+
+        public DbSet<VipOwner> VipOwners { get; set; }
+
+        public DbSet<ComplaintType> ComplaintTypes { get; set; }
+
+        public DbSet<BuildingUnit> BuildingUnits { get; set; }
+
+        public DbSet<Building> Buildings { get; set; }
     }
 }

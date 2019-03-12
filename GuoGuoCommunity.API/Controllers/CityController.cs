@@ -1,6 +1,7 @@
 ﻿using GuoGuoCommunity.API.Models;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
+using GuoGuoCommunity.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;

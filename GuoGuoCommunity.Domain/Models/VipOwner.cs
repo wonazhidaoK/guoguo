@@ -40,10 +40,15 @@ namespace GuoGuoCommunity.Domain.Models
         public string SmallDistrictName { get; set; }
 
         public string LastOperationUserId { get; set; }
+
         public DateTimeOffset? LastOperationTime { get; set; }
+
         public bool IsDeleted { get; set; }
+
         public DateTimeOffset? DeletedTime { get; set; }
+
         public string CreateOperationUserId { get; set; }
+
         public DateTimeOffset? CreateOperationTime { get; set; }
     }
 }
