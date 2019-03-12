@@ -79,8 +79,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\IBuildingService.cs" />
+    <Compile Include="Abstractions\IBuildingUnitService.cs" />
     <Compile Include="Abstractions\ICityService.cs" />
     <Compile Include="Abstractions\ICommunityService.cs" />
+    <Compile Include="Abstractions\IComplaintTypeService.cs" />
     <Compile Include="Abstractions\IMenuService.cs" />
     <Compile Include="Abstractions\IRoleMenuService.cs" />
     <Compile Include="Abstractions\IRoleService.cs" />
@@ -88,10 +91,15 @@
     <Compile Include="Abstractions\IStreetOfficeService.cs" />
     <Compile Include="Abstractions\ITestService.cs" />
     <Compile Include="Abstractions\IUserService.cs" />
+    <Compile Include="Abstractions\IVipOwnerService.cs" />
+    <Compile Include="Abstractions\IVipOwnerStructureService.cs" />
     <Compile Include="Abstractions\Models\ICreateOperation.cs" />
     <Compile Include="Abstractions\Models\IDeleted.cs" />
     <Compile Include="Abstractions\Models\ILastOperation.cs" />
+    <Compile Include="Dto\BuildingDto.cs" />
+    <Compile Include="Dto\BuildingUnitDto.cs" />
     <Compile Include="Dto\CommunityDto.cs" />
+    <Compile Include="Dto\ComplaintTypeDto.cs" />
     <Compile Include="Dto\RegionDto.cs" />
     <Compile Include="Dto\CityDto.cs" />
     <Compile Include="Dto\MenuDto.cs" />
@@ -100,6 +108,8 @@
     <Compile Include="Dto\SmallDistrictDto.cs" />
     <Compile Include="Dto\StreetOfficeDto.cs" />
     <Compile Include="Dto\UserDto.cs" />
+    <Compile Include="Dto\VipOwnerDto.cs" />
+    <Compile Include="Dto\VipOwnerStructureDto.cs" />
     <Compile Include="GuoGuoCommunityContext.cs" />
     <Compile Include="Migrations\201903060515308_role.cs" />
     <Compile Include="Migrations\201903060515308_role.Designer.cs">
@@ -137,12 +147,17 @@
     <Compile Include="Migrations\201903110802545_add-SmallDistrict.Designer.cs">
       <DependentUpon>201903110802545_add-SmallDistrict.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903120052192_add-Entity.cs" />
+    <Compile Include="Migrations\201903120052192_add-Entity.Designer.cs">
+      <DependentUpon>201903120052192_add-Entity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Building.cs" />
     <Compile Include="Models\BuildingUnit.cs" />
     <Compile Include="Models\Community.cs" />
     <Compile Include="Models\ComplaintType.cs" />
     <Compile Include="Models\Industry.cs" />
+    <Compile Include="Models\Enum\Department.cs" />
     <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\Owner.cs" />
     <Compile Include="Models\Role_Menu.cs" />
@@ -155,8 +170,11 @@
     <Compile Include="Models\VipOwnerStructure.cs" />
     <Compile Include="Payload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\BuildingService.cs" />
+    <Compile Include="Service\BuildingUnitService.cs" />
     <Compile Include="Service\CityService.cs" />
     <Compile Include="Service\CommunityService.cs" />
+    <Compile Include="Service\ComplaintTypeService.cs" />
     <Compile Include="Service\MenuService.cs" />
     <Compile Include="Service\RoleMenuService.cs" />
     <Compile Include="Service\RoleService.cs" />
@@ -164,6 +182,8 @@
     <Compile Include="Service\StreetOfficeService.cs" />
     <Compile Include="Service\TestService.cs" />
     <Compile Include="Service\UserService.cs" />
+    <Compile Include="Service\VipOwnerService.cs" />
+    <Compile Include="Service\VipOwnerStructureService.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="TokenCrypto.cs" />
     <Compile Include="TokenManager.cs" />
@@ -195,6 +215,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903110802545_add-SmallDistrict.resx">
       <DependentUpon>201903110802545_add-SmallDistrict.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903120052192_add-Entity.resx">
+      <DependentUpon>201903120052192_add-Entity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

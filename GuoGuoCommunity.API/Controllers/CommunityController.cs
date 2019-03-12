@@ -277,7 +277,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("community/getList")]
-        public async Task<ApiResult<List<GetListCommunityOuput>>> GetList([FromUri]GetListCommunityInput input, CancellationToken cancelToken)
+        public async Task<ApiResult<List<GetListCommunityOutput>>> GetList([FromUri]GetListCommunityInput input, CancellationToken cancelToken)
         {
             try
             {
@@ -291,7 +291,7 @@ namespace GuoGuoCommunity.API.Controllers
                      StreetOfficeId = input?.StreetOfficeId
                 }, cancelToken);
 
-                return new ApiResult<List<GetListCommunityOuput>>(APIResultCode.Success, data.Select(x => new GetListCommunityOuput
+                return new ApiResult<List<GetListCommunityOutput>>(APIResultCode.Success, data.Select(x => new GetListCommunityOutput
                 {
                     Id = x.Id.ToString(),
                     Name = x.Name
@@ -299,7 +299,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
             catch (Exception e)
             {
-                return new ApiResult<List<GetListCommunityOuput>>(APIResultCode.Success_NoB, new List<GetListCommunityOuput> { }, e.Message);
+                return new ApiResult<List<GetListCommunityOutput>>(APIResultCode.Success_NoB, new List<GetListCommunityOutput> { }, e.Message);
             }
         }
     }

@@ -39,11 +39,21 @@ namespace GuoGuoCommunity.Domain.Models
         [Required]
         public string SmallDistrictName { get; set; }
 
+        /// <summary>
+        /// 是否有效
+        /// </summary>
+        public bool IsValid { get; set; }
+
         public string LastOperationUserId { get; set; }
+
         public DateTimeOffset? LastOperationTime { get; set; }
+
         public bool IsDeleted { get; set; }
+
         public DateTimeOffset? DeletedTime { get; set; }
+
         public string CreateOperationUserId { get; set; }
+
         public DateTimeOffset? CreateOperationTime { get; set; }
     }
 }

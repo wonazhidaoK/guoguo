@@ -34,9 +34,9 @@
         /// </summary>
         public string avatar { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
+        // <summary>
+        // 
+        //</summary>
         //public string refresh_token { get; set; }
     }
 }
