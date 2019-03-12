@@ -16,7 +16,6 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-
                 var complaintType = await db.ComplaintTypes.Where(x => x.Name == dto.Name && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (complaintType != null)
                 {
@@ -84,7 +83,7 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async  Task<ComplaintType> GetAsync(string id, CancellationToken token = default)
+        public async Task<ComplaintType> GetAsync(string id, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {

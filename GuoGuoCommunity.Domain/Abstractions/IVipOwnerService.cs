@@ -19,5 +19,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<VipOwner> GetAsync(string id, CancellationToken token = default);
 
         Task<List<VipOwner>> GetListAsync(VipOwnerDto dto, CancellationToken token = default);
+
+        Task<List<VipOwner>> GetIsValidAsync(VipOwnerDto dto, CancellationToken token = default);
     }
 }

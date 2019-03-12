@@ -14,33 +14,33 @@ using System.Web.Http.Cors;
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
-    /// 街道办
+    /// 业委会架构(职能)
     /// </summary>
     [EnableCors(origins: "*", headers: "*", methods: "*")]
-    public class StreetOfficeController : ApiController
+    public class VipOwnerStructureController : ApiController
     {
-        private readonly IStreetOfficeService _streetOfficeService;
+        private readonly IVipOwnerStructureService _vipOwnerStructureService;
         private TokenManager _tokenManager;
 
         /// <summary>
-        /// 街道办
+        /// 
         /// </summary>
-        /// <param name="streetOfficeService"></param>
-        public StreetOfficeController(IStreetOfficeService streetOfficeService)
+        /// <param name="vipOwnerStructureService"></param>
+        public VipOwnerStructureController(IVipOwnerStructureService vipOwnerStructureService)
         {
-            _streetOfficeService = streetOfficeService;
+            _vipOwnerStructureService = vipOwnerStructureService;
             _tokenManager = new TokenManager();
         }
 
         /// <summary>
-        /// 添加街道办信息
+        /// 添加职能信息
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("streetOffice/add")]
-        public async Task<ApiResult<AddStreetOfficeOutput>> Add([FromBody]AddStreetOfficeInput input, CancellationToken cancelToken)
+        [Route("vipOwnerStructure/add")]
+        public async Task<ApiResult<AddVipOwnerStructureOutput>> Add([FromBody]AddVipOwnerStructureInput input, CancellationToken cancelToken)
         {
             try
             {
@@ -51,67 +51,54 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 if (string.IsNullOrWhiteSpace(input.Name))
                 {
-                    throw new NotImplementedException("街道办名称信息为空！");
+                    throw new NotImplementedException("职能名称信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.Region))
+
+                if (string.IsNullOrWhiteSpace(input.Weights))
                 {
-                    throw new NotImplementedException("街道办区信息为空！");
+                    throw new NotImplementedException("职能权重信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.State))
-                {
-                    throw new NotImplementedException("街道办省信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.City))
-                {
-                    throw new NotImplementedException("街道办城市信息为空！");
-                }
+
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
                     throw new NotImplementedException("token无效！");
                 }
-                var entity = await _streetOfficeService.AddAsync(new StreetOfficeDto
+
+                var entity = await _vipOwnerStructureService.AddAsync(new VipOwnerStructureDto
                 {
-                    City = input.City,
                     Name = input.Name,
-                    Region = input.Region,
-                    State = input.State,
+                    Description = input.Description,
+                    IsReview = input.IsReview.Value,
+                    Weights = input.Weights,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);
 
-                return new ApiResult<AddStreetOfficeOutput>(APIResultCode.Success, new AddStreetOfficeOutput { Id = entity.Id.ToString() });
+                return new ApiResult<AddVipOwnerStructureOutput>(APIResultCode.Success, new AddVipOwnerStructureOutput { Id = entity.Id.ToString() });
             }
             catch (Exception e)
             {
-                return new ApiResult<AddStreetOfficeOutput>(APIResultCode.Success_NoB, new AddStreetOfficeOutput { }, e.Message);
+                return new ApiResult<AddVipOwnerStructureOutput>(APIResultCode.Success_NoB, new AddVipOwnerStructureOutput { }, e.Message);
             }
         }
 
         /// <summary>
-        /// 修改街道办信息
+        /// 修改职能信息
         /// </summary>
         /// <param name="input"></param>
-        /// <param name="cancelToken"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("streetOffice/update")]
-        public async Task<ApiResult> Update([FromBody]UpdateStreetOfficeInput input, CancellationToken cancelToken)
+        [Route("vipOwnerStructure/update")]
+        public async Task<ApiResult> Update([FromBody]UpdateVipOwnerStructureInput input, CancellationToken cancellationToken)
         {
             try
             {
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
                 {
-                    throw new NotImplementedException("token信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.Id))
-                {
-                    throw new NotImplementedException("街道办Id信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.Name))
-                {
-                    throw new NotImplementedException("街道办名称信息为空！");
+                    throw new NotImplementedException("token为空！");
                 }
 
                 var user = _tokenManager.GetUser(token);
@@ -119,13 +106,17 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("token无效！");
                 }
-                await _streetOfficeService.UpdateAsync(new StreetOfficeDto
+
+                await _vipOwnerStructureService.UpdateAsync(new VipOwnerStructureDto
                 {
                     Id = input.Id,
                     Name = input.Name,
+                    Description = input.Description,
+                    IsReview = input.IsReview,
+                    Weights = input.Weights,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
-                }, cancelToken);
+                });
 
                 return new ApiResult();
             }
@@ -133,16 +124,17 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult(APIResultCode.Success_NoB, e.Message);
             }
+
         }
 
         /// <summary>
-        /// 删除街道办信息
+        /// 删除职能信息
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("streetOffice/delete")]
+        [Route("vipOwnerStructure/delete")]
         public async Task<ApiResult> Delete([FromUri]string id, CancellationToken cancelToken)
         {
             try
@@ -154,7 +146,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 if (string.IsNullOrWhiteSpace(id))
                 {
-                    throw new NotImplementedException("街道办Id信息为空！");
+                    throw new NotImplementedException("社区Id信息为空！");
                 }
 
                 var user = _tokenManager.GetUser(token);
@@ -162,7 +154,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("token无效！");
                 }
-                await _streetOfficeService.DeleteAsync(new StreetOfficeDto
+                await _vipOwnerStructureService.DeleteAsync(new VipOwnerStructureDto
                 {
                     Id = id,
                     OperationTime = DateTimeOffset.Now,
@@ -178,47 +170,47 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 获取街道办详情
+        /// 获取职能详情
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("streetOffice/get")]
-        public async Task<ApiResult<GetStreetOfficeOutput>> Get([FromUri]string id, CancellationToken cancelToken)
+        [Route("vipOwnerStructure/get")]
+        public async Task<ApiResult<GetVipOwnerStructureOutput>> Get([FromUri]string id, CancellationToken cancelToken)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(id))
                 {
-                    throw new NotImplementedException("街道办Id信息为空！");
+                    throw new NotImplementedException("社区Id信息为空！");
                 }
-                var data = await _streetOfficeService.GetAsync(id, cancelToken);
+                var data = await _vipOwnerStructureService.GetAsync(id, cancelToken);
 
-                return new ApiResult<GetStreetOfficeOutput>(APIResultCode.Success, new GetStreetOfficeOutput
+                return new ApiResult<GetVipOwnerStructureOutput>(APIResultCode.Success, new GetVipOwnerStructureOutput
                 {
                     Id = data.Id.ToString(),
-                    State = data.State,
-                    City = data.City,
-                    Region = data.Region,
-                    Name = data.Name
+                    Description = data.Description,
+                    Name = data.Name,
+                    IsReview = data.IsReview,
+                    Weights = data.Weights
                 });
             }
             catch (Exception e)
             {
-                return new ApiResult<GetStreetOfficeOutput>(APIResultCode.Success_NoB, new GetStreetOfficeOutput { }, e.Message);
+                return new ApiResult<GetVipOwnerStructureOutput>(APIResultCode.Success_NoB, new GetVipOwnerStructureOutput { }, e.Message);
             }
         }
 
         /// <summary>
-        /// 查询街道办列表
+        /// 查询职能列表
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("streetOffice/getAll")]
-        public async Task<ApiResult<GetAllStreetOfficeOutput>> GetAll([FromUri]GetAllStreetOfficeInput input, CancellationToken cancelToken)
+        [Route("vipOwnerStructure/getAll")]
+        public async Task<ApiResult<GetAllVipOwnerStructureOutput>> GetAll([FromUri]GetAllVipOwnerStructureInput input, CancellationToken cancelToken)
         {
             try
             {
@@ -231,56 +223,46 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-                var data = await _streetOfficeService.GetAllAsync(new StreetOfficeDto
+                var data = await _vipOwnerStructureService.GetAllAsync(new VipOwnerStructureDto
                 {
                     Name = input?.Name,
-                    City = input?.City,
-                    State = input?.State,
-                    Region = input?.Region
+                    Weights = input.Weights,
+                    IsReview = input.IsReview,
+                    Description = input.Description
                 }, cancelToken);
 
-                return new ApiResult<GetAllStreetOfficeOutput>(APIResultCode.Success, new GetAllStreetOfficeOutput
+                return new ApiResult<GetAllVipOwnerStructureOutput>(APIResultCode.Success, new GetAllVipOwnerStructureOutput
                 {
-                    List = data.Select(x => new GetCommunityOutput
+                    List = data.Select(x => new GetVipOwnerStructureOutput
                     {
                         Id = x.Id.ToString(),
-                        State = x.State,
-                        City = x.City,
-                        Region = x.Region,
-                        Name = x.Name
+                        Name = x.Name,
+                        Description = x.Description,
+                        IsReview = x.IsReview,
+                        Weights = x.Weights
                     }).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
             }
             catch (Exception e)
             {
-                return new ApiResult<GetAllStreetOfficeOutput>(APIResultCode.Success_NoB, new GetAllStreetOfficeOutput { }, e.Message);
+                return new ApiResult<GetAllVipOwnerStructureOutput>(APIResultCode.Success_NoB, new GetAllVipOwnerStructureOutput { }, e.Message);
             }
         }
 
         /// <summary>
-        /// 根据区获取街道办列表
+        /// 获取职能
         /// </summary>
-        /// <param name="input"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("streetOffice/getList")]
-        public async Task<ApiResult<List<GetListStreetOfficeOutput>>> GetList([FromUri]GetListStreetOfficeInput input, CancellationToken cancelToken)
+        [Route("vipOwnerStructure/getList")]
+        public async Task<ApiResult<List<GetListVipOwnerStructureOutput>>> GetList(CancellationToken cancelToken)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(input.Region))
-                {
-                    throw new NotImplementedException("街道办区信息为空！");
-                }
-
-                var data = await _streetOfficeService.GetListAsync(new StreetOfficeDto
-                {
-                    Region = input?.Region
-                }, cancelToken);
-
-                return new ApiResult<List<GetListStreetOfficeOutput>>(APIResultCode.Success, data.Select(x => new GetListStreetOfficeOutput
+                var data = await _vipOwnerStructureService.GetListAsync(cancelToken);
+                return new ApiResult<List<GetListVipOwnerStructureOutput>>(APIResultCode.Success, data.Select(x => new GetListVipOwnerStructureOutput
                 {
                     Id = x.Id.ToString(),
                     Name = x.Name
@@ -288,7 +270,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
             catch (Exception e)
             {
-                return new ApiResult<List<GetListStreetOfficeOutput>>(APIResultCode.Success_NoB, new List<GetListStreetOfficeOutput> { }, e.Message);
+                return new ApiResult<List<GetListVipOwnerStructureOutput>>(APIResultCode.Success_NoB, new List<GetListVipOwnerStructureOutput> { }, e.Message);
             }
         }
     }

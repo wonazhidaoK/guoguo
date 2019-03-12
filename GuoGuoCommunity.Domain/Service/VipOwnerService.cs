@@ -72,7 +72,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.VipOwners .Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.VipOwners .Where(x => x.IsDeleted == false&&x.IsValid==false).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.SmallDistrictId))
                 {
                     list = list.Where(x => x.SmallDistrictId == dto.SmallDistrictId).ToList();
@@ -101,17 +101,27 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public async Task<List<VipOwner>> GetIsValidAsync(VipOwnerDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (string.IsNullOrWhiteSpace(dto.SmallDistrictId))
+                {
+                    throw new NotImplementedException("小区Id信息不正确！");
+                }
+                return await db.VipOwners.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
+            }
+        }
+
         public async Task<List<VipOwner>> GetListAsync(VipOwnerDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.VipOwners.Where(x => x.IsDeleted == false).ToListAsync(token);
-
-                if (!string.IsNullOrWhiteSpace(dto.SmallDistrictId))
+                if (string.IsNullOrWhiteSpace(dto.SmallDistrictId))
                 {
-                    list = list.Where(x => x.SmallDistrictId == dto.SmallDistrictId).ToList();
+                    throw new NotImplementedException("小区Id信息不正确！");
                 }
-                return list;
+                return await db.VipOwners.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId&& x.IsValid == false).ToListAsync(token);
             }
         }
 

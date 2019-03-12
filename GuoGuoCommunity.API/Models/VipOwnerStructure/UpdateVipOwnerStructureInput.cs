@@ -3,31 +3,30 @@
     /// <summary>
     /// 
     /// </summary>
-    public class GetStreetOfficeOuput
+    public class UpdateVipOwnerStructureInput
     {
         /// <summary>
         /// 
         /// </summary>
         public string Id { get; set; }
-
         /// <summary>
-        /// 省
-        /// </summary>
-        public string State { get; set; }
-
-        /// <summary>
-        /// 市
-        /// </summary>
-        public string City { get; set; }
-
-        /// <summary>
-        /// 区
-        /// </summary>
-        public string Region { get; set; }
-
-        /// <summary>
-        /// 街道办名称
+        /// 职能名称
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// 职能权重
+        /// </summary>
+        public string Weights { get; set; }
+
+        /// <summary>
+        /// 是否具有审核权限
+        /// </summary>
+        public bool? IsReview { get; set; }
+
+        /// <summary>
+        /// 描述
+        /// </summary>
+        public string Description { get; set; }
     }
 }

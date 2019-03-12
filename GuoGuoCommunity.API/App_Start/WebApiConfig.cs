@@ -30,6 +30,11 @@ namespace GuoGuoCommunity.API
             container.RegisterType<IStreetOfficeService, StreetOfficeService>(new HierarchicalLifetimeManager());
             container.RegisterType<ISmallDistrictService, SmallDistrictService>(new HierarchicalLifetimeManager());
             container.RegisterType<ICommunityService, CommunityService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IBuildingService, BuildingService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IBuildingUnitService, BuildingUnitService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IComplaintTypeService, ComplaintTypeService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IVipOwnerService, VipOwnerService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IVipOwnerStructureService, VipOwnerStructureService>(new HierarchicalLifetimeManager());
             config.DependencyResolver = new UnityResolver(container);
             config.Filters.Add(new Logs.LogFilterAttribute());
             config.Filters.Add(new Logs.AbnormalFilterAttribute());

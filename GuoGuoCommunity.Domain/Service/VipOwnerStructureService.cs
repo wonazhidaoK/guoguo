@@ -65,13 +65,13 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 var list = await db.VipOwnerStructures.Where(x => x.IsDeleted == false).ToListAsync(token);
-                if (!string.IsNullOrWhiteSpace(dto.Description))
-                {
-                    list = list.Where(x => x.Description.Contains(dto.Description)).ToList();
-                }
                 if (!string.IsNullOrWhiteSpace(dto.Name))
                 {
                     list = list.Where(x => x.Name.Contains(dto.Name)).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.Description))
+                {
+                    list = list.Where(x => x.Description.Contains(dto.Description)).ToList();
                 }
                 if (dto.IsReview.HasValue)
                 {

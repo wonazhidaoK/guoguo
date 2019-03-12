@@ -50,10 +50,6 @@
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.AspNet.TelemetryCorrelation, Version=1.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.TelemetryCorrelation.1.0.5\lib\net45\Microsoft.AspNet.TelemetryCorrelation.dll</HintPath>
     </Reference>
@@ -167,18 +163,39 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\UnityResolver.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\BuildingController.cs" />
+    <Compile Include="Controllers\BuildingUnitController.cs" />
     <Compile Include="Controllers\CityController.cs" />
     <Compile Include="Controllers\CommunityController.cs" />
+    <Compile Include="Controllers\ComplaintTypeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\CompetenceController.cs" />
     <Compile Include="Controllers\SmallDistrictController.cs" />
     <Compile Include="Controllers\StreetOfficeController.cs" />
     <Compile Include="Controllers\TokenController.cs" />
+    <Compile Include="Controllers\VipOwnerController.cs" />
+    <Compile Include="Controllers\VipOwnerStructureController.cs" />
     <Compile Include="Filter\AbnormalFilterAttribute.cs" />
     <Compile Include="Filter\LogFilterAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\BuildingUnit\AddBuildingUnitInput.cs" />
+    <Compile Include="Models\BuildingUnit\AddBuildingUnitOutput.cs" />
+    <Compile Include="Models\BuildingUnit\GetAllBuildingUnitInput.cs" />
+    <Compile Include="Models\BuildingUnit\GetAllBuildingUnitOutput.cs" />
+    <Compile Include="Models\BuildingUnit\GetBuildingUnitOutput.cs" />
+    <Compile Include="Models\BuildingUnit\GetListBuildingUnitInput.cs" />
+    <Compile Include="Models\BuildingUnit\GetListBuildingUnitOutput.cs" />
+    <Compile Include="Models\BuildingUnit\UpdateBuildingUnitInput.cs" />
+    <Compile Include="Models\Building\AddBuildingInput.cs" />
+    <Compile Include="Models\Building\AddBuildingOutput.cs" />
+    <Compile Include="Models\Building\GetAllBuildingInput.cs" />
+    <Compile Include="Models\Building\GetAllBuildingOutput.cs" />
+    <Compile Include="Models\Building\GetBuildingOutput.cs" />
+    <Compile Include="Models\Building\GetListBuildingInput.cs" />
+    <Compile Include="Models\Building\GetListBuildingOutput.cs" />
+    <Compile Include="Models\Building\UpdateBuildingInput.cs" />
     <Compile Include="Models\City\CityInput.cs" />
     <Compile Include="Models\City\CityOutput.cs" />
     <Compile Include="Models\Community\AddCommunityInput.cs" />
@@ -187,8 +204,16 @@
     <Compile Include="Models\Community\GetAllCommunityOutput.cs" />
     <Compile Include="Models\Community\GetCommunityOutput.cs" />
     <Compile Include="Models\Community\GetListCommunityInput.cs" />
-    <Compile Include="Models\Community\GetListCommunityOuput.cs" />
+    <Compile Include="Models\Community\GetListCommunityOutput.cs" />
     <Compile Include="Models\Community\UpdateCommunityInput.cs" />
+    <Compile Include="Models\ComplaintType\AddComplaintTypeInput.cs" />
+    <Compile Include="Models\ComplaintType\AddComplaintTypeOutput.cs" />
+    <Compile Include="Models\ComplaintType\GetAllComplaintTypeInput.cs" />
+    <Compile Include="Models\ComplaintType\GetAllComplaintTypeOutput.cs" />
+    <Compile Include="Models\ComplaintType\GetComplaintTypeOutput.cs" />
+    <Compile Include="Models\ComplaintType\GetListComplaintTypeInput.cs" />
+    <Compile Include="Models\ComplaintType\GetListComplaintTypeOutput.cs" />
+    <Compile Include="Models\ComplaintType\UpdateComplaintTypeInput.cs" />
     <Compile Include="Models\Menu\AddMenuInput.cs" />
     <Compile Include="Models\Menu\GetAllMenuOutput.cs" />
     <Compile Include="Models\RoleMenu\AddRoleMenuInput.cs" />
@@ -207,10 +232,10 @@
     <Compile Include="Models\StreetOffice\AddStreetOfficeOutput.cs" />
     <Compile Include="Models\StreetOffice\GetAllStreetOfficeInput.cs" />
     <Compile Include="Models\StreetOffice\DeleteStreetOfficeInput.cs" />
-    <Compile Include="Models\StreetOffice\GetAllStreetOfficeOuput.cs" />
+    <Compile Include="Models\StreetOffice\GetAllStreetOfficeOutput.cs" />
     <Compile Include="Models\StreetOffice\GetListStreetOfficeInput.cs" />
-    <Compile Include="Models\StreetOffice\GetListStreetOfficeOuput.cs" />
-    <Compile Include="Models\StreetOffice\GetStreetOfficeOuput.cs" />
+    <Compile Include="Models\StreetOffice\GetListStreetOfficeOutput.cs" />
+    <Compile Include="Models\StreetOffice\GetStreetOfficeOutput.cs" />
     <Compile Include="Models\StreetOffice\UpdateStreetOfficeInput.cs" />
     <Compile Include="Models\StreetOffice\AddStreetOfficeInput.cs" />
     <Compile Include="Models\User\AddUserInput.cs" />
@@ -218,6 +243,21 @@
     <Compile Include="Models\User\LoginInput.cs" />
     <Compile Include="Models\User\LoginTokenOutput.cs" />
     <Compile Include="Models\User\LoginOutput.cs" />
+    <Compile Include="Models\VipOwnerStructure\AddVipOwnerStructureInput.cs" />
+    <Compile Include="Models\VipOwnerStructure\AddVipOwnerStructureOutput.cs" />
+    <Compile Include="Models\VipOwnerStructure\GetAllVipOwnerStructureInput.cs" />
+    <Compile Include="Models\VipOwnerStructure\GetAllVipOwnerStructureOutput.cs" />
+    <Compile Include="Models\VipOwnerStructure\GetListVipOwnerStructureOutput.cs" />
+    <Compile Include="Models\VipOwnerStructure\GetVipOwnerStructureOutput.cs" />
+    <Compile Include="Models\VipOwnerStructure\UpdateVipOwnerStructureInput.cs" />
+    <Compile Include="Models\VipOwner\AddVipOwnerInput.cs" />
+    <Compile Include="Models\VipOwner\AddVipOwnerOutput.cs" />
+    <Compile Include="Models\VipOwner\GetAllVipOwnerInput.cs" />
+    <Compile Include="Models\VipOwner\GetAllVipOwnerOutput.cs" />
+    <Compile Include="Models\VipOwner\GetVipOwnerOutput.cs" />
+    <Compile Include="Models\VipOwner\GetListVipOwnerInput.cs" />
+    <Compile Include="Models\VipOwner\GetListVipOwnerOutput.cs" />
+    <Compile Include="Models\VipOwner\UpdateVipOwnerInput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -14,33 +14,32 @@ using System.Web.Http.Cors;
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
-    /// 街道办
+    /// 楼宇信息管理
     /// </summary>
     [EnableCors(origins: "*", headers: "*", methods: "*")]
-    public class StreetOfficeController : ApiController
+    public class BuildingController : ApiController
     {
-        private readonly IStreetOfficeService _streetOfficeService;
+        private readonly IBuildingService _buildingService;
         private TokenManager _tokenManager;
 
         /// <summary>
-        /// 街道办
+        /// 
         /// </summary>
-        /// <param name="streetOfficeService"></param>
-        public StreetOfficeController(IStreetOfficeService streetOfficeService)
+        public BuildingController(IBuildingService buildingService)
         {
-            _streetOfficeService = streetOfficeService;
+            _buildingService = buildingService;
             _tokenManager = new TokenManager();
         }
 
         /// <summary>
-        /// 添加街道办信息
+        /// 添加楼宇信息
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("streetOffice/add")]
-        public async Task<ApiResult<AddStreetOfficeOutput>> Add([FromBody]AddStreetOfficeInput input, CancellationToken cancelToken)
+        [Route("building/add")]
+        public async Task<ApiResult<AddBuildingOutput>> Add([FromBody]AddBuildingInput input, CancellationToken cancelToken)
         {
             try
             {
@@ -51,67 +50,15 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 if (string.IsNullOrWhiteSpace(input.Name))
                 {
-                    throw new NotImplementedException("街道办名称信息为空！");
+                    throw new NotImplementedException("楼宇名称信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.Region))
+                if (string.IsNullOrWhiteSpace(input.SmallDistrictId))
                 {
-                    throw new NotImplementedException("街道办区信息为空！");
+                    throw new NotImplementedException("楼宇小区Id信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.State))
+                if (string.IsNullOrWhiteSpace(input.SmallDistrictName))
                 {
-                    throw new NotImplementedException("街道办省信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.City))
-                {
-                    throw new NotImplementedException("街道办城市信息为空！");
-                }
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    throw new NotImplementedException("token无效！");
-                }
-                var entity = await _streetOfficeService.AddAsync(new StreetOfficeDto
-                {
-                    City = input.City,
-                    Name = input.Name,
-                    Region = input.Region,
-                    State = input.State,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-
-                return new ApiResult<AddStreetOfficeOutput>(APIResultCode.Success, new AddStreetOfficeOutput { Id = entity.Id.ToString() });
-            }
-            catch (Exception e)
-            {
-                return new ApiResult<AddStreetOfficeOutput>(APIResultCode.Success_NoB, new AddStreetOfficeOutput { }, e.Message);
-            }
-        }
-
-        /// <summary>
-        /// 修改街道办信息
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="cancelToken"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("streetOffice/update")]
-        public async Task<ApiResult> Update([FromBody]UpdateStreetOfficeInput input, CancellationToken cancelToken)
-        {
-            try
-            {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    throw new NotImplementedException("token信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.Id))
-                {
-                    throw new NotImplementedException("街道办Id信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.Name))
-                {
-                    throw new NotImplementedException("街道办名称信息为空！");
+                    throw new NotImplementedException("楼宇小区名称信息为空！");
                 }
 
                 var user = _tokenManager.GetUser(token);
@@ -119,30 +66,32 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("token无效！");
                 }
-                await _streetOfficeService.UpdateAsync(new StreetOfficeDto
+
+                var entity = await _buildingService.AddAsync(new BuildingDto
                 {
-                    Id = input.Id,
                     Name = input.Name,
+                    SmallDistrictId = input.SmallDistrictId,
+                    SmallDistrictName = input.SmallDistrictName,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);
 
-                return new ApiResult();
+                return new ApiResult<AddBuildingOutput>(APIResultCode.Success, new AddBuildingOutput { Id = entity.Id.ToString() });
             }
             catch (Exception e)
             {
-                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+                return new ApiResult<AddBuildingOutput>(APIResultCode.Success_NoB, new AddBuildingOutput { }, e.Message);
             }
         }
 
         /// <summary>
-        /// 删除街道办信息
+        /// 删除楼宇信息
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("streetOffice/delete")]
+        [Route("building/delete")]
         public async Task<ApiResult> Delete([FromUri]string id, CancellationToken cancelToken)
         {
             try
@@ -154,7 +103,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 if (string.IsNullOrWhiteSpace(id))
                 {
-                    throw new NotImplementedException("街道办Id信息为空！");
+                    throw new NotImplementedException("楼宇Id信息为空！");
                 }
 
                 var user = _tokenManager.GetUser(token);
@@ -162,7 +111,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("token无效！");
                 }
-                await _streetOfficeService.DeleteAsync(new StreetOfficeDto
+                await _buildingService.DeleteAsync(new BuildingDto
                 {
                     Id = id,
                     OperationTime = DateTimeOffset.Now,
@@ -178,47 +127,87 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 获取街道办详情
+        /// 修改楼宇信息
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("building/update")]
+        public async Task<ApiResult> Update([FromBody]UpdateBuildingInput input, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    throw new NotImplementedException("token为空！");
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    throw new NotImplementedException("token无效！");
+                }
+
+                await _buildingService.UpdateAsync(new BuildingDto
+                {
+                    Id = input.Id,
+                    Name = input.Name,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                });
+
+                return new ApiResult();
+            }
+            catch (Exception e)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// 获取楼宇详情
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("streetOffice/get")]
-        public async Task<ApiResult<GetStreetOfficeOutput>> Get([FromUri]string id, CancellationToken cancelToken)
+        [Route("building/get")]
+        public async Task<ApiResult<GetBuildingOutput>> Get([FromUri]string id, CancellationToken cancelToken)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(id))
                 {
-                    throw new NotImplementedException("街道办Id信息为空！");
+                    throw new NotImplementedException("楼宇Id信息为空！");
                 }
-                var data = await _streetOfficeService.GetAsync(id, cancelToken);
+                var data = await _buildingService.GetAsync(id, cancelToken);
 
-                return new ApiResult<GetStreetOfficeOutput>(APIResultCode.Success, new GetStreetOfficeOutput
+                return new ApiResult<GetBuildingOutput>(APIResultCode.Success, new GetBuildingOutput
                 {
                     Id = data.Id.ToString(),
-                    State = data.State,
-                    City = data.City,
-                    Region = data.Region,
-                    Name = data.Name
+                    Name = data.Name,
+                    SmallDistrictId = data.SmallDistrictId,
+                    SmallDistrictName = data.SmallDistrictName
                 });
             }
             catch (Exception e)
             {
-                return new ApiResult<GetStreetOfficeOutput>(APIResultCode.Success_NoB, new GetStreetOfficeOutput { }, e.Message);
+                return new ApiResult<GetBuildingOutput>(APIResultCode.Success_NoB, new GetBuildingOutput { }, e.Message);
             }
         }
 
         /// <summary>
-        /// 查询街道办列表
+        /// 查询楼宇列表
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("streetOffice/getAll")]
-        public async Task<ApiResult<GetAllStreetOfficeOutput>> GetAll([FromUri]GetAllStreetOfficeInput input, CancellationToken cancelToken)
+        [Route("building/getAll")]
+        public async Task<ApiResult<GetAllBuildingOutput>> GetAll([FromUri]GetAllBuildingInput input, CancellationToken cancelToken)
         {
             try
             {
@@ -231,56 +220,53 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-                var data = await _streetOfficeService.GetAllAsync(new StreetOfficeDto
+                var data = await _buildingService.GetAllAsync(new BuildingDto
                 {
                     Name = input?.Name,
-                    City = input?.City,
-                    State = input?.State,
-                    Region = input?.Region
+                    SmallDistrictId = input.SmallDistrictId
                 }, cancelToken);
 
-                return new ApiResult<GetAllStreetOfficeOutput>(APIResultCode.Success, new GetAllStreetOfficeOutput
+                return new ApiResult<GetAllBuildingOutput>(APIResultCode.Success, new GetAllBuildingOutput
                 {
-                    List = data.Select(x => new GetCommunityOutput
+                    List = data.Select(x => new GetBuildingOutput
                     {
                         Id = x.Id.ToString(),
-                        State = x.State,
-                        City = x.City,
-                        Region = x.Region,
-                        Name = x.Name
+                        Name = x.Name,
+                        SmallDistrictId = x.SmallDistrictId,
+                        SmallDistrictName = x.SmallDistrictName,
                     }).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
             }
             catch (Exception e)
             {
-                return new ApiResult<GetAllStreetOfficeOutput>(APIResultCode.Success_NoB, new GetAllStreetOfficeOutput { }, e.Message);
+                return new ApiResult<GetAllBuildingOutput>(APIResultCode.Success_NoB, new GetAllBuildingOutput { }, e.Message);
             }
         }
 
         /// <summary>
-        /// 根据区获取街道办列表
+        /// 根据小区获取楼宇
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("streetOffice/getList")]
-        public async Task<ApiResult<List<GetListStreetOfficeOutput>>> GetList([FromUri]GetListStreetOfficeInput input, CancellationToken cancelToken)
+        [Route("building/getList")]
+        public async Task<ApiResult<List<GetListBuildingOutput>>> GetList([FromUri]GetListBuildingInput input, CancellationToken cancelToken)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(input.Region))
+                if (string.IsNullOrWhiteSpace(input.SmallDistrictId))
                 {
-                    throw new NotImplementedException("街道办区信息为空！");
+                    throw new NotImplementedException("小区信息为空！");
                 }
 
-                var data = await _streetOfficeService.GetListAsync(new StreetOfficeDto
+                var data = await _buildingService.GetListAsync(new BuildingDto
                 {
-                    Region = input?.Region
+                    SmallDistrictId = input.SmallDistrictId
                 }, cancelToken);
 
-                return new ApiResult<List<GetListStreetOfficeOutput>>(APIResultCode.Success, data.Select(x => new GetListStreetOfficeOutput
+                return new ApiResult<List<GetListBuildingOutput>>(APIResultCode.Success, data.Select(x => new GetListBuildingOutput
                 {
                     Id = x.Id.ToString(),
                     Name = x.Name
@@ -288,7 +274,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
             catch (Exception e)
             {
-                return new ApiResult<List<GetListStreetOfficeOutput>>(APIResultCode.Success_NoB, new List<GetListStreetOfficeOutput> { }, e.Message);
+                return new ApiResult<List<GetListBuildingOutput>>(APIResultCode.Success_NoB, new List<GetListBuildingOutput> { }, e.Message);
             }
         }
     }

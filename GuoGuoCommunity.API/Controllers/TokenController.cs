@@ -23,48 +23,55 @@ namespace GuoGuoCommunity.API.Controllers
             _tokenManager = new TokenManager();
         }
 
-        //紀錄 Refresh Token，需紀錄在資料庫
+        //记录 Refresh Token，需记录在资料库
         private static Dictionary<string, User> refreshTokens =
             new Dictionary<string, User>();
 
-        //登入
+        /// <summary>
+        /// 登陆
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [Route("signIn")]
-        public Token SignIn( )
+        public Token SignIn()
         {
-            //模擬從資料庫取得資料
+            //模拟从资料库取得资料
             //if (!(model.UserId == "abc" && model.Password == "123"))
             //{
-            //    throw new Exception("登入失敗，帳號或密碼錯誤");
+            //    throw new Exception("登入失败，账号或密码错误");
             //}
             var user = new User
             {
-                 Password="123456",
-                  Name="admin"
-                  
+                Password = "123456",
+                Name = "admin"
+
             };
-            //產生 Token
+            //产生 Token
             var token = _tokenManager.Create(user);
-            //需存入資料庫
+            //需存入数据库
             refreshTokens.Add(token.refresh_token, user);
             return token;
         }
 
-        //換取新 Token
+        /// <summary>
+        /// 换取新
+        /// </summary>
+        /// <param name="refreshToken"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("refresh")]
         public Token Refresh([FromBody]string refreshToken)
         {
-            //檢查 Refresh Token 是否正確
+            //检查 Refresh Token 是否正确
             if (!refreshTokens.ContainsKey(refreshToken))
             {
                 throw new Exception("查無此 Refresh Token");
             }
-            //需查詢資料庫
+            //需查询资料库
             var user = refreshTokens[refreshToken];
-            //產生一組新的 Token 和 Refresh Token
+            //产生一组新的 Token 和 Refresh Token
             var token = _tokenManager.Create(user);
-            //刪除舊的
+            //删除旧的
             refreshTokens.Remove(refreshToken);
             //存入新的
             refreshTokens.Add(token.refresh_token, user);
@@ -72,10 +79,9 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 測試是否通過驗證
+        /// 测试是否通过验证
         /// </summary>
         /// <returns></returns>
-
         [HttpPost]
         [Route("isAuthenticated")]
         public bool IsAuthenticated()
