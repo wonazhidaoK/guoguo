@@ -142,7 +142,9 @@
     <Compile Include="Models\BuildingUnit.cs" />
     <Compile Include="Models\Community.cs" />
     <Compile Include="Models\ComplaintType.cs" />
+    <Compile Include="Models\Industry.cs" />
     <Compile Include="Models\Menu.cs" />
+    <Compile Include="Models\Owner.cs" />
     <Compile Include="Models\Role_Menu.cs" />
     <Compile Include="Models\SmallDistrict.cs" />
     <Compile Include="Models\StreetOffice.cs" />
