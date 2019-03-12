@@ -79,6 +79,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\Event\ActionDelegatedEventHandler.cs" />
+    <Compile Include="Abstractions\Event\EventBus.cs" />
+    <Compile Include="Abstractions\Event\IEvent.cs" />
+    <Compile Include="Abstractions\Event\IEventHandler.cs" />
     <Compile Include="Abstractions\IBuildingService.cs" />
     <Compile Include="Abstractions\IBuildingUnitService.cs" />
     <Compile Include="Abstractions\ICityService.cs" />
