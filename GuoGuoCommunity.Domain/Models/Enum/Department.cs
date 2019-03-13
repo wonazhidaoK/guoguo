@@ -2,14 +2,17 @@
 
 namespace GuoGuoCommunity.Domain.Models.Enum
 {
+    /// <summary>
+    /// 部门
+    /// </summary>
     public class Department
     {
         static Department()
         {
-            YeZhu = new Department { Name = "业主", Value = "YeZhu" };
-            YeZhuWeiYuanHui = new Department { Name = "业主委员会", Value = "YeZhuWeiYuanHui" };
-            WuYe = new Department { Name = "物业", Value = "WuYe" };
-            JieDaoBan = new Department { Name = "街道办", Value = "JieDaoBan" };
+            YeZhu = new Department { Name = "业主", Value = "Owner" };
+            YeZhuWeiYuanHui = new Department { Name = "业主委员会", Value = "VipOwner" };
+            WuYe = new Department { Name = "物业", Value = "Property" };
+            JieDaoBan = new Department { Name = "街道办", Value = "StreetOffice" };
         }
         
         public string Name { get; set; }
@@ -22,7 +25,7 @@ namespace GuoGuoCommunity.Domain.Models.Enum
 
         public static Department JieDaoBan { get; set; }
 
-        public IEnumerable<Department> GetAll() => new List<Department>() { YeZhu, YeZhuWeiYuanHui, WuYe, JieDaoBan };
+        public static IEnumerable<Department> GetAll() => new List<Department>() { YeZhu, YeZhuWeiYuanHui, WuYe, JieDaoBan };
         
     }
 }

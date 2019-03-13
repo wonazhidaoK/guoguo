@@ -25,6 +25,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("小区信息不存在！");
                 }
+
                 var vipOwners = await db.VipOwners.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId).FirstOrDefaultAsync(token);
                 if (vipOwners != null)
                 {
@@ -59,7 +60,10 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该业委会不存在！");
                 }
-
+                if (OnDeleteAsync(db, dto, token))
+                {
+                    throw new NotImplementedException("该业委会存在下级数据！");
+                }
                 vipOwners.LastOperationTime = dto.OperationTime;
                 vipOwners.LastOperationUserId = dto.OperationUserId;
                 vipOwners.DeletedTime = dto.OperationTime;
@@ -93,7 +97,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                if (!Guid.TryParse(id, out var uid))
+                if (Guid.TryParse(id, out var uid))
                 {
                     return await db.VipOwners.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
                 }
@@ -117,10 +121,6 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                if (string.IsNullOrWhiteSpace(dto.SmallDistrictId))
-                {
-                    throw new NotImplementedException("小区Id信息不正确！");
-                }
                 return await db.VipOwners.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId&& x.IsValid == false).ToListAsync(token);
             }
         }
@@ -142,8 +142,19 @@ namespace GuoGuoCommunity.Domain.Service
                 vipOwners.RemarkName = dto.RemarkName;
                 vipOwners.LastOperationTime = dto.OperationTime;
                 vipOwners.LastOperationUserId = dto.OperationUserId;
+                OnUpdateAsync(db,dto,token);
                 await db.SaveChangesAsync(token);
             }
+        }
+
+        private void OnUpdateAsync(GuoGuoCommunityContext db, VipOwnerDto dto, CancellationToken token = default)
+        {
+
+        }
+
+        private bool OnDeleteAsync(GuoGuoCommunityContext db, VipOwnerDto dto, CancellationToken token = default)
+        {
+            return false;
         }
     }
 }

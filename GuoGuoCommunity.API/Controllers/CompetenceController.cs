@@ -202,55 +202,63 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("user/Login")]
         public async Task<ApiResult<LoginOutput>> Login([FromBody]LoginInput input, CancellationToken cancelToken)
         {
-            var user = await _userService.GetAsync(
+            try
+            {
+                var user = await _userService.GetAsync(
                new UserDto
                {
                    Name = input.Name,
                    Password = input.Pwd
                });
-            //產生 Token
-            var token = _tokenManager.Create(user);
-            //需存入資料庫
+                //产生 Token
+                var token = _tokenManager.Create(user);
+                //存入数据库
 
-            await _userService.UpdateTokenAsync(
-                new UserDto
-                {
-                    Id = user.Id.ToString(),
-                    RefreshToken = token.refresh_token
-                });
+                await _userService.UpdateTokenAsync(
+                    new UserDto
+                    {
+                        Id = user.Id.ToString(),
+                        RefreshToken = token.refresh_token
+                    });
 
-            if (user.Name == "admin")
-            {
-                return new ApiResult<LoginOutput>(APIResultCode.Success, new LoginOutput
+                if (user.Name == "admin")
                 {
-                    Roles = new string[1] { "authorityMax" },
-                    Name = user.Name,
-                    avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
-                    token = token.access_token,
-                    //refresh_token=token.refresh_token
-                });
-            }
-
-            var role_Menus = await _roleMenuService.GetByRoleIdAsync(user.RoleId, cancelToken);
-            List<string> list = new List<string>();
-            if (role_Menus != null)
-            {
-                foreach (var item in role_Menus)
-                {
-                    var menu = await _menuService.GetByIdAsync(item.MenuId, cancelToken);
-                    list.Add(menu.Kay);
+                    return new ApiResult<LoginOutput>(APIResultCode.Success, new LoginOutput
+                    {
+                        Roles = new string[1] { "authorityMax" },
+                        Name = user.Name,
+                        avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
+                        token = token.access_token,
+                        //refresh_token=token.refresh_token
+                    });
                 }
 
-            }
-            return new ApiResult<LoginOutput>(APIResultCode.Success,
-                new LoginOutput
+                var role_Menus = await _roleMenuService.GetByRoleIdAsync(user.RoleId, cancelToken);
+                List<string> list = new List<string>();
+                if (role_Menus != null)
                 {
-                    Roles = list.ToArray(),
-                    Name = user.Name,
-                    avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
-                    token = token.access_token,
+                    foreach (var item in role_Menus)
+                    {
+                        var menu = await _menuService.GetByIdAsync(item.MenuId, cancelToken);
+                        list.Add(menu.Kay);
+                    }
+
+                }
+                return new ApiResult<LoginOutput>(APIResultCode.Success,
+                    new LoginOutput
+                    {
+                        Roles = list.ToArray(),
+                        Name = user.Name,
+                        avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
+                        token = token.access_token,
                     // refresh_token = token.refresh_token
                 });
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<LoginOutput>(APIResultCode.Success_NoB, new LoginOutput { }, e.Message);
+            }
+            
         }
 
         /// <summary>

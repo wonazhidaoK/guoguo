@@ -247,7 +247,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 根据楼宇id获取楼宇单元列表
+        /// 根据楼宇id获取楼宇单元列表(小程序可用)
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>

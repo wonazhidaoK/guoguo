@@ -251,7 +251,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 获取职能
+        /// 获取职能(小程序可用)
         /// </summary>
         /// <param name="cancelToken"></param>
         /// <returns></returns>

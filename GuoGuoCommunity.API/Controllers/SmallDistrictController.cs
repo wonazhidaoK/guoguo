@@ -290,7 +290,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 根据社区获取小区列表
+        /// 根据社区获取小区列表(小程序可用)
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>

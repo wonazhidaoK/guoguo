@@ -241,7 +241,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 return new ApiResult<GetAllStreetOfficeOutput>(APIResultCode.Success, new GetAllStreetOfficeOutput
                 {
-                    List = data.Select(x => new GetCommunityOutput
+                    List = data.Select(x => new GetStreetOfficeOutput
                     {
                         Id = x.Id.ToString(),
                         State = x.State,
@@ -259,7 +259,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 根据区获取街道办列表
+        /// 根据区获取街道办列表(小程序可用)
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>

@@ -25,6 +25,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("小区信息不存在！");
                 }
+
                 var duilding = await db.Buildings.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId).FirstOrDefaultAsync(token);
                 if (duilding != null)
                 {
@@ -59,6 +60,11 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该楼宇不存在！");
                 }
 
+                if (OnDeleteAsync(db, dto, token))
+                {
+                    throw new NotImplementedException("该楼宇信息存在下级数据！");
+                }
+
                 building.LastOperationTime = dto.OperationTime;
                 building.LastOperationUserId = dto.OperationUserId;
                 building.DeletedTime = dto.OperationTime;
@@ -88,7 +94,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                if (!Guid.TryParse(id, out var uid))
+                if (Guid.TryParse(id, out var uid))
                 {
                     return await db.Buildings.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
                 }
@@ -100,13 +106,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Buildings.Where(x => x.IsDeleted == false).ToListAsync(token);
-
-                if (!string.IsNullOrWhiteSpace(dto.SmallDistrictId))
-                {
-                    list = list.Where(x => x.SmallDistrictId == dto.SmallDistrictId).ToList();
-                }
-                return list;
+                return await db.Buildings.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
             }
         }
 
@@ -130,8 +130,19 @@ namespace GuoGuoCommunity.Domain.Service
                 building.Name = dto.Name;
                 building.LastOperationTime = dto.OperationTime;
                 building.LastOperationUserId = dto.OperationUserId;
+                OnUpdateAsync(db, dto, token);
                 await db.SaveChangesAsync(token);
             }
+        }
+
+        private void OnUpdateAsync(GuoGuoCommunityContext db, BuildingDto dto, CancellationToken token = default)
+        {
+
+        }
+
+        private bool OnDeleteAsync(GuoGuoCommunityContext db, BuildingDto dto, CancellationToken token = default)
+        {
+            return false;
         }
     }
 }

@@ -54,6 +54,10 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该投诉类型不存在！");
                 }
 
+                if (OnDeleteAsync(db, dto, token))
+                {
+                    throw new NotImplementedException("该投诉类型存在下级数据！");
+                }
                 complaintType.LastOperationTime = dto.OperationTime;
                 complaintType.LastOperationUserId = dto.OperationUserId;
                 complaintType.DeletedTime = dto.OperationTime;
@@ -87,7 +91,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                if (!Guid.TryParse(id, out var uid))
+                if (Guid.TryParse(id, out var uid))
                 {
                     return await db.ComplaintTypes.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
                 }
@@ -131,8 +135,19 @@ namespace GuoGuoCommunity.Domain.Service
                 //complaintTypes.ComplaintPeriod = dto.ComplaintPeriod;
                 complaintType.LastOperationTime = dto.OperationTime;
                 complaintType.LastOperationUserId = dto.OperationUserId;
+                OnUpdateAsync(db, dto, token);
                 await db.SaveChangesAsync(token);
             }
+        }
+
+        private void OnUpdateAsync(GuoGuoCommunityContext db, ComplaintTypeDto dto, CancellationToken token = default)
+        {
+
+        }
+
+        private bool OnDeleteAsync(GuoGuoCommunityContext db, ComplaintTypeDto dto, CancellationToken token = default)
+        {
+            return false;
         }
     }
 }

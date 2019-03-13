@@ -1,4 +1,5 @@
-﻿using GuoGuoCommunity.Domain.Abstractions;
+﻿using EntityFramework.Extensions;
+using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
@@ -25,6 +26,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("街道办信息不存在！");
                 }
+
                 var community = await db.Communities.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.StreetOfficeId == dto.StreetOfficeId).FirstOrDefaultAsync(token);
                 if (community != null)
                 {
@@ -62,6 +64,11 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该社区不存在！");
                 }
 
+                if (await OnDelete(db, dto, token))
+                {
+                    throw new NotImplementedException("该社区下存在下级小区数据");
+                }
+
                 community.LastOperationTime = dto.OperationTime;
                 community.LastOperationUserId = dto.OperationUserId;
                 community.DeletedTime = dto.OperationTime;
@@ -77,15 +84,15 @@ namespace GuoGuoCommunity.Domain.Service
                 var list = await db.Communities.Where(x => x.IsDeleted == false).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.State))
                 {
-                    list = list.Where(x => x.State==dto.State).ToList();
+                    list = list.Where(x => x.State == dto.State).ToList();
                 }
                 if (!string.IsNullOrWhiteSpace(dto.City))
                 {
-                    list = list.Where(x => x.City==dto.City).ToList();
+                    list = list.Where(x => x.City == dto.City).ToList();
                 }
                 if (!string.IsNullOrWhiteSpace(dto.Region))
                 {
-                    list = list.Where(x => x.Region==dto.Region).ToList();
+                    list = list.Where(x => x.Region == dto.Region).ToList();
                 }
                 if (!string.IsNullOrWhiteSpace(dto.StreetOfficeId))
                 {
@@ -104,7 +111,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                if (!Guid.TryParse(id, out var uid))
+                if (Guid.TryParse(id, out var uid))
                 {
                     return await db.Communities.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
                 }
@@ -116,13 +123,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Communities.Where(x => x.IsDeleted == false).ToListAsync(token);
-
-                if (!string.IsNullOrWhiteSpace(dto.StreetOfficeId))
-                {
-                    list = list.Where(x => x.StreetOfficeId == dto.StreetOfficeId).ToList();
-                }
-                return list;
+                return await db.Communities.Where(x => x.IsDeleted == false && x.StreetOfficeId == dto.StreetOfficeId).ToListAsync(token);
             }
         }
 
@@ -139,6 +140,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该社区不存在！");
                 }
+
                 if (await db.Communities.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.StreetOfficeId == community.StreetOfficeId).FirstOrDefaultAsync(token) != null)
                 {
                     throw new NotImplementedException("该社区名称已存在！");
@@ -146,8 +148,23 @@ namespace GuoGuoCommunity.Domain.Service
                 community.Name = dto.Name;
                 community.LastOperationTime = dto.OperationTime;
                 community.LastOperationUserId = dto.OperationUserId;
+                await OnUpdate(db, dto, token);
                 await db.SaveChangesAsync(token);
             }
+        }
+
+        private async Task OnUpdate(GuoGuoCommunityContext db, CommunityDto dto, CancellationToken token = default)
+        {
+            await db.SmallDistricts.Where(x => x.CommunityId == dto.Id).UpdateAsync(x => new SmallDistrict { CommunityName = dto.Name });
+        }
+
+        private async Task<bool> OnDelete(GuoGuoCommunityContext db, CommunityDto dto, CancellationToken token = default)
+        {
+            if (await db.SmallDistricts.Where(x => x.IsDeleted == false && x.CommunityId == dto.Id).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

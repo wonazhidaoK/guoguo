@@ -51,6 +51,10 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该业委会职能不存在！");
                 }
+                if (OnDeleteAsync(db, dto, token))
+                {
+                    throw new NotImplementedException("该业委会职能存在下级数据！");
+                }
 
                 vipOwnerStructures.LastOperationTime = dto.OperationTime;
                 vipOwnerStructures.LastOperationUserId = dto.OperationUserId;
@@ -89,7 +93,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                if (!Guid.TryParse(id, out var uid))
+                if (Guid.TryParse(id, out var uid))
                 {
                     return await db.VipOwnerStructures.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
                 }
@@ -119,6 +123,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该业委会职能不存在！");
                 }
+
                 if (await db.VipOwnerStructures.Where(x => x.Name == dto.Name && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
                 {
                     throw new NotImplementedException("该业委会职能已存在！");
@@ -129,8 +134,19 @@ namespace GuoGuoCommunity.Domain.Service
                 vipOwnerStructures.IsReview = dto.IsReview.Value;
                 vipOwnerStructures.LastOperationTime = dto.OperationTime;
                 vipOwnerStructures.LastOperationUserId = dto.OperationUserId;
+                OnUpdateAsync(db,dto,token);
                 await db.SaveChangesAsync(token);
             }
+        }
+
+        private void OnUpdateAsync(GuoGuoCommunityContext db, VipOwnerStructureDto dto, CancellationToken token = default)
+        {
+
+        }
+
+        private bool OnDeleteAsync(GuoGuoCommunityContext db, VipOwnerStructureDto dto, CancellationToken token = default)
+        {
+            return false;
         }
     }
 }

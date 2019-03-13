@@ -25,6 +25,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("楼宇信息不存在！");
                 }
+
                 var buildingUnits = await db.BuildingUnits.Where(x => x.UnitName == dto.UnitName && x.IsDeleted == false && x.BuildingId == dto.BuildingId).FirstOrDefaultAsync(token);
                 if (buildingUnits != null)
                 {
@@ -59,6 +60,10 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该楼宇单元信息不存在！");
                 }
 
+                if (OnDeleteAsync(db, dto, token))
+                {
+                    throw new NotImplementedException("该楼宇单元信息存在下级数据！");
+                }
                 buildingUnit.LastOperationTime = dto.OperationTime;
                 buildingUnit.LastOperationUserId = dto.OperationUserId;
                 buildingUnit.DeletedTime = dto.OperationTime;
@@ -92,7 +97,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                if (!Guid.TryParse(id, out var uid))
+                if (Guid.TryParse(id, out var uid))
                 {
                     return await db.BuildingUnits.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
                 }
@@ -104,13 +109,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.BuildingUnits.Where(x => x.IsDeleted == false).ToListAsync(token);
-
-                if (!string.IsNullOrWhiteSpace(dto.BuildingId))
-                {
-                    list = list.Where(x => x.BuildingId == dto.BuildingId).ToList();
-                }
-                return list;
+                return await db.BuildingUnits.Where(x => x.IsDeleted == false && x.BuildingId == dto.BuildingId).ToListAsync(token);
             }
         }
 
@@ -127,16 +126,29 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该楼宇单元信息不存在！");
                 }
+
                 if (await db.BuildingUnits.Where(x => x.UnitName == dto.UnitName && x.IsDeleted == false && x.BuildingId == buildingUnit.BuildingId).FirstOrDefaultAsync(token) != null)
                 {
-                    throw new NotImplementedException("该社区名称已存在！");
+                    throw new NotImplementedException("该楼宇单元信息名称已存在！");
                 }
+
                 buildingUnit.UnitName = dto.UnitName;
                 buildingUnit.NumberOfLayers = dto.NumberOfLayers;
                 buildingUnit.LastOperationTime = dto.OperationTime;
                 buildingUnit.LastOperationUserId = dto.OperationUserId;
+                OnUpdateAsync(db,dto,token);
                 await db.SaveChangesAsync(token);
             }
+        }
+
+        private void OnUpdateAsync(GuoGuoCommunityContext db, BuildingUnitDto dto, CancellationToken token = default)
+        {
+
+        }
+
+        private bool OnDeleteAsync(GuoGuoCommunityContext db, BuildingUnitDto dto, CancellationToken token = default)
+        {
+            return false;
         }
     }
 }

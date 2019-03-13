@@ -142,7 +142,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 删除社区办信息
+        /// 删除社区信息
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cancelToken"></param>
@@ -270,7 +270,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 根据街道办获取社区
+        /// 根据街道办获取社区(小程序可用)
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>
