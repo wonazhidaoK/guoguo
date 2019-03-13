@@ -72,5 +72,15 @@ namespace GuoGuoCommunity.Domain
         /// 楼宇信息
         /// </summary>
         public DbSet<Building> Buildings { get; set; }
+
+        /// <summary>
+        /// 业户信息
+        /// </summary>
+        public DbSet<Industry> Industries { get; set; }
+
+        /// <summary>
+        /// 业主信息
+        /// </summary>
+        public DbSet<Owner> Owners { get; set; }
     }
 }

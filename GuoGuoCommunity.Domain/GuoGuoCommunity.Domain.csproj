@@ -92,7 +92,9 @@
     <Compile Include="Abstractions\ICityService.cs" />
     <Compile Include="Abstractions\ICommunityService.cs" />
     <Compile Include="Abstractions\IComplaintTypeService.cs" />
+    <Compile Include="Abstractions\IIndustryService.cs" />
     <Compile Include="Abstractions\IMenuService.cs" />
+    <Compile Include="Abstractions\IOwnerService.cs" />
     <Compile Include="Abstractions\IRoleMenuService.cs" />
     <Compile Include="Abstractions\IRoleService.cs" />
     <Compile Include="Abstractions\ISmallDistrictService.cs" />
@@ -108,6 +110,8 @@
     <Compile Include="Dto\BuildingUnitDto.cs" />
     <Compile Include="Dto\CommunityDto.cs" />
     <Compile Include="Dto\ComplaintTypeDto.cs" />
+    <Compile Include="Dto\IndustryDto.cs" />
+    <Compile Include="Dto\OwnerDto.cs" />
     <Compile Include="Dto\RegionDto.cs" />
     <Compile Include="Dto\CityDto.cs" />
     <Compile Include="Dto\MenuDto.cs" />
@@ -163,6 +167,10 @@
     <Compile Include="Migrations\201903130322298_update.Designer.cs">
       <DependentUpon>201903130322298_update.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903130910453_Add_Owners_Industries.cs" />
+    <Compile Include="Migrations\201903130910453_Add_Owners_Industries.Designer.cs">
+      <DependentUpon>201903130910453_Add_Owners_Industries.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Building.cs" />
     <Compile Include="Models\BuildingUnit.cs" />
@@ -187,6 +195,7 @@
     <Compile Include="Service\CityService.cs" />
     <Compile Include="Service\CommunityService.cs" />
     <Compile Include="Service\ComplaintTypeService.cs" />
+    <Compile Include="Service\IndustryService.cs" />
     <Compile Include="Service\MenuService.cs" />
     <Compile Include="Service\RoleMenuService.cs" />
     <Compile Include="Service\RoleService.cs" />
@@ -233,6 +242,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903130322298_update.resx">
       <DependentUpon>201903130322298_update.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903130910453_Add_Owners_Industries.resx">
+      <DependentUpon>201903130910453_Add_Owners_Industries.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
