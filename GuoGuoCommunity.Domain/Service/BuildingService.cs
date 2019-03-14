@@ -1,4 +1,5 @@
-﻿using GuoGuoCommunity.Domain.Abstractions;
+﻿using EntityFramework.Extensions;
+using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
@@ -60,7 +61,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该楼宇不存在！");
                 }
 
-                if (OnDeleteAsync(db, dto, token))
+                if (await OnDeleteAsync(db, dto, token))
                 {
                     throw new NotImplementedException("该楼宇信息存在下级数据！");
                 }
@@ -130,18 +131,23 @@ namespace GuoGuoCommunity.Domain.Service
                 building.Name = dto.Name;
                 building.LastOperationTime = dto.OperationTime;
                 building.LastOperationUserId = dto.OperationUserId;
-                OnUpdateAsync(db, dto, token);
+                await OnUpdateAsync(db, dto, token);
                 await db.SaveChangesAsync(token);
             }
         }
 
-        private void OnUpdateAsync(GuoGuoCommunityContext db, BuildingDto dto, CancellationToken token = default)
+        private async Task OnUpdateAsync(GuoGuoCommunityContext db, BuildingDto dto, CancellationToken token = default)
         {
-
+            await db.Industries.Where(x => x.BuildingId == dto.Id).UpdateAsync(x => new Industry {  BuildingName = dto.Name });
+          
         }
 
-        private bool OnDeleteAsync(GuoGuoCommunityContext db, BuildingDto dto, CancellationToken token = default)
+        private async Task<bool>  OnDeleteAsync(GuoGuoCommunityContext db, BuildingDto dto, CancellationToken token = default)
         {
+            if (await db.Industries.Where(x => x.BuildingId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
             return false;
         }
     }

@@ -47,7 +47,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
                 {
-                    throw new NotImplementedException("token为空！");
+                    return new ApiResult<AddOwnerOutput>(APIResultCode.Unknown, new AddOwnerOutput { }, APIResultMessage.TokenNull);
                 }
                 if (string.IsNullOrWhiteSpace(input.Name))
                 {
@@ -85,7 +85,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
-                    throw new NotImplementedException("token无效！");
+                    return new ApiResult<AddOwnerOutput>(APIResultCode.Unknown, new AddOwnerOutput { }, APIResultMessage.TokenError);
                 }
 
                 var entity = await _ownerService.AddAsync(new OwnerDto
@@ -125,7 +125,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
                 {
-                    throw new NotImplementedException("token信息为空！");
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
                 }
                 if (string.IsNullOrWhiteSpace(id))
                 {
@@ -135,7 +135,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
-                    throw new NotImplementedException("token无效！");
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
                 await _ownerService.DeleteAsync(new OwnerDto
                 {
@@ -168,13 +168,13 @@ namespace GuoGuoCommunity.API.Controllers
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
                 {
-                    throw new NotImplementedException("token为空！");
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
                 }
 
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
-                    throw new NotImplementedException("token无效！");
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
 
                 await _ownerService.UpdateAsync(new OwnerDto

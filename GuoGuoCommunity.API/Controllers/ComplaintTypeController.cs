@@ -47,7 +47,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
                 {
-                    throw new NotImplementedException("token为空！");
+                    return new ApiResult<AddComplaintTypeOutput>(APIResultCode.Unknown, new AddComplaintTypeOutput { }, APIResultMessage.TokenNull);
                 }
                 if (string.IsNullOrWhiteSpace(input.Name))
                 {
@@ -68,7 +68,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
-                    throw new NotImplementedException("token无效！");
+                    return new ApiResult<AddComplaintTypeOutput>(APIResultCode.Unknown, new AddComplaintTypeOutput { }, APIResultMessage.TokenError);
                 }
 
                 var entity = await _complaintTypeService.AddAsync(new ComplaintTypeDto
@@ -106,7 +106,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
                 {
-                    throw new NotImplementedException("token信息为空！");
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
                 }
                 if (string.IsNullOrWhiteSpace(id))
                 {
@@ -116,7 +116,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
-                    throw new NotImplementedException("token无效！");
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
                 await _complaintTypeService.DeleteAsync(new ComplaintTypeDto
                 {
@@ -148,13 +148,13 @@ namespace GuoGuoCommunity.API.Controllers
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
                 {
-                    throw new NotImplementedException("token为空！");
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
                 }
 
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
-                    throw new NotImplementedException("token无效！");
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
 
                 await _complaintTypeService.UpdateAsync(new ComplaintTypeDto

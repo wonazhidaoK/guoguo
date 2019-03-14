@@ -1,4 +1,5 @@
-﻿using GuoGuoCommunity.Domain.Abstractions;
+﻿using EntityFramework.Extensions;
+using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
@@ -73,7 +74,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该业户不存在！");
                 }
 
-                if (OnDelete(db, dto, token))
+                if (await OnDeleteAsync(db, dto, token))
                 {
                     throw new NotImplementedException("该业户下存在下级数据");
                 }
@@ -146,19 +147,22 @@ namespace GuoGuoCommunity.Domain.Service
                 industrie.Name = dto.Name;
                 industrie.LastOperationTime = dto.OperationTime;
                 industrie.LastOperationUserId = dto.OperationUserId;
-                OnUpdate(db, dto, token);
+                await OnUpdateAsync(db, dto, token);
                 await db.SaveChangesAsync(token);
             }
         }
 
-        private void OnUpdate(GuoGuoCommunityContext db, IndustryDto dto, CancellationToken token = default)
+        private async Task OnUpdateAsync(GuoGuoCommunityContext db, IndustryDto dto, CancellationToken token = default)
         {
-
+            await db.Owners.Where(x => x.IndustryId == dto.Id).UpdateAsync(x => new Owner { IndustryName = dto.Name });
         }
 
-        private bool OnDelete(GuoGuoCommunityContext db, IndustryDto dto, CancellationToken token = default)
+        private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, IndustryDto dto, CancellationToken token = default)
         {
-
+            if (await db.Owners.Where(x => x.IndustryId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
             return false;
         }
     }

@@ -14,7 +14,7 @@ namespace GuoGuoCommunity.Domain
         //產生 Token
         public Token Create(User user)
         {
-            var exp = 3600;   //過期時間(秒)
+            var exp = 36000;   //過期時間(秒)
 
             //稍微修改 Payload 將使用者資訊和過期時間分開
             var payload = new Payload

@@ -47,7 +47,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
                 {
-                    throw new NotImplementedException("token为空！");
+                    return new ApiResult<AddCommunityOutput>(APIResultCode.Unknown, new AddCommunityOutput { }, APIResultMessage.TokenNull);
                 }
                 if (string.IsNullOrWhiteSpace(input.Name))
                 {
@@ -77,7 +77,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
-                    throw new NotImplementedException("token无效！");
+                    return new ApiResult<AddCommunityOutput>(APIResultCode.Unknown, new AddCommunityOutput { }, APIResultMessage.TokenError);
                 }
 
                 var entity = await _communityService.AddAsync(new CommunityDto
@@ -115,13 +115,13 @@ namespace GuoGuoCommunity.API.Controllers
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
                 {
-                    throw new NotImplementedException("token为空！");
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
                 }
 
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
-                    throw new NotImplementedException("token无效！");
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
 
                 await _communityService.UpdateAsync(new CommunityDto
@@ -156,7 +156,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
                 {
-                    throw new NotImplementedException("token信息为空！");
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
                 }
                 if (string.IsNullOrWhiteSpace(id))
                 {
@@ -166,7 +166,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
-                    throw new NotImplementedException("token无效！");
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
                 await _communityService.DeleteAsync(new CommunityDto
                 {

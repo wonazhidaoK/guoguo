@@ -33,7 +33,7 @@
         /// </summary>
         public string message { get; set; }
 
-        
+
     }
 
     /// <summary>
@@ -76,7 +76,7 @@
         /// <summary>
         /// 接口调用成功，业务失败
         /// </summary>
-        public const string Success_NoB = "500";
+        public const string Success_NoB = "501";
         /// <summary>
         /// 异常错误
         /// </summary>
@@ -84,7 +84,7 @@
         /// <summary>
         /// 未知异常
         /// </summary>
-        public const string Unknown = "501";
+        public const string Unknown = "500";
         /// <summary>
         /// 网络异常
         /// </summary>
@@ -136,5 +136,13 @@
         /// 日期类型错误
         /// </summary>
         public const string DateFormatError = "日期类型错误";
+        /// <summary>
+        /// Token为空
+        /// </summary>
+        public const string TokenNull = "token为空！";
+        /// <summary>
+        /// Token无效
+        /// </summary>
+        public const string TokenError = "token无效！";
     }
 }
