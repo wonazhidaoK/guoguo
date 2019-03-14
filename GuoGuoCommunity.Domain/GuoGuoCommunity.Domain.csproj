@@ -197,6 +197,7 @@
     <Compile Include="Service\ComplaintTypeService.cs" />
     <Compile Include="Service\IndustryService.cs" />
     <Compile Include="Service\MenuService.cs" />
+    <Compile Include="Service\OwnerService.cs" />
     <Compile Include="Service\RoleMenuService.cs" />
     <Compile Include="Service\RoleService.cs" />
     <Compile Include="Service\SmallDistrictService.cs" />

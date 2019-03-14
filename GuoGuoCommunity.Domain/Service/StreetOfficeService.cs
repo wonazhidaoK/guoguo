@@ -105,7 +105,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.StreetOffices.Where(x => x.IsDeleted == false && x.Region == dto.Region).ToListAsync(token);
+                return await db.StreetOffices.Where(x => x.IsDeleted == false && x.Region == dto.Region&&x.State==dto.State&&x.City==dto.City).ToListAsync(token);
             }
         }
 

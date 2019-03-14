@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 公共接口
     /// </summary>
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CommonController : ApiController
     {
         /// <summary>

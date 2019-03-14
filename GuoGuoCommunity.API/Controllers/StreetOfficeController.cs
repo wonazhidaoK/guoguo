@@ -274,10 +274,20 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("街道办区信息为空！");
                 }
+                if (string.IsNullOrWhiteSpace(input.City))
+                {
+                    throw new NotImplementedException("街道办城市信息为空！");
+                }
+                if (string.IsNullOrWhiteSpace(input.State))
+                {
+                    throw new NotImplementedException("街道办省信息为空！");
+                }
 
                 var data = await _streetOfficeService.GetListAsync(new StreetOfficeDto
                 {
-                    Region = input?.Region
+                    Region = input?.Region,
+                     City=input?.City,
+                      State=input?.State
                 }, cancelToken);
 
                 return new ApiResult<List<GetListStreetOfficeOutput>>(APIResultCode.Success, data.Select(x => new GetListStreetOfficeOutput

@@ -35,6 +35,8 @@ namespace GuoGuoCommunity.API
             container.RegisterType<IComplaintTypeService, ComplaintTypeService>(new HierarchicalLifetimeManager());
             container.RegisterType<IVipOwnerService, VipOwnerService>(new HierarchicalLifetimeManager());
             container.RegisterType<IVipOwnerStructureService, VipOwnerStructureService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IIndustryService, IndustryService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IOwnerService, OwnerService>(new HierarchicalLifetimeManager());
             config.DependencyResolver = new UnityResolver(container);
             config.Filters.Add(new Logs.LogFilterAttribute());
             config.Filters.Add(new Logs.AbnormalFilterAttribute());
