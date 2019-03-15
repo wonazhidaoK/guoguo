@@ -10,7 +10,6 @@ namespace GuoGuoCommunity.Domain
             Database.Log = s => System.Diagnostics.Debug.WriteLine(s);
         }
 
-
         public DbSet<Test> Tests { get; set; }
 
         /// <summary>
@@ -82,5 +81,15 @@ namespace GuoGuoCommunity.Domain
         /// 业主信息
         /// </summary>
         public DbSet<Owner> Owners { get; set; }
+
+        /// <summary>
+        /// 业主认证记录
+        /// </summary>
+        public DbSet<OwnerCertificationRecord> OwnerCertificationRecords { get; set; }
+
+        /// <summary>
+        /// 微信用户表
+        /// </summary>
+        public DbSet<WeiXinUser> WeiXinUsers { get; set; }
     }
 }

@@ -128,7 +128,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该楼宇单元信息不存在！");
                 }
 
-                if (await db.BuildingUnits.Where(x => x.UnitName == dto.UnitName && x.IsDeleted == false && x.BuildingId == buildingUnit.BuildingId).FirstOrDefaultAsync(token) != null)
+                if (await db.BuildingUnits.Where(x => x.UnitName == dto.UnitName && x.IsDeleted == false && x.BuildingId == buildingUnit.BuildingId && x.Id != uid).FirstOrDefaultAsync(token) != null)
                 {
                     throw new NotImplementedException("该楼宇单元信息名称已存在！");
                 }

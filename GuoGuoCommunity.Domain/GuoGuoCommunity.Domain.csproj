@@ -94,6 +94,7 @@
     <Compile Include="Abstractions\IComplaintTypeService.cs" />
     <Compile Include="Abstractions\IIndustryService.cs" />
     <Compile Include="Abstractions\IMenuService.cs" />
+    <Compile Include="Abstractions\IOwnerCertificationRecordService.cs" />
     <Compile Include="Abstractions\IOwnerService.cs" />
     <Compile Include="Abstractions\IRoleMenuService.cs" />
     <Compile Include="Abstractions\IRoleService.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="Abstractions\IUserService.cs" />
     <Compile Include="Abstractions\IVipOwnerService.cs" />
     <Compile Include="Abstractions\IVipOwnerStructureService.cs" />
+    <Compile Include="Abstractions\IWeiXinUserService.cs" />
     <Compile Include="Abstractions\Models\ICreateOperation.cs" />
     <Compile Include="Abstractions\Models\IDeleted.cs" />
     <Compile Include="Abstractions\Models\ILastOperation.cs" />
@@ -111,6 +113,7 @@
     <Compile Include="Dto\CommunityDto.cs" />
     <Compile Include="Dto\ComplaintTypeDto.cs" />
     <Compile Include="Dto\IndustryDto.cs" />
+    <Compile Include="Dto\OwnerCertificationRecordDto.cs" />
     <Compile Include="Dto\OwnerDto.cs" />
     <Compile Include="Dto\RegionDto.cs" />
     <Compile Include="Dto\CityDto.cs" />
@@ -122,6 +125,7 @@
     <Compile Include="Dto\UserDto.cs" />
     <Compile Include="Dto\VipOwnerDto.cs" />
     <Compile Include="Dto\VipOwnerStructureDto.cs" />
+    <Compile Include="Dto\WeiXinUserDto.cs" />
     <Compile Include="GuoGuoCommunityContext.cs" />
     <Compile Include="Migrations\201903060515308_role.cs" />
     <Compile Include="Migrations\201903060515308_role.Designer.cs">
@@ -171,15 +175,25 @@
     <Compile Include="Migrations\201903130910453_Add_Owners_Industries.Designer.cs">
       <DependentUpon>201903130910453_Add_Owners_Industries.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903150310564_weiXinUser_owner.cs" />
+    <Compile Include="Migrations\201903150310564_weiXinUser_owner.Designer.cs">
+      <DependentUpon>201903150310564_weiXinUser_owner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903150855504_add_WeiXinUser.cs" />
+    <Compile Include="Migrations\201903150855504_add_WeiXinUser.Designer.cs">
+      <DependentUpon>201903150855504_add_WeiXinUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Building.cs" />
     <Compile Include="Models\BuildingUnit.cs" />
     <Compile Include="Models\Community.cs" />
     <Compile Include="Models\ComplaintType.cs" />
+    <Compile Include="Models\Enum\OwnerCertification.cs" />
     <Compile Include="Models\Industry.cs" />
     <Compile Include="Models\Enum\Department.cs" />
     <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\Owner.cs" />
+    <Compile Include="Models\OwnerCertificationRecord.cs" />
     <Compile Include="Models\Role_Menu.cs" />
     <Compile Include="Models\SmallDistrict.cs" />
     <Compile Include="Models\StreetOffice.cs" />
@@ -188,6 +202,7 @@
     <Compile Include="Models\User_Role.cs" />
     <Compile Include="Models\VipOwner.cs" />
     <Compile Include="Models\VipOwnerStructure.cs" />
+    <Compile Include="Models\WeiXinUser.cs" />
     <Compile Include="Payload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\BuildingService.cs" />
@@ -197,6 +212,7 @@
     <Compile Include="Service\ComplaintTypeService.cs" />
     <Compile Include="Service\IndustryService.cs" />
     <Compile Include="Service\MenuService.cs" />
+    <Compile Include="Service\OwnerCertificationRecordService.cs" />
     <Compile Include="Service\OwnerService.cs" />
     <Compile Include="Service\RoleMenuService.cs" />
     <Compile Include="Service\RoleService.cs" />
@@ -206,6 +222,7 @@
     <Compile Include="Service\UserService.cs" />
     <Compile Include="Service\VipOwnerService.cs" />
     <Compile Include="Service\VipOwnerStructureService.cs" />
+    <Compile Include="Service\WeiXinUserService.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="TokenCrypto.cs" />
     <Compile Include="TokenManager.cs" />
@@ -246,6 +263,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903130910453_Add_Owners_Industries.resx">
       <DependentUpon>201903130910453_Add_Owners_Industries.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903150310564_weiXinUser_owner.resx">
+      <DependentUpon>201903150310564_weiXinUser_owner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903150855504_add_WeiXinUser.resx">
+      <DependentUpon>201903150855504_add_WeiXinUser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

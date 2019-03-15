@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GuoGuoCommunity.Domain.Abstractions.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 菜单
     /// </summary>
-    public class Menu
+    public class Menu : IDeleted, ILastOperation, ICreateOperation
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -22,5 +23,17 @@ namespace GuoGuoCommunity.Domain.Models
         /// 菜单值
         /// </summary>
         public string Kay { get; set; }
+
+        public string CreateOperationUserId { get; set; }
+
+        public DateTimeOffset? CreateOperationTime { get; set; }
+
+        public string LastOperationUserId { get; set; }
+
+        public DateTimeOffset? LastOperationTime { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        public DateTimeOffset? DeletedTime { get; set; }
     }
 }

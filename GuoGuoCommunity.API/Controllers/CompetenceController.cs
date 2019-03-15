@@ -185,7 +185,7 @@ namespace GuoGuoCommunity.API.Controllers
             await _userService.AddAsync(new UserDto
             {
                 Name = input.Name,
-                RolesId = input.RolesId,
+                RoleId = input.RolesId,
                 PhoneNumber = input.PhoneNumber,
                 RoleName = input.RoleName
             }, cancelToken);

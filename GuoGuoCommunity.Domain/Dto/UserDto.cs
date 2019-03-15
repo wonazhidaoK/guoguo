@@ -4,10 +4,10 @@
     {
         public string Id { get; set; }
 
-        ///// <summary>
-        ///// 登陆账号
-        ///// </summary>
-        //public string Account { get; set; }
+        /// <summary>
+        /// 账号
+        /// </summary>
+        public string Account { get; set; }
 
         /// <summary>
         /// 登陆密码
@@ -27,12 +27,32 @@
         /// <summary>
         /// 角色id
         /// </summary>
-        public string RolesId { get; set; }
+        public string RoleId { get; set; }
 
         /// <summary>
         /// 角色名称
         /// </summary>
         public string RoleName { get; set; }
+
+        /// <summary>
+        /// 微信Openid
+        /// </summary>
+        public string OpenId { get; set; }
+
+        /// <summary>
+        /// 微信Unionid
+        /// </summary>
+        public string UnionId { get; set; }
+
+        /// <summary>
+        /// 是否是业主
+        /// </summary>
+        public string IsOwner { get; set; }
+
+        /// <summary>
+        /// 是否是业委会成员
+        /// </summary>
+        public string IsVipOwner { get; set; }
 
         /// <summary>
         /// 

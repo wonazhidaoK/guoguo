@@ -19,5 +19,11 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<User> GetAsync(UserDto dto, CancellationToken token = default);
 
         Task UpdateTokenAsync(UserDto dto, CancellationToken token = default);
+
+        Task<User> AddWeiXinAsync(UserDto dto, CancellationToken token = default);
+
+        Task<User> GetForOpenIdAsync(UserDto dto, CancellationToken token = default);
+
+        Task<User> GetForUnionIdAsync(UserDto dto, CancellationToken token = default);
     }
 }

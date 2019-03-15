@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GuoGuoCommunity.Domain.Abstractions.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 角色菜单
     /// </summary>
-    public class Role_Menu
+    public class Role_Menu : IDeleted, ILastOperation, ICreateOperation
     {
         /// <summary>
         /// 
@@ -30,5 +31,17 @@ namespace GuoGuoCommunity.Domain.Models
         /// 是否被展示
         /// </summary>
         public bool IsDisplayed { get; set; }
+
+        public string CreateOperationUserId { get; set; }
+
+        public DateTimeOffset? CreateOperationTime { get; set; }
+
+        public string LastOperationUserId { get; set; }
+
+        public DateTimeOffset? LastOperationTime { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        public DateTimeOffset? DeletedTime { get; set; }
     }
 }

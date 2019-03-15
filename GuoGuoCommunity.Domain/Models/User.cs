@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GuoGuoCommunity.Domain.Abstractions.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 用户表
     /// </summary>
-    public class User
+    public class User : IDeleted, ILastOperation, ICreateOperation
     {
         /// <summary>
         /// 
@@ -47,8 +48,40 @@ namespace GuoGuoCommunity.Domain.Models
         public string RoleName { get; set; }
 
         /// <summary>
+        /// 微信Openid
+        /// </summary>
+        public string OpenId { get; set; }
+
+        /// <summary>
+        /// 微信Unionid
+        /// </summary>
+        public string UnionId { get; set; }
+
+        /// <summary>
+        /// 是否是业主
+        /// </summary>
+        public string IsOwner { get; set; }
+
+        /// <summary>
+        /// 是否是业委会成员
+        /// </summary>
+        public string IsVipOwner { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         public string RefreshToken { get; set; }
+
+        public string CreateOperationUserId { get; set; }
+
+        public DateTimeOffset? CreateOperationTime { get; set; }
+
+        public string LastOperationUserId { get; set; }
+
+        public DateTimeOffset? LastOperationTime { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        public DateTimeOffset? DeletedTime { get; set; }
     }
 }
