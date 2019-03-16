@@ -197,6 +197,10 @@
     <Compile Include="Migrations\201903160607591_VipOwner.Designer.cs">
       <DependentUpon>201903160607591_VipOwner.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903160720169_VipOwner-bool.cs" />
+    <Compile Include="Migrations\201903160720169_VipOwner-bool.Designer.cs">
+      <DependentUpon>201903160720169_VipOwner-bool.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Upload.cs" />
     <Compile Include="Models\Building.cs" />
@@ -298,6 +302,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903160607591_VipOwner.resx">
       <DependentUpon>201903160607591_VipOwner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903160720169_VipOwner-bool.resx">
+      <DependentUpon>201903160720169_VipOwner-bool.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

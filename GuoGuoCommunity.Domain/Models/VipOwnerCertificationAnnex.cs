@@ -33,12 +33,8 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public string UploadId { get; set; }
 
-        
-
         public string CreateOperationUserId { get; set; }
 
         public DateTimeOffset? CreateOperationTime  { get; set; }
-
-        
     }
 }

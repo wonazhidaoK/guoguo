@@ -205,11 +205,11 @@ namespace GuoGuoCommunity.API.Controllers
             try
             {
                 var user = await _userRepository.GetAsync(
-               new UserDto
-               {
-                   Name = input.Name,
-                   Password = input.Pwd
-               });
+                    new UserDto
+                    {
+                        Name = input.Name,
+                        Password = input.Pwd
+                    });
                 //产生 Token
                 var token = _tokenManager.Create(user);
                 //存入数据库
@@ -251,14 +251,14 @@ namespace GuoGuoCommunity.API.Controllers
                         Name = user.Name,
                         avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
                         token = token.access_token,
-                    // refresh_token = token.refresh_token
-                });
+                        // refresh_token = token.refresh_token
+                    });
             }
             catch (Exception e)
             {
                 return new ApiResult<LoginOutput>(APIResultCode.Success_NoB, new LoginOutput { }, e.Message);
             }
-            
+
         }
 
         /// <summary>

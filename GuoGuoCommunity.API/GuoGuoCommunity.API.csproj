@@ -210,6 +210,7 @@
     <Compile Include="Controllers\SmallDistrictController.cs" />
     <Compile Include="Controllers\StreetOfficeController.cs" />
     <Compile Include="Controllers\TokenController.cs" />
+    <Compile Include="Controllers\VipOwnerCertificationRecordController.cs" />
     <Compile Include="Controllers\VipOwnerController.cs" />
     <Compile Include="Controllers\VipOwnerStructureController.cs" />
     <Compile Include="Controllers\WXController.cs" />
@@ -297,6 +298,7 @@
     <Compile Include="Models\User\LoginInput.cs" />
     <Compile Include="Models\User\LoginTokenOutput.cs" />
     <Compile Include="Models\User\LoginOutput.cs" />
+    <Compile Include="Models\VipOwnerCertificationRecord\AddVipOwnerCertificationRecordInput.cs" />
     <Compile Include="Models\VipOwnerStructure\AddVipOwnerStructureInput.cs" />
     <Compile Include="Models\VipOwnerStructure\AddVipOwnerStructureOutput.cs" />
     <Compile Include="Models\VipOwnerStructure\GetAllVipOwnerStructureInput.cs" />

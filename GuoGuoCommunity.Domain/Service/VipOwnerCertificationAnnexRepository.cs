@@ -3,6 +3,8 @@ using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,9 +12,21 @@ namespace GuoGuoCommunity.Domain.Service
 {
     class VipOwnerCertificationAnnexRepository : IVipOwnerCertificationAnnexRepository
     {
-        public Task<VipOwnerCertificationAnnex> AddAsync(VipOwnerCertificationAnnexDto dto, CancellationToken token = default)
+        public async Task<VipOwnerCertificationAnnex> AddAsync(VipOwnerCertificationAnnexDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var entity = db.VipOwnerCertificationAnnices.Add(new VipOwnerCertificationAnnex
+                {
+                    ApplicationRecordId = dto.ApplicationRecordId,
+                    CertificationConditionId = dto.CertificationConditionId,
+                    UploadId = dto.UploadId,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                });
+                await db.SaveChangesAsync(token);
+                return entity;
+            }
         }
 
         public Task DeleteAsync(VipOwnerCertificationAnnexDto dto, CancellationToken token = default)
@@ -30,9 +44,12 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<List<VipOwnerCertificationAnnex>> GetListAsync(VipOwnerCertificationAnnexDto dto, CancellationToken token = default)
+        public async Task<List<VipOwnerCertificationAnnex>> GetListAsync(VipOwnerCertificationAnnexDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VipOwnerCertificationAnnices.Where(x =>  x.ApplicationRecordId == dto.ApplicationRecordId).ToListAsync(token);
+            }
         }
 
         public Task UpdateAsync(VipOwnerCertificationAnnexDto dto, CancellationToken token = default)

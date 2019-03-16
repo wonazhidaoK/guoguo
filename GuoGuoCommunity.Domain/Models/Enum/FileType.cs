@@ -9,25 +9,19 @@ namespace GuoGuoCommunity.Domain.Models.Enum
     {
         static FileType()
         {
-            YeZhu = new Department { Name = "业主", Value = "Owner" };
-            YeZhuWeiYuanHui = new Department { Name = "业主委员会", Value = "VipOwner" };
-            WuYe = new Department { Name = "物业", Value = "Property" };
-            JieDaoBan = new Department { Name = "街道办", Value = "StreetOffice" };
+            Image = new FileType { Name = "图片", Value = "Image" };
+            Text = new FileType { Name = "文字", Value = "Text" };
         }
-        
+
         public string Name { get; set; }
 
         public string Value { get; set; }
 
-        public static Department YeZhu { get; set; }
+        public static FileType Image { get; set; }
 
-        public static Department YeZhuWeiYuanHui { get; set; }
+        public static FileType Text { get; set; }
 
-        public static Department WuYe { get; set; }
+        public static IEnumerable<FileType> GetAll() => new List<FileType>() { Image, Text };
 
-        public static Department JieDaoBan { get; set; }
-
-        public static IEnumerable<Department> GetAll() => new List<Department>() { YeZhu, YeZhuWeiYuanHui, WuYe, JieDaoBan };
-        
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    interface IVipOwnerApplicationRecordRepository
+   public interface IVipOwnerApplicationRecordRepository
     {
         Task<VipOwnerApplicationRecord> AddAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default);
 
@@ -18,6 +18,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<VipOwnerApplicationRecord> GetAsync(string id, CancellationToken token = default);
 
-        Task<List<VipOwnerApplicationRecord>> GetListAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default);
+        Task<List<VipOwnerApplicationRecord>> GetListAsync(List<string> dto, CancellationToken token = default);
+
+        Task<bool> IsPresenceforUserId(string userId,CancellationToken token=default);
     }
 }

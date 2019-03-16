@@ -45,7 +45,7 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 是否无效
         /// </summary>
-        public string IsInvalid { get; set; }
+        public bool IsInvalid { get; set; }
 
         public string LastOperationUserId { get; set; }
 
