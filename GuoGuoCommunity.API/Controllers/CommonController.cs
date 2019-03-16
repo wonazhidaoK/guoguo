@@ -1,4 +1,5 @@
-﻿using GuoGuoCommunity.Domain.Models.Enum;
+﻿using GuoGuoCommunity.API.App_Start;
+using GuoGuoCommunity.Domain.Models.Enum;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -19,5 +20,13 @@ namespace GuoGuoCommunity.API.Controllers
         [HttpGet]
         [Route("department/getAll")]
         public ApiResult<List<Department>> GetAll() => new ApiResult<List<Department>>(APIResultCode.Success, Department.GetAll().ToList());
+
+        /// <summary>
+        /// 获取服务器Id
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("common/getIp")]
+        public ApiResult<string> GetIp()=> new ApiResult<string>(APIResultCode.Success, IpUtility.GetLocalIP());
     }
 }

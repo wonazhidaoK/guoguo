@@ -19,16 +19,16 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CommunityController : ApiController
     {
-        private readonly ICommunityService _communityService;
+        private readonly ICommunityRepository _communityRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
         /// 社区
         /// </summary>
-        /// <param name="communityService"></param>
-        public CommunityController(ICommunityService communityService)
+        /// <param name="communityRepository"></param>
+        public CommunityController(ICommunityRepository communityRepository)
         {
-            _communityService = communityService;
+            _communityRepository = communityRepository;
             _tokenManager =new TokenManager();
         }
 
@@ -80,7 +80,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<AddCommunityOutput>(APIResultCode.Unknown, new AddCommunityOutput { }, APIResultMessage.TokenError);
                 }
 
-                var entity = await _communityService.AddAsync(new CommunityDto
+                var entity = await _communityRepository.AddAsync(new CommunityDto
                 {
                     City = input.City,
                     Name = input.Name,
@@ -124,7 +124,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
 
-                await _communityService.UpdateAsync(new CommunityDto
+                await _communityRepository.UpdateAsync(new CommunityDto
                 {
                     Id = input.Id,
                     Name = input.Name,
@@ -168,7 +168,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
-                await _communityService.DeleteAsync(new CommunityDto
+                await _communityRepository.DeleteAsync(new CommunityDto
                 {
                     Id = id,
                     OperationTime = DateTimeOffset.Now,
@@ -199,7 +199,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("社区Id信息为空！");
                 }
-                var data = await _communityService.GetAsync(id, cancelToken);
+                var data = await _communityRepository.GetAsync(id, cancelToken);
 
                 return new ApiResult<GetCommunityOutput>(APIResultCode.Success, new GetCommunityOutput
                 {
@@ -239,7 +239,7 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-                var data = await _communityService.GetAllAsync(new CommunityDto
+                var data = await _communityRepository.GetAllAsync(new CommunityDto
                 {
                     Name = input?.Name,
                     City = input?.City,
@@ -286,7 +286,7 @@ namespace GuoGuoCommunity.API.Controllers
                     throw new NotImplementedException("街道办区信息为空！");
                 }
 
-                var data = await _communityService.GetListAsync(new CommunityDto
+                var data = await _communityRepository.GetListAsync(new CommunityDto
                 {
                      StreetOfficeId = input?.StreetOfficeId
                 }, cancelToken);

@@ -17,13 +17,13 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CityController : ApiController
     {
-        private readonly ICityService _cityService;
+        private readonly ICityRepository _cityService;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="cityService"></param>
-        public CityController(ICityService cityService)
+        public CityController(ICityRepository cityService)
         {
             _cityService = cityService;
         }

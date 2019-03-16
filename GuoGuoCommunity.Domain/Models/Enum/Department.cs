@@ -16,7 +16,9 @@ namespace GuoGuoCommunity.Domain.Models.Enum
         }
         
         public string Name { get; set; }
+
         public string Value { get; set; }
+
         public static Department YeZhu { get; set; }
 
         public static Department YeZhuWeiYuanHui { get; set; }

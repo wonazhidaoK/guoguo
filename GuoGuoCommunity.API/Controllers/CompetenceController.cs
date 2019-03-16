@@ -19,33 +19,33 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CompetenceController : ApiController
     {
-        private readonly ITestService _testService;
-        private readonly IMenuService _menuService;
-        private readonly IRoleService _roleService;
-        private readonly IRoleMenuService _roleMenuService;
-        private readonly IUserService _userService;
+        private readonly ITestRepository _testRepository;
+        private readonly IMenuRepository _menuRepository;
+        private readonly IRoleRepository _roleRepository;
+        private readonly IRoleMenuRepository _roleMenuRepository;
+        private readonly IUserRepository _userRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
         /// 权限
         /// </summary>
-        /// <param name="testService"></param>
-        /// <param name="menuService"></param>
-        /// <param name="roleService"></param>
-        /// <param name="roleMenuService"></param>
-        /// <param name="userService"></param>
+        /// <param name="testRepository"></param>
+        /// <param name="menuRepository"></param>
+        /// <param name="roleRepository"></param>
+        /// <param name="roleMenuRepository"></param>
+        /// <param name="userRepository"></param>
         public CompetenceController(
-            ITestService testService,
-            IMenuService menuService,
-            IRoleService roleService,
-            IRoleMenuService roleMenuService,
-            IUserService userService)
+            ITestRepository testRepository,
+            IMenuRepository menuRepository,
+            IRoleRepository roleRepository,
+            IRoleMenuRepository roleMenuRepository,
+            IUserRepository userRepository)
         {
-            _testService = testService;
-            _menuService = menuService;
-            _roleService = roleService;
-            _roleMenuService = roleMenuService;
-            _userService = userService;
+            _testRepository = testRepository;
+            _menuRepository = menuRepository;
+            _roleRepository = roleRepository;
+            _roleMenuRepository = roleMenuRepository;
+            _userRepository = userRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -58,7 +58,7 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("menu/add")]
         public async Task<ApiResult> AddMenu([FromBody]AddMenuInput input, CancellationToken cancelToken)
         {
-            await _menuService.AddAsync(new MenuDto
+            await _menuRepository.AddAsync(new MenuDto
             {
                 Kay = input.Kay,
                 Name = input.Name
@@ -74,7 +74,7 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("menu/getAll")]
         public async Task<ApiResult<List<GetAllMenuOutput>>> GetAllMenu(CancellationToken cancelToken)
         {
-            var data = (await _menuService.GetAllAsync(cancelToken)).Select(
+            var data = (await _menuRepository.GetAllAsync(cancelToken)).Select(
                 x => new GetAllMenuOutput
                 {
                     Id = x.Id.ToString(),
@@ -97,7 +97,7 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("role/add")]
         public async Task<ApiResult> AddRole([FromBody]AddRoleInput input, CancellationToken cancelToken)
         {
-            await _roleService.AddAsync(new RoleDto
+            await _roleRepository.AddAsync(new RoleDto
             {
                 Name = input.Name
             }, cancelToken);
@@ -113,7 +113,7 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("role/getAll")]
         public async Task<ApiResult<List<GetAllRoleOutput>>> GetAllRole(CancellationToken cancelToken)
         {
-            var data = (await _roleService.GetAllAsync(cancelToken)).Select(
+            var data = (await _roleRepository.GetAllAsync(cancelToken)).Select(
                  x => new GetAllRoleOutput
                  {
                      Id = x.Id.ToString(),
@@ -132,7 +132,7 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("roleMenu/add")]
         public async Task<ApiResult> AddRoleMenu([FromBody]AddRoleMenuInput input, CancellationToken cancelToken)
         {
-            await _roleMenuService.AddAsync(new RoleMenuDto
+            await _roleMenuRepository.AddAsync(new RoleMenuDto
             {
                 MenuId = input.MenuId,
                 RolesId = input.RolesId
@@ -150,13 +150,13 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("roleMenu/getRoleMenus")]
         public async Task<ApiResult<List<GetRoleMenusOutput>>> GetRoleMenus([FromUri]GetRoleMenusInput input, CancellationToken cancelToken)
         {
-            var data = await _roleMenuService.GetByRoleIdAsync(input.RoleId, cancelToken);
+            var data = await _roleMenuRepository.GetByRoleIdAsync(input.RoleId, cancelToken);
             List<GetRoleMenusOutput> list = new List<GetRoleMenusOutput>();
             if (data != null)
             {
                 foreach (var item in data)
                 {
-                    var menu = await _menuService.GetByIdAsync(item.MenuId, cancelToken);
+                    var menu = await _menuRepository.GetByIdAsync(item.MenuId, cancelToken);
                     list.Add(new GetRoleMenusOutput
                     {
 
@@ -182,7 +182,7 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("user/addUser")]
         public async Task<ApiResult> AddUser([FromBody]AddUserInput input, CancellationToken cancelToken)
         {
-            await _userService.AddAsync(new UserDto
+            await _userRepository.AddAsync(new UserDto
             {
                 Name = input.Name,
                 RoleId = input.RolesId,
@@ -204,7 +204,7 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-                var user = await _userService.GetAsync(
+                var user = await _userRepository.GetAsync(
                new UserDto
                {
                    Name = input.Name,
@@ -214,7 +214,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var token = _tokenManager.Create(user);
                 //存入数据库
 
-                await _userService.UpdateTokenAsync(
+                await _userRepository.UpdateTokenAsync(
                     new UserDto
                     {
                         Id = user.Id.ToString(),
@@ -233,13 +233,13 @@ namespace GuoGuoCommunity.API.Controllers
                     });
                 }
 
-                var role_Menus = await _roleMenuService.GetByRoleIdAsync(user.RoleId, cancelToken);
+                var role_Menus = await _roleMenuRepository.GetByRoleIdAsync(user.RoleId, cancelToken);
                 List<string> list = new List<string>();
                 if (role_Menus != null)
                 {
                     foreach (var item in role_Menus)
                     {
-                        var menu = await _menuService.GetByIdAsync(item.MenuId, cancelToken);
+                        var menu = await _menuRepository.GetByIdAsync(item.MenuId, cancelToken);
                         list.Add(menu.Kay);
                     }
 
@@ -286,13 +286,13 @@ namespace GuoGuoCommunity.API.Controllers
                 });
             }
 
-            var role_Menus = await _roleMenuService.GetByRoleIdAsync(user.RoleId, cancelToken);
+            var role_Menus = await _roleMenuRepository.GetByRoleIdAsync(user.RoleId, cancelToken);
             List<string> list = new List<string>();
             if (role_Menus != null)
             {
                 foreach (var item in role_Menus)
                 {
-                    var menu = await _menuService.GetByIdAsync(item.MenuId, cancelToken);
+                    var menu = await _menuRepository.GetByIdAsync(item.MenuId, cancelToken);
                     list.Add(menu.Kay);
                 }
 

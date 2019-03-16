@@ -19,16 +19,16 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class ComplaintTypeController : ApiController
     {
-        private readonly IComplaintTypeService _complaintTypeService;
+        private readonly IComplaintTypeRepository _complaintTypeRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="complaintTypeService"></param>
-        public ComplaintTypeController(IComplaintTypeService complaintTypeService)
+        /// <param name="complaintTypeRepository"></param>
+        public ComplaintTypeController(IComplaintTypeRepository complaintTypeRepository)
         {
-            _complaintTypeService = complaintTypeService;
+            _complaintTypeRepository = complaintTypeRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -71,7 +71,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<AddComplaintTypeOutput>(APIResultCode.Unknown, new AddComplaintTypeOutput { }, APIResultMessage.TokenError);
                 }
 
-                var entity = await _complaintTypeService.AddAsync(new ComplaintTypeDto
+                var entity = await _complaintTypeRepository.AddAsync(new ComplaintTypeDto
                 {
 
                     Name = input.Name,
@@ -118,7 +118,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
-                await _complaintTypeService.DeleteAsync(new ComplaintTypeDto
+                await _complaintTypeRepository.DeleteAsync(new ComplaintTypeDto
                 {
                     Id = id,
                     OperationTime = DateTimeOffset.Now,
@@ -157,7 +157,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
 
-                await _complaintTypeService.UpdateAsync(new ComplaintTypeDto
+                await _complaintTypeRepository.UpdateAsync(new ComplaintTypeDto
                 {
                     Id = input.Id,
                     Description = input.Description,
@@ -194,7 +194,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("楼宇Id信息为空！");
                 }
-                var data = await _complaintTypeService.GetAsync(id, cancelToken);
+                var data = await _complaintTypeRepository.GetAsync(id, cancelToken);
 
                 return new ApiResult<GetComplaintTypeOutput>(APIResultCode.Success, new GetComplaintTypeOutput
                 {
@@ -235,7 +235,7 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-                var data = await _complaintTypeService.GetAllAsync(new ComplaintTypeDto
+                var data = await _complaintTypeRepository.GetAllAsync(new ComplaintTypeDto
                 {
                     Description = input.Description,
                     Name = input.Name,
@@ -281,7 +281,7 @@ namespace GuoGuoCommunity.API.Controllers
                     throw new NotImplementedException("发起部门值信息为空！");
                 }
 
-                var data = await _complaintTypeService.GetListAsync(new ComplaintTypeDto
+                var data = await _complaintTypeRepository.GetListAsync(new ComplaintTypeDto
                 {
                     InitiatingDepartmentValue = input.InitiatingDepartmentValue
                 }, cancelToken);

@@ -25,15 +25,15 @@ namespace GuoGuoCommunity.API.Controllers
     /// </summary>
     public class WXController : ApiController
     {
-        private readonly IUserService _userService;
+        private readonly IUserRepository _userRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="userService"></param>
-        public WXController(IUserService userService)
+        /// <param name="userRepository"></param>
+        public WXController(IUserRepository userRepository)
         {
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         /// <summary>
@@ -251,7 +251,7 @@ namespace GuoGuoCommunity.API.Controllers
             try
             {
                 var openIdResult = SnsApi.JsCode2Json(GuoGuoCommunity_WxOpenAppId, GuoGuoCommunity_WxOpenAppSecret, code);
-                var user = await _userService.GetForOpenIdAsync(new UserDto { OpenId = openIdResult.openid });
+                var user = await _userRepository.GetForOpenIdAsync(new UserDto { OpenId = openIdResult.openid });
 
 
                 if (user != null)
@@ -261,7 +261,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 else
                 {
-                    user = await _userService.AddWeiXinAsync(new UserDto() { OpenId = openIdResult.openid, UnionId = openIdResult.unionid });
+                    user = await _userRepository.AddWeiXinAsync(new UserDto() { OpenId = openIdResult.openid, UnionId = openIdResult.unionid });
                     return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput() { OpenId = user.OpenId }, APIResultMessage.Success);
                 }
             }
@@ -270,10 +270,6 @@ namespace GuoGuoCommunity.API.Controllers
 
                 return new ApiResult<WXLoginOutput>(APIResultCode.Error,new WXLoginOutput() { }, e.Message);
             }
-
-            //
-            //string phoneJson = EncryptHelper.DecodeEncryptedData(openIdResult.session_key, input.EncryptedData, input.Iv);
-
         }
     }
 }

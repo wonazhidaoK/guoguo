@@ -19,17 +19,17 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class SmallDistrictController : ApiController
     {
-        private readonly ISmallDistrictService _smallDistrictService;
+        private readonly ISmallDistrictRepository _smallDistrictRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="smallDistrictService"></param>
+        /// <param name="smallDistrictRepository"></param>
         /// <param name="tokenManager"></param>
-        public SmallDistrictController(ISmallDistrictService smallDistrictService, TokenManager tokenManager)
+        public SmallDistrictController(ISmallDistrictRepository smallDistrictRepository, TokenManager tokenManager)
         {
-            _smallDistrictService = smallDistrictService;
+            _smallDistrictRepository = smallDistrictRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -87,7 +87,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<AddSmallDistrictOutput>(APIResultCode.Unknown, new AddSmallDistrictOutput { }, APIResultMessage.TokenError);
                 }
-                var entity = await _smallDistrictService.AddAsync(new SmallDistrictDto
+                var entity = await _smallDistrictRepository.AddAsync(new SmallDistrictDto
                 {
                     City = input.City,
                     Name = input.Name,
@@ -140,7 +140,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
-                await _smallDistrictService.UpdateAsync(new SmallDistrictDto
+                await _smallDistrictRepository.UpdateAsync(new SmallDistrictDto
                 {
                     Id = input.Id,
                     Name = input.Name,
@@ -183,7 +183,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
-                await _smallDistrictService.DeleteAsync(new SmallDistrictDto
+                await _smallDistrictRepository.DeleteAsync(new SmallDistrictDto
                 {
                     Id = id,
                     OperationTime = DateTimeOffset.Now,
@@ -214,7 +214,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("街道办Id信息为空！");
                 }
-                var data = await _smallDistrictService.GetAsync(id, cancelToken);
+                var data = await _smallDistrictRepository.GetAsync(id, cancelToken);
 
                 return new ApiResult<GetSmallDistrictOutput>(APIResultCode.Success, new GetSmallDistrictOutput
                 {
@@ -256,7 +256,7 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-                var data = await _smallDistrictService.GetAllAsync(new SmallDistrictDto
+                var data = await _smallDistrictRepository.GetAllAsync(new SmallDistrictDto
                 {
                     Name = input?.Name,
                     City = input?.City,
@@ -306,7 +306,7 @@ namespace GuoGuoCommunity.API.Controllers
                     throw new NotImplementedException("小区社区信息为空！");
                 }
 
-                var data = await _smallDistrictService.GetListAsync(new SmallDistrictDto
+                var data = await _smallDistrictRepository.GetListAsync(new SmallDistrictDto
                 {
                     CommunityId = input?.CommunityId
                 }, cancelToken);

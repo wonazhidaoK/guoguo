@@ -19,13 +19,13 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class BuildingController : ApiController
     {
-        private readonly IBuildingService _buildingService;
+        private readonly IBuildingRepository _buildingService;
         private TokenManager _tokenManager;
 
         /// <summary>
         /// 
         /// </summary>
-        public BuildingController(IBuildingService buildingService)
+        public BuildingController(IBuildingRepository buildingService)
         {
             _buildingService = buildingService;
             _tokenManager = new TokenManager();

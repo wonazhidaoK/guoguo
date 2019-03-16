@@ -87,24 +87,29 @@
     <Compile Include="Abstractions\Event\HandlesAsynchronouslyAttribute.cs" />
     <Compile Include="Abstractions\Event\IEvent.cs" />
     <Compile Include="Abstractions\Event\IEventHandler.cs" />
-    <Compile Include="Abstractions\IBuildingService.cs" />
-    <Compile Include="Abstractions\IBuildingUnitService.cs" />
-    <Compile Include="Abstractions\ICityService.cs" />
-    <Compile Include="Abstractions\ICommunityService.cs" />
-    <Compile Include="Abstractions\IComplaintTypeService.cs" />
-    <Compile Include="Abstractions\IIndustryService.cs" />
-    <Compile Include="Abstractions\IMenuService.cs" />
-    <Compile Include="Abstractions\IOwnerCertificationRecordService.cs" />
-    <Compile Include="Abstractions\IOwnerService.cs" />
-    <Compile Include="Abstractions\IRoleMenuService.cs" />
-    <Compile Include="Abstractions\IRoleService.cs" />
-    <Compile Include="Abstractions\ISmallDistrictService.cs" />
-    <Compile Include="Abstractions\IStreetOfficeService.cs" />
-    <Compile Include="Abstractions\ITestService.cs" />
-    <Compile Include="Abstractions\IUserService.cs" />
-    <Compile Include="Abstractions\IVipOwnerService.cs" />
-    <Compile Include="Abstractions\IVipOwnerStructureService.cs" />
-    <Compile Include="Abstractions\IWeiXinUserService.cs" />
+    <Compile Include="Abstractions\IBuildingRepository.cs" />
+    <Compile Include="Abstractions\IBuildingUnitRepository.cs" />
+    <Compile Include="Abstractions\ICityRepository.cs" />
+    <Compile Include="Abstractions\ICommunityRepository.cs" />
+    <Compile Include="Abstractions\IComplaintTypeRepository.cs" />
+    <Compile Include="Abstractions\IIndustryRepository.cs" />
+    <Compile Include="Abstractions\IMenuRepository.cs" />
+    <Compile Include="Abstractions\IOwnerCertificationRecordRepository.cs" />
+    <Compile Include="Abstractions\IOwnerRepository.cs" />
+    <Compile Include="Abstractions\IRoleMenuRepository.cs" />
+    <Compile Include="Abstractions\IRoleRepository.cs" />
+    <Compile Include="Abstractions\ISmallDistrictRepository.cs" />
+    <Compile Include="Abstractions\IStreetOfficeRepository.cs" />
+    <Compile Include="Abstractions\ITestRepository.cs" />
+    <Compile Include="Abstractions\IUploadService.cs" />
+    <Compile Include="Abstractions\IUserRepository.cs" />
+    <Compile Include="Abstractions\IVipOwnerApplicationRecordRepository.cs" />
+    <Compile Include="Abstractions\IVipOwnerCertificationAnnexRepository.cs" />
+    <Compile Include="Abstractions\IVipOwnerCertificationConditionRepository.cs" />
+    <Compile Include="Abstractions\IVipOwnerCertificationRecordRepository.cs" />
+    <Compile Include="Abstractions\IVipOwnerRepository.cs" />
+    <Compile Include="Abstractions\IVipOwnerStructureRepository.cs" />
+    <Compile Include="Abstractions\IWeiXinUserRepository.cs" />
     <Compile Include="Abstractions\Models\ICreateOperation.cs" />
     <Compile Include="Abstractions\Models\IDeleted.cs" />
     <Compile Include="Abstractions\Models\ILastOperation.cs" />
@@ -122,7 +127,12 @@
     <Compile Include="Dto\RoleMenuDto.cs" />
     <Compile Include="Dto\SmallDistrictDto.cs" />
     <Compile Include="Dto\StreetOfficeDto.cs" />
+    <Compile Include="Dto\UploadDto.cs" />
     <Compile Include="Dto\UserDto.cs" />
+    <Compile Include="Dto\VipOwnerApplicationRecordDto.cs" />
+    <Compile Include="Dto\VipOwnerCertificationAnnexDto.cs" />
+    <Compile Include="Dto\VipOwnerCertificationConditionDto.cs" />
+    <Compile Include="Dto\VipOwnerCertificationRecordDto.cs" />
     <Compile Include="Dto\VipOwnerDto.cs" />
     <Compile Include="Dto\VipOwnerStructureDto.cs" />
     <Compile Include="Dto\WeiXinUserDto.cs" />
@@ -183,11 +193,19 @@
     <Compile Include="Migrations\201903150855504_add_WeiXinUser.Designer.cs">
       <DependentUpon>201903150855504_add_WeiXinUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903160607591_VipOwner.cs" />
+    <Compile Include="Migrations\201903160607591_VipOwner.Designer.cs">
+      <DependentUpon>201903160607591_VipOwner.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Upload.cs" />
     <Compile Include="Models\Building.cs" />
     <Compile Include="Models\BuildingUnit.cs" />
+    <Compile Include="Models\VipOwnerCertificationAnnex.cs" />
+    <Compile Include="Models\VipOwnerCertificationCondition.cs" />
     <Compile Include="Models\Community.cs" />
     <Compile Include="Models\ComplaintType.cs" />
+    <Compile Include="Models\Enum\FileType.cs" />
     <Compile Include="Models\Enum\OwnerCertification.cs" />
     <Compile Include="Models\Industry.cs" />
     <Compile Include="Models\Enum\Department.cs" />
@@ -201,31 +219,39 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\User_Role.cs" />
     <Compile Include="Models\VipOwner.cs" />
+    <Compile Include="Models\VipOwnerApplicationRecord.cs" />
+    <Compile Include="Models\VipOwnerCertificationRecord.cs" />
     <Compile Include="Models\VipOwnerStructure.cs" />
     <Compile Include="Models\WeiXinUser.cs" />
     <Compile Include="Payload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service\BuildingService.cs" />
-    <Compile Include="Service\BuildingUnitService.cs" />
-    <Compile Include="Service\CityService.cs" />
-    <Compile Include="Service\CommunityService.cs" />
-    <Compile Include="Service\ComplaintTypeService.cs" />
-    <Compile Include="Service\IndustryService.cs" />
-    <Compile Include="Service\MenuService.cs" />
-    <Compile Include="Service\OwnerCertificationRecordService.cs" />
-    <Compile Include="Service\OwnerService.cs" />
-    <Compile Include="Service\RoleMenuService.cs" />
-    <Compile Include="Service\RoleService.cs" />
-    <Compile Include="Service\SmallDistrictService.cs" />
-    <Compile Include="Service\StreetOfficeService.cs" />
-    <Compile Include="Service\TestService.cs" />
-    <Compile Include="Service\UserService.cs" />
-    <Compile Include="Service\VipOwnerService.cs" />
-    <Compile Include="Service\VipOwnerStructureService.cs" />
-    <Compile Include="Service\WeiXinUserService.cs" />
+    <Compile Include="Service\BuildingRepository.cs" />
+    <Compile Include="Service\BuildingUnitRepository.cs" />
+    <Compile Include="Service\CityRepository.cs" />
+    <Compile Include="Service\CommunityRepository.cs" />
+    <Compile Include="Service\ComplaintTypeRepository.cs" />
+    <Compile Include="Service\IndustryRepository.cs" />
+    <Compile Include="Service\MenuRepository.cs" />
+    <Compile Include="Service\OwnerCertificationRecordRepository.cs" />
+    <Compile Include="Service\OwnerRepository.cs" />
+    <Compile Include="Service\RoleMenuRepository.cs" />
+    <Compile Include="Service\RoleRepository.cs" />
+    <Compile Include="Service\SmallDistrictRepository.cs" />
+    <Compile Include="Service\StreetOfficeRepository.cs" />
+    <Compile Include="Service\TestRepository.cs" />
+    <Compile Include="Service\UploadRepository.cs" />
+    <Compile Include="Service\UserRepository.cs" />
+    <Compile Include="Service\VipOwnerApplicationRecordRepository.cs" />
+    <Compile Include="Service\VipOwnerCertificationAnnexRepository.cs" />
+    <Compile Include="Service\VipOwnerCertificationConditionRepository.cs" />
+    <Compile Include="Service\VipOwnerCertificationRecordRepository.cs" />
+    <Compile Include="Service\VipOwnerRepository.cs" />
+    <Compile Include="Service\VipOwnerStructureRepository.cs" />
+    <Compile Include="Service\WeiXinUserRepository.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="TokenCrypto.cs" />
     <Compile Include="TokenManager.cs" />
+    <Compile Include="VipOwnerApplicationAnnex.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201903060515308_role.resx">
@@ -269,6 +295,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903150855504_add_WeiXinUser.resx">
       <DependentUpon>201903150855504_add_WeiXinUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903160607591_VipOwner.resx">
+      <DependentUpon>201903160607591_VipOwner.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

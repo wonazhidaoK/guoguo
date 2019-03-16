@@ -19,16 +19,16 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class IndustryController : ApiController
     {
-        private readonly IIndustryService _industryService;
+        private readonly IIndustryRepository _industryRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="industryService"></param>
-        public IndustryController(IIndustryService industryService)
+        /// <param name="industryRepository"></param>
+        public IndustryController(IIndustryRepository industryRepository)
         {
-            _industryService = industryService;
+            _industryRepository = industryRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -80,7 +80,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<AddIndustryOutput>(APIResultCode.Unknown, new AddIndustryOutput { }, APIResultMessage.TokenError);
                 }
 
-                var entity = await _industryService.AddAsync(new IndustryDto
+                var entity = await _industryRepository.AddAsync(new IndustryDto
                 {
                     Name = input.Name,
                     Oriented = input.Oriented,
@@ -127,7 +127,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
-                await _industryService.DeleteAsync(new IndustryDto
+                await _industryRepository.DeleteAsync(new IndustryDto
                 {
                     Id = id,
                     OperationTime = DateTimeOffset.Now,
@@ -166,7 +166,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
 
-                await _industryService.UpdateAsync(new IndustryDto
+                await _industryRepository.UpdateAsync(new IndustryDto
                 {
                     Id = input.Id,
                     Name = input.Name,
@@ -199,7 +199,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("楼宇Id信息为空！");
                 }
-                var data = await _industryService.GetAsync(id, cancelToken);
+                var data = await _industryRepository.GetAsync(id, cancelToken);
 
                 return new ApiResult<GetIndustryOutput>(APIResultCode.Success, new GetIndustryOutput
                 {
@@ -241,7 +241,7 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-                var data = await _industryService.GetAllAsync(new IndustryDto
+                var data = await _industryRepository.GetAllAsync(new IndustryDto
                 {
                     Name = input?.Name,
                     BuildingId = input?.BuildingId,
@@ -288,7 +288,7 @@ namespace GuoGuoCommunity.API.Controllers
                     throw new NotImplementedException("楼宇单元Id信息为空！");
                 }
 
-                var data = await _industryService.GetListAsync(new IndustryDto
+                var data = await _industryRepository.GetListAsync(new IndustryDto
                 {
                     BuildingUnitId = input.BuildingUnitId
                 }, cancelToken);

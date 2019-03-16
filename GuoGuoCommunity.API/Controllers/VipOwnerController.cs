@@ -19,16 +19,16 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class VipOwnerController : ApiController
     {
-        private readonly IVipOwnerService _vipOwnerService;
+        private readonly IVipOwnerRepository _vipOwnerRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="vipOwnerService"></param>
-        public VipOwnerController(IVipOwnerService vipOwnerService)
+        /// <param name="vipOwnerRepository"></param>
+        public VipOwnerController(IVipOwnerRepository vipOwnerRepository)
         {
-            _vipOwnerService = vipOwnerService;
+            _vipOwnerRepository = vipOwnerRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -58,7 +58,7 @@ namespace GuoGuoCommunity.API.Controllers
                     throw new NotImplementedException("业委会小区名称信息为空！");
                 }
 
-                var count = (await _vipOwnerService.GetIsValidAsync(new VipOwnerDto
+                var count = (await _vipOwnerRepository.GetIsValidAsync(new VipOwnerDto
                 {
                     SmallDistrictId = input.SmallDistrictId
                 })).Count;
@@ -69,7 +69,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<AddVipOwnerOutput>(APIResultCode.Unknown, new AddVipOwnerOutput { }, APIResultMessage.TokenError);
                 }
 
-                var entity = await _vipOwnerService.AddAsync(new VipOwnerDto
+                var entity = await _vipOwnerRepository.AddAsync(new VipOwnerDto
                 {
 
                     Name = input.SmallDistrictName + "【第" + (count + 1) + "界】业主委员会",
@@ -115,7 +115,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
-                await _vipOwnerService.DeleteAsync(new VipOwnerDto
+                await _vipOwnerRepository.DeleteAsync(new VipOwnerDto
                 {
                     Id = id,
                     OperationTime = DateTimeOffset.Now,
@@ -154,7 +154,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
 
-                await _vipOwnerService.UpdateAsync(new VipOwnerDto
+                await _vipOwnerRepository.UpdateAsync(new VipOwnerDto
                 {
                     Id = input.Id,
                     RemarkName = input.RemarkName,
@@ -187,7 +187,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("楼宇Id信息为空！");
                 }
-                var data = await _vipOwnerService.GetAsync(id, cancelToken);
+                var data = await _vipOwnerRepository.GetAsync(id, cancelToken);
 
                 return new ApiResult<GetVipOwnerOutput>(APIResultCode.Success, new GetVipOwnerOutput
                 {
@@ -226,7 +226,7 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-                var data = await _vipOwnerService.GetAllAsync(new VipOwnerDto
+                var data = await _vipOwnerRepository.GetAllAsync(new VipOwnerDto
                 {
 
                     Name = input.Name,
@@ -272,7 +272,7 @@ namespace GuoGuoCommunity.API.Controllers
                     throw new NotImplementedException("小区Id信息为空！");
                 }
 
-                var data = await _vipOwnerService.GetListAsync(new VipOwnerDto
+                var data = await _vipOwnerRepository.GetListAsync(new VipOwnerDto
                 {
                     SmallDistrictId = input.SmallDistrictId
                 }, cancelToken);

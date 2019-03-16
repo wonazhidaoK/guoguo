@@ -91,5 +91,30 @@ namespace GuoGuoCommunity.Domain
         /// 微信用户表
         /// </summary>
         public DbSet<WeiXinUser> WeiXinUsers { get; set; }
+
+        /// <summary>
+        /// 上传表
+        /// </summary>
+        public DbSet<Upload> Uploads { get; set; }
+
+        /// <summary>
+        /// 业委会成员申请表
+        /// </summary>
+        public DbSet<VipOwnerApplicationRecord> VipOwnerApplicationRecords{ get; set; }
+
+        /// <summary>
+        /// 业委会认证附件表
+        /// </summary>
+        public DbSet<VipOwnerCertificationAnnex> VipOwnerCertificationAnnices { get; set; }
+
+        /// <summary>
+        /// 高级认证申请条件
+        /// </summary>
+        public DbSet<VipOwnerCertificationCondition> VipOwnerCertificationConditions { get; set; }
+
+        /// <summary>
+        /// 业委会成员认证记录
+        /// </summary>
+        public DbSet<VipOwnerCertificationRecord> VipOwnerCertificationRecords { get; set; }
     }
 }

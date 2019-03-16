@@ -19,16 +19,16 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class StreetOfficeController : ApiController
     {
-        private readonly IStreetOfficeService _streetOfficeService;
+        private readonly IStreetOfficeRepository _streetOfficeRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
         /// 街道办
         /// </summary>
-        /// <param name="streetOfficeService"></param>
-        public StreetOfficeController(IStreetOfficeService streetOfficeService)
+        /// <param name="streetOfficeRepository"></param>
+        public StreetOfficeController(IStreetOfficeRepository streetOfficeRepository)
         {
-            _streetOfficeService = streetOfficeService;
+            _streetOfficeRepository = streetOfficeRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -70,7 +70,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<AddStreetOfficeOutput>(APIResultCode.Unknown, new AddStreetOfficeOutput { }, APIResultMessage.TokenError);
                 }
-                var entity = await _streetOfficeService.AddAsync(new StreetOfficeDto
+                var entity = await _streetOfficeRepository.AddAsync(new StreetOfficeDto
                 {
                     City = input.City,
                     Name = input.Name,
@@ -119,7 +119,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
-                await _streetOfficeService.UpdateAsync(new StreetOfficeDto
+                await _streetOfficeRepository.UpdateAsync(new StreetOfficeDto
                 {
                     Id = input.Id,
                     Name = input.Name,
@@ -162,7 +162,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
-                await _streetOfficeService.DeleteAsync(new StreetOfficeDto
+                await _streetOfficeRepository.DeleteAsync(new StreetOfficeDto
                 {
                     Id = id,
                     OperationTime = DateTimeOffset.Now,
@@ -193,7 +193,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("街道办Id信息为空！");
                 }
-                var data = await _streetOfficeService.GetAsync(id, cancelToken);
+                var data = await _streetOfficeRepository.GetAsync(id, cancelToken);
 
                 return new ApiResult<GetStreetOfficeOutput>(APIResultCode.Success, new GetStreetOfficeOutput
                 {
@@ -231,7 +231,7 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-                var data = await _streetOfficeService.GetAllAsync(new StreetOfficeDto
+                var data = await _streetOfficeRepository.GetAllAsync(new StreetOfficeDto
                 {
                     Name = input?.Name,
                     City = input?.City,
@@ -283,7 +283,7 @@ namespace GuoGuoCommunity.API.Controllers
                     throw new NotImplementedException("街道办省信息为空！");
                 }
 
-                var data = await _streetOfficeService.GetListAsync(new StreetOfficeDto
+                var data = await _streetOfficeRepository.GetListAsync(new StreetOfficeDto
                 {
                     Region = input?.Region,
                      City=input?.City,

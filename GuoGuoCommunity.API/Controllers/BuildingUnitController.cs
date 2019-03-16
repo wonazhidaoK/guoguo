@@ -19,16 +19,16 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class BuildingUnitController : ApiController
     {
-        private readonly IBuildingUnitService _buildingUnitService;
+        private readonly IBuildingUnitRepository _buildingUnitRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="buildingUnitService"></param>
-        public BuildingUnitController(IBuildingUnitService buildingUnitService)
+        /// <param name="buildingUnitRepository"></param>
+        public BuildingUnitController(IBuildingUnitRepository buildingUnitRepository)
         {
-            _buildingUnitService = buildingUnitService;
+            _buildingUnitRepository = buildingUnitRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -69,7 +69,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<AddBuildingUnitOutput>(APIResultCode.Unknown, new AddBuildingUnitOutput { }, APIResultMessage.TokenError);
                 }
 
-                var entity = await _buildingUnitService.AddAsync(new BuildingUnitDto
+                var entity = await _buildingUnitRepository.AddAsync(new BuildingUnitDto
                 {
                     BuildingId = input.BuildingId,
                     NumberOfLayers = input.NumberOfLayers,
@@ -113,7 +113,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
-                await _buildingUnitService.DeleteAsync(new BuildingUnitDto
+                await _buildingUnitRepository.DeleteAsync(new BuildingUnitDto
                 {
                     Id = id,
                     OperationTime = DateTimeOffset.Now,
@@ -152,7 +152,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
 
-                await _buildingUnitService.UpdateAsync(new BuildingUnitDto
+                await _buildingUnitRepository.UpdateAsync(new BuildingUnitDto
                 {
                     Id = input.Id,
                     NumberOfLayers = input.NumberOfLayers,
@@ -186,7 +186,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("楼宇Id信息为空！");
                 }
-                var data = await _buildingUnitService.GetAsync(id, cancelToken);
+                var data = await _buildingUnitRepository.GetAsync(id, cancelToken);
 
                 return new ApiResult<GetBuildingUnitOutput>(APIResultCode.Success, new GetBuildingUnitOutput
                 {
@@ -222,7 +222,7 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-                var data = await _buildingUnitService.GetAllAsync(new BuildingUnitDto
+                var data = await _buildingUnitRepository.GetAllAsync(new BuildingUnitDto
                 {
                     BuildingId = input.BuildingId,
                     NumberOfLayers = input.NumberOfLayers,
@@ -263,7 +263,7 @@ namespace GuoGuoCommunity.API.Controllers
                     throw new NotImplementedException("楼宇Id信息为空！");
                 }
 
-                var data = await _buildingUnitService.GetListAsync(new BuildingUnitDto
+                var data = await _buildingUnitRepository.GetListAsync(new BuildingUnitDto
                 {
                     BuildingId = input.BuildingId
                 }, cancelToken);

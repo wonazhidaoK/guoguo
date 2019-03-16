@@ -19,16 +19,16 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class OwnerController : ApiController
     {
-        private readonly IOwnerService _ownerService;
+        private readonly IOwnerRepository _ownerRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="ownerService"></param>
-        public OwnerController(IOwnerService ownerService)
+        /// <param name="ownerRepository"></param>
+        public OwnerController(IOwnerRepository ownerRepository)
         {
-            _ownerService = ownerService;
+            _ownerRepository = ownerRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -88,7 +88,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<AddOwnerOutput>(APIResultCode.Unknown, new AddOwnerOutput { }, APIResultMessage.TokenError);
                 }
 
-                var entity = await _ownerService.AddAsync(new OwnerDto
+                var entity = await _ownerRepository.AddAsync(new OwnerDto
                 {
                     Name = input.Name,
                     PhoneNumber = input.PhoneNumber,
@@ -137,7 +137,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
-                await _ownerService.DeleteAsync(new OwnerDto
+                await _ownerRepository.DeleteAsync(new OwnerDto
                 {
                     Id = id,
                     OperationTime = DateTimeOffset.Now,
@@ -177,7 +177,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
 
-                await _ownerService.UpdateAsync(new OwnerDto
+                await _ownerRepository.UpdateAsync(new OwnerDto
                 {
                     //Id = input.Id,
                     //Name = input.Name,
@@ -210,7 +210,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("楼宇Id信息为空！");
                 }
-                var data = await _ownerService.GetAsync(id, cancelToken);
+                var data = await _ownerRepository.GetAsync(id, cancelToken);
 
                 return new ApiResult<GetOwnerOutput>(APIResultCode.Success, new GetOwnerOutput
                 {
@@ -251,7 +251,7 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-                var data = await _ownerService.GetAllAsync(new OwnerDto
+                var data = await _ownerRepository.GetAllAsync(new OwnerDto
                 {
                     Name = input?.Name,
                     IDCard = input?.IDCard,
@@ -299,7 +299,7 @@ namespace GuoGuoCommunity.API.Controllers
                     throw new NotImplementedException("业户Id信息为空！");
                 }
 
-                var data = await _ownerService.GetListAsync(new OwnerDto
+                var data = await _ownerRepository.GetListAsync(new OwnerDto
                 {
                     IndustryId = input.IndustryId
                 }, cancelToken);

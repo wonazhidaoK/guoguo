@@ -19,16 +19,16 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class VipOwnerStructureController : ApiController
     {
-        private readonly IVipOwnerStructureService _vipOwnerStructureService;
+        private readonly IVipOwnerStructureRepository _vipOwnerStructureRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="vipOwnerStructureService"></param>
-        public VipOwnerStructureController(IVipOwnerStructureService vipOwnerStructureService)
+        /// <param name="vipOwnerStructureRepository"></param>
+        public VipOwnerStructureController(IVipOwnerStructureRepository vipOwnerStructureRepository)
         {
-            _vipOwnerStructureService = vipOwnerStructureService;
+            _vipOwnerStructureRepository = vipOwnerStructureRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -65,7 +65,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<AddVipOwnerStructureOutput>(APIResultCode.Unknown, new AddVipOwnerStructureOutput { }, APIResultMessage.TokenError);
                 }
 
-                var entity = await _vipOwnerStructureService.AddAsync(new VipOwnerStructureDto
+                var entity = await _vipOwnerStructureRepository.AddAsync(new VipOwnerStructureDto
                 {
                     Name = input.Name,
                     Description = input.Description,
@@ -107,7 +107,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
 
-                await _vipOwnerStructureService.UpdateAsync(new VipOwnerStructureDto
+                await _vipOwnerStructureRepository.UpdateAsync(new VipOwnerStructureDto
                 {
                     Id = input.Id,
                     Name = input.Name,
@@ -154,7 +154,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
-                await _vipOwnerStructureService.DeleteAsync(new VipOwnerStructureDto
+                await _vipOwnerStructureRepository.DeleteAsync(new VipOwnerStructureDto
                 {
                     Id = id,
                     OperationTime = DateTimeOffset.Now,
@@ -185,7 +185,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("社区Id信息为空！");
                 }
-                var data = await _vipOwnerStructureService.GetAsync(id, cancelToken);
+                var data = await _vipOwnerStructureRepository.GetAsync(id, cancelToken);
 
                 return new ApiResult<GetVipOwnerStructureOutput>(APIResultCode.Success, new GetVipOwnerStructureOutput
                 {
@@ -223,7 +223,7 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-                var data = await _vipOwnerStructureService.GetAllAsync(new VipOwnerStructureDto
+                var data = await _vipOwnerStructureRepository.GetAllAsync(new VipOwnerStructureDto
                 {
                     Name = input?.Name,
                     Weights = input.Weights,
@@ -261,7 +261,7 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-                var data = await _vipOwnerStructureService.GetListAsync(cancelToken);
+                var data = await _vipOwnerStructureRepository.GetListAsync(cancelToken);
                 return new ApiResult<List<GetListVipOwnerStructureOutput>>(APIResultCode.Success, data.Select(x => new GetListVipOwnerStructureOutput
                 {
                     Id = x.Id.ToString(),
