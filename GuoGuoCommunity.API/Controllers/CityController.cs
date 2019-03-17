@@ -1,7 +1,6 @@
 ﻿using GuoGuoCommunity.API.Models;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
-using GuoGuoCommunity.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +42,7 @@ namespace GuoGuoCommunity.API.Controllers
                     CityDto = new CityDto
                     {
                         Name = stateName,
-                       // Code = stateCode
+                        // Code = stateCode
                     },
                     //Code = cityCode,
                     Name = cityName

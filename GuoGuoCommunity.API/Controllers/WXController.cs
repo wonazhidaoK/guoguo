@@ -1,4 +1,5 @@
 ﻿using GuoGuoCommunity.API.Models;
+using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using Senparc.Weixin;
@@ -26,7 +27,7 @@ namespace GuoGuoCommunity.API.Controllers
     public class WXController : ApiController
     {
         private readonly IUserRepository _userRepository;
-
+        private TokenManager _tokenManager;
         /// <summary>
         /// 
         /// </summary>
@@ -34,6 +35,7 @@ namespace GuoGuoCommunity.API.Controllers
         public WXController(IUserRepository userRepository)
         {
             _userRepository = userRepository;
+            _tokenManager = new TokenManager();
         }
 
         /// <summary>
@@ -252,23 +254,32 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 var openIdResult = SnsApi.JsCode2Json(GuoGuoCommunity_WxOpenAppId, GuoGuoCommunity_WxOpenAppSecret, code);
                 var user = await _userRepository.GetForOpenIdAsync(new UserDto { OpenId = openIdResult.openid });
+                //产生 Token
+                var token = _tokenManager.Create(user);
 
+                //存入数据库
+                await _userRepository.UpdateTokenAsync(
+                    new UserDto
+                    {
+                        Id = user.Id.ToString(),
+                        RefreshToken = token.refresh_token
+                    });
 
                 if (user != null)
                 {
                     //to Token
-                    return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput() { OpenId = user.OpenId }, openIdResult.openid);
+                    return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput() { OpenId = user.OpenId, Token = token.access_token }, openIdResult.openid);
                 }
                 else
                 {
                     user = await _userRepository.AddWeiXinAsync(new UserDto() { OpenId = openIdResult.openid, UnionId = openIdResult.unionid });
-                    return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput() { OpenId = user.OpenId }, APIResultMessage.Success);
+                    return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput() { OpenId = user.OpenId, Token = token.access_token }, APIResultMessage.Success);
                 }
             }
             catch (Exception e)
             {
 
-                return new ApiResult<WXLoginOutput>(APIResultCode.Error,new WXLoginOutput() { }, e.Message);
+                return new ApiResult<WXLoginOutput>(APIResultCode.Error, new WXLoginOutput() { }, e.Message);
             }
         }
     }

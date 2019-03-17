@@ -1,5 +1,6 @@
 ﻿using GuoGuoCommunity.API.Controllers;
-using Senparc.NeuChar.Context;
+using GuoGuoCommunity.Domain.Dto;
+using GuoGuoCommunity.Domain.Service;
 using Senparc.NeuChar.Entities;
 using Senparc.Weixin.Exceptions;
 using Senparc.Weixin.MP.AdvancedAPIs;
@@ -8,6 +9,7 @@ using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.MP.MessageHandlers;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.API
 {
@@ -16,10 +18,7 @@ namespace GuoGuoCommunity.API
     /// </summary>
     public class WXCustomMessageHandler : MessageHandler<WXCustomMessageContext>
     {
-        
-
-      
-
+        private WeiXinUserRepository _weiXinUserRepository;
         /// <summary>
         /// 构造子
         /// </summary>
@@ -29,7 +28,58 @@ namespace GuoGuoCommunity.API
         public WXCustomMessageHandler(Stream inputStream, PostModel postModel, int maxRecordCount)
             : base(inputStream, postModel, maxRecordCount)
         {
+            _weiXinUserRepository = new WeiXinUserRepository();
+        }
 
+
+
+        /// <summary>
+        /// 异步关注事件
+        /// </summary>
+        /// <param name="requestMessage"></param>
+        /// <returns></returns>
+        public async override Task<IResponseMessageBase> OnEvent_SubscribeRequestAsync(RequestMessageEvent_Subscribe requestMessage)
+        {
+            var userInfo = UserApi.Info(WXController.AppId, OpenId);
+            if (userInfo != null)
+            {
+                //添加微信用户
+                await _weiXinUserRepository.AddAsync(
+                new WeiXinUserDto
+                {
+                    City = userInfo.city,
+                    Country = userInfo.country,
+                    Groupid = userInfo.groupid.ToString(),
+                    Headimgurl = userInfo.headimgurl,
+                    Language = userInfo.language,
+                    Nickname = userInfo.nickname,
+                    Openid = userInfo.openid,
+                    Province = userInfo.province,
+                    //  Qr_scene=userInfo?.qr_scene,
+                    // Qr_scene_str
+                    Remark = userInfo.remark,
+                    Sex = userInfo.sex,
+                    Subscribe = userInfo.subscribe,
+                    Subscribe_scene = userInfo.subscribe_scene,
+                    Subscribe_time = userInfo.subscribe_time.ToString(),
+                    Tagid_list = userInfo.tagid_list.ToString(),
+                    Unionid = userInfo.unionid
+                });
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// 异步取关事件
+        /// </summary>
+        /// <param name="requestMessage"></param>
+        /// <returns></returns>
+        public async override Task<IResponseMessageBase> OnEvent_UnsubscribeRequestAsync(RequestMessageEvent_Unsubscribe requestMessage)
+        {
+            var userInfo = UserApi.Info(WXController.AppId, OpenId);
+            await _weiXinUserRepository.UpdateForUnionIdAsync(new WeiXinUserDto { Unionid = userInfo.unionid });
+            return null;
         }
 
         //{"action_name": "QR_LIMIT_STR_SCENE", "action_info": {"scene": {"scene_str": "AnZhi_Pub&dimdicien2dddvbnd23rfdcjkw8129&1"}}}
@@ -97,39 +147,41 @@ namespace GuoGuoCommunity.API
         /// 订阅（关注）事件
         /// </summary>
         /// <returns></returns>
-        public override IResponseMessageBase OnEvent_SubscribeRequest(RequestMessageEvent_Subscribe requestMessage)
-        {
-            if (!string.IsNullOrEmpty(requestMessage.EventKey))
-            {
-                
-                string[] qr_para = requestMessage.EventKey.Split('&');
-                string shopCode = string.Empty;
+        //public override IResponseMessageBase OnEvent_SubscribeRequest(RequestMessageEvent_Subscribe requestMessage)
+        //{
+        //    //if (!string.IsNullOrEmpty(requestMessage.EventKey))
+        //    //{
 
-                if (qr_para != null && qr_para.Length >= 2)
-                {
-                    //4S店的识别号
-                    shopCode = qr_para[1];
+        //    //    string[] qr_para = requestMessage.EventKey.Split('&');
+        //    //    string shopCode = string.Empty;
 
-                    #region 消费者扫码
-                    if (qr_para[0].Contains("AnZhi_Pub"))
-                    {
-                        registerCustomer(qr_para, shopCode, true);
-                    }
-                    #endregion
+        //    //    if (qr_para != null && qr_para.Length >= 2)
+        //    //    {
+        //    //        //4S店的识别号
+        //    //        shopCode = qr_para[1];
 
-                    #region 员工扫码
+        //    //        #region 消费者扫码
+        //    //        if (qr_para[0].Contains("AnZhi_Pub"))
+        //    //        {
+        //    //            registerCustomer(qr_para, shopCode, true);
+        //    //        }
+        //    //        #endregion
 
-                    if (qr_para[0].Contains("AnZhi_EmployeeRegQR"))
-                    {
-                        registerRemind(qr_para);
-                    }
+        //    //        #region 员工扫码
 
-                    #endregion
-                }
-                
-            }
-            return null;
-        }
+        //    //        if (qr_para[0].Contains("AnZhi_EmployeeRegQR"))
+        //    //        {
+        //    //            registerRemind(qr_para);
+        //    //        }
+
+        //    //        #endregion
+        //    //    }
+
+        //    //}
+
+
+        //    return null;
+        //}
 
         /// <summary>
         /// 通过二维码扫描进入公众号事件
@@ -139,7 +191,7 @@ namespace GuoGuoCommunity.API
         public override IResponseMessageBase OnEvent_ScanRequest(RequestMessageEvent_Scan requestMessage)
         {
             if (!string.IsNullOrEmpty(requestMessage.EventKey))
-            {                
+            {
                 string[] qr_para = requestMessage.EventKey.Split('&');
                 string shopCode = string.Empty;
 
@@ -153,7 +205,7 @@ namespace GuoGuoCommunity.API
                     {
                         registerCustomer(qr_para, shopCode, false);
                     }
-                    
+
                     #endregion
 
                     #region 员工扫码
@@ -187,7 +239,7 @@ namespace GuoGuoCommunity.API
         /// <returns></returns>
         public override IResponseMessageBase OnEvent_UnsubscribeRequest(RequestMessageEvent_Unsubscribe requestMessage)
         {
-            
+
 
             return null;
         }
@@ -242,8 +294,6 @@ namespace GuoGuoCommunity.API
             return responseMessage;
         }
 
-        #endregion
-
         /// <summary>
         /// 消费者扫码注册
         /// </summary>
@@ -258,11 +308,9 @@ namespace GuoGuoCommunity.API
             //TODO 业务逻辑
 
             //模板消息
-            WXController.SendEmployeeRegisterRemind(1, OpenId,"sss");
-            
-        }
+            WXController.SendEmployeeRegisterRemind(1, OpenId, "sss");
 
-        
+        }
 
         /// <summary>
         /// 员工扫码加入公众号
@@ -280,44 +328,9 @@ namespace GuoGuoCommunity.API
 
 
         }
+
+        #endregion
+
     }
 
-    #region 自定义上下文
-    /// <summary>
-    /// 自定义上下文
-    /// </summary>
-    public class WXCustomMessageContext : MessageContext<IRequestMessageBase, IResponseMessageBase>
-    {
-        /// <summary>
-        /// 构造子
-        /// </summary>
-        public WXCustomMessageContext()
-        {
-            base.MessageContextRemoved += CustomMessageContext_MessageContextRemoved;
-        }
-
-        /// <summary>
-        /// 当上下文过期，被移除时触发的时间
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void CustomMessageContext_MessageContextRemoved(object sender, WeixinContextRemovedEventArgs<IRequestMessageBase, IResponseMessageBase> e)
-        {
-            /* 注意，这个事件不是实时触发的（当然你也可以专门写一个线程监控）
-             * 为了提高效率，根据WeixinContext中的算法，这里的过期消息会在过期后下一条请求执行之前被清除
-             */
-
-            var messageContext = e.MessageContext as WXCustomMessageContext;
-            if (messageContext == null)
-            {
-                return;//如果是正常的调用，messageContext不会为null
-            }
-
-            //TODO:这里根据需要执行消息过期时候的逻辑，下面的代码仅供参考
-
-            //Log.InfoFormat("{0}的消息上下文已过期",e.OpenId);
-            //api.SendMessage(e.OpenId, "由于长时间未搭理客服，您的客服状态已退出！");
-        }
-    }
-    #endregion
 }

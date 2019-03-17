@@ -17,7 +17,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task DeleteAsync(WeiXinUserDto dto, CancellationToken token = default);
 
-        Task<WeiXinUser> GetAsync(string id, CancellationToken token = default);
+        Task<WeiXinUser> GetAsync(string unionid, CancellationToken token = default);
 
         Task<List<WeiXinUser>> GetListAsync(WeiXinUserDto dto, CancellationToken token = default);
     }

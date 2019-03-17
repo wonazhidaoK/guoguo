@@ -197,6 +197,7 @@
     <Compile Include="App_Start\UnityResolver.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="App_Start\WXBusiness.cs" />
+    <Compile Include="App_Start\WXCustomMessageContext.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\BuildingUnitController.cs" />
     <Compile Include="Controllers\CityController.cs" />
@@ -210,6 +211,7 @@
     <Compile Include="Controllers\SmallDistrictController.cs" />
     <Compile Include="Controllers\StreetOfficeController.cs" />
     <Compile Include="Controllers\TokenController.cs" />
+    <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Controllers\VipOwnerCertificationRecordController.cs" />
     <Compile Include="Controllers\VipOwnerController.cs" />
     <Compile Include="Controllers\VipOwnerStructureController.cs" />
@@ -439,7 +441,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>64177</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:2223</IISUrl>
+          <IISUrl>http://192.168.3.11:2223</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

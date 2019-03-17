@@ -16,7 +16,6 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-
                 var weiXinUser = await db.WeiXinUsers.Where(x => x.Unionid == dto.Unionid && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (weiXinUser != null)
                 {
@@ -102,14 +101,17 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 var list = await db.WeiXinUsers.Where(x => x.IsDeleted == false).ToListAsync(token);
-               
+
                 return list;
             }
         }
 
-        public Task<WeiXinUser> GetAsync(string id, CancellationToken token = default)
+        public async Task<WeiXinUser> GetAsync(string unionid, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.WeiXinUsers.Where(x => x.Unionid == unionid).FirstOrDefaultAsync(token);
+            }
         }
 
         public Task<List<WeiXinUser>> GetListAsync(WeiXinUserDto dto, CancellationToken token = default)
@@ -154,14 +156,14 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        private  void OnUpdateAsync(GuoGuoCommunityContext db, WeiXinUserDto dto, CancellationToken token = default)
+        private void OnUpdateAsync(GuoGuoCommunityContext db, WeiXinUserDto dto, CancellationToken token = default)
         {
-           
+
         }
 
         private bool OnDeleteAsync(GuoGuoCommunityContext db, WeiXinUserDto dto, CancellationToken token = default)
         {
-           
+
             return false;
         }
 
