@@ -404,6 +404,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Upload\VipOwnerCertification\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
