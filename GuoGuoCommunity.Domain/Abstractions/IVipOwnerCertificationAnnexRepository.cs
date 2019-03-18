@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    interface IVipOwnerCertificationAnnexRepository
+    public interface IVipOwnerCertificationAnnexRepository
     {
         Task<VipOwnerCertificationAnnex> AddAsync(VipOwnerCertificationAnnexDto dto, CancellationToken token = default);
 

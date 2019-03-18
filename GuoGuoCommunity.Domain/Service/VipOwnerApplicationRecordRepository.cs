@@ -57,6 +57,28 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public async Task Adopt(VipOwnerApplicationRecordDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("申请记录Id信息不正确！");
+                }
+                var vipOwnerApplicationRecord = await db.VipOwnerApplicationRecords.Where(x => x.Id == uid && x.IsDeleted == false && x.IsAdopt == false).FirstOrDefaultAsync(token);
+                if (vipOwnerApplicationRecord == null)
+                {
+                    throw new NotImplementedException("该申请记录不存在！");
+                }
+
+                vipOwnerApplicationRecord.IsAdopt = true;
+                vipOwnerApplicationRecord.LastOperationTime = dto.OperationTime;
+                vipOwnerApplicationRecord.LastOperationUserId = dto.OperationUserId;
+
+                await db.SaveChangesAsync(token);
+            }
+        }
+
         public Task DeleteAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
@@ -72,11 +94,19 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public async Task<List<VipOwnerApplicationRecord>> GetListAdoptAsync(List<string> dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VipOwnerApplicationRecords.Where(x => x.IsInvalid == false && x.IsDeleted == false && x.IsAdopt == true && dto.Contains(x.UserId)).ToListAsync(token);
+            }
+        }
+
         public async Task<List<VipOwnerApplicationRecord>> GetListAsync(List<string> dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.VipOwnerApplicationRecords.Where(x => x.IsInvalid == false && dto.Contains(x.UserId)).ToListAsync(token);
+                return await db.VipOwnerApplicationRecords.Where(x => x.IsInvalid == false && x.IsDeleted == false && dto.Contains(x.UserId)).ToListAsync(token);
             }
         }
 

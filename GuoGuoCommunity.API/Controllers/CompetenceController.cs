@@ -2,6 +2,7 @@
 using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
+using GuoGuoCommunity.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,148 +50,11 @@ namespace GuoGuoCommunity.API.Controllers
             _tokenManager = new TokenManager();
         }
 
-        /// <summary>
-        /// 添加菜单
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="cancelToken"></param>
-        [HttpPost]
-        [Route("menu/add")]
-        public async Task<ApiResult> AddMenu([FromBody]AddMenuInput input, CancellationToken cancelToken)
-        {
-            await _menuRepository.AddAsync(new MenuDto
-            {
-                Kay = input.Kay,
-                Name = input.Name
-            }, cancelToken);
-            return new ApiResult();
-        }
 
-        /// <summary>
-        /// 获取所有菜单
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("menu/getAll")]
-        public async Task<ApiResult<List<GetAllMenuOutput>>> GetAllMenu(CancellationToken cancelToken)
-        {
-            var data = (await _menuRepository.GetAllAsync(cancelToken)).Select(
-                x => new GetAllMenuOutput
-                {
-                    Id = x.Id.ToString(),
-                    Kay = x.Kay,
-                    Name = x.Name
-                }).ToList();
-            return new ApiResult<List<GetAllMenuOutput>>
-            {
-                code = APIResultCode.Success,
-                data = data
-            };
-        }
 
-        /// <summary>
-        /// 添加角色
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="cancelToken"></param>
-        [HttpPost]
-        [Route("role/add")]
-        public async Task<ApiResult> AddRole([FromBody]AddRoleInput input, CancellationToken cancelToken)
-        {
-            await _roleRepository.AddAsync(new RoleDto
-            {
-                Name = input.Name
-            }, cancelToken);
+       
 
-            return new ApiResult();
-        }
 
-        /// <summary>
-        /// 获取角色列表
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("role/getAll")]
-        public async Task<ApiResult<List<GetAllRoleOutput>>> GetAllRole(CancellationToken cancelToken)
-        {
-            var data = (await _roleRepository.GetAllAsync(cancelToken)).Select(
-                 x => new GetAllRoleOutput
-                 {
-                     Id = x.Id.ToString(),
-                     Name = x.Name
-                 }).ToList();
-            return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success, data);
-        }
-
-        /// <summary>
-        /// 添加权限
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="cancelToken"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("roleMenu/add")]
-        public async Task<ApiResult> AddRoleMenu([FromBody]AddRoleMenuInput input, CancellationToken cancelToken)
-        {
-            await _roleMenuRepository.AddAsync(new RoleMenuDto
-            {
-                MenuId = input.MenuId,
-                RolesId = input.RolesId
-            }, cancelToken);
-            return new ApiResult();
-        }
-
-        /// <summary>
-        /// 获取角色菜单权限
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="cancelToken"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("roleMenu/getRoleMenus")]
-        public async Task<ApiResult<List<GetRoleMenusOutput>>> GetRoleMenus([FromUri]GetRoleMenusInput input, CancellationToken cancelToken)
-        {
-            var data = await _roleMenuRepository.GetByRoleIdAsync(input.RoleId, cancelToken);
-            List<GetRoleMenusOutput> list = new List<GetRoleMenusOutput>();
-            if (data != null)
-            {
-                foreach (var item in data)
-                {
-                    var menu = await _menuRepository.GetByIdAsync(item.MenuId, cancelToken);
-                    list.Add(new GetRoleMenusOutput
-                    {
-
-                        RoleId = item.RolesId,
-                        MenuId = item.MenuId,
-                        IsDisplayed = item.IsDisplayed,
-                        Key = menu.Kay,
-                        Name = menu.Name
-                    });
-                }
-            }
-            return new ApiResult<List<GetRoleMenusOutput>>(APIResultCode.Success, list);
-
-        }
-
-        /// <summary>
-        /// 添加账号
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="cancelToken"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("user/addUser")]
-        public async Task<ApiResult> AddUser([FromBody]AddUserInput input, CancellationToken cancelToken)
-        {
-            await _userRepository.AddAsync(new UserDto
-            {
-                Name = input.Name,
-                RoleId = input.RolesId,
-                PhoneNumber = input.PhoneNumber,
-                RoleName = input.RoleName
-            }, cancelToken);
-            return new ApiResult();
-        }
 
         /// <summary>
         /// 登陆
@@ -305,5 +169,387 @@ namespace GuoGuoCommunity.API.Controllers
                     avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif"
                 });
         }
+
+        #region 账号管理
+
+        /// <summary>
+        /// 添加账号
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [Obsolete]
+        [HttpPost]
+        [Route("user/addUser")]
+        public async Task<ApiResult> AddUser([FromBody]AddUserInput input, CancellationToken cancelToken)
+        {
+            await _userRepository.AddAsync(new UserDto
+            {
+                Name = input.Name,
+                RoleId = input.RolesId,
+                PhoneNumber = input.PhoneNumber,
+                RoleName = input.RoleName
+            }, cancelToken);
+            return new ApiResult();
+        }
+
+        /// <summary>
+        /// 添加街道办账号
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("user/addStreetOfficeUser")]
+        public async Task<ApiResult> AddStreetOfficeUser([FromBody]AddUserInput input, CancellationToken cancelToken)
+        {
+            await _userRepository.AddAsync(new UserDto
+            {
+                Name = input.Name,
+                RoleId = input.RolesId,
+                PhoneNumber = input.PhoneNumber,
+                RoleName = input.RoleName
+            }, cancelToken);
+            return new ApiResult();
+        }
+
+        /// <summary>
+        /// 添加街道办账号
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("user/addPropertyUser")]
+        public async Task<ApiResult> AddPropertyUser([FromBody]AddUserInput input, CancellationToken cancelToken)
+        {
+            await _userRepository.AddAsync(new UserDto
+            {
+                Name = input.Name,
+                RoleId = input.RolesId,
+                PhoneNumber = input.PhoneNumber,
+                RoleName = input.RoleName
+            }, cancelToken);
+            return new ApiResult();
+        }
+
+        #endregion
+
+        #region 菜单管理
+
+        /// <summary>
+        /// 添加菜单
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        [HttpPost]
+        [Route("menu/add")]
+        public async Task<ApiResult<AddMenuOutput>> AddMenu([FromBody]AddMenuInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(input.Kay))
+                {
+                    throw new NotImplementedException("菜单值信息为空！");
+                }
+                if (string.IsNullOrWhiteSpace(input.Name))
+                {
+                    throw new NotImplementedException("菜单名称信息为空！");
+                }
+
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<AddMenuOutput>(APIResultCode.Unknown, new AddMenuOutput { }, APIResultMessage.TokenNull);
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult<AddMenuOutput>(APIResultCode.Unknown, new AddMenuOutput { }, APIResultMessage.TokenError);
+                }
+
+                return new ApiResult<AddMenuOutput>(APIResultCode.Success, new AddMenuOutput
+                {
+                    Id = (await _menuRepository.AddAsync(new MenuDto
+                    {
+                        Kay = input.Kay,
+                        Name = input.Name,
+                        OperationTime = DateTimeOffset.Now,
+                        OperationUserId = user.Id.ToString()
+                    }, cancelToken)).Id.ToString()
+                }, APIResultMessage.Success);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<AddMenuOutput>(APIResultCode.Success_NoB, new AddMenuOutput { }, e.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// 获取所有菜单
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("menu/getAll")]
+        public async Task<ApiResult<List<GetAllMenuOutput>>> GetAllMenu(CancellationToken cancelToken)
+        {
+            var data = (await _menuRepository.GetAllAsync(cancelToken)).Select(
+                x => new GetAllMenuOutput
+                {
+                    Id = x.Id.ToString(),
+                    Kay = x.Kay,
+                    Name = x.Name
+                }).ToList();
+            return new ApiResult<List<GetAllMenuOutput>>
+            {
+                code = APIResultCode.Success,
+                data = data
+            };
+        }
+
+        /// <summary>
+        /// 删除菜单信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("menu/delete")]
+        public async Task<ApiResult> DeleteMenu([FromUri]string id, CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+                }
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    throw new NotImplementedException("菜单Id信息为空！");
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+                }
+                await _menuRepository.DeleteAsync(new MenuDto
+                {
+                    Id = id,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+
+                return new ApiResult();
+            }
+            catch (Exception e)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+            }
+        }
+
+        #endregion
+
+
+        #region 角色管理
+
+        /// <summary>
+        /// 添加角色
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        [HttpPost]
+        [Route("role/add")]
+        public async Task<ApiResult<AddRoleOutput>> AddRole([FromBody]AddRoleInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(input.Name))
+                {
+                    throw new NotImplementedException("角色名称信息为空！");
+                }
+                if (string.IsNullOrWhiteSpace(input.DepartmentValue))
+                {
+                    throw new NotImplementedException("角色部门值信息为空！");
+                }
+                if (string.IsNullOrWhiteSpace(Department.GetAll().Where(x => x.Value == input.DepartmentValue).Select(x => x.Name).FirstOrDefault()))
+                {
+                    throw new NotImplementedException("角色部门信息不准确！");
+                }
+
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<AddRoleOutput>(APIResultCode.Unknown, new AddRoleOutput { }, APIResultMessage.TokenNull);
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult<AddRoleOutput>(APIResultCode.Unknown, new AddRoleOutput { }, APIResultMessage.TokenError);
+                }
+
+                var entity = await _roleRepository.AddAsync(new RoleDto
+                {
+                    Name = input.Name,
+                    DepartmentValue = input.DepartmentValue,
+                    DepartmentName = Department.GetAll().Where(x => x.Value == input.DepartmentValue).Select(x => x.Name).FirstOrDefault(),
+                    Description = input.Description,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+
+                return new ApiResult<AddRoleOutput>(APIResultCode.Success, new AddRoleOutput { Id = entity.Id.ToString() }, APIResultMessage.Success);
+
+            }
+            catch (Exception)
+            {
+                return new ApiResult<AddRoleOutput>(APIResultCode.Unknown, new AddRoleOutput { }, APIResultMessage.TokenError);
+            }
+        }
+
+        /// <summary>
+        /// 获取角色列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("role/getAll")]
+        public async Task<ApiResult<List<GetAllRoleOutput>>> GetAllRole([FromUri]GetAllRoleInput input, CancellationToken cancelToken)
+        {
+            var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = input.DepartmentValue, Name = input.Name }, cancelToken)).Select(
+                 x => new GetAllRoleOutput
+                 {
+                     Id = x.Id.ToString(),
+                     Name = x.Name,
+                     DepartmentName = x.DepartmentName,
+                     DepartmentValue = x.DepartmentValue,
+                     Description = x.Description
+                 }).ToList();
+            return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success, data);
+        }
+
+        /// <summary>
+        /// 删除角色信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("role/delete")]
+        public async Task<ApiResult> DeleteRole([FromUri]string id, CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+                }
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    throw new NotImplementedException("菜单Id信息为空！");
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+                }
+                await _roleRepository.DeleteAsync(new RoleDto
+                {
+                    Id = id,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+
+                return new ApiResult();
+            }
+            catch (Exception e)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+            }
+        }
+
+        #endregion
+
+        #region 权限管理
+
+        /// <summary>
+        /// 添加权限
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("roleMenu/add")]
+        public async Task<ApiResult<AddRoleMenuOutput>> AddRoleMenu([FromBody]AddRoleMenuInput input, CancellationToken cancelToken)
+        {
+            if (string.IsNullOrWhiteSpace(input.MenuId))
+            {
+                throw new NotImplementedException("菜单Id信息为空！");
+            }
+            if (string.IsNullOrWhiteSpace(input.RolesId))
+            {
+                throw new NotImplementedException("角色Id信息为空！");
+            }
+            
+            var token = HttpContext.Current.Request.Headers["Authorization"];
+            if (token == null)
+            {
+                return new ApiResult<AddRoleMenuOutput>(APIResultCode.Unknown, new AddRoleMenuOutput { }, APIResultMessage.TokenNull);
+            }
+
+            var user = _tokenManager.GetUser(token);
+            if (user == null)
+            {
+                return new ApiResult<AddRoleMenuOutput>(APIResultCode.Unknown, new AddRoleMenuOutput { }, APIResultMessage.TokenError);
+            }
+
+           var entity= await _roleMenuRepository.AddAsync(new RoleMenuDto
+            {
+                MenuId = input.MenuId,
+                RolesId = input.RolesId,
+                 OperationTime=DateTimeOffset.Now,
+                  OperationUserId=user.Id.ToString()
+            }, cancelToken);
+            return new ApiResult<AddRoleMenuOutput>(APIResultCode.Success, new AddRoleMenuOutput { Id= entity.Id.ToString() }, APIResultMessage.Success);
+        }
+
+        /// <summary>
+        /// 获取角色菜单权限
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("roleMenu/getRoleMenus")]
+        public async Task<ApiResult<List<GetRoleMenusOutput>>> GetRoleMenus([FromUri]GetRoleMenusInput input, CancellationToken cancelToken)
+        {
+            var data = await _roleMenuRepository.GetByRoleIdAsync(input.RoleId, cancelToken);
+            List<GetRoleMenusOutput> list = new List<GetRoleMenusOutput>();
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    var menu = await _menuRepository.GetByIdAsync(item.MenuId, cancelToken);
+                    list.Add(new GetRoleMenusOutput
+                    {
+
+                        RoleId = item.RolesId,
+                        MenuId = item.MenuId,
+                        IsDisplayed = item.IsDisplayed,
+                        Key = menu.Kay,
+                        Name = menu.Name
+                    });
+                }
+            }
+            return new ApiResult<List<GetRoleMenusOutput>>(APIResultCode.Success, list);
+
+        }
+
+        #endregion
     }
 }

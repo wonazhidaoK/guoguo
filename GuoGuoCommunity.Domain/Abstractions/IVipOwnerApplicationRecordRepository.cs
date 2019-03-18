@@ -21,5 +21,9 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<List<VipOwnerApplicationRecord>> GetListAsync(List<string> dto, CancellationToken token = default);
 
         Task<bool> IsPresenceforUserId(string userId,CancellationToken token=default);
+
+        Task Adopt(VipOwnerApplicationRecordDto dto, CancellationToken token = default);
+
+        Task<List<VipOwnerApplicationRecord>> GetListAdoptAsync(List<string> dto, CancellationToken token = default);
     }
 }

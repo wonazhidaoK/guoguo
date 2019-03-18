@@ -1,4 +1,6 @@
-﻿namespace GuoGuoCommunity.Domain.Dto
+﻿using System;
+
+namespace GuoGuoCommunity.Domain.Dto
 {
     public class RoleMenuDto
     {
@@ -18,5 +20,15 @@
         /// 是否禁用
         /// </summary>
         public bool IsDisplay { get; set; }
+
+        /// <summary>
+        /// 操作人Id
+        /// </summary>
+        public string OperationUserId { get; set; }
+
+        /// <summary>
+        /// 操作时间
+        /// </summary>
+        public DateTimeOffset? OperationTime { get; set; }
     }
 }

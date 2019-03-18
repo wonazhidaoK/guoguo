@@ -2,9 +2,9 @@
 
 namespace GuoGuoCommunity.Domain.Dto
 {
-   public class VipOwnerApplicationRecordDto
+    public class VipOwnerApplicationRecordDto
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// 申请人Id

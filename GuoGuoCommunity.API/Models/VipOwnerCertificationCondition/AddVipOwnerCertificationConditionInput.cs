@@ -3,21 +3,21 @@
     /// <summary>
     /// 
     /// </summary>
-    public class AddRoleInput
+    public class AddVipOwnerCertificationConditionInput
     {
         /// <summary>
-        /// 角色名称
+        /// 标题
         /// </summary>
-        public string Name { get; set; }
+        public string Title { get; set; }
 
         /// <summary>
-        /// 角色描述
+        /// 描述
         /// </summary>
         public string Description { get; set; }
 
         /// <summary>
-        /// 部门值
+        /// 类型值
         /// </summary>
-        public string DepartmentValue { get; set; }
+        public string TypeValue { get; set; }
     }
 }

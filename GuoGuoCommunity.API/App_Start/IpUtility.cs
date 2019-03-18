@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 
-namespace GuoGuoCommunity.API.App_Start
+namespace GuoGuoCommunity.API
 {
     /// <summary>
     /// 
@@ -42,7 +40,35 @@ namespace GuoGuoCommunity.API.App_Start
                 }
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static string GetIPPort()
+        {
+            string result = RunApp("route", "print", true);
+            Match m = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)");
+            if (m.Success)
+            {
+                return m.Groups[2].Value+ HttpContext.Current.Request.Url.Port;
+            }
+            else
+            {
+                try
+                {
+                    System.Net.Sockets.TcpClient c = new System.Net.Sockets.TcpClient();
+                    c.Connect("www.baidu.com", 80);
+                    string ip = ((System.Net.IPEndPoint)c.Client.LocalEndPoint).Address.ToString();
+                    string port = ((System.Net.IPEndPoint)c.Client.LocalEndPoint).Port.ToString();
+                    c.Close();
+                    return ip+":"+ ip;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+        }
         /// <summary>  
         /// 获取本机主DNS  
         /// </summary>  
@@ -65,7 +91,8 @@ namespace GuoGuoCommunity.API.App_Start
         /// 运行一个控制台程序并返回其输出参数。  
         /// </summary>  
         /// <param name="filename">程序名</param>  
-        /// <param name="arguments">输入参数</param>  
+        /// <param name="arguments">输入参数</param>
+        /// <param name="recordLog"></param>  
         /// <returns></returns>  
         public static string RunApp(string filename, string arguments, bool recordLog)
         {

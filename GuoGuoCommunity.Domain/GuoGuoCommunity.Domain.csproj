@@ -101,7 +101,7 @@
     <Compile Include="Abstractions\ISmallDistrictRepository.cs" />
     <Compile Include="Abstractions\IStreetOfficeRepository.cs" />
     <Compile Include="Abstractions\ITestRepository.cs" />
-    <Compile Include="Abstractions\IUploadService.cs" />
+    <Compile Include="Abstractions\IUploadRepository.cs" />
     <Compile Include="Abstractions\IUserRepository.cs" />
     <Compile Include="Abstractions\IVipOwnerApplicationRecordRepository.cs" />
     <Compile Include="Abstractions\IVipOwnerCertificationAnnexRepository.cs" />
@@ -200,6 +200,10 @@
     <Compile Include="Migrations\201903160720169_VipOwner-bool.cs" />
     <Compile Include="Migrations\201903160720169_VipOwner-bool.Designer.cs">
       <DependentUpon>201903160720169_VipOwner-bool.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903180724507_VipOwnerApplicationRecord-add-IsAdopt.cs" />
+    <Compile Include="Migrations\201903180724507_VipOwnerApplicationRecord-add-IsAdopt.Designer.cs">
+      <DependentUpon>201903180724507_VipOwnerApplicationRecord-add-IsAdopt.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Upload.cs" />
@@ -305,6 +309,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903160720169_VipOwner-bool.resx">
       <DependentUpon>201903160720169_VipOwner-bool.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903180724507_VipOwnerApplicationRecord-add-IsAdopt.resx">
+      <DependentUpon>201903180724507_VipOwnerApplicationRecord-add-IsAdopt.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

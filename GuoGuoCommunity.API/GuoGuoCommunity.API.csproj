@@ -212,6 +212,7 @@
     <Compile Include="Controllers\StreetOfficeController.cs" />
     <Compile Include="Controllers\TokenController.cs" />
     <Compile Include="Controllers\UploadController.cs" />
+    <Compile Include="Controllers\VipOwnerCertificationConditionController.cs" />
     <Compile Include="Controllers\VipOwnerCertificationRecordController.cs" />
     <Compile Include="Controllers\VipOwnerController.cs" />
     <Compile Include="Controllers\VipOwnerStructureController.cs" />
@@ -264,6 +265,7 @@
     <Compile Include="Models\Industry\GetListIndustryOutput.cs" />
     <Compile Include="Models\Industry\UpdateIndustryInput.cs" />
     <Compile Include="Models\Menu\AddMenuInput.cs" />
+    <Compile Include="Models\Menu\AddMenuOutput.cs" />
     <Compile Include="Models\Menu\GetAllMenuOutput.cs" />
     <Compile Include="Models\Owner\AddOwnerInput.cs" />
     <Compile Include="Models\Owner\AddOwnerOutput.cs" />
@@ -274,9 +276,12 @@
     <Compile Include="Models\Owner\GetListOwnerOutput.cs" />
     <Compile Include="Models\Owner\UpdateOwnerInput.cs" />
     <Compile Include="Models\RoleMenu\AddRoleMenuInput.cs" />
+    <Compile Include="Models\RoleMenu\AddRoleMenuOutput.cs" />
     <Compile Include="Models\RoleMenu\GetRoleMenusInput.cs" />
     <Compile Include="Models\RoleMenu\GetRoleMenusOutput.cs" />
     <Compile Include="Models\Role\AddRoleInput.cs" />
+    <Compile Include="Models\Role\AddRoleOutput.cs" />
+    <Compile Include="Models\Role\GetAllRoleInput.cs" />
     <Compile Include="Models\Role\GetAllRoleOutput.cs" />
     <Compile Include="Models\SmallDistrict\AddSmallDistrictInput.cs" />
     <Compile Include="Models\SmallDistrict\AddSmallDistrictOutput.cs" />
@@ -295,12 +300,18 @@
     <Compile Include="Models\StreetOffice\GetStreetOfficeOutput.cs" />
     <Compile Include="Models\StreetOffice\UpdateStreetOfficeInput.cs" />
     <Compile Include="Models\StreetOffice\AddStreetOfficeInput.cs" />
+    <Compile Include="Models\Upload\UploadInput.cs" />
+    <Compile Include="Models\Upload\UploadOutput.cs" />
     <Compile Include="Models\User\AddUserInput.cs" />
     <Compile Include="Models\User\RefreshTokenInput.cs" />
     <Compile Include="Models\User\LoginInput.cs" />
     <Compile Include="Models\User\LoginTokenOutput.cs" />
     <Compile Include="Models\User\LoginOutput.cs" />
+    <Compile Include="Models\VipOwnerCertificationCondition\AddVipOwnerCertificationConditionInput.cs" />
+    <Compile Include="Models\VipOwnerCertificationCondition\AddVipOwnerCertificationConditionOutput.cs" />
+    <Compile Include="Models\VipOwnerCertificationCondition\GetListVipOwnerCertificationConditionOutpu.cs" />
     <Compile Include="Models\VipOwnerCertificationRecord\AddVipOwnerCertificationRecordInput.cs" />
+    <Compile Include="Models\VipOwnerCertificationRecord\AddVipOwnerCertificationRecordOutput.cs" />
     <Compile Include="Models\VipOwnerStructure\AddVipOwnerStructureInput.cs" />
     <Compile Include="Models\VipOwnerStructure\AddVipOwnerStructureOutput.cs" />
     <Compile Include="Models\VipOwnerStructure\GetAllVipOwnerStructureInput.cs" />
@@ -404,6 +415,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Upload\OwnerCertification\" />
     <Folder Include="Upload\VipOwnerCertification\" />
   </ItemGroup>
   <ItemGroup>
@@ -442,7 +454,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>64177</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://192.168.3.11:2223</IISUrl>
+          <IISUrl>http://192.168.2.133:2223</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

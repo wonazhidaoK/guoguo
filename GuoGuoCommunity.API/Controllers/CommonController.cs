@@ -1,5 +1,5 @@
-﻿using GuoGuoCommunity.API.App_Start;
-using GuoGuoCommunity.Domain.Models.Enum;
+﻿using GuoGuoCommunity.Domain.Models.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -25,8 +25,17 @@ namespace GuoGuoCommunity.API.Controllers
         /// 获取服务器Id
         /// </summary>
         /// <returns></returns>
+        [Obsolete]
         [HttpGet]
         [Route("common/getIp")]
         public ApiResult<string> GetIp()=> new ApiResult<string>(APIResultCode.Success, IpUtility.GetLocalIP());
+
+        /// <summary>
+        /// 获取文件类型
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("fileType/getAll")]
+        public ApiResult<List<FileType>> GetFileTypeAll() => new ApiResult<List<FileType>>(APIResultCode.Success, FileType.GetAll().ToList());
     }
 }

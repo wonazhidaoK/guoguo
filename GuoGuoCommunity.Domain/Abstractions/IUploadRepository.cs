@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    interface IUploadService
+   public interface IUploadRepository
     {
         Task<Upload> AddAsync(UploadDto dto, CancellationToken token = default);
 

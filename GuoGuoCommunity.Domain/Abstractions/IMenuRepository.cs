@@ -10,9 +10,9 @@ namespace GuoGuoCommunity.Domain.Abstractions
     {
         Task<List<Menu>> GetAllAsync(CancellationToken token = default);
 
-        Task AddAsync(MenuDto dto, CancellationToken token = default);
+        Task<Menu> AddAsync(MenuDto dto, CancellationToken token = default);
 
-        Task DeleteAsync(string id, CancellationToken token = default);
+        Task DeleteAsync(MenuDto dto, CancellationToken token = default);
 
         Task UpdateAsync(MenuDto dto, CancellationToken token = default);
 

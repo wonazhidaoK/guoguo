@@ -1,9 +1,13 @@
-﻿using System;
-
-namespace GuoGuoCommunity.Domain.Dto
+﻿namespace GuoGuoCommunity.API.Models
 {
-    public class VipOwnerCertificationConditionDto
+    /// <summary>
+    /// 
+    /// </summary>
+    public class GetListVipOwnerCertificationConditionOutpu
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string Id { get; set; }
 
         /// <summary>
@@ -25,15 +29,5 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 类型值
         /// </summary>
         public string TypeValue { get; set; }
-
-        /// <summary>
-        /// 操作人Id
-        /// </summary>
-        public string OperationUserId { get; set; }
-
-        /// <summary>
-        /// 操作时间
-        /// </summary>
-        public DateTimeOffset? OperationTime { get; set; }
     }
 }

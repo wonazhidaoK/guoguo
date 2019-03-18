@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Service
 {
-    class UploadRepository : IUploadService
+    public class UploadRepository : IUploadRepository
     {
         public async Task<Upload> AddAsync(UploadDto dto, CancellationToken token = default)
         {
@@ -22,7 +22,7 @@ namespace GuoGuoCommunity.Domain.Service
                     Directory = dto.Directory,
                     Domain = dto.Domain,
                     File = dto.File,
-                    Host = dto.Id,
+                    Host = dto.Host,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,

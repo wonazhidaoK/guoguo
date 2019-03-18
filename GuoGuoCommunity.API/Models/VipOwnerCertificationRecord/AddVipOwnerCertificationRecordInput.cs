@@ -31,7 +31,7 @@ namespace GuoGuoCommunity.API.Models
     public class Model
     {
         /// <summary>
-        /// 提交
+        /// 条件Id
         /// </summary>
         public string ConditionId { get; set; }
 

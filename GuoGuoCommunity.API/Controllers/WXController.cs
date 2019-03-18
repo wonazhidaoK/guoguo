@@ -268,7 +268,7 @@ namespace GuoGuoCommunity.API.Controllers
                 if (user != null)
                 {
                     //to Token
-                    return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput() { OpenId = user.OpenId, Token = token.access_token }, openIdResult.openid);
+                    return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput() { OpenId = user.OpenId, Token = token.access_token }, APIResultMessage.Success);
                 }
                 else
                 {
