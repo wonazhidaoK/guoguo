@@ -1,19 +1,10 @@
-﻿namespace GuoGuoCommunity.Domain.Dto
+﻿namespace GuoGuoCommunity.API.Models
 {
-    public class UserDto
+    /// <summary>
+    /// 
+    /// </summary>
+    public class AddPropertyUserInput
     {
-        public string Id { get; set; }
-
-        /// <summary>
-        /// 账号
-        /// </summary>
-        public string Account { get; set; }
-
-        /// <summary>
-        /// 登陆密码
-        /// </summary>
-        public string Password { get; set; }
-
         /// <summary>
         /// 用户姓名
         /// </summary>
@@ -25,26 +16,15 @@
         public string PhoneNumber { get; set; }
 
         /// <summary>
+        /// 登陆密码
+        /// </summary>
+        public string Password { get; set; }
+
+
+        /// <summary>
         /// 角色id
         /// </summary>
         public string RoleId { get; set; }
-
-        /// <summary>
-        /// 微信Openid
-        /// </summary>
-        public string OpenId { get; set; }
-
-        /// <summary>
-        /// 微信Unionid
-        /// </summary>
-        public string UnionId { get; set; }
-
-        
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string RefreshToken { get; set; }
 
         #region 省市区
 
@@ -70,23 +50,18 @@
         /// <summary>
         /// 街道办Id
         /// </summary>
-        public string StreetOfficeId { get; set; } 
+        public string StreetOfficeId { get; set; }
 
         /// <summary>
         /// 社区Id
         /// </summary>
-        public string CommunityId { get; set; } 
+        public string CommunityId { get; set; }
 
         /// <summary>
         /// 小区Id
         /// </summary>
         public string SmallDistrictId { get; set; }
 
-        #endregion
-
-        /// <summary>
-        /// 部门值
-        /// </summary>
-        public string DepartmentValue { get; set; }
+        #endregion 
     }
 }

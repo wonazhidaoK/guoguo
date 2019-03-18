@@ -50,12 +50,6 @@ namespace GuoGuoCommunity.API.Controllers
             _tokenManager = new TokenManager();
         }
 
-
-
-       
-
-
-
         /// <summary>
         /// 登陆
         /// </summary>
@@ -173,27 +167,6 @@ namespace GuoGuoCommunity.API.Controllers
         #region 账号管理
 
         /// <summary>
-        /// 添加账号
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="cancelToken"></param>
-        /// <returns></returns>
-        [Obsolete]
-        [HttpPost]
-        [Route("user/addUser")]
-        public async Task<ApiResult> AddUser([FromBody]AddUserInput input, CancellationToken cancelToken)
-        {
-            await _userRepository.AddAsync(new UserDto
-            {
-                Name = input.Name,
-                RoleId = input.RolesId,
-                PhoneNumber = input.PhoneNumber,
-                RoleName = input.RoleName
-            }, cancelToken);
-            return new ApiResult();
-        }
-
-        /// <summary>
         /// 添加街道办账号
         /// </summary>
         /// <param name="input"></param>
@@ -201,37 +174,172 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("user/addStreetOfficeUser")]
-        public async Task<ApiResult> AddStreetOfficeUser([FromBody]AddUserInput input, CancellationToken cancelToken)
+        public async Task<ApiResult> AddStreetOfficeUser([FromBody]AddStreetOfficeUserInput input, CancellationToken cancelToken)
         {
-            await _userRepository.AddAsync(new UserDto
+            await _userRepository.AddStreetOfficeAsync(new UserDto
             {
                 Name = input.Name,
-                RoleId = input.RolesId,
                 PhoneNumber = input.PhoneNumber,
-                RoleName = input.RoleName
+                Password = input.Password,
+                State = input.State,
+                City = input.City,
+                Region = input.Region,
+                StreetOfficeId = input.StreetOfficeId,
+                DepartmentValue = Department.JieDaoBan.Value,
+                RoleId = input.RoleId,
             }, cancelToken);
             return new ApiResult();
         }
 
         /// <summary>
-        /// 添加街道办账号
+        /// 查询街道办列表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("user/GetAllStreetOfficeUser")]
+        public async Task<ApiResult<GetAllStreetOfficeUserOutput>> GetAllStreetOfficeUser([FromUri]GetAllStreetOfficeUserInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                if (input.PageIndex < 1)
+                {
+                    input.PageIndex = 1;
+                }
+                if (input.PageSize < 1)
+                {
+                    input.PageSize = 10;
+                }
+                int startRow = (input.PageIndex - 1) * input.PageSize;
+                var data = await _userRepository.GetAllStreetOfficeAsync(new UserDto
+                {
+                    Name = input?.Name,
+                    State = input.State,
+                    City = input.City,
+                    Region = input.Region,
+                    StreetOfficeId = input.StreetOfficeId
+                }, cancelToken);
+
+                return new ApiResult<GetAllStreetOfficeUserOutput>(APIResultCode.Success, new GetAllStreetOfficeUserOutput
+                {
+                    List = data.Select(x => new GetUserOutput
+                    {
+                        Id = x.Id.ToString(),
+                        Name = x.Name,
+                        SmallDistrictId = x.SmallDistrictId,
+                        SmallDistrictName = x.SmallDistrictName,
+                        City = x.City,
+                        CommunityId = x.CommunityId,
+                        CommunityName = x.CommunityName,
+                        DepartmentName = x.DepartmentName,
+                        DepartmentValue = x.DepartmentValue,
+                        PhoneNumber = x.PhoneNumber,
+                        Region = x.Region,
+                        RoleId = x.RoleId,
+                        RoleName = x.RoleName,
+                        State = x.State,
+                        StreetOfficeId = x.StreetOfficeId,
+                        StreetOfficeName = x.StreetOfficeName
+                    }).Skip(startRow).Take(input.PageSize).ToList(),
+                    TotalCount = data.Count()
+                });
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<GetAllStreetOfficeUserOutput>(APIResultCode.Success_NoB, new GetAllStreetOfficeUserOutput { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 添加物业账号
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("user/addPropertyUser")]
-        public async Task<ApiResult> AddPropertyUser([FromBody]AddUserInput input, CancellationToken cancelToken)
+        public async Task<ApiResult> AddPropertyUser([FromBody]AddPropertyUserInput input, CancellationToken cancelToken)
         {
-            await _userRepository.AddAsync(new UserDto
+            await _userRepository.AddPropertyAsync(new UserDto
             {
                 Name = input.Name,
-                RoleId = input.RolesId,
                 PhoneNumber = input.PhoneNumber,
-                RoleName = input.RoleName
+                Password = input.Password,
+                State = input.State,
+                City = input.City,
+                Region = input.Region,
+                StreetOfficeId = input.StreetOfficeId,
+                SmallDistrictId = input.SmallDistrictId,
+                CommunityId = input.CommunityId,
+                DepartmentValue = Department.WuYe.Value,
+                RoleId = input.RoleId,
             }, cancelToken);
             return new ApiResult();
         }
+
+        /// <summary>
+        /// 查询物业列表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("user/GetAllStreetOfficeUser")]
+        public async Task<ApiResult<GetAllPropertyUserOutput>> GetAllPropertyUser([FromUri]GetAllPropertyUserInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                if (input.PageIndex < 1)
+                {
+                    input.PageIndex = 1;
+                }
+                if (input.PageSize < 1)
+                {
+                    input.PageSize = 10;
+                }
+                int startRow = (input.PageIndex - 1) * input.PageSize;
+                var data = await _userRepository.GetAllStreetOfficeAsync(new UserDto
+                {
+                    Name = input?.Name,
+                    State = input.State,
+                    City = input.City,
+                    Region = input.Region,
+                    StreetOfficeId = input.StreetOfficeId,
+                    SmallDistrictId = input.SmallDistrictId,
+                    CommunityId = input.CommunityId
+                }, cancelToken);
+
+                return new ApiResult<GetAllPropertyUserOutput>(APIResultCode.Success, new GetAllPropertyUserOutput
+                {
+                    List = data.Select(x => new GetUserOutput
+                    {
+                        Id = x.Id.ToString(),
+                        Name = x.Name,
+                        SmallDistrictId = x.SmallDistrictId,
+                        SmallDistrictName = x.SmallDistrictName,
+                        City = x.City,
+                        CommunityId = x.CommunityId,
+                        CommunityName = x.CommunityName,
+                        DepartmentName = x.DepartmentName,
+                        DepartmentValue = x.DepartmentValue,
+                        PhoneNumber = x.PhoneNumber,
+                        Region = x.Region,
+                        RoleId = x.RoleId,
+                        RoleName = x.RoleName,
+                        State = x.State,
+                        StreetOfficeId = x.StreetOfficeId,
+                        StreetOfficeName = x.StreetOfficeName
+                    }).Skip(startRow).Take(input.PageSize).ToList(),
+                    TotalCount = data.Count()
+                });
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<GetAllPropertyUserOutput>(APIResultCode.Success_NoB, new GetAllPropertyUserOutput { }, e.Message);
+            }
+        }
+
 
         #endregion
 
@@ -352,7 +460,6 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         #endregion
-
 
         #region 角色管理
 
@@ -487,35 +594,42 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("roleMenu/add")]
         public async Task<ApiResult<AddRoleMenuOutput>> AddRoleMenu([FromBody]AddRoleMenuInput input, CancellationToken cancelToken)
         {
-            if (string.IsNullOrWhiteSpace(input.MenuId))
+            try
             {
-                throw new NotImplementedException("菜单Id信息为空！");
-            }
-            if (string.IsNullOrWhiteSpace(input.RolesId))
-            {
-                throw new NotImplementedException("角色Id信息为空！");
-            }
-            
-            var token = HttpContext.Current.Request.Headers["Authorization"];
-            if (token == null)
-            {
-                return new ApiResult<AddRoleMenuOutput>(APIResultCode.Unknown, new AddRoleMenuOutput { }, APIResultMessage.TokenNull);
-            }
+                if (string.IsNullOrWhiteSpace(input.MenuId))
+                {
+                    throw new NotImplementedException("菜单Id信息为空！");
+                }
+                if (string.IsNullOrWhiteSpace(input.RolesId))
+                {
+                    throw new NotImplementedException("角色Id信息为空！");
+                }
 
-            var user = _tokenManager.GetUser(token);
-            if (user == null)
-            {
-                return new ApiResult<AddRoleMenuOutput>(APIResultCode.Unknown, new AddRoleMenuOutput { }, APIResultMessage.TokenError);
-            }
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<AddRoleMenuOutput>(APIResultCode.Unknown, new AddRoleMenuOutput { }, APIResultMessage.TokenNull);
+                }
 
-           var entity= await _roleMenuRepository.AddAsync(new RoleMenuDto
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult<AddRoleMenuOutput>(APIResultCode.Unknown, new AddRoleMenuOutput { }, APIResultMessage.TokenError);
+                }
+
+                var entity = await _roleMenuRepository.AddAsync(new RoleMenuDto
+                {
+                    MenuId = input.MenuId,
+                    RolesId = input.RolesId,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+                return new ApiResult<AddRoleMenuOutput>(APIResultCode.Success, new AddRoleMenuOutput { Id = entity.Id.ToString() }, APIResultMessage.Success);
+            }
+            catch (Exception e)
             {
-                MenuId = input.MenuId,
-                RolesId = input.RolesId,
-                 OperationTime=DateTimeOffset.Now,
-                  OperationUserId=user.Id.ToString()
-            }, cancelToken);
-            return new ApiResult<AddRoleMenuOutput>(APIResultCode.Success, new AddRoleMenuOutput { Id= entity.Id.ToString() }, APIResultMessage.Success);
+                return new ApiResult<AddRoleMenuOutput>(APIResultCode.Success_NoB, new AddRoleMenuOutput { }, e.Message);
+            }
         }
 
         /// <summary>
