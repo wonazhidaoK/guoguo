@@ -50,6 +50,12 @@ namespace GuoGuoCommunity.API
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+            config.Routes.MapHttpRoute(
+                name: "DefaultApi2",
+                routeTemplate: "api/{controller}/{action}/{content}",
+                defaults: new { ApiController = "Message", Action = "Post", content = RouteParameter.Optional }
+
+            );
             AutoFacBootStrapper.CoreAutoFacInit();
         }
     }

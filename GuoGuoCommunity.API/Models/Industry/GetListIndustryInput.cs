@@ -6,8 +6,13 @@
     public class GetListIndustryInput
     {
         /// <summary>
-        /// 
+        /// 楼宇单元Id
         /// </summary>
         public string BuildingUnitId { get; set; }
+
+        /// <summary>
+        /// 层数
+        /// </summary>
+        public string NumberOfLayers { get; set; }
     }
 }

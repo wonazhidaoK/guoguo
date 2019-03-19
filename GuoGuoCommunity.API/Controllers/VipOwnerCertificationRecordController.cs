@@ -43,7 +43,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("vipOwnerCertification/Add")]
         public async Task<ApiResult<AddVipOwnerCertificationRecordOutput>> Add([FromBody]AddVipOwnerCertificationRecordInput input, CancellationToken cancelToken)
         {
-
             try
             {
                 if (string.IsNullOrWhiteSpace(input.StructureId))

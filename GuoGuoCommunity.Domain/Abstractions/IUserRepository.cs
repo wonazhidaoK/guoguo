@@ -30,7 +30,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         /// <param name="dto"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task AddStreetOfficeAsync(UserDto dto, CancellationToken token = default);
+        Task<User> AddStreetOfficeAsync(UserDto dto, CancellationToken token = default);
 
         /// <summary>
         /// 添加物业账号
@@ -38,7 +38,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         /// <param name="dto"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task AddPropertyAsync(UserDto dto, CancellationToken token = default);
+        Task<User> AddPropertyAsync(UserDto dto, CancellationToken token = default);
 
         /// <summary>
         /// 添加微信用户
@@ -48,7 +48,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         /// <returns></returns>
         Task<User> AddWeiXinAsync(UserDto dto, CancellationToken token = default);
 
-        Task DeleteAsync(string id, CancellationToken token = default);
+        Task DeleteAsync(UserDto dto, CancellationToken token = default);
 
         Task UpdateAsync(UserDto dto, CancellationToken token = default);
 

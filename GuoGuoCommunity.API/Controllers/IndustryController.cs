@@ -272,7 +272,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 根据楼宇单元id获取业户(小程序可用)
+        /// 根据楼宇单元id层数获取业户(小程序可用)
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>
@@ -290,7 +290,8 @@ namespace GuoGuoCommunity.API.Controllers
 
                 var data = await _industryRepository.GetListAsync(new IndustryDto
                 {
-                    BuildingUnitId = input.BuildingUnitId
+                    BuildingUnitId = input.BuildingUnitId,
+                    NumberOfLayers = input.NumberOfLayers
                 }, cancelToken);
 
                 return new ApiResult<List<GetListIndustryOutput>>(APIResultCode.Success, data.Select(x => new GetListIndustryOutput

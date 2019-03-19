@@ -122,7 +122,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.Industries.Where(x => x.IsDeleted == false && x.BuildingId == dto.BuildingId).ToListAsync(token);
+                return await db.Industries.Where(x => x.IsDeleted == false && x.BuildingId == dto.BuildingId && x.NumberOfLayers == dto.NumberOfLayers).ToListAsync(token);
             }
         }
 

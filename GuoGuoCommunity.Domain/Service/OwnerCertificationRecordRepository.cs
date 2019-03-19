@@ -17,6 +17,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
+                //用户信息
                 if (!Guid.TryParse(dto.UserId, out var userId))
                 {
                     throw new NotImplementedException("用户Id不正确！");
@@ -27,17 +28,73 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("用户信息不存在！");
                 }
 
-                if (!Guid.TryParse(dto.OwnerId, out var ownerId))
+                //街道办信息
+                if (!Guid.TryParse(dto.StreetOfficeId, out var streetOfficeId))
                 {
-                    throw new NotImplementedException("业主Id不正确！");
+                    throw new NotImplementedException("街道办Id不正确！");
                 }
-                var owner = await db.Owners.Where(x => x.Id == ownerId && x.IsDeleted == false).FirstOrDefaultAsync(token);
-                if (owner == null)
+                var streetOffice = await db.StreetOffices.Where(x => x.Id == streetOfficeId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (streetOffice == null)
                 {
-                    throw new NotImplementedException("业主信息不存在！");
+                    throw new NotImplementedException("街道办信息不存在！");
                 }
 
-                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.UserId == dto.UserId&&x.OwnerId==dto.OwnerId&&x.CertificationStatusValue!= OwnerCertification.Failure.Value && x.IsDeleted == false && x.OwnerId == dto.OwnerId).FirstOrDefaultAsync(token);
+                //社区信息
+                if (!Guid.TryParse(dto.CommunityId, out var communityId))
+                {
+                    throw new NotImplementedException("社区Id不正确！");
+                }
+                var communitie = await db.Communities.Where(x => x.Id == communityId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (communitie == null)
+                {
+                    throw new NotImplementedException("社区信息不存在！");
+                }
+
+                //小区信息
+                if (!Guid.TryParse(dto.SmallDistrictId, out var smallDistrictId))
+                {
+                    throw new NotImplementedException("小区Id不正确！");
+                }
+                var smallDistrict = await db.SmallDistricts.Where(x => x.Id == smallDistrictId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (smallDistrict == null)
+                {
+                    throw new NotImplementedException("小区信息不存在！");
+                }
+
+                //楼宇信息
+                if (!Guid.TryParse(dto.BuildingId, out var buildingId))
+                {
+                    throw new NotImplementedException("楼宇Id不正确！");
+                }
+                var building = await db.Buildings.Where(x => x.Id == buildingId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (building == null)
+                {
+                    throw new NotImplementedException("楼宇信息不存在！");
+                }
+
+                //单元信息
+                if (!Guid.TryParse(dto.BuildingUnitId, out var buildingUnitId))
+                {
+                    throw new NotImplementedException("楼宇单元Id不正确！");
+                }
+                var buildingUnit = await db.BuildingUnits.Where(x => x.Id == buildingUnitId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (buildingUnit == null)
+                {
+                    throw new NotImplementedException("楼宇单元信息不存在！");
+                }
+
+                //业户信息
+                if (!Guid.TryParse(dto.IndustryId, out var industryId))
+                {
+                    throw new NotImplementedException("业户Id信息不正确！");
+                }
+                var industrie = await db.Industries.Where(x => x.Id == industryId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (industrie == null)
+                {
+                    throw new NotImplementedException("业户信息不存在！");
+                }
+
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.UserId == dto.UserId && x.IndustryId == dto.IndustryId && x.CertificationStatusValue != OwnerCertification.Failure.Value && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (ownerCertificationRecord != null)
                 {
                     throw new NotImplementedException("该业主信息已存在！");
@@ -46,7 +103,18 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     CertificationResult = dto.CertificationResult,
                     UserId = dto.UserId,
-                    OwnerId = dto.OwnerId,
+                    IndustryId = dto.IndustryId,
+                    SmallDistrictId = dto.SmallDistrictId,
+                    StreetOfficeId = dto.StreetOfficeId,
+                    BuildingUnitId = dto.BuildingUnitId,
+                    BuildingId = dto.BuildingId,
+                    CommunityId = dto.CommunityId,
+                    BuildingName = building.Name,
+                    BuildingUnitName = buildingUnit.UnitName,
+                    CommunityName = communitie.Name,
+                    IndustryName = industrie.Name,
+                    SmallDistrictName = smallDistrict.Name,
+                    StreetOfficeName = streetOffice.Name,
                     CertificationStatusName = OwnerCertification.Executing.Name,
                     CertificationStatusValue = OwnerCertification.Executing.Value,
                     CreateOperationTime = dto.OperationTime,

@@ -174,21 +174,41 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("user/addStreetOfficeUser")]
-        public async Task<ApiResult> AddStreetOfficeUser([FromBody]AddStreetOfficeUserInput input, CancellationToken cancelToken)
+        public async Task<ApiResult<AddStreetOfficeUserOutput>> AddStreetOfficeUser([FromBody]AddStreetOfficeUserInput input, CancellationToken cancelToken)
         {
-            await _userRepository.AddStreetOfficeAsync(new UserDto
+            try
             {
-                Name = input.Name,
-                PhoneNumber = input.PhoneNumber,
-                Password = input.Password,
-                State = input.State,
-                City = input.City,
-                Region = input.Region,
-                StreetOfficeId = input.StreetOfficeId,
-                DepartmentValue = Department.JieDaoBan.Value,
-                RoleId = input.RoleId,
-            }, cancelToken);
-            return new ApiResult();
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Unknown, new AddStreetOfficeUserOutput { }, APIResultMessage.TokenNull);
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Unknown, new AddStreetOfficeUserOutput { }, APIResultMessage.TokenError);
+                }
+                var entity = await _userRepository.AddStreetOfficeAsync(new UserDto
+                {
+                    Name = input.Name,
+                    PhoneNumber = input.PhoneNumber,
+                    Password = input.Password,
+                    State = input.State,
+                    City = input.City,
+                    Region = input.Region,
+                    StreetOfficeId = input.StreetOfficeId,
+                    DepartmentValue = Department.JieDaoBan.Value,
+                    RoleId = input.RoleId,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+                return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Success, new AddStreetOfficeUserOutput { Id = entity.Id.ToString() }, APIResultMessage.Success);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Success_NoB, new AddStreetOfficeUserOutput { }, e.Message);
+            }
         }
 
         /// <summary>
@@ -252,6 +272,50 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
+        /// 修改街道办账户信息
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("user/updateStreetOfficeUser")]
+        public async Task<ApiResult> UpdateStreetOfficeUser([FromBody]UpdateStreetOfficeUserInput input, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+                }
+
+                await _userRepository.UpdateAsync(new UserDto
+                {
+                    Id = input.Id,
+                    Name = input.Name,
+                    Password = input.Password,
+                    PhoneNumber = input.PhoneNumber,
+                    RoleId = input.RoleId,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                });
+
+                return new ApiResult();
+            }
+            catch (Exception e)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+            }
+
+        }
+
+        /// <summary>
         /// 添加物业账号
         /// </summary>
         /// <param name="input"></param>
@@ -259,23 +323,43 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("user/addPropertyUser")]
-        public async Task<ApiResult> AddPropertyUser([FromBody]AddPropertyUserInput input, CancellationToken cancelToken)
+        public async Task<ApiResult<AddPropertyUserOutput>> AddPropertyUser([FromBody]AddPropertyUserInput input, CancellationToken cancelToken)
         {
-            await _userRepository.AddPropertyAsync(new UserDto
+            try
             {
-                Name = input.Name,
-                PhoneNumber = input.PhoneNumber,
-                Password = input.Password,
-                State = input.State,
-                City = input.City,
-                Region = input.Region,
-                StreetOfficeId = input.StreetOfficeId,
-                SmallDistrictId = input.SmallDistrictId,
-                CommunityId = input.CommunityId,
-                DepartmentValue = Department.WuYe.Value,
-                RoleId = input.RoleId,
-            }, cancelToken);
-            return new ApiResult();
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<AddPropertyUserOutput>(APIResultCode.Unknown, new AddPropertyUserOutput { }, APIResultMessage.TokenNull);
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult<AddPropertyUserOutput>(APIResultCode.Unknown, new AddPropertyUserOutput { }, APIResultMessage.TokenError);
+                }
+                var entity = await _userRepository.AddPropertyAsync(new UserDto
+                {
+                    Name = input.Name,
+                    PhoneNumber = input.PhoneNumber,
+                    Password = input.Password,
+                    State = input.State,
+                    City = input.City,
+                    Region = input.Region,
+                    StreetOfficeId = input.StreetOfficeId,
+                    SmallDistrictId = input.SmallDistrictId,
+                    CommunityId = input.CommunityId,
+                    DepartmentValue = Department.WuYe.Value,
+                    RoleId = input.RoleId,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success, new AddPropertyUserOutput { Id = entity.Id.ToString() }, APIResultMessage.Success);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, e.Message);
+            }
         }
 
         /// <summary>
@@ -340,6 +424,91 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
+        /// <summary>
+        /// 修改物业账户信息
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("user/updatePropertyUser")]
+        public async Task<ApiResult> UpdatePropertyUser([FromBody]UpdatePropertyUserInput input, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+                }
+
+                await _userRepository.UpdateAsync(new UserDto
+                {
+                    Id = input.Id,
+                    Name = input.Name,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString(),
+                    Password = input.Password,
+                    RoleId = input.RoleId,
+                    PhoneNumber = input.PhoneNumber
+                });
+
+                return new ApiResult();
+            }
+            catch (Exception e)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// 删除用户信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("user/delete")]
+        public async Task<ApiResult> Delete([FromUri]string id, CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+                }
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    throw new NotImplementedException("用户Id信息为空！");
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+                }
+                await _userRepository.DeleteAsync(new  UserDto
+                {
+                    Id = id,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+
+                return new ApiResult();
+            }
+            catch (Exception e)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+            }
+        }
 
         #endregion
 
