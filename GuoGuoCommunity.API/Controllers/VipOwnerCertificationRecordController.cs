@@ -2,7 +2,9 @@
 using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
+using GuoGuoCommunity.Domain.Models.Enum;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -85,7 +87,7 @@ namespace GuoGuoCommunity.API.Controllers
                         {
                             ApplicationRecordId = vipOwnerApplicationRecord.Id.ToString(),
                             CertificationConditionId = item.ConditionId,
-                            UploadId = item.UploadId,
+                            AnnexContent = item.AnnexContent,
                             OperationTime = DateTimeOffset.Now,
                             OperationUserId = user.Id.ToString()
                         });
@@ -98,6 +100,105 @@ namespace GuoGuoCommunity.API.Controllers
             }
 
 
+        }
+
+        /// <summary>
+        /// 查询高级申请列表(街道办指定小区)
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("vipOwnerCertification/getAll")]
+        public async Task<ApiResult<GetAllVipOwnerCertificationOutput>> GetAll([FromUri]GetAllVipOwnerCertificationInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                if (input.PageIndex < 1)
+                {
+                    input.PageIndex = 1;
+                }
+                if (input.PageSize < 1)
+                {
+                    input.PageSize = 10;
+                }
+                int startRow = (input.PageIndex - 1) * input.PageSize;
+                var data = await _vipOwnerApplicationRecordRepository.GetAllAsync(new VipOwnerApplicationRecordDto
+                {
+                    SmallDistrictId = input.SmallDistrictId
+                }, cancelToken);
+
+                return new ApiResult<GetAllVipOwnerCertificationOutput>(APIResultCode.Success, new GetAllVipOwnerCertificationOutput
+                {
+                    List = data.Select(x => new GetVipOwnerCertificationOutput
+                    {
+                        Id = x.Id.ToString(),
+                        Name = x.Name,
+                        SmallDistrictId = x.SmallDistrictId,
+                        SmallDistrictName = x.SmallDistrictName,
+                        IsAdopt = x.IsAdopt,
+                        Reason = x.Reason,
+                        StructureId = x.StructureId,
+                        StructureName = x.StructureName,
+                        UserId = x.UserId
+                    }).Skip(startRow).Take(input.PageSize).ToList(),
+                    TotalCount = data.Count()
+                });
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<GetAllVipOwnerCertificationOutput>(APIResultCode.Success_NoB, new GetAllVipOwnerCertificationOutput { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 查询高级申请列表(小程序用户)
+        /// </summary>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("weiXin/vipOwnerCertification/getAll")]
+        public async Task<ApiResult<GetAllForWeiXinVipOwnerCertificationOutput>> GetAllForWeiXin(CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<GetAllForWeiXinVipOwnerCertificationOutput>(APIResultCode.Unknown, new GetAllForWeiXinVipOwnerCertificationOutput { }, APIResultMessage.TokenNull);
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult<GetAllForWeiXinVipOwnerCertificationOutput>(APIResultCode.Unknown, new GetAllForWeiXinVipOwnerCertificationOutput { }, APIResultMessage.TokenError);
+                }
+                if (user.DepartmentName != Department.YeZhu.Value)
+                {
+                    throw new NotImplementedException("用户权限不正确！");
+                }
+                var data = await _vipOwnerApplicationRecordRepository.GetListAsync(user.Id.ToString(), cancelToken);
+
+                return new ApiResult<GetAllForWeiXinVipOwnerCertificationOutput>(APIResultCode.Success, new GetAllForWeiXinVipOwnerCertificationOutput
+                {
+                    List = data.Select(x => new GetVipOwnerCertificationOutput
+                    {
+                        Id = x.Id.ToString(),
+                        Name = x.Name,
+                        SmallDistrictId = x.SmallDistrictId,
+                        SmallDistrictName = x.SmallDistrictName,
+                        IsAdopt = x.IsAdopt,
+                        Reason = x.Reason,
+                        StructureId = x.StructureId,
+                        StructureName = x.StructureName,
+                        UserId = x.UserId
+                    }).ToList()
+                });
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<GetAllForWeiXinVipOwnerCertificationOutput>(APIResultCode.Success_NoB, new GetAllForWeiXinVipOwnerCertificationOutput { }, e.Message);
+            }
         }
     }
 }

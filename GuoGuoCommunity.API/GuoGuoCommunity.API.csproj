@@ -344,6 +344,10 @@
     <Compile Include="Models\VipOwnerCertificationCondition\GetListVipOwnerCertificationConditionOutpu.cs" />
     <Compile Include="Models\VipOwnerCertificationRecord\AddVipOwnerCertificationRecordInput.cs" />
     <Compile Include="Models\VipOwnerCertificationRecord\AddVipOwnerCertificationRecordOutput.cs" />
+    <Compile Include="Models\VipOwnerCertificationRecord\GetAllVipOwnerCertificationInput.cs" />
+    <Compile Include="Models\VipOwnerCertificationRecord\GetAllForWeiXinVipOwnerCertificationOutput.cs" />
+    <Compile Include="Models\VipOwnerCertificationRecord\GetAllVipOwnerCertificationOutput.cs" />
+    <Compile Include="Models\VipOwnerCertificationRecord\GetVipOwnerCertificationOutput.cs" />
     <Compile Include="Models\VipOwnerStructure\AddVipOwnerStructureInput.cs" />
     <Compile Include="Models\VipOwnerStructure\AddVipOwnerStructureOutput.cs" />
     <Compile Include="Models\VipOwnerStructure\GetAllVipOwnerStructureInput.cs" />
@@ -448,6 +452,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Hangfire\" />
     <Folder Include="Upload\OwnerCertification\" />
     <Folder Include="Upload\VipOwnerCertification\" />
   </ItemGroup>

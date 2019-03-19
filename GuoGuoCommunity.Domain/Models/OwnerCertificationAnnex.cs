@@ -5,11 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GuoGuoCommunity.Domain.Models
 {
-
     /// <summary>
-    /// 业委会认证附件表
+    /// 业主认证附件表
     /// </summary>
-    public class VipOwnerCertificationAnnex : ICreateOperation
+    public class OwnerCertificationAnnex : ICreateOperation
     {
         /// <summary>
         /// 
@@ -19,9 +18,9 @@ namespace GuoGuoCommunity.Domain.Models
         public Guid Id { get; set; }
 
         /// <summary>
-        /// 申请条件Id
+        /// 附件类型值
         /// </summary>
-        public string CertificationConditionId { get; set; }
+        public string OwnerCertificationAnnexTypeValue { get; set; }
 
         /// <summary>
         /// 申请Id
@@ -29,12 +28,13 @@ namespace GuoGuoCommunity.Domain.Models
         public string ApplicationRecordId { get; set; }
 
         /// <summary>
-        ///  附件内容
+        /// 附件内容
         /// </summary>
         public string AnnexContent { get; set; }
 
+
         public string CreateOperationUserId { get; set; }
 
-        public DateTimeOffset? CreateOperationTime  { get; set; }
+        public DateTimeOffset? CreateOperationTime { get; set; }
     }
 }

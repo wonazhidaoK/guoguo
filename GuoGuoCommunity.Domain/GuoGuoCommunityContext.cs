@@ -116,5 +116,10 @@ namespace GuoGuoCommunity.Domain
         /// 业委会成员认证记录
         /// </summary>
         public DbSet<VipOwnerCertificationRecord> VipOwnerCertificationRecords { get; set; }
+
+        /// <summary>
+        /// 业主认证附件表
+        /// </summary>
+        public DbSet<OwnerCertificationAnnex> OwnerCertificationAnnices { get; set; }
     }
 }

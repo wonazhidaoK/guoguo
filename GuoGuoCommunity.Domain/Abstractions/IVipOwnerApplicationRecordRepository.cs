@@ -14,11 +14,15 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<List<VipOwnerApplicationRecord>> GetAllAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default);
 
+        Task<List<VipOwnerApplicationRecord>> GetAllForSmallDistrictIdAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default);
+
         Task DeleteAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default);
 
         Task<VipOwnerApplicationRecord> GetAsync(string id, CancellationToken token = default);
 
         Task<List<VipOwnerApplicationRecord>> GetListAsync(List<string> dto, CancellationToken token = default);
+
+        Task<List<VipOwnerApplicationRecord>> GetListAsync(string userId, CancellationToken token = default);
 
         Task<bool> IsPresenceforUserId(string userId,CancellationToken token=default);
 

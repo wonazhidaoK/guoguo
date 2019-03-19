@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    interface IOwnerCertificationRecordRepository
+    public interface IOwnerCertificationRecordRepository
     {
         Task<OwnerCertificationRecord> AddAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
 
@@ -23,5 +23,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<List<OwnerCertificationRecord>> GetListAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
 
         Task<List<OwnerCertificationRecord>> GetListForOwnerAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
+
+        Task UpdateInvalidAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
     }
 }

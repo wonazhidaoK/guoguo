@@ -47,6 +47,21 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public bool IsAdopt { get; set; }
 
+        /// <summary>
+        /// 小区Id
+        /// </summary>
+        public string SmallDistrictId { get; set; }
+
+        /// <summary>
+        /// 小区名称
+        /// </summary>
+        public string SmallDistrictName { get; set; }
+
+        /// <summary>
+        /// 姓名
+        /// </summary>
+        public string Name { get; set; }
+
         public string LastOperationUserId { get; set; }
 
         public DateTimeOffset? LastOperationTime { get; set; }

@@ -20,7 +20,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     ApplicationRecordId = dto.ApplicationRecordId,
                     CertificationConditionId = dto.CertificationConditionId,
-                    UploadId = dto.UploadId,
+                    AnnexContent = dto.AnnexContent,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                 });

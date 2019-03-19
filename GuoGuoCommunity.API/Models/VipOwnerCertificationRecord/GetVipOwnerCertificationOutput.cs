@@ -1,15 +1,24 @@
-﻿using System;
-
-namespace GuoGuoCommunity.Domain.Dto
+﻿namespace GuoGuoCommunity.API.Models
 {
-    public class VipOwnerApplicationRecordDto
+    /// <summary>
+    /// 
+    /// </summary>
+    public class GetVipOwnerCertificationOutput
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string Id { get; set; }
 
         /// <summary>
         /// 申请人Id
         /// </summary>
         public string UserId { get; set; }
+
+        /// <summary>
+        /// 姓名
+        /// </summary>
+        public string Name { get; set; }
 
         /// <summary>
         /// 职能Id
@@ -27,9 +36,9 @@ namespace GuoGuoCommunity.Domain.Dto
         public string Reason { get; set; }
 
         /// <summary>
-        /// 是否无效
+        /// 是否通过
         /// </summary>
-        public string IsInvalid { get; set; }
+        public bool IsAdopt { get; set; }
 
         /// <summary>
         /// 小区Id
@@ -37,13 +46,8 @@ namespace GuoGuoCommunity.Domain.Dto
         public string SmallDistrictId { get; set; }
 
         /// <summary>
-        /// 操作人Id
+        /// 小区名称
         /// </summary>
-        public string OperationUserId { get; set; }
-
-        /// <summary>
-        /// 操作时间
-        /// </summary>
-        public DateTimeOffset? OperationTime { get; set; }
+        public string SmallDistrictName { get; set; }
     }
 }

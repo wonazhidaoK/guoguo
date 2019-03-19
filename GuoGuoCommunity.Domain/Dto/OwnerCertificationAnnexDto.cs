@@ -2,14 +2,14 @@
 
 namespace GuoGuoCommunity.Domain.Dto
 {
-    public class VipOwnerCertificationAnnexDto
+    public  class OwnerCertificationAnnexDto
     {
         public string Id { get; set; }
 
         /// <summary>
-        /// 申请条件Id
+        /// 附件类型值
         /// </summary>
-        public string CertificationConditionId { get; set; }
+        public string OwnerCertificationAnnexTypeValue { get; set; }
 
         /// <summary>
         /// 申请Id

@@ -1,8 +1,11 @@
 ﻿using GuoGuoCommunity.API.Models;
 using GuoGuoCommunity.Domain;
+using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
-using GuoGuoCommunity.Domain.Service;
+using GuoGuoCommunity.Domain.Models.Enum;
+using Hangfire;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -17,16 +20,21 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class OwnerCertificationRecordController : ApiController
     {
-        private readonly OwnerCertificationRecordRepository _ownerCertificationRecordRepository;
+        private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
+        private readonly IOwnerCertificationAnnexRepository _ownerCertificationAnnexRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="ownerCertificationRecordRepository"></param>
-        public OwnerCertificationRecordController(OwnerCertificationRecordRepository ownerCertificationRecordRepository)
+        /// <param name="ownerCertificationAnnexRepository"></param>
+        public OwnerCertificationRecordController(
+            IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
+            IOwnerCertificationAnnexRepository ownerCertificationAnnexRepository)
         {
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
+            _ownerCertificationAnnexRepository = ownerCertificationAnnexRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -47,10 +55,12 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<AddOwnerCertificationRecordOutput>(APIResultCode.Unknown, new AddOwnerCertificationRecordOutput { }, APIResultMessage.TokenNull);
                 }
+
                 if (string.IsNullOrWhiteSpace(input.StreetOfficeId))
                 {
                     throw new NotImplementedException("街道办Id信息为空！");
                 }
+
                 if (string.IsNullOrWhiteSpace(input.CommunityId))
                 {
                     throw new NotImplementedException("社区Id信息为空！");
@@ -72,7 +82,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("业户Id信息为空！");
                 }
-
+                if (input.Models.Count < 2)
+                {
+                    throw new NotImplementedException("提交附件信息不准确！");
+                }
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
@@ -93,12 +106,38 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);
 
+                foreach (var item in input.Models)
+                {
+                    var itemEntity = await _ownerCertificationAnnexRepository.AddAsync(
+                          new OwnerCertificationAnnexDto
+                          {
+                              ApplicationRecordId = entity.Id.ToString(),
+                              OwnerCertificationAnnexTypeValue = item.OwnerCertificationAnnexTypeValue,
+                              AnnexContent = item.AnnexContent,
+                              OperationTime = DateTimeOffset.Now,
+                              OperationUserId = user.Id.ToString()
+                          });
+                    if (itemEntity.OwnerCertificationAnnexTypeValue == OwnerCertificationAnnexType.IDCardFront.Value)
+                    {
+                        BackgroundJob.Enqueue(() => Send(itemEntity.Id.ToString()));
+                    }
+                }
+
                 return new ApiResult<AddOwnerCertificationRecordOutput>(APIResultCode.Success, new AddOwnerCertificationRecordOutput { Id = entity.Id.ToString() });
             }
             catch (Exception e)
             {
                 return new ApiResult<AddOwnerCertificationRecordOutput>(APIResultCode.Success_NoB, new AddOwnerCertificationRecordOutput { }, e.Message);
             }
+        }
+
+        /// <summary>
+        /// 这个是用来发送消息的静态方法
+        /// </summary>
+        /// <param name="message"></param>
+        public static void Send(string message)
+        {
+            EventLog.WriteEntry("EventSystem", string.Format("这里要处理一个图像识别任务:{0},时间为:{1}", message, DateTime.Now));
         }
     }
 }

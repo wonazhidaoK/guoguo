@@ -37,5 +37,13 @@ namespace GuoGuoCommunity.API.Controllers
         [HttpGet]
         [Route("fileType/getAll")]
         public ApiResult<List<FileType>> GetFileTypeAll() => new ApiResult<List<FileType>>(APIResultCode.Success, FileType.GetAll().ToList());
+
+        /// <summary>
+        /// 获取业主认证上传附件类型
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ownerCertificationAnnexType/getAll")]
+        public ApiResult<List<OwnerCertificationAnnexType>> GetOwnerCertificationAnnexTypeAll() => new ApiResult<List<OwnerCertificationAnnexType>>(APIResultCode.Success, OwnerCertificationAnnexType.GetAll().ToList());
     }
 }

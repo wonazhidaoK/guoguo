@@ -1,4 +1,6 @@
-﻿namespace GuoGuoCommunity.API.Models
+﻿using System.Collections.Generic;
+
+namespace GuoGuoCommunity.API.Models
 {
     /// <summary>
     /// 
@@ -42,5 +44,25 @@
         public string IndustryId { get; set; }
 
         #endregion
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<AddOwnerCertificationRecordModel> Models { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class AddOwnerCertificationRecordModel
+    {
+        /// <summary>
+        /// 附件类型值
+        /// </summary>
+        public string OwnerCertificationAnnexTypeValue { get; set; }
+
+        /// <summary>
+        /// 附件内容
+        /// </summary>
+        public string AnnexContent { get; set; }
     }
 }

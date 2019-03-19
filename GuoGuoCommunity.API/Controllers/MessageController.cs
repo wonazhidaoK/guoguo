@@ -1,10 +1,6 @@
 ﻿using Hangfire;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
 namespace GuoGuoCommunity.API.Controllers
@@ -23,6 +19,11 @@ namespace GuoGuoCommunity.API.Controllers
             EventLog.WriteEntry("EventSystem", string.Format("这是由Hangfire后台任务发送的消息:{0},时间为:{1}", message, DateTime.Now));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
         public IHttpActionResult Post(string content)
         {
             //这里可以做一些业务判断或操作

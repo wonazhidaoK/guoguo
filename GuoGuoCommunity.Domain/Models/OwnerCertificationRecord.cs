@@ -119,7 +119,7 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 是否有效
         /// </summary>
-        public string IsValid { get; set; }
+        public bool IsInvalid { get; set; }
 
         public string LastOperationUserId { get; set; }
         public DateTimeOffset? LastOperationTime { get; set; }

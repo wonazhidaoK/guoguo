@@ -94,7 +94,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("业户信息不存在！");
                 }
 
-                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.UserId == dto.UserId && x.IndustryId == dto.IndustryId && x.CertificationStatusValue != OwnerCertification.Failure.Value && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.UserId == dto.UserId && x.IndustryId == dto.IndustryId && x.CertificationStatusValue != OwnerCertification.Failure.Value && x.IsDeleted == false&&x.IsInvalid==false).FirstOrDefaultAsync(token);
                 if (ownerCertificationRecord != null)
                 {
                     throw new NotImplementedException("该业主信息已存在！");
@@ -218,6 +218,29 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.OwnerId == dto.OwnerId).ToListAsync(token);
+            }
+        }
+
+        public async Task UpdateInvalidAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("认证信息Id不正确！");
+                }
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (ownerCertificationRecord == null)
+                {
+                    throw new NotImplementedException("该认证信息不存在！");
+                }
+
+                ownerCertificationRecord.IsInvalid = true;
+               
+                ownerCertificationRecord.LastOperationTime = dto.OperationTime;
+                ownerCertificationRecord.LastOperationUserId = dto.OperationUserId;
+                OnUpdate(db, dto, token);
+                await db.SaveChangesAsync(token);
             }
         }
     }

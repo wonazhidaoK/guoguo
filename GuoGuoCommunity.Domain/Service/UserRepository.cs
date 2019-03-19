@@ -45,7 +45,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该用户已存在！");
                 }
-              var entity=   db.Users.Add(new User
+                var entity = db.Users.Add(new User
                 {
                     Name = dto.Name,
                     PhoneNumber = dto.PhoneNumber,
@@ -117,7 +117,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该用户已存在！");
                 }
-              var entity=  db.Users.Add(new User
+                var entity = db.Users.Add(new User
                 {
                     Name = dto.Name,
                     PhoneNumber = dto.PhoneNumber,
@@ -184,7 +184,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Users.Where(x => x.IsDeleted == false&&x.DepartmentValue==Department.WuYe.Value).ToListAsync(token);
+                var list = await db.Users.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.WuYe.Value).ToListAsync(token);
 
                 if (!string.IsNullOrWhiteSpace(dto.State))
                 {
@@ -276,7 +276,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("角色信息不存在！");
                 }
-                
+
                 user.Name = dto.Name;
                 user.Password = dto.Password;
                 user.PhoneNumber = dto.PhoneNumber;
@@ -322,6 +322,8 @@ namespace GuoGuoCommunity.Domain.Service
                     //Account = dto.Account,
                     OpenId = dto.OpenId,
                     UnionId = dto.UnionId,
+                    DepartmentValue = Department.YeZhu.Value,
+                    DepartmentName = Department.YeZhu.Name
                     //Name = dto.Name,
                     //PhoneNumber = dto.PhoneNumber,
                     //RoleId = dto.RoleId,

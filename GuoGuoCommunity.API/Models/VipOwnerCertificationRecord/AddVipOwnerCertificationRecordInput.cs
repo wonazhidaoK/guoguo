@@ -19,6 +19,11 @@ namespace GuoGuoCommunity.API.Models
         public string Reason { get; set; }
 
         /// <summary>
+        /// 小区Id
+        /// </summary>
+        public string SmallDistrictId { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         public List<Model>  Models { get; set; }
@@ -36,8 +41,8 @@ namespace GuoGuoCommunity.API.Models
         public string ConditionId { get; set; }
 
         /// <summary>
-        /// 上传Id
+        /// 附件内容
         /// </summary>
-        public string UploadId { get; set; }
+        public string AnnexContent { get; set; }
     }
 }

@@ -25,6 +25,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("用户信息不存在！");
                 }
+
                 if (!Guid.TryParse(dto.StructureId, out var structureId))
                 {
                     throw new NotImplementedException("申请职能Id信息不正确！");
@@ -34,6 +35,18 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("申请职能不存在！");
                 }
+
+                if (!Guid.TryParse(dto.SmallDistrictId, out var smallDistrictId))
+                {
+                    throw new NotImplementedException("小区Id信息不正确！");
+                }
+                var smallDistricts = await db.SmallDistricts.Where(x => x.Id == smallDistrictId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (smallDistricts == null)
+                {
+                    throw new NotImplementedException("小区信息不存在！");
+                }
+
+                var ownerName = await db.OwnerCertificationRecords.Where(x => x.UserId == dto.UserId && x.SmallDistrictId == dto.SmallDistrictId && x.IsDeleted == false).Select(x => x.OwnerName).FirstOrDefaultAsync(token);
 
                 var vipOwnerApplicationRecord = await db.VipOwnerApplicationRecords.Where(x => x.UserId == dto.UserId && (x.IsDeleted == false || x.IsInvalid == false)).FirstOrDefaultAsync(token);
                 if (vipOwnerApplicationRecord != null)
@@ -49,7 +62,10 @@ namespace GuoGuoCommunity.Domain.Service
                     UserId = dto.UserId,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
+                    SmallDistrictId = dto.SmallDistrictId,
+                    SmallDistrictName = smallDistricts.Name,
                     LastOperationTime = dto.OperationTime,
+                    Name = ownerName,
                     LastOperationUserId = dto.OperationUserId
                 });
                 await db.SaveChangesAsync(token);
@@ -89,6 +105,14 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public async Task<List<VipOwnerApplicationRecord>> GetAllForSmallDistrictIdAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VipOwnerApplicationRecords.Where(x => x.IsInvalid == false && x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
+            }
+        }
+
         public Task<VipOwnerApplicationRecord> GetAsync(string id, CancellationToken token = default)
         {
             throw new NotImplementedException();
@@ -107,6 +131,14 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 return await db.VipOwnerApplicationRecords.Where(x => x.IsInvalid == false && x.IsDeleted == false && dto.Contains(x.UserId)).ToListAsync(token);
+            }
+        }
+
+        public async Task<List<VipOwnerApplicationRecord>> GetListAsync(string userId, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VipOwnerApplicationRecords.Where(x => x.IsInvalid == false && x.IsDeleted == false && x.UserId==userId).ToListAsync(token);
             }
         }
 

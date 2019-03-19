@@ -94,6 +94,7 @@
     <Compile Include="Abstractions\IComplaintTypeRepository.cs" />
     <Compile Include="Abstractions\IIndustryRepository.cs" />
     <Compile Include="Abstractions\IMenuRepository.cs" />
+    <Compile Include="Abstractions\IOwnerCertificationAnnexRepository.cs" />
     <Compile Include="Abstractions\IOwnerCertificationRecordRepository.cs" />
     <Compile Include="Abstractions\IOwnerRepository.cs" />
     <Compile Include="Abstractions\IRoleMenuRepository.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="Dto\CommunityDto.cs" />
     <Compile Include="Dto\ComplaintTypeDto.cs" />
     <Compile Include="Dto\IndustryDto.cs" />
+    <Compile Include="Dto\OwnerCertificationAnnexDto.cs" />
     <Compile Include="Dto\OwnerCertificationRecordDto.cs" />
     <Compile Include="Dto\OwnerDto.cs" />
     <Compile Include="Dto\RegionDto.cs" />
@@ -205,7 +207,13 @@
     <Compile Include="Migrations\201903180724507_VipOwnerApplicationRecord-add-IsAdopt.Designer.cs">
       <DependentUpon>201903180724507_VipOwnerApplicationRecord-add-IsAdopt.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903190925341_user.cs" />
+    <Compile Include="Migrations\201903190925341_user.Designer.cs">
+      <DependentUpon>201903190925341_user.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Enum\OwnerCertificationAnnexType.cs" />
+    <Compile Include="Models\OwnerCertificationAnnex.cs" />
     <Compile Include="Models\Upload.cs" />
     <Compile Include="Models\Building.cs" />
     <Compile Include="Models\BuildingUnit.cs" />
@@ -240,6 +248,7 @@
     <Compile Include="Service\ComplaintTypeRepository.cs" />
     <Compile Include="Service\IndustryRepository.cs" />
     <Compile Include="Service\MenuRepository.cs" />
+    <Compile Include="Service\OwnerCertificationAnnexRepository.cs" />
     <Compile Include="Service\OwnerCertificationRecordRepository.cs" />
     <Compile Include="Service\OwnerRepository.cs" />
     <Compile Include="Service\RoleMenuRepository.cs" />
@@ -312,6 +321,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903180724507_VipOwnerApplicationRecord-add-IsAdopt.resx">
       <DependentUpon>201903180724507_VipOwnerApplicationRecord-add-IsAdopt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903190925341_user.resx">
+      <DependentUpon>201903190925341_user.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
