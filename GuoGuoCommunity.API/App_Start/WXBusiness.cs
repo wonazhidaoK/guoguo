@@ -1,6 +1,7 @@
 ﻿using GuoGuoCommunity.API.Controllers;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Service;
+using Hangfire;
 using Senparc.NeuChar.Entities;
 using Senparc.Weixin.Exceptions;
 using Senparc.Weixin.MP.AdvancedAPIs;
@@ -8,6 +9,7 @@ using Senparc.Weixin.MP.Entities;
 using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.MP.MessageHandlers;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -32,7 +34,11 @@ namespace GuoGuoCommunity.API
         }
 
 
-
+        public async Task SendAsync(string message)
+        {
+           // await _testRepository.Add(a());
+            EventLog.WriteEntry("EventSystem", string.Format("这是由Hangfire后台任务发送的消息:{0},时间为:{1}", message, DateTime.Now));
+        }
         /// <summary>
         /// 异步关注事件
         /// </summary>
@@ -43,28 +49,29 @@ namespace GuoGuoCommunity.API
             var userInfo = UserApi.Info(WXController.AppId, OpenId);
             if (userInfo != null)
             {
+                BackgroundJob.Enqueue(() => SendAsync("4444"));
                 //添加微信用户
-                await _weiXinUserRepository.AddAsync(
-                new WeiXinUserDto
-                {
-                    City = userInfo.city,
-                    Country = userInfo.country,
-                    Groupid = userInfo.groupid.ToString(),
-                    Headimgurl = userInfo.headimgurl,
-                    Language = userInfo.language,
-                    Nickname = userInfo.nickname,
-                    Openid = userInfo.openid,
-                    Province = userInfo.province,
-                    //  Qr_scene=userInfo?.qr_scene,
-                    // Qr_scene_str
-                    Remark = userInfo.remark,
-                    Sex = userInfo.sex,
-                    Subscribe = userInfo.subscribe,
-                    Subscribe_scene = userInfo.subscribe_scene,
-                    Subscribe_time = userInfo.subscribe_time.ToString(),
-                    Tagid_list = userInfo.tagid_list.ToString(),
-                    Unionid = userInfo.unionid
-                });
+                //await _weiXinUserRepository.AddAsync(
+                //new WeiXinUserDto
+                //{
+                //    City = userInfo.city,
+                //    Country = userInfo.country,
+                //    Groupid = userInfo.groupid.ToString(),
+                //    Headimgurl = userInfo.headimgurl,
+                //    Language = userInfo.language,
+                //    Nickname = userInfo.nickname,
+                //    Openid = userInfo.openid,
+                //    Province = userInfo.province,
+                //    //  Qr_scene=userInfo?.qr_scene,
+                //    // Qr_scene_str
+                //    Remark = userInfo.remark,
+                //    Sex = userInfo.sex,
+                //    Subscribe = userInfo.subscribe,
+                //    Subscribe_scene = userInfo.subscribe_scene,
+                //    Subscribe_time = userInfo.subscribe_time.ToString(),
+                //    Tagid_list = userInfo.tagid_list.ToString(),
+                //    Unionid = userInfo.unionid
+                //});
             }
 
             return null;

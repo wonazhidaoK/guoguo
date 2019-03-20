@@ -26,8 +26,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// 
         /// </summary>
         /// <param name="smallDistrictRepository"></param>
-        /// <param name="tokenManager"></param>
-        public SmallDistrictController(ISmallDistrictRepository smallDistrictRepository, TokenManager tokenManager)
+        public SmallDistrictController(ISmallDistrictRepository smallDistrictRepository)
         {
             _smallDistrictRepository = smallDistrictRepository;
             _tokenManager = new TokenManager();

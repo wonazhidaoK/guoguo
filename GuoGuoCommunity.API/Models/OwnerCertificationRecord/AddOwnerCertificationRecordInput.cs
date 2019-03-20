@@ -7,10 +7,10 @@ namespace GuoGuoCommunity.API.Models
     /// </summary>
     public class AddOwnerCertificationRecordInput
     {
-        /// <summary>
-        /// 用户Id
-        /// </summary>
-        public string UserId { get; set; }
+        ///// <summary>
+        ///// 用户Id
+        ///// </summary>
+        //public string UserId { get; set; }
 
         #region 基础信息
 

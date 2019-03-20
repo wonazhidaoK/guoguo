@@ -38,6 +38,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpPost]
+      
         [Route("building/add")]
         public async Task<ApiResult<AddBuildingOutput>> Add([FromBody]AddBuildingInput input, CancellationToken cancelToken)
         {

@@ -10,14 +10,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     ///  权限
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
+    //[EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CompetenceController : ApiController
     {
         private readonly ITestRepository _testRepository;
@@ -58,7 +57,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("user/Login")]
-        public async Task<ApiResult<LoginOutput>> Login([FromBody]LoginInput input, CancellationToken cancelToken)
+        public async Task<ApiResult<LoginOutput>> Login([FromBody] LoginInput input, CancellationToken cancelToken)
         {
             try
             {
@@ -495,7 +494,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
-                await _userRepository.DeleteAsync(new  UserDto
+                await _userRepository.DeleteAsync(new UserDto
                 {
                     Id = id,
                     OperationTime = DateTimeOffset.Now,

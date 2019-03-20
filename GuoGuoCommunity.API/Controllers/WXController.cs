@@ -41,15 +41,15 @@ namespace GuoGuoCommunity.API.Controllers
         /// <summary>
         /// 令牌
         /// </summary>
-        public static readonly string Token = Config.SenparcWeixinSetting.Token;//与微信公众账号后台的Token设置保持一致，区分大小写。
+        public static readonly string Token = "zhishiweixin";//与微信公众账号后台的Token设置保持一致，区分大小写。
         /// <summary>
         /// AESKey
         /// </summary>
-        public static readonly string EncodingAESKey = Config.SenparcWeixinSetting.EncodingAESKey;//与微信公众账号后台的EncodingAESKey设置保持一致，区分大小写。
+        public static readonly string EncodingAESKey = "CLL32hmcGhJTqXxRRCcQBsK317p19qFFAUiScZrFOrd";//与微信公众账号后台的EncodingAESKey设置保持一致，区分大小写。
         /// <summary>
         /// 微信AppID
         /// </summary>
-        public static readonly string AppId = Config.SenparcWeixinSetting.WeixinAppId;//与微信公众账号后台的AppId设置保持一致，区分大小写。
+        public static readonly string AppId = "wx0bfc9becbe59d710";//与微信公众账号后台的AppId设置保持一致，区分大小写。
         /// <summary>
         /// 微信Secret
         /// </summary>
@@ -79,9 +79,9 @@ namespace GuoGuoCommunity.API.Controllers
         /// 微信后台验证地址（使用Get），微信后台的“接口配置信息”的Url填写如：http://weixin.senparc.com/weixin
         /// </summary>
         [HttpGet]
-        [AllowAnonymous]
-        [Route("")]
-        public HttpResponseMessage Get(string signature, string timestamp, string nonce, string echostr)
+        //[AllowAnonymous]
+        [Route("WeiXin")]
+        public HttpResponseMessage Get(string signature, string timestamp, string nonce,string echostr)
         {
             if (CheckSignature.Check(signature, timestamp, nonce, Token))
             {
@@ -100,8 +100,8 @@ namespace GuoGuoCommunity.API.Controllers
         /// v0.8之后的版本可以结合Senparc.Weixin.MP.MvcExtension扩展包，使用WeixinResult，见MiniPost方法。
         /// </summary>
         [HttpPost]
-        [AllowAnonymous]
-        [Route("")]
+        //[AllowAnonymous]
+        [Route("WeiXin")]
         public HttpResponseMessage Post()
         {
             var requestQueryPairs = Request.GetQueryNameValuePairs().ToDictionary(k => k.Key, v => v.Value);

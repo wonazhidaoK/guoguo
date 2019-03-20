@@ -2,6 +2,7 @@
 using GuoGuoCommunity.Domain.Service;
 using Logs;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using Unity;
 using Unity.Lifetime;
 
@@ -21,7 +22,7 @@ namespace GuoGuoCommunity.API
             // Web API 配置和服务
 
             //var container = new UnityContainer();
-            //config.EnableCors();
+            //config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
             //container.RegisterType<ITestRepository, TestRepository>(new HierarchicalLifetimeManager());
             //container.RegisterType<IMenuRepository, MenuRepository>(new HierarchicalLifetimeManager());
             //container.RegisterType<IRoleRepository, RoleRepository>(new HierarchicalLifetimeManager());
@@ -54,8 +55,13 @@ namespace GuoGuoCommunity.API
                 name: "DefaultApi2",
                 routeTemplate: "api/{controller}/{action}/{content}",
                 defaults: new { ApiController = "Message", Action = "Post", content = RouteParameter.Optional }
-
             );
+            config.Routes.MapHttpRoute(
+               name: "DefaultApi3",
+               routeTemplate: "{controller}/{action}",
+               defaults: new { ApiController = "WX" }
+           );
+
             AutoFacBootStrapper.CoreAutoFacInit();
         }
     }
