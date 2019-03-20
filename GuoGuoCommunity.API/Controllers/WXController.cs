@@ -2,6 +2,7 @@
 using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
+using Hangfire;
 using Senparc.Weixin;
 using Senparc.Weixin.MP;
 using Senparc.Weixin.MP.AdvancedAPIs;
@@ -11,6 +12,8 @@ using Senparc.Weixin.WxOpen.AdvancedAPIs.Sns;
 using Senparc.Weixin.WxOpen.Helpers;
 using System;
 using System.Configuration;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -93,7 +96,11 @@ namespace GuoGuoCommunity.API.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "failed:" + signature + "," + CheckSignature.GetSignature(timestamp, nonce, Token) + "。" +
                     "如果你在浏览器中看到这句话，说明此地址可以被作为微信公众账号后台的Url，请注意保持Token一致。");
         }
-
+        private void SendAsync(string message)
+        {
+            //await _testRepository.Add(a());
+            EventLog.WriteEntry("EventSystem", string.Format("这是由Hangfire后台任务发送的消息:{0},时间为:{1}", message, DateTime.Now));
+        }
         /// <summary>
         /// 用户发送消息后，微信平台自动Post一个请求到这里，并等待响应XML。
         /// PS：此方法为简化方法，效果与OldPost一致。
@@ -126,7 +133,10 @@ namespace GuoGuoCommunity.API.Controllers
 
             //v4.2.2之后的版本，可以设置每个人上下文消息储存的最大数量，防止内存占用过多，如果该参数小于等于0，则不限制
             var maxRecordCount = 10;
-
+            var ss = Request.Content.ReadAsStreamAsync().Result;
+            StreamReader reader = new StreamReader(ss, Encoding.GetEncoding("utf-8"));
+            var json = reader.ReadToEnd();
+            BackgroundJob.Enqueue(() => SendAsync(json));
             //自定义MessageHandler，对微信请求的详细判断操作都在这里面。
             var messageHandler = new WXCustomMessageHandler(Request.Content.ReadAsStreamAsync().Result, postModel, maxRecordCount);
 
