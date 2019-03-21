@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    interface IWeiXinUserRepository
+    public interface IWeiXinUserRepository
     {
         Task<WeiXinUser> AddAsync(WeiXinUserDto dto, CancellationToken token = default);
 

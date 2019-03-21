@@ -49,7 +49,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     Name = dto.Name,
                     PhoneNumber = dto.PhoneNumber,
-                    Password = dto.Password,
+                    Password = "123456",
                     RoleId = dto.RoleId,
                     RoleName = role.Name,
                     State = dto.State,
@@ -121,7 +121,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     Name = dto.Name,
                     PhoneNumber = dto.PhoneNumber,
-                    Password = dto.Password,
+                    Password = "123456",
                     RoleId = dto.RoleId,
                     RoleName = role.Name,
                     State = dto.State,
@@ -223,7 +223,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Users.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.JieDaoBan.Value).ToListAsync(token);
+                var list = await db.Users.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.WuYe.Value).ToListAsync(token);
 
                 if (!string.IsNullOrWhiteSpace(dto.State))
                 {
@@ -242,7 +242,7 @@ namespace GuoGuoCommunity.Domain.Service
 
                 if (!string.IsNullOrWhiteSpace(dto.StreetOfficeId))
                 {
-                    list = list.Where(x => x.SmallDistrictId == dto.SmallDistrictId).ToList();
+                    list = list.Where(x => x.StreetOfficeId == dto.StreetOfficeId).ToList();
                 }
 
                 if (!string.IsNullOrWhiteSpace(dto.Name))

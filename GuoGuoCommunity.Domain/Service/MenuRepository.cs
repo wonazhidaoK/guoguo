@@ -17,14 +17,14 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var menu = await db.Menus.Where(x => (x.Kay == dto.Kay || x.Name == dto.Name)&&x.IsDeleted==false).FirstOrDefaultAsync(token);
+                var menu = await db.Menus.Where(x => (x.Key == dto.Key || x.Name == dto.Name)&&x.IsDeleted==false).FirstOrDefaultAsync(token);
                 if (menu != null)
                 {
                     throw new NotImplementedException("该菜单已存在！");
                 }
                var entity= db.Menus.Add(new Menu
                 {
-                    Kay = dto.Kay,
+                    Key = dto.Key,
                     Name = dto.Name,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId
@@ -60,7 +60,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.Menus.ToListAsync(token);
+                return await db.Menus.Where(x => x.IsDeleted == false).ToListAsync(token);
             }
         }
 

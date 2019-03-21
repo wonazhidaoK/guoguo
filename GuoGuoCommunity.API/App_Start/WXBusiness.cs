@@ -1,4 +1,5 @@
 ﻿using GuoGuoCommunity.API.Controllers;
+using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Service;
 using Hangfire;
@@ -6,6 +7,7 @@ using Senparc.NeuChar.Entities;
 using Senparc.Weixin.Exceptions;
 using Senparc.Weixin.MP.AdvancedAPIs;
 using Senparc.Weixin.MP.AppStore;
+using Senparc.Weixin.MP.Containers;
 using Senparc.Weixin.MP.Entities;
 using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.MP.MessageHandlers;
@@ -21,7 +23,7 @@ namespace GuoGuoCommunity.API
     /// </summary>
     public class WXCustomMessageHandler : MessageHandler<WXCustomMessageContext>
     {
-        private WeiXinUserRepository _weiXinUserRepository;
+        private IWeiXinUserRepository _weiXinUserRepository;
         /// <summary>
         /// 构造子
         /// </summary>
@@ -32,6 +34,7 @@ namespace GuoGuoCommunity.API
         public WXCustomMessageHandler(Stream inputStream, PostModel postModel = null, int maxRecordCount = 0, DeveloperInfo developerInfo = null) : base(inputStream, postModel, maxRecordCount, developerInfo)
         {
             _weiXinUserRepository = new WeiXinUserRepository();
+            AccessTokenContainer.Register(WXController.AppId, "d6c479f98ac1a8593157373a5c5973d1");
         }
 
 
@@ -52,36 +55,45 @@ namespace GuoGuoCommunity.API
         // public async override Task<IResponseMessageBase> OnEvent_SubscribeRequestAsync(RequestMessageEvent_Subscribe requestMessage)
         public override IResponseMessageBase OnEvent_SubscribeRequest(RequestMessageEvent_Subscribe requestMessage)
         {
-             //SendAsync(WXController.AppId+ OpenId);
-            //var userInfo = UserApi.Info(WXController.AppId, OpenId);
-            //if (userInfo != null)
-            //{
-           BackgroundJob.Enqueue(() => SendAsync("4444"));
-            //    //添加微信用户
-            //    await _weiXinUserRepository.AddAsync(
-            //    new WeiXinUserDto
-            //    {
-            //        City = userInfo.city,
-            //        Country = userInfo.country,
-            //        Groupid = userInfo.groupid.ToString(),
-            //        Headimgurl = userInfo.headimgurl,
-            //        Language = userInfo.language,
-            //        Nickname = userInfo.nickname,
-            //        Openid = userInfo.openid,
-            //        Province = userInfo.province,
-            //        //  Qr_scene=userInfo?.qr_scene,
-            //        // Qr_scene_str
-            //        Remark = userInfo.remark,
-            //        Sex = userInfo.sex,
-            //        Subscribe = userInfo.subscribe,
-            //        Subscribe_scene = userInfo.subscribe_scene,
-            //        Subscribe_time = userInfo.subscribe_time.ToString(),
-            //        Tagid_list = userInfo.tagid_list.ToString(),
-            //        Unionid = userInfo.unionid
-            //    });
-            //}
+            BackgroundJob.Enqueue(() => SendAsync(WXController.AppId + OpenId));
+           
+            try
+            {
+                var userInfo = UserApi.Info(WXController.AppId, OpenId);
+                if (userInfo != null)
+                {
+                    //BackgroundJob.Enqueue(() => SendAsync(WXController.AppId + OpenId));
+                    //添加微信用户
+                    _weiXinUserRepository.AddAsync(
+                   new WeiXinUserDto
+                   {
+                       City = userInfo.city,
+                       Country = userInfo.country,
+                       Groupid = userInfo.groupid.ToString(),
+                       Headimgurl = userInfo.headimgurl,
+                       Language = userInfo.language,
+                       Nickname = userInfo.nickname,
+                       Openid = userInfo.openid,
+                       Province = userInfo.province,
+                    //  Qr_scene=userInfo?.qr_scene,
+                    // Qr_scene_str
+                    Remark = userInfo.remark,
+                       Sex = userInfo.sex,
+                       Subscribe = userInfo.subscribe,
+                       Subscribe_scene = userInfo.subscribe_scene,
+                       Subscribe_time = userInfo.subscribe_time.ToString(),
+                       Tagid_list = userInfo.tagid_list.ToString(),
+                       Unionid = userInfo.unionid
+                   });
+                }
+                BackgroundJob.Enqueue(() => SendAsync("999"));
 
-            return null;
+                return null;
+            }
+            catch (Exception e)
+            {
+                throw new NotImplementedException(e.Message);
+            }
         }
 
         /// <summary>
@@ -322,7 +334,7 @@ namespace GuoGuoCommunity.API
             //TODO 业务逻辑
 
             //模板消息
-            WXController.SendEmployeeRegisterRemind(1, OpenId, "sss");
+            //WXController.SendEmployeeRegisterRemind(1, OpenId, "sss");
 
         }
 

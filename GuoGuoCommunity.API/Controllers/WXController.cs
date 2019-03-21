@@ -86,6 +86,7 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("WeiXin")]
         public HttpResponseMessage Get(string signature, string timestamp, string nonce,string echostr)
         {
+            BackgroundJob.Enqueue(() => SendAsync("888"));
             if (CheckSignature.Check(signature, timestamp, nonce, Token))
             {
                 var result = new StringContent(echostr, UTF8Encoding.UTF8, "application/x-www-form-urlencoded");
@@ -96,11 +97,13 @@ namespace GuoGuoCommunity.API.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "failed:" + signature + "," + CheckSignature.GetSignature(timestamp, nonce, Token) + "。" +
                     "如果你在浏览器中看到这句话，说明此地址可以被作为微信公众账号后台的Url，请注意保持Token一致。");
         }
-        private void SendAsync(string message)
+
+        public async Task SendAsync(string message)
         {
             //await _testRepository.Add(a());
             EventLog.WriteEntry("EventSystem", string.Format("这是由Hangfire后台任务发送的消息:{0},时间为:{1}", message, DateTime.Now));
         }
+
         /// <summary>
         /// 用户发送消息后，微信平台自动Post一个请求到这里，并等待响应XML。
         /// PS：此方法为简化方法，效果与OldPost一致。
@@ -111,6 +114,7 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("WeiXin")]
         public HttpResponseMessage Post()
         {
+           // BackgroundJob.Enqueue(() => SendAsync("888"));
             var requestQueryPairs = Request.GetQueryNameValuePairs().ToDictionary(k => k.Key, v => v.Value);
             if (requestQueryPairs.Count == 0
                 || !requestQueryPairs.ContainsKey("timestamp")
@@ -130,13 +134,13 @@ namespace GuoGuoCommunity.API.Controllers
             postModel.Token = Token;
             postModel.EncodingAESKey = EncodingAESKey;//根据自己后台的设置保持一致
             postModel.AppId = AppId;//根据自己后台的设置保持一致
-
+            //BackgroundJob.Enqueue(() => SendAsync("888"));
             //v4.2.2之后的版本，可以设置每个人上下文消息储存的最大数量，防止内存占用过多，如果该参数小于等于0，则不限制
             var maxRecordCount = 10;
             var ss = Request.Content.ReadAsStreamAsync().Result;
             StreamReader reader = new StreamReader(ss, Encoding.GetEncoding("utf-8"));
             var json = reader.ReadToEnd();
-            BackgroundJob.Enqueue(() => SendAsync(json));
+          
             //自定义MessageHandler，对微信请求的详细判断操作都在这里面。
             var messageHandler = new WXCustomMessageHandler(Request.Content.ReadAsStreamAsync().Result, postModel, maxRecordCount);
 
@@ -179,15 +183,15 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="employeeID">员工ID</param>
         /// <param name="openID">OpenID</param>
         /// <param name="wxNickName">微信昵称</param>
-        public static void SendEmployeeRegisterRemind(int employeeID, string openID, string wxNickName)
+        public   void SendEmployeeRegisterRemind( )
         {
             //更换成你需要的模板消息ID
-            string templateId = ConfigurationManager.AppSettings["WXTemplate_EmployeeRegisterRemind"].ToString();
+            string templateId = "eTflBDVcaZzGtjEbXvHzkQq--Rfnc12-VT4iNMjjlf0";//ConfigurationManager.AppSettings["WXTemplate_EmployeeRegisterRemind"].ToString();
             //更换成对应的模板消息格式
             var templateData = new
             {
                 first = new TemplateDataItem("门店员工注册通知"),
-                account = new TemplateDataItem(wxNickName),
+              //  account = new TemplateDataItem(wxNickName),
                 time = new TemplateDataItem(DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
                 type = new TemplateDataItem("系统通知"),
                 remark = new TemplateDataItem(">>点击完成注册<<", "#FF0000")
@@ -195,11 +199,11 @@ namespace GuoGuoCommunity.API.Controllers
 
             var miniProgram = new TempleteModel_MiniProgram()
             {
-                appid = ZhiShiHuLian_WxOpenAppId,
-                pagepath = "pages/editmyinfo/editmyinfo?id=" + employeeID
+                appid = "wx7f36e41455caec1b",//ZhiShiHuLian_WxOpenAppId,
+                //pagepath = "pages/editmyinfo/editmyinfo?id=" + employeeID
             };
 
-            TemplateApi.SendTemplateMessage(AppId, openID, templateId, null, templateData, miniProgram);
+            //TemplateApi.SendTemplateMessage(AppId, openID, templateId, null, templateData, miniProgram);
         }
 
 

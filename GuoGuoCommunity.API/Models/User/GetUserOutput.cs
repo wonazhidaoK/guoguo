@@ -92,5 +92,10 @@
         /// 手机号
         /// </summary>
         public string PhoneNumber { get; set; }
+
+        /// <summary>
+        /// 密码
+        /// </summary>
+        public string Password { get; set; }
     }
 }

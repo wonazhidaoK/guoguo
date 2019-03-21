@@ -97,7 +97,7 @@ namespace GuoGuoCommunity.API.Controllers
                     foreach (var item in role_Menus)
                     {
                         var menu = await _menuRepository.GetByIdAsync(item.MenuId, cancelToken);
-                        list.Add(menu.Kay);
+                        list.Add(menu.Key);
                     }
 
                 }
@@ -150,7 +150,7 @@ namespace GuoGuoCommunity.API.Controllers
                 foreach (var item in role_Menus)
                 {
                     var menu = await _menuRepository.GetByIdAsync(item.MenuId, cancelToken);
-                    list.Add(menu.Kay);
+                    list.Add(menu.Key);
                 }
 
             }
@@ -192,7 +192,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     Name = input.Name,
                     PhoneNumber = input.PhoneNumber,
-                    Password = input.Password,
+                    //Password = input.Password,
                     State = input.State,
                     City = input.City,
                     Region = input.Region,
@@ -259,7 +259,8 @@ namespace GuoGuoCommunity.API.Controllers
                         RoleName = x.RoleName,
                         State = x.State,
                         StreetOfficeId = x.StreetOfficeId,
-                        StreetOfficeName = x.StreetOfficeName
+                        StreetOfficeName = x.StreetOfficeName,
+                        Password = x.Password
                     }).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
@@ -368,7 +369,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("user/GetAllStreetOfficeUser")]
+        [Route("user/GetAllPropertyUser")]
         public async Task<ApiResult<GetAllPropertyUserOutput>> GetAllPropertyUser([FromUri]GetAllPropertyUserInput input, CancellationToken cancelToken)
         {
             try
@@ -412,7 +413,8 @@ namespace GuoGuoCommunity.API.Controllers
                         RoleName = x.RoleName,
                         State = x.State,
                         StreetOfficeId = x.StreetOfficeId,
-                        StreetOfficeName = x.StreetOfficeName
+                        StreetOfficeName = x.StreetOfficeName,
+                        Password = x.Password
                     }).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
@@ -524,7 +526,7 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(input.Kay))
+                if (string.IsNullOrWhiteSpace(input.Key))
                 {
                     throw new NotImplementedException("菜单值信息为空！");
                 }
@@ -549,7 +551,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     Id = (await _menuRepository.AddAsync(new MenuDto
                     {
-                        Kay = input.Kay,
+                        Key = input.Key,
                         Name = input.Name,
                         OperationTime = DateTimeOffset.Now,
                         OperationUserId = user.Id.ToString()
@@ -575,7 +577,7 @@ namespace GuoGuoCommunity.API.Controllers
                 x => new GetAllMenuOutput
                 {
                     Id = x.Id.ToString(),
-                    Kay = x.Kay,
+                    Key = x.Key,
                     Name = x.Name
                 }).ToList();
             return new ApiResult<List<GetAllMenuOutput>>
@@ -694,7 +696,7 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("role/getAll")]
         public async Task<ApiResult<List<GetAllRoleOutput>>> GetAllRole([FromUri]GetAllRoleInput input, CancellationToken cancelToken)
         {
-            var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = input.DepartmentValue, Name = input.Name }, cancelToken)).Select(
+            var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = input?.DepartmentValue, Name = input?.Name }, cancelToken)).Select(
                  x => new GetAllRoleOutput
                  {
                      Id = x.Id.ToString(),
@@ -823,7 +825,7 @@ namespace GuoGuoCommunity.API.Controllers
                         RoleId = item.RolesId,
                         MenuId = item.MenuId,
                         IsDisplayed = item.IsDisplayed,
-                        Key = menu.Kay,
+                        Key = menu.Key,
                         Name = menu.Name
                     });
                 }

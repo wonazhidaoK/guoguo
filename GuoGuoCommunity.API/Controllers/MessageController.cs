@@ -37,7 +37,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="message"></param>
         public  async Task SendAsync(string message)
         {
-           await _testRepository.Add(a());
+          // await _testRepository.Add(a());
             EventLog.WriteEntry("EventSystem", string.Format("这是由Hangfire后台任务发送的消息:{0},时间为:{1}", message, DateTime.Now));
         }
 

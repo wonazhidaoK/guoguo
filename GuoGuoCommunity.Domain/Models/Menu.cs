@@ -22,7 +22,7 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 菜单值
         /// </summary>
-        public string Kay { get; set; }
+        public string Key { get; set; }
 
         public string CreateOperationUserId { get; set; }
 
