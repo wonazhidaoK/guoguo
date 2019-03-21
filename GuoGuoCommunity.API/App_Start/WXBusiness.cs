@@ -52,41 +52,44 @@ namespace GuoGuoCommunity.API
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <returns></returns>
-        // public async override Task<IResponseMessageBase> OnEvent_SubscribeRequestAsync(RequestMessageEvent_Subscribe requestMessage)
-        public override IResponseMessageBase OnEvent_SubscribeRequest(RequestMessageEvent_Subscribe requestMessage)
+         public async override Task<IResponseMessageBase> OnEvent_SubscribeRequestAsync(RequestMessageEvent_Subscribe requestMessage)
+        //public override IResponseMessageBase OnEvent_SubscribeRequest(RequestMessageEvent_Subscribe requestMessage)
         {
-            BackgroundJob.Enqueue(() => SendAsync(WXController.AppId + OpenId));
-           
+            // BackgroundJob.Enqueue(() => SendAsync(WXController.AppId + OpenId));
+
             try
             {
+                // var accessToken = AccessTokenContainer.GetAccessToken(WXController.AppId);
                 var userInfo = UserApi.Info(WXController.AppId, OpenId);
+               // BackgroundJob.Enqueue(() => SendAsync(userInfo.city));
                 if (userInfo != null)
                 {
                     //BackgroundJob.Enqueue(() => SendAsync(WXController.AppId + OpenId));
                     //添加微信用户
-                    _weiXinUserRepository.AddAsync(
-                   new WeiXinUserDto
-                   {
-                       City = userInfo.city,
-                       Country = userInfo.country,
-                       Groupid = userInfo.groupid.ToString(),
-                       Headimgurl = userInfo.headimgurl,
-                       Language = userInfo.language,
-                       Nickname = userInfo.nickname,
-                       Openid = userInfo.openid,
-                       Province = userInfo.province,
-                    //  Qr_scene=userInfo?.qr_scene,
-                    // Qr_scene_str
-                    Remark = userInfo.remark,
-                       Sex = userInfo.sex,
-                       Subscribe = userInfo.subscribe,
-                       Subscribe_scene = userInfo.subscribe_scene,
-                       Subscribe_time = userInfo.subscribe_time.ToString(),
-                       Tagid_list = userInfo.tagid_list.ToString(),
-                       Unionid = userInfo.unionid
-                   });
+                 var a= await  _weiXinUserRepository.AddAsync(
+                        new WeiXinUserDto
+                        {
+                            City = userInfo.city,
+                            Country = userInfo.country,
+                            Groupid = userInfo.groupid.ToString(),
+                            Headimgurl = userInfo.headimgurl,
+                            Language = userInfo.language,
+                            Nickname = userInfo.nickname,
+                            Openid = userInfo.openid,
+                            Province = userInfo.province,
+                            //  Qr_scene=userInfo?.qr_scene,
+                            // Qr_scene_str
+                            Remark = userInfo.remark,
+                            Sex = userInfo.sex,
+                            Subscribe = userInfo.subscribe,
+                            Subscribe_scene = userInfo.subscribe_scene,
+                            Subscribe_time = userInfo.subscribe_time.ToString(),
+                            Tagid_list = userInfo.tagid_list.ToString(),
+                            Unionid = userInfo.unionid,
+                            OperationTime = DateTimeOffset.Now
+                        });
+                BackgroundJob.Enqueue(() => SendAsync(a.City));
                 }
-                BackgroundJob.Enqueue(() => SendAsync("999"));
 
                 return null;
             }

@@ -86,6 +86,9 @@ namespace GuoGuoCommunity.API.Controllers
                         Name = user.Name,
                         avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
                         token = token.access_token,
+                        City = user.City,
+                        Region = user.Region,
+                        State = user.State
                         //refresh_token=token.refresh_token
                     });
                 }
@@ -108,6 +111,9 @@ namespace GuoGuoCommunity.API.Controllers
                         Name = user.Name,
                         avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
                         token = token.access_token,
+                        City = user.City,
+                        Region = user.Region,
+                        State = user.State
                         // refresh_token = token.refresh_token
                     });
             }

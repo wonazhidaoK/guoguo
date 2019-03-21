@@ -167,7 +167,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var user = await db.Users.Where(x => x.Name == dto.Name).FirstOrDefaultAsync(token);
+                var user = await db.Users.Where(x => (x.Name == dto.Name || x.PhoneNumber == dto.Name) && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (user == null)
                 {
                     throw new NotImplementedException("该用户不存在！");

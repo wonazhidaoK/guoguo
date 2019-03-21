@@ -19,6 +19,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -112,7 +113,7 @@ namespace GuoGuoCommunity.API.Controllers
         [HttpPost]
         //[AllowAnonymous]
         [Route("WeiXin")]
-        public HttpResponseMessage Post()
+        public async Task<HttpResponseMessage> Post(CancellationToken cancelToken)
         {
            // BackgroundJob.Enqueue(() => SendAsync("888"));
             var requestQueryPairs = Request.GetQueryNameValuePairs().ToDictionary(k => k.Key, v => v.Value);
@@ -134,13 +135,13 @@ namespace GuoGuoCommunity.API.Controllers
             postModel.Token = Token;
             postModel.EncodingAESKey = EncodingAESKey;//根据自己后台的设置保持一致
             postModel.AppId = AppId;//根据自己后台的设置保持一致
-            //BackgroundJob.Enqueue(() => SendAsync("888"));
+           
             //v4.2.2之后的版本，可以设置每个人上下文消息储存的最大数量，防止内存占用过多，如果该参数小于等于0，则不限制
             var maxRecordCount = 10;
             var ss = Request.Content.ReadAsStreamAsync().Result;
             StreamReader reader = new StreamReader(ss, Encoding.GetEncoding("utf-8"));
             var json = reader.ReadToEnd();
-          
+            BackgroundJob.Enqueue(() => SendAsync(json));
             //自定义MessageHandler，对微信请求的详细判断操作都在这里面。
             var messageHandler = new WXCustomMessageHandler(Request.Content.ReadAsStreamAsync().Result, postModel, maxRecordCount);
 
@@ -151,7 +152,7 @@ namespace GuoGuoCommunity.API.Controllers
                 messageHandler.OmitRepeatedMessage = true;
 
                 //执行微信处理过程
-                messageHandler.Execute();
+               await messageHandler.ExecuteAsync(cancelToken);
 
                 var resMessage = Request.CreateResponse(HttpStatusCode.OK);
 
