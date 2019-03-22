@@ -9,12 +9,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 公告信息管理
     /// </summary>
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class AnnouncementController : ApiController
     {
         private readonly IAnnouncementRepository _announcementRepository;
