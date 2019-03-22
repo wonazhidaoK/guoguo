@@ -145,7 +145,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     Roles = new string[1] { "authorityMax" },
                     Name = user.Name,
-                    avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif"
+                    avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
+                    City = user.City,
+                    Region = user.Region,
+                    State = user.State
                 });
             }
 
@@ -165,7 +168,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     Roles = list.ToArray(),
                     Name = user.Name,
-                    avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif"
+                    avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
+                    City = user.City,
+                    Region = user.Region,
+                    State = user.State
                 });
         }
 
@@ -389,7 +395,7 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-                var data = await _userRepository.GetAllStreetOfficeAsync(new UserDto
+                var data = await _userRepository.GetAllPropertyAsync(new UserDto
                 {
                     Name = input?.Name,
                     State = input.State,

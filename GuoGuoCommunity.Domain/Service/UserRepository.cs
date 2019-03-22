@@ -223,7 +223,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Users.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.WuYe.Value).ToListAsync(token);
+                var list = await db.Users.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.JieDaoBan.Value).ToListAsync(token);
 
                 if (!string.IsNullOrWhiteSpace(dto.State))
                 {

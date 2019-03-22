@@ -216,6 +216,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="App_Start\WXBusiness.cs" />
     <Compile Include="App_Start\WXCustomMessageContext.cs" />
+    <Compile Include="Controllers\AnnouncementController.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\BuildingUnitController.cs" />
     <Compile Include="Controllers\CityController.cs" />
@@ -242,6 +243,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Announcement\AddPropertyAnnouncementInput.cs" />
+    <Compile Include="Models\Announcement\AddPropertyAnnouncementOutput.cs" />
+    <Compile Include="Models\Announcement\AddStreetOfficeAnnouncementInput.cs" />
+    <Compile Include="Models\Announcement\AddStreetOfficeAnnouncementOutput.cs" />
+    <Compile Include="Models\Announcement\AddVipOwnerAnnouncementInput.cs" />
+    <Compile Include="Models\Announcement\AddVipOwnerAnnouncementOutput.cs" />
+    <Compile Include="Models\Announcement\GetAllAnnouncementInput.cs" />
+    <Compile Include="Models\Announcement\GetAllAnnouncementOutput.cs" />
+    <Compile Include="Models\Announcement\GetVipOwnerAnnouncementOutput.cs" />
     <Compile Include="Models\BuildingUnit\AddBuildingUnitInput.cs" />
     <Compile Include="Models\BuildingUnit\AddBuildingUnitOutput.cs" />
     <Compile Include="Models\BuildingUnit\GetAllBuildingUnitInput.cs" />
@@ -453,6 +463,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Hangfire\" />
+    <Folder Include="Upload\Announcement\" />
     <Folder Include="Upload\OwnerCertification\" />
     <Folder Include="Upload\VipOwnerCertification\" />
   </ItemGroup>

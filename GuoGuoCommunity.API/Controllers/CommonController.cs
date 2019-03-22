@@ -45,5 +45,11 @@ namespace GuoGuoCommunity.API.Controllers
         [HttpGet]
         [Route("ownerCertificationAnnexType/getAll")]
         public ApiResult<List<OwnerCertificationAnnexType>> GetOwnerCertificationAnnexTypeAll() => new ApiResult<List<OwnerCertificationAnnexType>>(APIResultCode.Success, OwnerCertificationAnnexType.GetAll().ToList());
+
+        //TODO 当前用户有效认证业主认证记录
+
+        //TODO 当前用户有效业主认证的小区记录
+
+        //TODO 当前用户有效高级认证记录
     }
 }

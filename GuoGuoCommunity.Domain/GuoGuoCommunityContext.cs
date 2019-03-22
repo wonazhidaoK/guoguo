@@ -100,7 +100,7 @@ namespace GuoGuoCommunity.Domain
         /// <summary>
         /// 业委会成员申请表
         /// </summary>
-        public DbSet<VipOwnerApplicationRecord> VipOwnerApplicationRecords{ get; set; }
+        public DbSet<VipOwnerApplicationRecord> VipOwnerApplicationRecords { get; set; }
 
         /// <summary>
         /// 业委会认证附件表
@@ -121,5 +121,15 @@ namespace GuoGuoCommunity.Domain
         /// 业主认证附件表
         /// </summary>
         public DbSet<OwnerCertificationAnnex> OwnerCertificationAnnices { get; set; }
+
+        /// <summary>
+        /// 公告表
+        /// </summary>
+        public DbSet<Announcement> Announcements { get; set; }
+
+        /// <summary>
+        /// 公告附件表
+        /// </summary>
+        public DbSet<AnnouncementAnnex> AnnouncementAnnices { get; set; }
     }
 }

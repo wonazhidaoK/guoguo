@@ -1,21 +1,10 @@
-﻿using GuoGuoCommunity.Domain.Abstractions.Models;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
 
-namespace GuoGuoCommunity.Domain.Models
+namespace GuoGuoCommunity.Domain.Dto
 {
-    /// <summary>
-    /// 公告表
-    /// </summary>
-    public class Announcement : IDeleted, ILastOperation, ICreateOperation
+    public class AnnouncementDto
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// 标题
@@ -81,16 +70,14 @@ namespace GuoGuoCommunity.Domain.Models
 
         #endregion
 
-        public string CreateOperationUserId { get; set; }
+        /// <summary>
+        /// 操作人Id
+        /// </summary>
+        public string OperationUserId { get; set; }
 
-        public DateTimeOffset? CreateOperationTime { get; set; }
-
-        public string LastOperationUserId { get; set; }
-
-        public DateTimeOffset? LastOperationTime { get; set; }
-
-        public bool IsDeleted { get; set; }
-
-        public DateTimeOffset? DeletedTime { get; set; }
+        /// <summary>
+        /// 操作时间
+        /// </summary>
+        public DateTimeOffset? OperationTime { get; set; }
     }
 }

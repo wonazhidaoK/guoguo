@@ -65,7 +65,7 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-                
+
                 #region Token
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
@@ -92,6 +92,9 @@ namespace GuoGuoCommunity.API.Controllers
                         break;
                     case "VipOwner":
                         typeName = "VipOwnerCertification";
+                        break;
+                    case "Announcement":
+                        typeName = "Announcement";
                         break;
                     default:
                         break;
@@ -134,7 +137,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="file"></param>
         /// <param name="userId"></param>
         /// <param name="cancelToken"></param>
-        private async Task<UploadOutput> AddUpload(string directory, string file, string userId, CancellationToken cancelToken= default)
+        private async Task<UploadOutput> AddUpload(string directory, string file, string userId, CancellationToken cancelToken = default)
         {
             var upload = await _uploadRepository.AddAsync(
                   new UploadDto
@@ -176,7 +179,4 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
     }
-
-
-
 }

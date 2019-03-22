@@ -87,6 +87,8 @@
     <Compile Include="Abstractions\Event\HandlesAsynchronouslyAttribute.cs" />
     <Compile Include="Abstractions\Event\IEvent.cs" />
     <Compile Include="Abstractions\Event\IEventHandler.cs" />
+    <Compile Include="Abstractions\IAnnouncementAnnexRepository.cs" />
+    <Compile Include="Abstractions\IAnnouncementRepository.cs" />
     <Compile Include="Abstractions\IBuildingRepository.cs" />
     <Compile Include="Abstractions\IBuildingUnitRepository.cs" />
     <Compile Include="Abstractions\ICityRepository.cs" />
@@ -114,6 +116,8 @@
     <Compile Include="Abstractions\Models\ICreateOperation.cs" />
     <Compile Include="Abstractions\Models\IDeleted.cs" />
     <Compile Include="Abstractions\Models\ILastOperation.cs" />
+    <Compile Include="Dto\AnnouncementAnnexDto.cs" />
+    <Compile Include="Dto\AnnouncementDto.cs" />
     <Compile Include="Dto\BuildingDto.cs" />
     <Compile Include="Dto\BuildingUnitDto.cs" />
     <Compile Include="Dto\CommunityDto.cs" />
@@ -215,6 +219,14 @@
     <Compile Include="Migrations\201903210301308_Key.Designer.cs">
       <DependentUpon>201903210301308_Key.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903220553594_Announcement.cs" />
+    <Compile Include="Migrations\201903220553594_Announcement.Designer.cs">
+      <DependentUpon>201903220553594_Announcement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903220701083_Announcement-update.cs" />
+    <Compile Include="Migrations\201903220701083_Announcement-update.Designer.cs">
+      <DependentUpon>201903220701083_Announcement-update.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AnnouncementAnnex.cs" />
@@ -245,6 +257,8 @@
     <Compile Include="Models\VipOwnerCertificationRecord.cs" />
     <Compile Include="Models\VipOwnerStructure.cs" />
     <Compile Include="Models\WeiXinUser.cs" />
+    <Compile Include="Service\AnnouncementAnnexRepository.cs" />
+    <Compile Include="Service\AnnouncementRepository.cs" />
     <Compile Include="Token\Payload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\BuildingRepository.cs" />
@@ -332,6 +346,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903210301308_Key.resx">
       <DependentUpon>201903210301308_Key.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903220553594_Announcement.resx">
+      <DependentUpon>201903220553594_Announcement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903220701083_Announcement-update.resx">
+      <DependentUpon>201903220701083_Announcement-update.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

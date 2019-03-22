@@ -19,12 +19,24 @@ namespace GuoGuoCommunity.Domain.Models.Enum
 
         public string Value { get; set; }
 
+        /// <summary>
+        /// 业主
+        /// </summary>
         public static Department YeZhu { get; set; }
 
+        /// <summary>
+        /// 业主委员会
+        /// </summary>
         public static Department YeZhuWeiYuanHui { get; set; }
 
+        /// <summary>
+        /// 物业
+        /// </summary>
         public static Department WuYe { get; set; }
 
+        /// <summary>
+        /// 街道办
+        /// </summary>
         public static Department JieDaoBan { get; set; }
 
         public static IEnumerable<Department> GetAll() => new List<Department>() { YeZhu, YeZhuWeiYuanHui, WuYe, JieDaoBan };

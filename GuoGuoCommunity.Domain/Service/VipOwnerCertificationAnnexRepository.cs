@@ -52,6 +52,11 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public Task<string> GetUrlAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task UpdateAsync(VipOwnerCertificationAnnexDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
