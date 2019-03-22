@@ -39,9 +39,25 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public Task DeleteAsync(RoleMenuDto dto, CancellationToken token = default)
+        public async Task DeleteAsync(RoleMenuDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("菜单权限信息不存在！");
+                }
+                var roleMenu = await db.Role_Menus.Where(x => x.Id == uid && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (roleMenu == null)
+                {
+                    throw new NotImplementedException("该菜单权限信息不存在！");
+                }
+                roleMenu.LastOperationTime = dto.OperationTime;
+                roleMenu.LastOperationUserId = dto.OperationUserId;
+                roleMenu.DeletedTime = dto.OperationTime;
+                roleMenu.IsDeleted = true;
+                await db.SaveChangesAsync(token);
+            }
         }
 
         public async Task<List<Role_Menu>> GetByRoleIdAsync(string roleId, CancellationToken token = default)

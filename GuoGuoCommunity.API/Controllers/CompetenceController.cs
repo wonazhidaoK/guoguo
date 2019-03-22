@@ -815,6 +815,48 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
+        /// 删除权限信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("roleMenu/delete")]
+        public async Task<ApiResult> DeleteRoleMenu([FromUri]string id, CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+                }
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    throw new NotImplementedException("菜单权限Id信息为空！");
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+                }
+                await _roleMenuRepository.DeleteAsync(new RoleMenuDto
+                {
+                    Id = id,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+
+                return new ApiResult();
+            }
+            catch (Exception e)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+            }
+        }
+
+        /// <summary>
         /// 获取角色菜单权限
         /// </summary>
         /// <param name="input"></param>
