@@ -34,7 +34,7 @@ namespace GuoGuoCommunity.API
         public WXCustomMessageHandler(Stream inputStream, PostModel postModel = null, int maxRecordCount = 0, DeveloperInfo developerInfo = null) : base(inputStream, postModel, maxRecordCount, developerInfo)
         {
             _weiXinUserRepository = new WeiXinUserRepository();
-            AccessTokenContainer.Register(WXController.AppId, "d6c479f98ac1a8593157373a5c5973d1");
+           
         }
 
 
