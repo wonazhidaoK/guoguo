@@ -277,18 +277,18 @@ namespace GuoGuoCommunity.API.Controllers
                     new UserDto
                     {
                         Id = user.Id.ToString(),
-                        RefreshToken = token.refresh_token
+                        RefreshToken = token.Refresh_token
                     });
 
                 if (user != null)
                 {
                     //to Token
-                    return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput() { OpenId = user.OpenId, Token = token.access_token }, APIResultMessage.Success);
+                    return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput() { OpenId = user.OpenId, Token = token.Access_token }, APIResultMessage.Success);
                 }
                 else
                 {
                     user = await _userRepository.AddWeiXinAsync(new UserDto() { OpenId = openIdResult.openid, UnionId = openIdResult.unionid });
-                    return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput() { OpenId = user.OpenId, Token = token.access_token }, APIResultMessage.Success);
+                    return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput() { OpenId = user.OpenId, Token = token.Access_token }, APIResultMessage.Success);
                 }
             }
             catch (Exception e)

@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain
 {
     public static class TokenCrypto
     {
-        //產生 HMACSHA256 雜湊
+        //产生 HMACSHA256 杂凑
         public static string ComputeHMACSHA256(string data, string key)
         {
             var keyBytes = Encoding.UTF8.GetBytes(key);

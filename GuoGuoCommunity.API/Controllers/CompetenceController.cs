@@ -75,7 +75,7 @@ namespace GuoGuoCommunity.API.Controllers
                     new UserDto
                     {
                         Id = user.Id.ToString(),
-                        RefreshToken = token.refresh_token
+                        RefreshToken = token.Refresh_token
                     });
 
                 if (user.Name == "admin")
@@ -85,7 +85,7 @@ namespace GuoGuoCommunity.API.Controllers
                         Roles = new string[1] { "authorityMax" },
                         Name = user.Name,
                         avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
-                        token = token.access_token,
+                        token = token.Access_token,
                         City = user.City,
                         Region = user.Region,
                         State = user.State
@@ -110,7 +110,7 @@ namespace GuoGuoCommunity.API.Controllers
                         Roles = list.ToArray(),
                         Name = user.Name,
                         avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
-                        token = token.access_token,
+                        token = token.Access_token,
                         City = user.City,
                         Region = user.Region,
                         State = user.State

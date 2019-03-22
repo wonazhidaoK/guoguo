@@ -49,7 +49,7 @@ namespace GuoGuoCommunity.API.Controllers
             //产生 Token
             var token = _tokenManager.Create(user);
             //需存入数据库
-            refreshTokens.Add(token.refresh_token, user);
+            refreshTokens.Add(token.Refresh_token, user);
             return token;
         }
 
@@ -74,7 +74,7 @@ namespace GuoGuoCommunity.API.Controllers
             //删除旧的
             refreshTokens.Remove(refreshToken);
             //存入新的
-            refreshTokens.Add(token.refresh_token, user);
+            refreshTokens.Add(token.Refresh_token, user);
             return token;
         }
 

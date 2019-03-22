@@ -3,12 +3,12 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GuoGuoCommunity.Domain
+namespace GuoGuoCommunity.Domain.Models
 {
     /// <summary>
-    /// 业主申请附件
+    /// 公告表
     /// </summary>
-    public class VipOwnerApplicationAnnex : ICreateOperation
+    public class Announcement : IDeleted, ILastOperation, ICreateOperation
     {
         /// <summary>
         /// 
@@ -18,26 +18,35 @@ namespace GuoGuoCommunity.Domain
         public Guid Id { get; set; }
 
         /// <summary>
-        /// 申请Id
+        /// 标题
         /// </summary>
-        public string RecordId { get; set; }
+        public string Title { get; set; }
 
         /// <summary>
-        /// 申请条件Id
+        /// 摘要
         /// </summary>
-        public string ConditionId { get; set; }
+        public string Summary { get; set; }
 
         /// <summary>
-        /// 附件Id
+        /// 内容
         /// </summary>
-        public string AnnexId { get; set; }
+        public string Content { get; set; }
 
         /// <summary>
-        /// 附件内容
+        /// 小区范围
         /// </summary>
-        public string AnnexContent { get; set; }
+        public string SmallDistrictArray { get; set; }
 
         public string CreateOperationUserId { get; set; }
+
         public DateTimeOffset? CreateOperationTime { get; set; }
+
+        public string LastOperationUserId { get; set; }
+
+        public DateTimeOffset? LastOperationTime { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        public DateTimeOffset? DeletedTime { get; set; }
     }
 }

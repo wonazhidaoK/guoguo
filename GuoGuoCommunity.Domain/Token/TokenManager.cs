@@ -9,8 +9,6 @@ namespace GuoGuoCommunity.Domain
         //密钥从数据库获取
         public string key = "AAAAAAAAAA-BBBBBBBBBB-CCCCCCCCCC-DDDDDDDDDD-EEEEEEEEEE-FFFFFFFFFF-GGGGGGGGGG";
 
-
-
         //产生 Token
         public Token Create(User user)
         {
@@ -19,9 +17,9 @@ namespace GuoGuoCommunity.Domain
             //稍微修改 Payload 将使用着咨询和过期时间翻开
             var payload = new Payload
             {
-                info = user,
+                Info = user,
                 //Unix 时间戳
-                exp = Convert.ToInt32((DateTime.Now.AddSeconds(exp) - new DateTime(1970, 1, 1)).TotalSeconds)
+                Exp = Convert.ToInt32((DateTime.Now.AddSeconds(exp) - new DateTime(1970, 1, 1)).TotalSeconds)
             };
 
             var json = JsonConvert.SerializeObject(payload);
@@ -36,11 +34,11 @@ namespace GuoGuoCommunity.Domain
 
             return new Token
             {
-                //Token 為 iv + encrypt + signature，並用 . 串聯
-                access_token = iv + "." + encrypt + "." + signature,
-                //Refresh Token 使用 Guid 產生
-                refresh_token = Guid.NewGuid().ToString().Replace("-", ""),
-                expires_in = exp,
+                //Token 为 iv + encrypt + signature，并用 . 串联
+                Access_token = iv + "." + encrypt + "." + signature,
+                //Refresh Token 使用 Guid 产生
+                Refresh_token = Guid.NewGuid().ToString().Replace("-", ""),
+                Expires_in = exp,
             };
         }
 
@@ -59,19 +57,18 @@ namespace GuoGuoCommunity.Domain
             }
 
             //使用 AES 解密 Payload
-            var base64 = TokenCrypto
-                .AESDecrypt(encrypt, key.Substring(0, 16), iv);
+            var base64 = TokenCrypto.AESDecrypt(encrypt, key.Substring(0, 16), iv);
             var json = Encoding.UTF8.GetString(Convert.FromBase64String(base64));
             var payload = JsonConvert.DeserializeObject<Payload>(json);
 
             //检查是否过期
-            if (payload.exp < Convert.ToInt32(
+            if (payload.Exp < Convert.ToInt32(
                 (DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds))
             {
                 return null;
             }
 
-            return payload.info;
+            return payload.Info;
         }
     }
 }

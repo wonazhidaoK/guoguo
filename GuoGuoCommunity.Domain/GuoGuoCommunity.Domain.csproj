@@ -216,6 +216,8 @@
       <DependentUpon>201903210301308_Key.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Announcement.cs" />
+    <Compile Include="Models\AnnouncementAnnex.cs" />
     <Compile Include="Models\Enum\OwnerCertificationAnnexType.cs" />
     <Compile Include="Models\OwnerCertificationAnnex.cs" />
     <Compile Include="Models\Upload.cs" />
@@ -243,7 +245,7 @@
     <Compile Include="Models\VipOwnerCertificationRecord.cs" />
     <Compile Include="Models\VipOwnerStructure.cs" />
     <Compile Include="Models\WeiXinUser.cs" />
-    <Compile Include="Payload.cs" />
+    <Compile Include="Token\Payload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\BuildingRepository.cs" />
     <Compile Include="Service\BuildingUnitRepository.cs" />
@@ -269,10 +271,9 @@
     <Compile Include="Service\VipOwnerRepository.cs" />
     <Compile Include="Service\VipOwnerStructureRepository.cs" />
     <Compile Include="Service\WeiXinUserRepository.cs" />
-    <Compile Include="Token.cs" />
-    <Compile Include="TokenCrypto.cs" />
-    <Compile Include="TokenManager.cs" />
-    <Compile Include="VipOwnerApplicationAnnex.cs" />
+    <Compile Include="Token\Token.cs" />
+    <Compile Include="Token\TokenCrypto.cs" />
+    <Compile Include="Token\TokenManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201903060515308_role.resx">
@@ -345,7 +346,9 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="UnitOfWork\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Models\city\Area_List.xml" />
   </ItemGroup>
