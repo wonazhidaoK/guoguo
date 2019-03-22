@@ -122,7 +122,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该街道办不存在！");
                 }
-                if (await db.StreetOffices.Where(x => x.Name == dto.Name && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+                if (await db.StreetOffices.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.Id != uid).FirstOrDefaultAsync(token) != null)
                 {
                     throw new NotImplementedException("该街道办名称已存在！");
                 }

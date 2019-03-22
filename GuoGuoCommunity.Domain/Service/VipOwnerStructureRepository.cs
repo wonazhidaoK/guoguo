@@ -124,7 +124,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该业委会职能不存在！");
                 }
 
-                if (await db.VipOwnerStructures.Where(x => x.Name == dto.Name && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+                if (await db.VipOwnerStructures.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.Id != uid).FirstOrDefaultAsync(token) != null)
                 {
                     throw new NotImplementedException("该业委会职能已存在！");
                 }
@@ -134,7 +134,7 @@ namespace GuoGuoCommunity.Domain.Service
                 vipOwnerStructures.IsReview = dto.IsReview.Value;
                 vipOwnerStructures.LastOperationTime = dto.OperationTime;
                 vipOwnerStructures.LastOperationUserId = dto.OperationUserId;
-                OnUpdateAsync(db,dto,token);
+                OnUpdateAsync(db, dto, token);
                 await db.SaveChangesAsync(token);
             }
         }

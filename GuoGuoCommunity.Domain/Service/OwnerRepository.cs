@@ -140,9 +140,9 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该社区不存在！");
                 }
 
-                if (await db.Owners.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.IndustryId == owners.IndustryId).FirstOrDefaultAsync(token) != null)
+                if (await db.Owners.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.IndustryId == owners.IndustryId && x.Id != uid).FirstOrDefaultAsync(token) != null)
                 {
-                    throw new NotImplementedException("该社区名称已存在！");
+                    throw new NotImplementedException("该业主名称已存在！");
                 }
                
                 owners.LastOperationTime = dto.OperationTime;

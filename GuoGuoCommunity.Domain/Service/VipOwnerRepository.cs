@@ -76,7 +76,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.VipOwners .Where(x => x.IsDeleted == false&&x.IsValid==false).ToListAsync(token);
+                var list = await db.VipOwners.Where(x => x.IsDeleted == false && x.IsValid == false).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.SmallDistrictId))
                 {
                     list = list.Where(x => x.SmallDistrictId == dto.SmallDistrictId).ToList();
@@ -121,7 +121,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.VipOwners.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId&& x.IsValid == false).ToListAsync(token);
+                return await db.VipOwners.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId && x.IsValid == false).ToListAsync(token);
             }
         }
 
@@ -138,11 +138,15 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该业委会不存在！");
                 }
-               
+                var entity = await db.VipOwners.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId && x.Id != uid).FirstOrDefaultAsync(token);
+                if (entity != null)
+                {
+                    throw new NotImplementedException("该业委会已存在！");
+                }
                 vipOwners.RemarkName = dto.RemarkName;
                 vipOwners.LastOperationTime = dto.OperationTime;
                 vipOwners.LastOperationUserId = dto.OperationUserId;
-                OnUpdateAsync(db,dto,token);
+                OnUpdateAsync(db, dto, token);
                 await db.SaveChangesAsync(token);
             }
         }

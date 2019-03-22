@@ -276,7 +276,11 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("角色信息不存在！");
                 }
-
+                var entity = await db.Users.Where(x => (x.Name == dto.Name || x.PhoneNumber == dto.PhoneNumber) && x.IsDeleted == false && x.Id != uid).FirstOrDefaultAsync(token);
+                if (entity != null)
+                {
+                    throw new NotImplementedException("该用户已存在！");
+                }
                 user.Name = dto.Name;
                 user.Password = dto.Password;
                 user.PhoneNumber = dto.PhoneNumber;

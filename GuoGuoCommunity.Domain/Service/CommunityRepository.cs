@@ -141,7 +141,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该社区不存在！");
                 }
 
-                if (await db.Communities.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.StreetOfficeId == community.StreetOfficeId).FirstOrDefaultAsync(token) != null)
+                if (await db.Communities.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.StreetOfficeId == community.StreetOfficeId && x.Id != uid).FirstOrDefaultAsync(token) != null)
                 {
                     throw new NotImplementedException("该社区名称已存在！");
                 }

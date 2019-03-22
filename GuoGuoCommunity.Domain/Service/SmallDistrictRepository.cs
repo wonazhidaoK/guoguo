@@ -154,7 +154,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该小区不存在！");
                 }
-                if (await db.SmallDistricts.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.StreetOfficeId == smallDistrict.StreetOfficeId).FirstOrDefaultAsync(token) != null)
+                if (await db.SmallDistricts.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.StreetOfficeId == smallDistrict.StreetOfficeId && x.Id != uid).FirstOrDefaultAsync(token) != null)
                 {
                     throw new NotImplementedException("该小区名称已存在！");
                 }
