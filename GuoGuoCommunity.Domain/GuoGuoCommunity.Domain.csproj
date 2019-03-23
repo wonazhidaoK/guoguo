@@ -241,6 +241,10 @@
     <Compile Include="Migrations\201903230655144_update-stationLetter.Designer.cs">
       <DependentUpon>201903230655144_update-stationLetter.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903231237138_update1.cs" />
+    <Compile Include="Migrations\201903231237138_update1.Designer.cs">
+      <DependentUpon>201903231237138_update1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AnnouncementAnnex.cs" />
@@ -378,6 +382,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903230655144_update-stationLetter.resx">
       <DependentUpon>201903230655144_update-stationLetter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903231237138_update1.resx">
+      <DependentUpon>201903231237138_update1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
