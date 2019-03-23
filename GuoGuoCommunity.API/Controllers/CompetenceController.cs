@@ -10,13 +10,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     ///  权限
     /// </summary>
-    //[EnableCors(origins: "*", headers: "*", methods: "*")]
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CompetenceController : ApiController
     {
         private readonly ITestRepository _testRepository;
@@ -782,7 +783,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("菜单Id信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.RolesId))
+                if (string.IsNullOrWhiteSpace(input.RoleId))
                 {
                     throw new NotImplementedException("角色Id信息为空！");
                 }
@@ -802,7 +803,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var entity = await _roleMenuRepository.AddAsync(new RoleMenuDto
                 {
                     MenuId = input.MenuId,
-                    RolesId = input.RolesId,
+                    RoleId = input.RoleId,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);
@@ -817,12 +818,12 @@ namespace GuoGuoCommunity.API.Controllers
         /// <summary>
         /// 删除权限信息
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="input"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         [Route("roleMenu/delete")]
-        public async Task<ApiResult> DeleteRoleMenu([FromUri]string id, CancellationToken cancelToken)
+        public async Task<ApiResult> DeleteRoleMenu([FromBody]DeleteRoleMenuInput input, CancellationToken cancelToken)
         {
             try
             {
@@ -831,9 +832,15 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
                 }
-                if (string.IsNullOrWhiteSpace(id))
+
+                if (string.IsNullOrWhiteSpace(input.MenuId))
                 {
-                    throw new NotImplementedException("菜单权限Id信息为空！");
+                    throw new NotImplementedException("菜单Id信息为空！");
+                }
+
+                if (string.IsNullOrWhiteSpace(input.RoleId))
+                {
+                    throw new NotImplementedException("角色Id信息为空！");
                 }
 
                 var user = _tokenManager.GetUser(token);
@@ -843,7 +850,8 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 await _roleMenuRepository.DeleteAsync(new RoleMenuDto
                 {
-                    Id = id,
+                    RoleId = input.RoleId,
+                    MenuId = input.MenuId,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);

@@ -13,16 +13,26 @@
         /// <summary>
         /// 是否是业主
         /// </summary>
-        public string IsOwner { get; set; }
+        public bool IsOwner { get; set; }
 
         /// <summary>
         /// 是否是业委会成员
         /// </summary>
-        public string IsVipOwner { get; set; }
+        public bool IsVipOwner { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         public string Token { get; set; }
+
+        /// <summary>
+        /// 用户头像
+        /// </summary>
+        public string Headimgurl { get; set; }
+
+        /// <summary>
+        /// 用户的昵称
+        /// </summary>
+        public string Nickname { get; set; }
     }
 }

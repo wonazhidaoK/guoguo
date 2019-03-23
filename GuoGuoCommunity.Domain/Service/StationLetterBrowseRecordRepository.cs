@@ -1,0 +1,43 @@
+﻿using GuoGuoCommunity.Domain.Abstractions;
+using GuoGuoCommunity.Domain.Dto;
+using GuoGuoCommunity.Domain.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace GuoGuoCommunity.Domain.Service
+{
+    public class StationLetterBrowseRecordRepository : IStationLetterBrowseRecordRepository
+    {
+        public Task<StationLetterBrowseRecord> AddAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<StationLetterBrowseRecord>> GetAllAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<StationLetterBrowseRecord> GetAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<StationLetterBrowseRecord>> GetListAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

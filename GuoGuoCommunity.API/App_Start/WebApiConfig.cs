@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API
 {
@@ -21,7 +22,7 @@ namespace GuoGuoCommunity.API
             // Web API 配置和服务
 
             //var container = new UnityContainer();
-            //config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
+            config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
             //container.RegisterType<ITestRepository, TestRepository>(new HierarchicalLifetimeManager());
             //container.RegisterType<IMenuRepository, MenuRepository>(new HierarchicalLifetimeManager());
             //container.RegisterType<IRoleRepository, RoleRepository>(new HierarchicalLifetimeManager());

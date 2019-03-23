@@ -31,14 +31,18 @@ namespace GuoGuoCommunity.API.Controllers
     {
         private readonly IUserRepository _userRepository;
         private TokenManager _tokenManager;
+        private readonly IWeiXinUserRepository _weiXinUserRepository;
         /// <summary>
         /// 
         /// </summary>
         /// <param name="userRepository"></param>
-        public WXController(IUserRepository userRepository)
+        /// <param name="weiXinUserRepository"></param>
+        public WXController(IUserRepository userRepository,
+            IWeiXinUserRepository weiXinUserRepository)
         {
             _userRepository = userRepository;
             _tokenManager = new TokenManager();
+            _weiXinUserRepository = weiXinUserRepository;
         }
 
         /// <summary>
@@ -209,7 +213,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException(e.Message);
             }
-            
+
         }
 
 
@@ -268,12 +272,17 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [Route("wx/Login")]
         [HttpGet]
-        public async Task<ApiResult<WXLoginOutput>> Login([FromUri]string code)
+        public async Task<ApiResult<WXLoginOutput>> Login([FromUri]string code, CancellationToken cancelToken)
         {
             try
             {
                 var openIdResult = SnsApi.JsCode2Json(GuoGuoCommunity_WxOpenAppId, GuoGuoCommunity_WxOpenAppSecret, code);
                 var user = await _userRepository.GetForOpenIdAsync(new UserDto { OpenId = openIdResult.openid });
+
+                if (user == null)
+                {
+                    user = await _userRepository.AddWeiXinAsync(new UserDto() { OpenId = openIdResult.openid, UnionId = openIdResult.unionid }, cancelToken);
+                }
                 //产生 Token
                 var token = _tokenManager.Create(user);
 
@@ -284,22 +293,21 @@ namespace GuoGuoCommunity.API.Controllers
                         Id = user.Id.ToString(),
                         RefreshToken = token.Refresh_token
                     });
+                var weiXinUser = await _weiXinUserRepository.GetAsync(openIdResult.unionid, cancelToken);
 
-                if (user != null)
+                return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput()
                 {
-                    //to Token
-                    return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput() { OpenId = user.OpenId, Token = token.Access_token }, APIResultMessage.Success);
-                }
-                else
-                {
-                    user = await _userRepository.AddWeiXinAsync(new UserDto() { OpenId = openIdResult.openid, UnionId = openIdResult.unionid });
-                    return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput() { OpenId = user.OpenId, Token = token.Access_token }, APIResultMessage.Success);
-                }
+                    OpenId = user.OpenId,
+                    Token = token.Access_token,
+                    Headimgurl = weiXinUser?.Headimgurl,
+                    Nickname = weiXinUser?.Nickname
+                }, APIResultMessage.Success);
+
             }
             catch (Exception e)
             {
 
-                return new ApiResult<WXLoginOutput>(APIResultCode.Error, new WXLoginOutput() { }, e.Message);
+                return new ApiResult<WXLoginOutput>(APIResultCode.Success_NoB, new WXLoginOutput() { }, e.Message);
             }
         }
     }

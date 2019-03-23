@@ -210,6 +210,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IpUtility.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\SpecialMethodModule.cs" />
     <Compile Include="App_Start\SwaggerCacheProvider.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\UnityResolver.cs" />
@@ -230,6 +231,7 @@
     <Compile Include="Controllers\OwnerCertificationRecordController.cs" />
     <Compile Include="Controllers\OwnerController.cs" />
     <Compile Include="Controllers\SmallDistrictController.cs" />
+    <Compile Include="Controllers\StationLetterController.cs" />
     <Compile Include="Controllers\StreetOfficeController.cs" />
     <Compile Include="Controllers\TokenController.cs" />
     <Compile Include="Controllers\UploadController.cs" />
@@ -309,6 +311,7 @@
     <Compile Include="Models\Owner\UpdateOwnerInput.cs" />
     <Compile Include="Models\RoleMenu\AddRoleMenuInput.cs" />
     <Compile Include="Models\RoleMenu\AddRoleMenuOutput.cs" />
+    <Compile Include="Models\RoleMenu\DeleteRoleMenuInput.cs" />
     <Compile Include="Models\RoleMenu\GetRoleMenusInput.cs" />
     <Compile Include="Models\RoleMenu\GetRoleMenusOutput.cs" />
     <Compile Include="Models\Role\AddRoleInput.cs" />
@@ -323,6 +326,11 @@
     <Compile Include="Models\SmallDistrict\GetListSmallDistrictOutput.cs" />
     <Compile Include="Models\SmallDistrict\GetSmallDistrictOutput.cs" />
     <Compile Include="Models\SmallDistrict\UpdateSmallDistrictInput.cs" />
+    <Compile Include="Models\StationLetter\AddStationLetterInput.cs" />
+    <Compile Include="Models\StationLetter\AddStationLetterOutput.cs" />
+    <Compile Include="Models\StationLetter\GetAllStreetOfficeStationLetterInput.cs" />
+    <Compile Include="Models\StationLetter\GetAllStreetOfficeStationLetterOutput.cs" />
+    <Compile Include="Models\StationLetter\GetStreetOfficeStationLetterOutput.cs" />
     <Compile Include="Models\StreetOffice\AddStreetOfficeOutput.cs" />
     <Compile Include="Models\StreetOffice\GetAllStreetOfficeInput.cs" />
     <Compile Include="Models\StreetOffice\DeleteStreetOfficeInput.cs" />
@@ -503,7 +511,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>64177</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:2223</IISUrl>
+          <IISUrl>http://192.168.2.133:2222</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

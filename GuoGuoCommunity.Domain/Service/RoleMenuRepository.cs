@@ -16,7 +16,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var role = await db.Role_Menus.Where(x => x.MenuId == dto.MenuId && x.RolesId == dto.RolesId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var role = await db.Role_Menus.Where(x => x.MenuId == dto.MenuId && x.RolesId == dto.RoleId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (role != null)
                 {
                     role.IsDisplayed = true;
@@ -29,7 +29,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     IsDisplayed = true,
                     MenuId = dto.MenuId,
-                    RolesId = dto.RolesId,
+                    RolesId = dto.RoleId,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId
                 };
@@ -43,11 +43,8 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                if (!Guid.TryParse(dto.Id, out var uid))
-                {
-                    throw new NotImplementedException("菜单权限信息不存在！");
-                }
-                var roleMenu = await db.Role_Menus.Where(x => x.Id == uid && x.IsDeleted == false).FirstOrDefaultAsync(token);
+
+                var roleMenu = await db.Role_Menus.Where(x => x.MenuId == dto.MenuId && x.RolesId == dto.RoleId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (roleMenu == null)
                 {
                     throw new NotImplementedException("该菜单权限信息不存在！");
@@ -64,7 +61,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.Role_Menus.Where(x => x.RolesId == roleId).ToListAsync(token);
+                return await db.Role_Menus.Where(x => x.RolesId == roleId && x.IsDeleted == false).ToListAsync(token);
             }
         }
 

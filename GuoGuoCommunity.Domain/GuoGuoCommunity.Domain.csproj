@@ -102,6 +102,9 @@
     <Compile Include="Abstractions\IRoleMenuRepository.cs" />
     <Compile Include="Abstractions\IRoleRepository.cs" />
     <Compile Include="Abstractions\ISmallDistrictRepository.cs" />
+    <Compile Include="Abstractions\IStationLetterAnnexRepository.cs" />
+    <Compile Include="Abstractions\IStationLetterBrowseRecordRepository.cs" />
+    <Compile Include="Abstractions\IStationLetterRepository.cs" />
     <Compile Include="Abstractions\IStreetOfficeRepository.cs" />
     <Compile Include="Abstractions\ITestRepository.cs" />
     <Compile Include="Abstractions\IUploadRepository.cs" />
@@ -132,6 +135,9 @@
     <Compile Include="Dto\RoleDto.cs" />
     <Compile Include="Dto\RoleMenuDto.cs" />
     <Compile Include="Dto\SmallDistrictDto.cs" />
+    <Compile Include="Dto\StationLetterAnnexDto.cs" />
+    <Compile Include="Dto\StationLetterBrowseRecordDto.cs" />
+    <Compile Include="Dto\StationLetterDto.cs" />
     <Compile Include="Dto\StreetOfficeDto.cs" />
     <Compile Include="Dto\UploadDto.cs" />
     <Compile Include="Dto\UserDto.cs" />
@@ -227,11 +233,22 @@
     <Compile Include="Migrations\201903220701083_Announcement-update.Designer.cs">
       <DependentUpon>201903220701083_Announcement-update.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903230544333_StationLetter.cs" />
+    <Compile Include="Migrations\201903230544333_StationLetter.Designer.cs">
+      <DependentUpon>201903230544333_StationLetter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903230655144_update-stationLetter.cs" />
+    <Compile Include="Migrations\201903230655144_update-stationLetter.Designer.cs">
+      <DependentUpon>201903230655144_update-stationLetter.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AnnouncementAnnex.cs" />
     <Compile Include="Models\Enum\OwnerCertificationAnnexType.cs" />
     <Compile Include="Models\OwnerCertificationAnnex.cs" />
+    <Compile Include="Models\StationLetter.cs" />
+    <Compile Include="Models\StationLetterAnnex.cs" />
+    <Compile Include="Models\StationLetterBrowseRecord.cs" />
     <Compile Include="Models\Upload.cs" />
     <Compile Include="Models\Building.cs" />
     <Compile Include="Models\BuildingUnit.cs" />
@@ -259,6 +276,9 @@
     <Compile Include="Models\WeiXinUser.cs" />
     <Compile Include="Service\AnnouncementAnnexRepository.cs" />
     <Compile Include="Service\AnnouncementRepository.cs" />
+    <Compile Include="Service\StationLetterAnnexRepository.cs" />
+    <Compile Include="Service\StationLetterBrowseRecordRepository.cs" />
+    <Compile Include="Service\StationLetterRepository.cs" />
     <Compile Include="Token\Payload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\BuildingRepository.cs" />
@@ -352,6 +372,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903220701083_Announcement-update.resx">
       <DependentUpon>201903220701083_Announcement-update.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903230544333_StationLetter.resx">
+      <DependentUpon>201903230544333_StationLetter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903230655144_update-stationLetter.resx">
+      <DependentUpon>201903230655144_update-stationLetter.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

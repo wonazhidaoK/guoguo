@@ -2,24 +2,18 @@
 
 namespace GuoGuoCommunity.Domain.Dto
 {
-    public class RoleMenuDto
+    public class StationLetterAnnexDto
     {
         public string Id { get; set; }
+        /// <summary>
+        /// 站内信Id
+        /// </summary>
+        public string StationLetterId { get; set; }
 
         /// <summary>
-        /// 角色Id
+        ///  附件内容
         /// </summary>
-        public string RoleId { get; set; }
-
-        /// <summary>
-        /// 菜单Id
-        /// </summary>
-        public string MenuId { get; set; }
-
-        /// <summary>
-        /// 是否禁用
-        /// </summary>
-        public bool IsDisplay { get; set; }
+        public string AnnexContent { get; set; }
 
         /// <summary>
         /// 操作人Id

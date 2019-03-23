@@ -131,5 +131,20 @@ namespace GuoGuoCommunity.Domain
         /// 公告附件表
         /// </summary>
         public DbSet<AnnouncementAnnex> AnnouncementAnnices { get; set; }
+
+        /// <summary>
+        /// 站内信
+        /// </summary>
+        public DbSet<StationLetter> StationLetters { get; set; }
+
+        /// <summary>
+        /// 站内信附件
+        /// </summary>
+        public DbSet<StationLetterAnnex> StationLetterAnnices { get; set; }
+
+        /// <summary>
+        /// 站内信浏览记录
+        /// </summary>
+        public DbSet<StationLetterBrowseRecord> StationLetterBrowseRecords { get; set; }
     }
 }
