@@ -51,7 +51,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 登陆
+        /// pc端登陆
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>

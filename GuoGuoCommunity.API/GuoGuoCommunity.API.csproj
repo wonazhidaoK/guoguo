@@ -301,6 +301,7 @@
     <Compile Include="Models\Menu\GetAllMenuOutput.cs" />
     <Compile Include="Models\OwnerCertificationRecord\AddOwnerCertificationRecordInput.cs" />
     <Compile Include="Models\OwnerCertificationRecord\AddOwnerCertificationRecordOutput.cs" />
+    <Compile Include="Models\OwnerCertificationRecord\GetListOwnerCertificationRecordInput.cs" />
     <Compile Include="Models\Owner\AddOwnerInput.cs" />
     <Compile Include="Models\Owner\AddOwnerOutput.cs" />
     <Compile Include="Models\Owner\GetAllOwnerInput.cs" />

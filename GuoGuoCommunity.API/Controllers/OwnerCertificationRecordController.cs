@@ -6,6 +6,7 @@ using GuoGuoCommunity.Domain.Models.Enum;
 using Hangfire;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -128,6 +129,65 @@ namespace GuoGuoCommunity.API.Controllers
             catch (Exception e)
             {
                 return new ApiResult<AddOwnerCertificationRecordOutput>(APIResultCode.Success_NoB, new AddOwnerCertificationRecordOutput { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 获取用户认证列表
+        /// </summary>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("ownerCertificationRecord/getList")]
+        public async Task<ApiResult<GetListOwnerCertificationRecordInput>> GetList(CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<GetListOwnerCertificationRecordInput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordInput { }, APIResultMessage.TokenNull);
+                }
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult<GetListOwnerCertificationRecordInput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordInput { }, APIResultMessage.TokenError);
+                }
+                var data = await _ownerCertificationRecordRepository.GetListAsync(new OwnerCertificationRecordDto
+                {
+                    CertificationStatusValue = OwnerCertification.Success.Value,
+                    UserId = user.Id.ToString()
+                }, cancelToken);
+                return new ApiResult<GetListOwnerCertificationRecordInput>(APIResultCode.Success, new GetListOwnerCertificationRecordInput
+                {
+                    List = data.Select(x => new GetOwnerCertificationRecordInput
+                    {
+                        BuildingId = x.BuildingId,
+                        BuildingName = x.BuildingName,
+                        BuildingUnitId = x.BuildingUnitId,
+                        BuildingUnitName = x.BuildingUnitName,
+                        CertificationResult = x.CertificationResult,
+                        CertificationStatusName = x.CertificationStatusName,
+                        CertificationStatusValue = x.CertificationStatusValue,
+                        CertificationTime = x.CertificationTime,
+                        CommunityId = x.CommunityId,
+                        CommunityName = x.CommunityName,
+                        Id = x.Id.ToString(),
+                        IndustryId = x.IndustryId,
+                        IndustryName = x.IndustryName,
+                        OwnerId = x.OwnerId,
+                        OwnerName = x.OwnerName,
+                        SmallDistrictId = x.SmallDistrictId,
+                        SmallDistrictName = x.SmallDistrictName,
+                        StreetOfficeId = x.StreetOfficeId,
+                        StreetOfficeName = x.StreetOfficeName,
+                        UserId = x.UserId
+                    }).ToList()
+                });
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<GetListOwnerCertificationRecordInput>(APIResultCode.Success_NoB, new GetListOwnerCertificationRecordInput { }, e.Message);
             }
         }
 

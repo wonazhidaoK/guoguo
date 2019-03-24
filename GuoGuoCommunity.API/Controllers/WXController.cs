@@ -30,8 +30,8 @@ namespace GuoGuoCommunity.API.Controllers
     public class WXController : ApiController
     {
         private readonly IUserRepository _userRepository;
-        private TokenManager _tokenManager;
         private readonly IWeiXinUserRepository _weiXinUserRepository;
+        private TokenManager _tokenManager;
         /// <summary>
         /// 
         /// </summary>
@@ -41,8 +41,8 @@ namespace GuoGuoCommunity.API.Controllers
             IWeiXinUserRepository weiXinUserRepository)
         {
             _userRepository = userRepository;
-            _tokenManager = new TokenManager();
             _weiXinUserRepository = weiXinUserRepository;
+            _tokenManager = new TokenManager();
         }
 
         /// <summary>
@@ -62,23 +62,21 @@ namespace GuoGuoCommunity.API.Controllers
         /// </summary>
         public static readonly string Secret = Config.SenparcWeixinSetting.WeixinAppSecret;
         /// <summary>
-        /// 小车主微信小程序AppID
+        /// 小程序AppID
         /// </summary>
         public static readonly string GuoGuoCommunity_WxOpenAppId = ConfigurationManager.AppSettings["GuoGuoCommunity_WxOpenAppId"];
         /// <summary>
-        /// 小车主微信小程序Secret
+        /// 小程序Secret
         /// </summary>
         public static readonly string GuoGuoCommunity_WxOpenAppSecret = ConfigurationManager.AppSettings["GuoGuoCommunity_WxOpenAppSecret"];
-        /// <summary>
-        /// 知士互联微信小程序AppID
-        /// </summary>
-        public static readonly string ZhiShiHuLian_WxOpenAppId = ConfigurationManager.AppSettings["ZhiShiHuLian_WxOpenAppId"];
-        /// <summary>
-        /// 知士互联微信小程序Secret
-        /// </summary>
-        public static readonly string ZhiShiHuLian_WxOpenAppSecret = ConfigurationManager.AppSettings["ZhiShiHuLian_WxOpenAppSecret"];
-
-
+        ///// <summary>
+        ///// 知士互联微信小程序AppID
+        ///// </summary>
+        //public static readonly string ZhiShiHuLian_WxOpenAppId = ConfigurationManager.AppSettings["ZhiShiHuLian_WxOpenAppId"];
+        ///// <summary>
+        ///// 知士互联微信小程序Secret
+        ///// </summary>
+        //public static readonly string ZhiShiHuLian_WxOpenAppSecret = ConfigurationManager.AppSettings["ZhiShiHuLian_WxOpenAppSecret"];
 
         #region 微信服务器消息接收及处理
 
@@ -175,7 +173,6 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         #endregion
-
 
         #region 人机交互
 

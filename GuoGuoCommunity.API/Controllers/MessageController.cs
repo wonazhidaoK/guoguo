@@ -59,26 +59,26 @@ namespace GuoGuoCommunity.API.Controllers
 
         public static string a()
         {
-            String url = "http://dm-51.data.aliyun.com/rest/160601/ocr/ocr_idcard.json";
-            String appcode = "9b5eda2cae234efdb318b4344af42782";
-            String img_file = "G:\\Download\\20190319215127.jpg";
+            string url = "http://dm-51.data.aliyun.com/rest/160601/ocr/ocr_idcard.json";
+            string appcode = "9b5eda2cae234efdb318b4344af42782";
+            string img_file = "G:\\Download\\20190319215127.jpg";
 
             //如果输入带有inputs, 设置为True，否则设为False
             bool is_old_format = false;
 
             //如果没有configure字段，config设为''
             //String config = '';
-            String config = "{\\\"side\\\":\\\"face\\\"}";
+            string config = "{\\\"side\\\":\\\"face\\\"}";
 
-            String method = "POST";
+            string method = "POST";
 
-            String querys = "";
+            string querys = "";
 
             FileStream fs = new FileStream(img_file, FileMode.Open);
             BinaryReader br = new BinaryReader(fs);
             byte[] contentBytes = br.ReadBytes(Convert.ToInt32(fs.Length));
-            String base64 = System.Convert.ToBase64String(contentBytes);
-            String bodys;
+            string base64 = Convert.ToBase64String(contentBytes);
+            string bodys;
             if (is_old_format)
             {
                 bodys = "{\"inputs\" :" +

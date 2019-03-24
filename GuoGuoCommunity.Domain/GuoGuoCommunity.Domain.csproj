@@ -277,6 +277,12 @@
     <Compile Include="Models\VipOwnerApplicationRecord.cs" />
     <Compile Include="Models\VipOwnerCertificationRecord.cs" />
     <Compile Include="Models\VipOwnerStructure.cs" />
+    <Compile Include="Models\Vote.cs" />
+    <Compile Include="Models\VoteAnnex.cs" />
+    <Compile Include="Models\VoteQuestion.cs" />
+    <Compile Include="Models\VoteQuestionOption.cs" />
+    <Compile Include="Models\VoteRecord.cs" />
+    <Compile Include="Models\VoteRecordDetail.cs" />
     <Compile Include="Models\WeiXinUser.cs" />
     <Compile Include="Service\AnnouncementAnnexRepository.cs" />
     <Compile Include="Service\AnnouncementRepository.cs" />
