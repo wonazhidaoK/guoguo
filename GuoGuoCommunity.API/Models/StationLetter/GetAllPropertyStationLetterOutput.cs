@@ -1,9 +1,27 @@
-﻿namespace GuoGuoCommunity.API.Models
+﻿using System.Collections.Generic;
+
+namespace GuoGuoCommunity.API.Models
 {
     /// <summary>
     /// 
     /// </summary>
-    public class GetStationLetterOutput
+    public class GetAllPropertyStationLetterOutput
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<GetPropertyStationLetterOutput> List { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int TotalCount { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class GetPropertyStationLetterOutput
     {
         /// <summary>
         /// 
@@ -20,11 +38,6 @@
         public string Summary { get; set; }
 
         /// <summary>
-        /// 内容
-        /// </summary>
-        public string Content { get; set; }
-
-        /// <summary>
         /// 小区范围
         /// </summary>
         public string SmallDistrictArray { get; set; }
@@ -38,10 +51,5 @@
         /// 街道办名称
         /// </summary>
         public string StreetOfficeName { get; set; }
-
-        /// <summary>
-        /// 附件url
-        /// </summary>
-        public string Url { get; set; }
     }
 }

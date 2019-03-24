@@ -886,7 +886,6 @@ namespace GuoGuoCommunity.API.Controllers
 
                         RoleId = item.RolesId,
                         MenuId = item.MenuId,
-                        IsDisplayed = item.IsDisplayed,
                         Key = menu.Key,
                         Name = menu.Name
                     });

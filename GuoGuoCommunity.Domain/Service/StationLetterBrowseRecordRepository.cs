@@ -10,9 +10,19 @@ namespace GuoGuoCommunity.Domain.Service
 {
     public class StationLetterBrowseRecordRepository : IStationLetterBrowseRecordRepository
     {
-        public Task<StationLetterBrowseRecord> AddAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)
+        public async Task<StationLetterBrowseRecord> AddAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var entity = db.StationLetterBrowseRecords.Add(new  StationLetterBrowseRecord
+                {
+                    StationLetterId = dto.StationLetterId,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                });
+                await db.SaveChangesAsync(token);
+                return entity;
+            }
         }
 
         public Task DeleteAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)

@@ -27,11 +27,6 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public string MenuId { get; set; }
 
-        /// <summary>
-        /// 是否被展示
-        /// </summary>
-        public bool IsDisplayed { get; set; }
-
         public string CreateOperationUserId { get; set; }
 
         public DateTimeOffset? CreateOperationTime { get; set; }

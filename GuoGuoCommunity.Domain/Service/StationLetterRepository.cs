@@ -43,7 +43,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.StationLetters.Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.StationLetters.Where(x => x.IsDeleted == false && x.StreetOfficeId == dto.StreetOfficeId).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.SmallDistrictArray))
                 {
                     list = list.Where(x => x.SmallDistrictArray.Split(',').Contains(dto.SmallDistrictArray)).ToList();
@@ -52,14 +52,30 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public Task<StationLetter> GetAsync(string id, CancellationToken token = default)
+        public async Task<StationLetter> GetAsync(string id, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(id, out var stationLetterId))
+                {
+                    throw new NotImplementedException("站内信Id信息不正确！");
+                }
+                
+                return await db.StationLetters.Where(x => x.IsDeleted == false && x.Id == stationLetterId).FirstOrDefaultAsync(token);
+            }
         }
 
-        public Task<List<StationLetter>> GetListAsync(StationLetterDto dto, CancellationToken token = default)
+        public async Task<List<StationLetter>> GetListAsync(StationLetterDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.StationLetters.Where(x => x.IsDeleted == false).ToListAsync(token);
+                if (!string.IsNullOrWhiteSpace(dto.SmallDistrictArray))
+                {
+                    list = list.Where(x => x.SmallDistrictArray.Split(',').Contains(dto.SmallDistrictArray)).ToList();
+                }
+                return list;
+            }
         }
 
         public Task UpdateAsync(StationLetterDto dto, CancellationToken token = default)

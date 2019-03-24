@@ -24,5 +24,10 @@
         /// 小区范围
         /// </summary>
         public string SmallDistrictArray { get; set; }
+
+        /// <summary>
+        /// 附件Id
+        /// </summary>
+        public string AnnexId { get; set; }
     }
 }

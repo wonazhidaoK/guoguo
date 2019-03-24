@@ -19,7 +19,6 @@ namespace GuoGuoCommunity.Domain.Service
                 var role = await db.Role_Menus.Where(x => x.MenuId == dto.MenuId && x.RolesId == dto.RoleId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (role != null)
                 {
-                    role.IsDisplayed = true;
                     role.LastOperationTime = dto.OperationTime;
                     role.LastOperationUserId = dto.OperationUserId;
                     await db.SaveChangesAsync(token);
@@ -27,11 +26,11 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 role = new Role_Menu
                 {
-                    IsDisplayed = true,
                     MenuId = dto.MenuId,
                     RolesId = dto.RoleId,
                     CreateOperationTime = dto.OperationTime,
-                    CreateOperationUserId = dto.OperationUserId
+                    CreateOperationUserId = dto.OperationUserId,
+                    IsDeleted = false
                 };
                 db.Role_Menus.Add(role);
                 await db.SaveChangesAsync(token);

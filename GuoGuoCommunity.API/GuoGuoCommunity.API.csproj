@@ -328,8 +328,11 @@
     <Compile Include="Models\SmallDistrict\UpdateSmallDistrictInput.cs" />
     <Compile Include="Models\StationLetter\AddStationLetterInput.cs" />
     <Compile Include="Models\StationLetter\AddStationLetterOutput.cs" />
+    <Compile Include="Models\StationLetter\GetAllPropertyStationLetterInput.cs" />
+    <Compile Include="Models\StationLetter\GetAllPropertyStationLetterOutput.cs" />
     <Compile Include="Models\StationLetter\GetAllStreetOfficeStationLetterInput.cs" />
     <Compile Include="Models\StationLetter\GetAllStreetOfficeStationLetterOutput.cs" />
+    <Compile Include="Models\StationLetter\GetPropertyStationLetterInput.cs" />
     <Compile Include="Models\StationLetter\GetStreetOfficeStationLetterOutput.cs" />
     <Compile Include="Models\StreetOffice\AddStreetOfficeOutput.cs" />
     <Compile Include="Models\StreetOffice\GetAllStreetOfficeInput.cs" />

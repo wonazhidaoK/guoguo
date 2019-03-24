@@ -10,7 +10,7 @@ namespace GuoGuoCommunity.API.Models
         /// <summary>
         /// 
         /// </summary>
-        public List<GetStreetOfficeStationLetterOutput> List { get; set; }
+        public List<GetStationLetterOutput> List { get; set; }
 
         /// <summary>
         /// 

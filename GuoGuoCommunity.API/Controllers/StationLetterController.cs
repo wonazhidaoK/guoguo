@@ -17,16 +17,25 @@ namespace GuoGuoCommunity.API.Controllers
     public class StationLetterController : ApiController
     {
         private readonly IStationLetterRepository _stationLetterRepository;
+        private readonly IStationLetterAnnexRepository _stationLetterAnnexRepository;
+        private readonly IStationLetterBrowseRecordRepository _stationLetterBrowseRecordRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="stationLetterRepository"></param>
+        /// <param name="stationLetterAnnexRepository"></param>
+        /// <param name="stationLetterBrowseRecordRepository"></param>
         /// <param name="tokenManager"></param>
-        public StationLetterController(IStationLetterRepository stationLetterRepository, TokenManager tokenManager)
+        public StationLetterController(IStationLetterRepository stationLetterRepository,
+            IStationLetterAnnexRepository stationLetterAnnexRepository,
+            IStationLetterBrowseRecordRepository stationLetterBrowseRecordRepository,
+            TokenManager tokenManager)
         {
             _stationLetterRepository = stationLetterRepository;
+            _stationLetterAnnexRepository = stationLetterAnnexRepository;
+            _stationLetterBrowseRecordRepository = stationLetterBrowseRecordRepository;
             _tokenManager = tokenManager;
         }
         /*
@@ -86,6 +95,14 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);
 
+                await _stationLetterAnnexRepository.AddAsync(new StationLetterAnnexDto
+                {
+                    AnnexContent = input.AnnexId,
+                    StationLetterId = entity.Id.ToString(),
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+
                 return new ApiResult<AddStationLetterOutput>(APIResultCode.Success, new AddStationLetterOutput { Id = entity.Id.ToString() });
             }
             catch (Exception e)
@@ -139,7 +156,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 return new ApiResult<GetAllStreetOfficeStationLetterOutput>(APIResultCode.Success, new GetAllStreetOfficeStationLetterOutput
                 {
-                    List = data.Select(x => new GetStreetOfficeStationLetterOutput
+                    List = data.Select(x => new GetStationLetterOutput
                     {
                         Id = x.Id.ToString(),
                         Title = x.Title,
@@ -147,7 +164,7 @@ namespace GuoGuoCommunity.API.Controllers
                         StreetOfficeId = x.StreetOfficeId,
                         Summary = x.Summary,
                         StreetOfficeName = x.StreetOfficeName,
-                        //Url = _announcementAnnexRepository.GetUrl(x.Id.ToString())
+                        Url = _stationLetterAnnexRepository.GetUrl(x.Id.ToString())
                     }).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
@@ -158,6 +175,117 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
+        /// <summary>
+        /// 物业获取站内信列表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("stationLetter/getAllPropertyStationLetter")]
+        public async Task<ApiResult<GetAllPropertyStationLetterOutput>> GetAllPropertyStationLetter([FromUri]GetAllPropertyStationLetterInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                if (input.PageIndex < 1)
+                {
+                    input.PageIndex = 1;
+                }
+                if (input.PageSize < 1)
+                {
+                    input.PageSize = 10;
+                }
 
+                int startRow = (input.PageIndex - 1) * input.PageSize;
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+
+                if (token == null)
+                {
+                    return new ApiResult<GetAllPropertyStationLetterOutput>(APIResultCode.Unknown, new GetAllPropertyStationLetterOutput { }, APIResultMessage.TokenNull);
+                }
+
+                var user = _tokenManager.GetUser(token);
+
+                if (user == null)
+                {
+                    return new ApiResult<GetAllPropertyStationLetterOutput>(APIResultCode.Unknown, new GetAllPropertyStationLetterOutput { }, APIResultMessage.TokenError);
+                }
+
+                var data = await _stationLetterRepository.GetListAsync(new StationLetterDto
+                {
+                    //ReleaseTimeEnd = input.ReleaseTimeEnd,
+                    //ReleaseTimeStart = input.ReleaseTimeStart,
+                    StreetOfficeId = user.StreetOfficeId,
+                    SmallDistrictArray = input.SmallDistrict
+                }, cancelToken);
+
+                return new ApiResult<GetAllPropertyStationLetterOutput>(APIResultCode.Success, new GetAllPropertyStationLetterOutput
+                {
+                    List = data.Select(x => new GetPropertyStationLetterOutput
+                    {
+                        Id = x.Id.ToString(),
+                        Title = x.Title,
+                        StreetOfficeId = x.StreetOfficeId,
+                        Summary = x.Summary,
+                        StreetOfficeName = x.StreetOfficeName,
+                    }).Skip(startRow).Take(input.PageSize).ToList(),
+                    TotalCount = data.Count()
+                });
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<GetAllPropertyStationLetterOutput>(APIResultCode.Success_NoB, new GetAllPropertyStationLetterOutput { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 物业获取站内信详情
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("stationLetter/getPropertyStationLetter")]
+        public async Task<ApiResult<GetStationLetterOutput>> GetPropertyStationLetter([FromUri]GetPropertyStationLetterInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+
+                if (token == null)
+                {
+                    return new ApiResult<GetStationLetterOutput>(APIResultCode.Unknown, new GetStationLetterOutput { }, APIResultMessage.TokenNull);
+                }
+
+                var user = _tokenManager.GetUser(token);
+
+                if (user == null)
+                {
+                    return new ApiResult<GetStationLetterOutput>(APIResultCode.Unknown, new GetStationLetterOutput { }, APIResultMessage.TokenError);
+                }
+
+                var entity = await _stationLetterRepository.GetAsync(input.Id, cancelToken);
+                await _stationLetterBrowseRecordRepository.AddAsync(new StationLetterBrowseRecordDto
+                {
+                     StationLetterId= entity.Id.ToString(),
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                });
+                return new ApiResult<GetStationLetterOutput>(APIResultCode.Success, new GetStationLetterOutput
+                {
+                    Id = entity.Id.ToString(),
+                    Title = entity.Title,
+                    Content = entity.Content,
+                    StreetOfficeId = entity.StreetOfficeId,
+                    Summary = entity.Summary,
+                    StreetOfficeName = entity.StreetOfficeName,
+                    Url = _stationLetterAnnexRepository.GetUrl(entity.Id.ToString())
+                });
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<GetStationLetterOutput>(APIResultCode.Success_NoB, new GetStationLetterOutput { }, e.Message);
+            }
+        }
     }
 }
