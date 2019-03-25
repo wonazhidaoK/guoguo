@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GuoGuoCommunity.Domain.Models
 {
+    /// <summary>
+    /// 投票记录详情
+    /// </summary>
     public class VoteRecordDetail : IDeleted, ILastOperation, ICreateOperation
     {
         /// <summary>

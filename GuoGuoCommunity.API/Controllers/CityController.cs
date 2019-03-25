@@ -1,6 +1,7 @@
 ﻿using GuoGuoCommunity.API.Models;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
+using GuoGuoCommunity.Domain.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -109,5 +110,18 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<List<CityOutput>>(APIResultCode.Success_NoB, new List<CityOutput> { }, e.Message);
             }
         }
+        /// <summary>
+        /// 获取全部城市数据
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("city/linkage")]
+        public async Task<List<ModelCountryState>> Linkage()
+        {
+            
+                var aa = await _cityService.Linkage(new RegionDto());
+            return aa;
+        }
+        //
     }
 }

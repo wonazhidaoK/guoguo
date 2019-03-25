@@ -21,6 +21,29 @@ namespace GuoGuoCommunity.Domain.Migrations
                 new Test() { Id = 1, Name = "Jane Austen" },
                 new Test() { Id = 2, Name = "Charles Dickens" }
                 );
+            context.Menus.AddOrUpdate(x => x.Id,
+                new Menu() { Name = "物业后台-业户信息", Key = "wy_house_info" },
+                new Menu() { Name = "物业后台-认证中心", Key = "wy_rz" },
+                new Menu() { Name = "物业后台-业主认证", Key = "wy_rz_yz" },
+                new Menu() { Name = "物业后台-投票", Key = "wy_vote" },
+                new Menu() { Name = "物业后台-投诉", Key = "wy_complaint" },
+                new Menu() { Name = "物业后台-站内信", Key = "wy_letter" },
+                new Menu() { Name = "街道办后台-公告", Key = "jdb_notice" },
+                new Menu() { Name = "街道办后台-投票", Key = "jdb_vote" },
+                new Menu() { Name = "街道办后台-投诉", Key = "jdb_complaint" },
+                new Menu() { Name = "街道办后台-站内信", Key = "jdb_complaint" },
+                new Menu() { Name = "系统管理员", Key = "authorityMax" }
+                );
+            context.Users.AddOrUpdate(x => x.Id,
+                new User()
+                {
+                    Name = "admin",
+                    Password = "123456",
+                    PhoneNumber = "13888888888",
+                    State = "黑龙江",
+                    City = "哈尔滨",
+                    Region = "南岗区"
+                });
         }
     }
 }

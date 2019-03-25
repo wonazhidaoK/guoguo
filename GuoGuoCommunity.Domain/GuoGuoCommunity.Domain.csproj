@@ -115,6 +115,12 @@
     <Compile Include="Abstractions\IVipOwnerCertificationRecordRepository.cs" />
     <Compile Include="Abstractions\IVipOwnerRepository.cs" />
     <Compile Include="Abstractions\IVipOwnerStructureRepository.cs" />
+    <Compile Include="Abstractions\IVoteAnnexRepository.cs" />
+    <Compile Include="Abstractions\IVoteQuestionOptionRepository.cs" />
+    <Compile Include="Abstractions\IVoteQuestionRepository.cs" />
+    <Compile Include="Abstractions\IVoteRecordDetailRepository.cs" />
+    <Compile Include="Abstractions\IVoteRecordRepository.cs" />
+    <Compile Include="Abstractions\IVoteRepository.cs" />
     <Compile Include="Abstractions\IWeiXinUserRepository.cs" />
     <Compile Include="Abstractions\Models\ICreateOperation.cs" />
     <Compile Include="Abstractions\Models\IDeleted.cs" />
@@ -147,103 +153,17 @@
     <Compile Include="Dto\VipOwnerCertificationRecordDto.cs" />
     <Compile Include="Dto\VipOwnerDto.cs" />
     <Compile Include="Dto\VipOwnerStructureDto.cs" />
+    <Compile Include="Dto\VoteAnnexDto.cs" />
+    <Compile Include="Dto\VoteDto.cs" />
+    <Compile Include="Dto\VoteQuestionDto.cs" />
+    <Compile Include="Dto\VoteQuestionOptionDto.cs" />
+    <Compile Include="Dto\VoteRecordDetailDto.cs" />
+    <Compile Include="Dto\VoteRecordDto.cs" />
     <Compile Include="Dto\WeiXinUserDto.cs" />
     <Compile Include="GuoGuoCommunityContext.cs" />
-    <Compile Include="Migrations\201903060515308_role.cs" />
-    <Compile Include="Migrations\201903060515308_role.Designer.cs">
-      <DependentUpon>201903060515308_role.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903070143283_roleMenu-isDisplayed.cs" />
-    <Compile Include="Migrations\201903070143283_roleMenu-isDisplayed.Designer.cs">
-      <DependentUpon>201903070143283_roleMenu-isDisplayed.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903070301539_user-update.cs" />
-    <Compile Include="Migrations\201903070301539_user-update.Designer.cs">
-      <DependentUpon>201903070301539_user-update.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903090112184_userToken.cs" />
-    <Compile Include="Migrations\201903090112184_userToken.Designer.cs">
-      <DependentUpon>201903090112184_userToken.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903090203263_streetOffice.cs" />
-    <Compile Include="Migrations\201903090203263_streetOffice.Designer.cs">
-      <DependentUpon>201903090203263_streetOffice.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903090222138_streetOfficeTime.cs" />
-    <Compile Include="Migrations\201903090222138_streetOfficeTime.Designer.cs">
-      <DependentUpon>201903090222138_streetOfficeTime.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903110202591_Add-Community.cs" />
-    <Compile Include="Migrations\201903110202591_Add-Community.Designer.cs">
-      <DependentUpon>201903110202591_Add-Community.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903110208520_up-community.cs" />
-    <Compile Include="Migrations\201903110208520_up-community.Designer.cs">
-      <DependentUpon>201903110208520_up-community.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903110802545_add-SmallDistrict.cs" />
-    <Compile Include="Migrations\201903110802545_add-SmallDistrict.Designer.cs">
-      <DependentUpon>201903110802545_add-SmallDistrict.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903120052192_add-Entity.cs" />
-    <Compile Include="Migrations\201903120052192_add-Entity.Designer.cs">
-      <DependentUpon>201903120052192_add-Entity.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903130322298_update.cs" />
-    <Compile Include="Migrations\201903130322298_update.Designer.cs">
-      <DependentUpon>201903130322298_update.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903130910453_Add_Owners_Industries.cs" />
-    <Compile Include="Migrations\201903130910453_Add_Owners_Industries.Designer.cs">
-      <DependentUpon>201903130910453_Add_Owners_Industries.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903150310564_weiXinUser_owner.cs" />
-    <Compile Include="Migrations\201903150310564_weiXinUser_owner.Designer.cs">
-      <DependentUpon>201903150310564_weiXinUser_owner.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903150855504_add_WeiXinUser.cs" />
-    <Compile Include="Migrations\201903150855504_add_WeiXinUser.Designer.cs">
-      <DependentUpon>201903150855504_add_WeiXinUser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903160607591_VipOwner.cs" />
-    <Compile Include="Migrations\201903160607591_VipOwner.Designer.cs">
-      <DependentUpon>201903160607591_VipOwner.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903160720169_VipOwner-bool.cs" />
-    <Compile Include="Migrations\201903160720169_VipOwner-bool.Designer.cs">
-      <DependentUpon>201903160720169_VipOwner-bool.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903180724507_VipOwnerApplicationRecord-add-IsAdopt.cs" />
-    <Compile Include="Migrations\201903180724507_VipOwnerApplicationRecord-add-IsAdopt.Designer.cs">
-      <DependentUpon>201903180724507_VipOwnerApplicationRecord-add-IsAdopt.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903190925341_user.cs" />
-    <Compile Include="Migrations\201903190925341_user.Designer.cs">
-      <DependentUpon>201903190925341_user.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903210301308_Key.cs" />
-    <Compile Include="Migrations\201903210301308_Key.Designer.cs">
-      <DependentUpon>201903210301308_Key.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903220553594_Announcement.cs" />
-    <Compile Include="Migrations\201903220553594_Announcement.Designer.cs">
-      <DependentUpon>201903220553594_Announcement.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903220701083_Announcement-update.cs" />
-    <Compile Include="Migrations\201903220701083_Announcement-update.Designer.cs">
-      <DependentUpon>201903220701083_Announcement-update.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903230544333_StationLetter.cs" />
-    <Compile Include="Migrations\201903230544333_StationLetter.Designer.cs">
-      <DependentUpon>201903230544333_StationLetter.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903230655144_update-stationLetter.cs" />
-    <Compile Include="Migrations\201903230655144_update-stationLetter.Designer.cs">
-      <DependentUpon>201903230655144_update-stationLetter.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903231237138_update1.cs" />
-    <Compile Include="Migrations\201903231237138_update1.Designer.cs">
-      <DependentUpon>201903231237138_update1.cs</DependentUpon>
+    <Compile Include="Migrations\201903250136020_initialization.cs" />
+    <Compile Include="Migrations\201903250136020_initialization.Designer.cs">
+      <DependentUpon>201903250136020_initialization.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
@@ -290,6 +210,12 @@
     <Compile Include="Service\StationLetterAnnexRepository.cs" />
     <Compile Include="Service\StationLetterBrowseRecordRepository.cs" />
     <Compile Include="Service\StationLetterRepository.cs" />
+    <Compile Include="Service\VoteAnnexRepository.cs" />
+    <Compile Include="Service\VoteQuestionOptionRepository.cs" />
+    <Compile Include="Service\VoteQuestionRepository.cs" />
+    <Compile Include="Service\VoteRecordDetailRepository.cs" />
+    <Compile Include="Service\VoteRecordRepository.cs" />
+    <Compile Include="Service\VoteRepository.cs" />
     <Compile Include="Token\Payload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\BuildingRepository.cs" />
@@ -321,80 +247,6 @@
     <Compile Include="Token\TokenManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201903060515308_role.resx">
-      <DependentUpon>201903060515308_role.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903070143283_roleMenu-isDisplayed.resx">
-      <DependentUpon>201903070143283_roleMenu-isDisplayed.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903070301539_user-update.resx">
-      <DependentUpon>201903070301539_user-update.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903090112184_userToken.resx">
-      <DependentUpon>201903090112184_userToken.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903090203263_streetOffice.resx">
-      <DependentUpon>201903090203263_streetOffice.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903090222138_streetOfficeTime.resx">
-      <DependentUpon>201903090222138_streetOfficeTime.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903110202591_Add-Community.resx">
-      <DependentUpon>201903110202591_Add-Community.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903110208520_up-community.resx">
-      <DependentUpon>201903110208520_up-community.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903110802545_add-SmallDistrict.resx">
-      <DependentUpon>201903110802545_add-SmallDistrict.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903120052192_add-Entity.resx">
-      <DependentUpon>201903120052192_add-Entity.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903130322298_update.resx">
-      <DependentUpon>201903130322298_update.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903130910453_Add_Owners_Industries.resx">
-      <DependentUpon>201903130910453_Add_Owners_Industries.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903150310564_weiXinUser_owner.resx">
-      <DependentUpon>201903150310564_weiXinUser_owner.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903150855504_add_WeiXinUser.resx">
-      <DependentUpon>201903150855504_add_WeiXinUser.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903160607591_VipOwner.resx">
-      <DependentUpon>201903160607591_VipOwner.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903160720169_VipOwner-bool.resx">
-      <DependentUpon>201903160720169_VipOwner-bool.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903180724507_VipOwnerApplicationRecord-add-IsAdopt.resx">
-      <DependentUpon>201903180724507_VipOwnerApplicationRecord-add-IsAdopt.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903190925341_user.resx">
-      <DependentUpon>201903190925341_user.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903210301308_Key.resx">
-      <DependentUpon>201903210301308_Key.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903220553594_Announcement.resx">
-      <DependentUpon>201903220553594_Announcement.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903220701083_Announcement-update.resx">
-      <DependentUpon>201903220701083_Announcement-update.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903230544333_StationLetter.resx">
-      <DependentUpon>201903230544333_StationLetter.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903230655144_update-stationLetter.resx">
-      <DependentUpon>201903230655144_update-stationLetter.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903231237138_update1.resx">
-      <DependentUpon>201903231237138_update1.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
@@ -410,7 +262,13 @@
     <Folder Include="UnitOfWork\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Models\city\App_List.xml" />
     <Content Include="Models\city\Area_List.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201903250136020_initialization.resx">
+      <DependentUpon>201903250136020_initialization.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
