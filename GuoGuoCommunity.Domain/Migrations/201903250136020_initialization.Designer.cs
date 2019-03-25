@@ -7,13 +7,13 @@ namespace GuoGuoCommunity.Domain.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class StationLetter : IMigrationMetadata
+    public sealed partial class initialization : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(StationLetter));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(initialization));
         
         string IMigrationMetadata.Id
         {
-            get { return "201903230544333_StationLetter"; }
+            get { return "201903250136020_initialization"; }
         }
         
         string IMigrationMetadata.Source
