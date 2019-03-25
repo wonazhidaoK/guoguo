@@ -1,5 +1,4 @@
-﻿using EntityFramework.Extensions;
-using GuoGuoCommunity.Domain.Abstractions;
+﻿using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
@@ -13,6 +12,9 @@ namespace GuoGuoCommunity.Domain.Service
 {
     public class StreetOfficeRepository : IStreetOfficeRepository
     {
+        public delegate void StreetOfficeUpdateHandler(StreetOffice streetOffice);
+        public event StreetOfficeUpdateHandler streetOfficeUpdateEvent = null;
+
         public async Task<StreetOffice> AddAsync(StreetOfficeDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -105,7 +107,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.StreetOffices.Where(x => x.IsDeleted == false && x.Region == dto.Region&&x.State==dto.State&&x.City==dto.City).ToListAsync(token);
+                return await db.StreetOffices.Where(x => x.IsDeleted == false && x.Region == dto.Region && x.State == dto.State && x.City == dto.City).ToListAsync(token);
             }
         }
 
@@ -129,15 +131,19 @@ namespace GuoGuoCommunity.Domain.Service
                 streetOffice.Name = dto.Name;
                 streetOffice.LastOperationTime = dto.OperationTime;
                 streetOffice.LastOperationUserId = dto.OperationUserId;
-                await OnUpdate(db, dto, token);
+                await OnUpdate(db, streetOffice, token);
                 await db.SaveChangesAsync(token);
             }
         }
 
-        private async Task OnUpdate(GuoGuoCommunityContext db, StreetOfficeDto dto, CancellationToken token = default)
+        private async Task OnUpdate(GuoGuoCommunityContext db, StreetOffice dto, CancellationToken token = default)
         {
-            await db.Communities.Where(x => x.StreetOfficeId == dto.Id).UpdateAsync(x => new Community { StreetOfficeName = dto.Name });
-            await db.SmallDistricts.Where(x => x.StreetOfficeId == dto.Id).UpdateAsync(x => new SmallDistrict { StreetOfficeName = dto.Name });
+            Incrementer incrementer = new Incrementer();
+            CommunityRepository dozensCounter = new CommunityRepository();
+            dozensCounter.OnE(incrementer);
+            await incrementer.DoCount(db, dto, token);
+            //await db.Communities.Where(x => x.StreetOfficeId == dto.Id).UpdateAsync(x => new Community { StreetOfficeName = dto.Name });
+            //await db.SmallDistricts.Where(x => x.StreetOfficeId == dto.Id).UpdateAsync(x => new SmallDistrict { StreetOfficeName = dto.Name });
         }
 
         private async Task<bool> OnDelete(GuoGuoCommunityContext db, StreetOfficeDto dto, CancellationToken token = default)
@@ -147,6 +153,11 @@ namespace GuoGuoCommunity.Domain.Service
                 return true;
             }
             return false;
+        }
+
+        public void DoSomeThing(StreetOffice streetOffice)
+        {
+            streetOfficeUpdateEvent?.Invoke(streetOffice);//触发事件
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static GuoGuoCommunity.Domain.Service.StreetOfficeRepository;
 
 namespace GuoGuoCommunity.Domain.Service
 {
@@ -160,11 +161,36 @@ namespace GuoGuoCommunity.Domain.Service
 
         private async Task<bool> OnDelete(GuoGuoCommunityContext db, CommunityDto dto, CancellationToken token = default)
         {
+            StreetOfficeRepository streetOfficeRepository = new StreetOfficeRepository();
+
+            streetOfficeRepository.streetOfficeUpdateEvent += new StreetOfficeUpdateHandler(noteMe);//订阅(注册)窗口1的Listener事件
+                                                                                                    //事件处理方法
             if (await db.SmallDistricts.Where(x => x.IsDeleted == false && x.CommunityId == dto.Id).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }
             return false;
+
+        }
+
+        private void noteMe(Object sender)
+        {
+            //窗口1的Listener事件出发后执行
+        }
+
+        public void OnE(Incrementer incrementer)
+        {
+            incrementer.CountedADozen += IncrementDozensCount;//在发布者私有委托里增加方法
+        }
+
+
+        public async void IncrementDozensCount(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)//事件成员被触发时要调用的方法
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+
+                await db.Communities.Where(x => x.StreetOfficeId == streetOffice.Id.ToString()).UpdateAsync(x => new Community { StreetOfficeName = streetOffice.Name });
+            }
         }
     }
 }
