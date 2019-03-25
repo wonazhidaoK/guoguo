@@ -146,5 +146,35 @@ namespace GuoGuoCommunity.Domain
         /// 站内信浏览记录
         /// </summary>
         public DbSet<StationLetterBrowseRecord> StationLetterBrowseRecords { get; set; }
+
+        /// <summary>
+        /// 投票附件
+        /// </summary>
+        public DbSet<VoteAnnex> VoteAnnices { get; set; }
+
+        /// <summary>
+        /// 投票问题选项
+        /// </summary>
+        public DbSet<VoteQuestionOption> VoteQuestionOptions { get; set; }
+
+        /// <summary>
+        /// 投票问题
+        /// </summary>
+        public DbSet<VoteQuestion> VoteQuestions { get; set; }
+
+        /// <summary>
+        /// 投票记录详情
+        /// </summary>
+        public DbSet<VoteRecordDetail> VoteRecordDetails { get; set; }
+
+        /// <summary>
+        /// 投票记录
+        /// </summary>
+        public DbSet<VoteRecord> VoteRecords { get; set; }
+
+        /// <summary>
+        /// 投票管理
+        /// </summary>
+        public DbSet<Vote> Votes { get; set; }
     }
 }

@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GuoGuoCommunity.Domain.Models
 {
+    /// <summary>
+    /// 投票问题选项
+    /// </summary>
     public class VoteQuestionOption : IDeleted, ILastOperation, ICreateOperation
     {
         /// <summary>
@@ -33,13 +36,18 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 票数
         /// </summary>
-        public string Votes { get; set; }
+        public int Votes { get; set; }
 
-        public string LastOperationUserId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public DateTimeOffset? LastOperationTime { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string CreateOperationUserId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public DateTimeOffset? CreateOperationTime { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool IsDeleted { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public DateTimeOffset? DeletedTime { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string LastOperationUserId { get; set; }
+
+        public DateTimeOffset? LastOperationTime { get; set; }
+
+        public string CreateOperationUserId { get; set; }
+
+        public DateTimeOffset? CreateOperationTime { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        public DateTimeOffset? DeletedTime { get; set; }
     }
 }

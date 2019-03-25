@@ -115,6 +115,12 @@
     <Compile Include="Abstractions\IVipOwnerCertificationRecordRepository.cs" />
     <Compile Include="Abstractions\IVipOwnerRepository.cs" />
     <Compile Include="Abstractions\IVipOwnerStructureRepository.cs" />
+    <Compile Include="Abstractions\IVoteAnnexRepository.cs" />
+    <Compile Include="Abstractions\IVoteQuestionOptionRepository.cs" />
+    <Compile Include="Abstractions\IVoteQuestionRepository.cs" />
+    <Compile Include="Abstractions\IVoteRecordDetailRepository.cs" />
+    <Compile Include="Abstractions\IVoteRecordRepository.cs" />
+    <Compile Include="Abstractions\IVoteRepository.cs" />
     <Compile Include="Abstractions\IWeiXinUserRepository.cs" />
     <Compile Include="Abstractions\Models\ICreateOperation.cs" />
     <Compile Include="Abstractions\Models\IDeleted.cs" />
@@ -147,6 +153,12 @@
     <Compile Include="Dto\VipOwnerCertificationRecordDto.cs" />
     <Compile Include="Dto\VipOwnerDto.cs" />
     <Compile Include="Dto\VipOwnerStructureDto.cs" />
+    <Compile Include="Dto\VoteAnnexDto.cs" />
+    <Compile Include="Dto\VoteDto.cs" />
+    <Compile Include="Dto\VoteQuestionDto.cs" />
+    <Compile Include="Dto\VoteQuestionOptionDto.cs" />
+    <Compile Include="Dto\VoteRecordDetailDto.cs" />
+    <Compile Include="Dto\VoteRecordDto.cs" />
     <Compile Include="Dto\WeiXinUserDto.cs" />
     <Compile Include="GuoGuoCommunityContext.cs" />
     <Compile Include="Migrations\201903250136020_initialization.cs" />
@@ -197,6 +209,12 @@
     <Compile Include="Service\StationLetterAnnexRepository.cs" />
     <Compile Include="Service\StationLetterBrowseRecordRepository.cs" />
     <Compile Include="Service\StationLetterRepository.cs" />
+    <Compile Include="Service\VoteAnnexRepository.cs" />
+    <Compile Include="Service\VoteQuestionOptionRepository.cs" />
+    <Compile Include="Service\VoteQuestionRepository.cs" />
+    <Compile Include="Service\VoteRecordDetailRepository.cs" />
+    <Compile Include="Service\VoteRecordRepository.cs" />
+    <Compile Include="Service\VoteRepository.cs" />
     <Compile Include="Token\Payload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\BuildingRepository.cs" />
@@ -243,6 +261,7 @@
     <Folder Include="UnitOfWork\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Models\city\App_List.xml" />
     <Content Include="Models\city\Area_List.xml" />
   </ItemGroup>
   <ItemGroup>
