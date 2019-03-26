@@ -3,6 +3,8 @@ using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -36,9 +38,26 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<VoteAnnex> GetAsync(string id, CancellationToken token = default)
+        public async Task<VoteAnnex> GetAsync(string id, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (Guid.TryParse(id, out var uid))
+                {
+                    return await db.VoteAnnices.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                }
+                throw new NotImplementedException("该楼宇Id信息不正确！");
+            }
+        }
+
+        public string GetUrl(string id)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var entity = db.AnnouncementAnnices.Where(x => x.AnnouncementId == id).FirstOrDefault();
+                var upload = db.Uploads.Where(x => x.Id == Guid.Parse(entity.AnnexContent)).FirstOrDefault();
+                return upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
+            }
         }
 
         public Task<List<VoteAnnex>> GetListAsync(VoteAnnexDto dto, CancellationToken token = default)

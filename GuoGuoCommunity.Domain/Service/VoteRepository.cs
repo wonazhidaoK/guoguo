@@ -97,7 +97,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Votes.Where(x => x.IsDeleted == false&&x.DepartmentValue== Department.WuYe.Value && x.StreetOfficeId == dto.StreetOfficeId && x.CommunityId == dto.CommunityId && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
+                var list = await db.Votes.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.WuYe.Value && x.StreetOfficeId == dto.StreetOfficeId && x.CommunityId == dto.CommunityId && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
 
                 if (!string.IsNullOrWhiteSpace(dto.Title))
                 {
@@ -135,9 +135,16 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public Task<Vote> GetAsync(string id, CancellationToken token = default)
+        public async Task<Vote> GetAsync(string id, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (Guid.TryParse(id, out var uid))
+                {
+                    return await db.Votes.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                }
+                throw new NotImplementedException("该投票Id信息不正确！");
+            }
         }
 
         public Task<List<Vote>> GetListAsync(VoteDto dto, CancellationToken token = default)
@@ -189,6 +196,6 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-       
+
     }
 }

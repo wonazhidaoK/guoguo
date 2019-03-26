@@ -3,6 +3,8 @@ using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,9 +12,32 @@ namespace GuoGuoCommunity.Domain.Service
 {
     public class VoteRecordRepository : IVoteRecordRepository
     {
-        public Task<VoteRecord> AddAsync(VoteRecordDto dto, CancellationToken token = default)
+        public async Task<VoteRecord> AddAsync(VoteRecordDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.VoteId, out var voteId))
+                {
+                    throw new NotImplementedException("投票Id信息不正确！");
+                }
+                var vote = await db.Votes.Where(x => x.Id == voteId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (vote == null)
+                {
+                    throw new NotImplementedException("投票信息不存在！");
+                }
+
+                var entity = db.VoteRecords.Add(new VoteRecord
+                {
+                    Feedback = dto.Feedback,
+                    VoteId = dto.VoteId,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                    LastOperationTime = dto.OperationTime,
+                    LastOperationUserId = dto.OperationUserId
+                });
+                await db.SaveChangesAsync(token);
+                return entity;
+            }
         }
 
         public Task DeleteAsync(VoteRecordDto dto, CancellationToken token = default)

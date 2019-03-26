@@ -240,6 +240,7 @@
     <Compile Include="Controllers\VipOwnerController.cs" />
     <Compile Include="Controllers\VipOwnerStructureController.cs" />
     <Compile Include="Controllers\VoteController.cs" />
+    <Compile Include="Controllers\VoteRecordController.cs" />
     <Compile Include="Controllers\WXController.cs" />
     <Compile Include="Filter\AbnormalFilterAttribute.cs" />
     <Compile Include="Filter\LogFilterAttribute.cs" />
@@ -386,12 +387,14 @@
     <Compile Include="Models\VipOwner\GetListVipOwnerInput.cs" />
     <Compile Include="Models\VipOwner\GetListVipOwnerOutput.cs" />
     <Compile Include="Models\VipOwner\UpdateVipOwnerInput.cs" />
+    <Compile Include="Models\VoteRecord\AddVoteRecordOutput.cs" />
     <Compile Include="Models\Vote\AddVoteForPropertyInput.cs" />
     <Compile Include="Models\Vote\AddVoteForPropertyOutput.cs" />
     <Compile Include="Models\Vote\AddVoteForStreetOfficeInput.cs" />
     <Compile Include="Models\Vote\AddVoteForStreetOfficeOutput.cs" />
     <Compile Include="Models\Vote\AddVoteForVipOwnerInput.cs" />
     <Compile Include="Models\Vote\AddVoteForVipOwnerOutput.cs" />
+    <Compile Include="Models\VoteRecord\AddVoteRecordIntput.cs" />
     <Compile Include="Models\Vote\GetAllForOwnerInput.cs" />
     <Compile Include="Models\Vote\GetAllForOwnerOutput.cs" />
     <Compile Include="Models\Vote\GetAllForPropertyInput.cs" />
@@ -401,6 +404,7 @@
     <Compile Include="Models\Vote\GetAllForVipOwnerInput.cs" />
     <Compile Include="Models\Vote\GetAllForVipOwnerOutput.cs" />
     <Compile Include="Models\Vote\GetForStreetOfficeOutput.cs" />
+    <Compile Include="Models\Vote\GetVoteOutput.cs" />
     <Compile Include="Models\WX\WXLoginInput.cs" />
     <Compile Include="Models\WX\WXLoginOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

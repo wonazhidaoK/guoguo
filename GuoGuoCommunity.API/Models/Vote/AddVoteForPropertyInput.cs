@@ -26,7 +26,7 @@ namespace GuoGuoCommunity.API.Models
         /// <summary>
         /// 问题集合
         /// </summary>
-        public List<VoteQuestionModel> List { get; set; }
+        public List<AddVoteQuestionModel> List { get; set; }
 
         /// <summary>
         /// 附件Id

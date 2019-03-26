@@ -41,6 +41,11 @@ namespace GuoGuoCommunity.API.Controllers
             EventLog.WriteEntry("EventSystem", string.Format("这是由Hangfire后台任务发送的消息:{0},时间为:{1}", message, DateTime.Now));
         }
 
+        public async Task DingShiRenWu()
+        {
+            BackgroundJob.Schedule(() => Console.WriteLine("Delayed!"),TimeSpan.FromMinutes(2));
+        }
+
         /// <summary>
         /// 
         /// </summary>

@@ -5,6 +5,7 @@ using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,8 +54,8 @@ namespace GuoGuoCommunity.API.Controllers
          * 7.干预投票结果计算方式
          * 8.业主投票
          * 9.业主查看投票详情
-         * 10.业主查看投票列表
-         * 11.投票详情
+         *  10.业主查看投票列表
+         *  11.投票详情
          */
 
         /// <summary>
@@ -602,5 +603,58 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
+        /// <summary>
+        /// 获取投票详情
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("vote/get")]
+        public async Task<ApiResult<GetVoteOutput>> Get([FromUri]string id, CancellationToken cancelToken)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    throw new NotImplementedException("楼宇Id信息为空！");
+                }
+                var vote = await _voteRepository.GetAsync(id, cancelToken);
+                var voteQuestionList = await _voteQuestionRepository.GetListAsync(new VoteQuestionDto { VoteId = vote?.Id.ToString() }, cancelToken);
+                List<GetVoteQuestionModel> list = new List<GetVoteQuestionModel>();
+                foreach (var item in voteQuestionList)
+                {
+                    GetVoteQuestionModel questionModel = new GetVoteQuestionModel();
+                    List<GetVoteQuestionOptionModel> voteQuestionOptionModels = new List<GetVoteQuestionOptionModel>();
+                    var voteQuestionOptionList = await _voteQuestionOptionRepository.GetListAsync(new VoteQuestionOptionDto { VoteId = vote?.Id.ToString(), VoteQuestionId = item.Id.ToString() }, cancelToken);
+                    foreach (var voteQuestionOptionItem in voteQuestionOptionList)
+                    {
+                        GetVoteQuestionOptionModel model = new GetVoteQuestionOptionModel
+                        {
+                            Describe = voteQuestionOptionItem.Describe,
+                            Votes = voteQuestionOptionItem.Votes
+                        };
+                        voteQuestionOptionModels.Add(model);
+                    }
+                    questionModel.List = voteQuestionOptionModels;
+                    questionModel.Title = item.Title;
+                    list.Add(questionModel);
+                }
+
+                return new ApiResult<GetVoteOutput>(APIResultCode.Success, new GetVoteOutput
+                {
+                    Title = vote.Title,
+                    List = list,
+                    Deadline = vote.Deadline,
+                    SmallDistrictArray = vote.SmallDistrictArray,
+                    Summary = vote.Summary,
+                    Url = _voteAnnexRepository.GetUrl(vote.Id.ToString())
+                });
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<GetVoteOutput>(APIResultCode.Success_NoB, new GetVoteOutput { }, e.Message);
+            }
+        }
     }
 }

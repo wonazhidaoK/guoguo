@@ -3,6 +3,8 @@ using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,9 +46,12 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<List<VoteQuestion>> GetListAsync(VoteQuestionDto dto, CancellationToken token = default)
+        public async Task<List<VoteQuestion>> GetListAsync(VoteQuestionDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VoteQuestions.Where(x => x.IsDeleted == false && x.VoteId == dto.VoteId).ToListAsync(token);
+            }
         }
 
         public Task UpdateAsync(VoteQuestionDto dto, CancellationToken token = default)
