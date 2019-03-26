@@ -10,7 +10,7 @@ using System.Web.Http;
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
-    /// 
+    /// 投票记录管理
     /// </summary>
     public class VoteRecordController : ApiController
     {
