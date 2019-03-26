@@ -12,8 +12,7 @@ namespace GuoGuoCommunity.Domain.Service
 {
     public class StreetOfficeRepository : IStreetOfficeRepository
     {
-        public delegate void StreetOfficeUpdateHandler(StreetOffice streetOffice);
-        public event StreetOfficeUpdateHandler streetOfficeUpdateEvent = null;
+        //public delegate void StreetOfficeUpdateHandler(StreetOffice streetOffice);
 
         public async Task<StreetOffice> AddAsync(StreetOfficeDto dto, CancellationToken token = default)
         {
@@ -136,28 +135,73 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        /// <summary>
+        /// 修改街道办名称触发事件
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="dto"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         private async Task OnUpdate(GuoGuoCommunityContext db, StreetOffice dto, CancellationToken token = default)
         {
-            Incrementer incrementer = new Incrementer();
-            CommunityRepository dozensCounter = new CommunityRepository();
-            dozensCounter.OnE(incrementer);
-            await incrementer.DoCount(db, dto, token);
-            //await db.Communities.Where(x => x.StreetOfficeId == dto.Id).UpdateAsync(x => new Community { StreetOfficeName = dto.Name });
-            //await db.SmallDistricts.Where(x => x.StreetOfficeId == dto.Id).UpdateAsync(x => new SmallDistrict { StreetOfficeName = dto.Name });
+            StreetOfficeIncrementer incrementer = new StreetOfficeIncrementer();
+            //社区订阅
+            CommunityRepository communityRepository = new CommunityRepository();
+            communityRepository.OnSubscribe(incrementer);
+            //小区订阅
+            SmallDistrictRepository smallDistrictRepository = new SmallDistrictRepository();
+            smallDistrictRepository.OnSubscribe(incrementer);
+            //公告订阅
+            AnnouncementRepository announcementRepository = new AnnouncementRepository();
+            announcementRepository.OnSubscribe(incrementer);
+            //业主认证记录订阅
+            OwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
+            ownerCertificationRecordRepository.OnSubscribe(incrementer);
+            //站内信订阅
+            StationLetterRepository stationLetterRepository = new StationLetterRepository();
+            ownerCertificationRecordRepository.OnSubscribe(incrementer);
+            //投票订阅
+            VoteRepository voteRepository = new VoteRepository();
+            voteRepository.OnSubscribe(incrementer);
+
+            await incrementer.OnUpdate(db, dto, token);
         }
 
         private async Task<bool> OnDelete(GuoGuoCommunityContext db, StreetOfficeDto dto, CancellationToken token = default)
         {
+            //社区
             if (await db.Communities.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }
+            //小区
+            if (await db.SmallDistricts.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+            //公告
+            //if (await db.Announcements.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
+            //业主认证记录
+            //if (await db.OwnerCertificationRecords.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
+            //站内信
+            //if (await db.StationLetters.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
+            //投票
+            //if (await db.Votes.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
             return false;
         }
 
-        public void DoSomeThing(StreetOffice streetOffice)
-        {
-            streetOfficeUpdateEvent?.Invoke(streetOffice);//触发事件
-        }
+
     }
 }

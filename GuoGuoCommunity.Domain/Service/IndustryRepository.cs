@@ -165,5 +165,31 @@ namespace GuoGuoCommunity.Domain.Service
             }
             return false;
         }
+
+        public void OnSubscribe(BuildingIncrementer incrementer)
+        {
+            incrementer.BuildingEvent += BuildingChanging; 
+        }
+
+        public async void BuildingChanging(GuoGuoCommunityContext dbs, Building building, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.Industries.Where(x => x.BuildingId == building.Id.ToString()).UpdateAsync(x => new Industry { BuildingName = building.Name });
+            }
+        }
+
+        public void OnSubscribe(BuildingUnitIncrementer incrementer)
+        {
+            incrementer.BuildingUnitEvent += BuildingUnitChanging;
+        }
+
+        public async void BuildingUnitChanging(GuoGuoCommunityContext dbs, BuildingUnit buildingUnit, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.Industries.Where(x => x.BuildingUnitId == buildingUnit.Id.ToString()).UpdateAsync(x => new Industry { BuildingUnitName = buildingUnit.UnitName });
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using GuoGuoCommunity.Domain.Abstractions;
+﻿using EntityFramework.Extensions;
+using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
@@ -20,7 +21,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("小区信息不正确！");
                 }
-                var smallDistrict = await db.SmallDistricts.Where(x => x.Id == smallDistrictId  && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var smallDistrict = await db.SmallDistricts.Where(x => x.Id == smallDistrictId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (smallDistrict == null)
                 {
                     throw new NotImplementedException("小区信息不存在！");
@@ -30,7 +31,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("社区信息不正确！");
                 }
-                var communitie = await db.Communities.Where(x => x.Id == communityId &&  x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var communitie = await db.Communities.Where(x => x.Id == communityId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (communitie == null)
                 {
                     throw new NotImplementedException("社区信息不存在！");
@@ -91,6 +92,45 @@ namespace GuoGuoCommunity.Domain.Service
         public Task UpdateAsync(VoteDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
+        }
+
+        public void OnSubscribe(StreetOfficeIncrementer incrementer)
+        {
+            incrementer.StreetOfficeEvent += StreetOfficeChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void StreetOfficeChanging(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.Votes.Where(x => x.StreetOfficeId == streetOffice.Id.ToString()).UpdateAsync(x => new Vote { StreetOfficeName = streetOffice.Name });
+            }
+        }
+
+        public void OnSubscribe(CommunityIncrementer incrementer)
+        {
+            incrementer.CommunityEvent += CommunityChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void CommunityChanging(GuoGuoCommunityContext dbs, Community community, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.Votes.Where(x => x.CommunityId == community.Id.ToString()).UpdateAsync(x => new Vote { CommunityName = community.Name });
+            }
+        }
+
+        public void OnSubscribe(SmallDistrictIncrementer incrementer)
+        {
+            incrementer.SmallDistrictEvent += SmallDistrictChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void SmallDistrictChanging(GuoGuoCommunityContext dbs, SmallDistrict smallDistrict, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.Votes.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new Vote { SmallDistrictName = smallDistrict.Name });
+            }
         }
     }
 }

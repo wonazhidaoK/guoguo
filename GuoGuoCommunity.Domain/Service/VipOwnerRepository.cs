@@ -1,4 +1,5 @@
-﻿using GuoGuoCommunity.Domain.Abstractions;
+﻿using EntityFramework.Extensions;
+using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
@@ -133,8 +134,8 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("业委会Id信息不正确！");
                 }
-                var vipOwners = await db.VipOwners.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
-                if (vipOwners == null)
+                var vipOwner = await db.VipOwners.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (vipOwner == null)
                 {
                     throw new NotImplementedException("该业委会不存在！");
                 }
@@ -143,22 +144,41 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该业委会已存在！");
                 }
-                vipOwners.RemarkName = dto.RemarkName;
-                vipOwners.LastOperationTime = dto.OperationTime;
-                vipOwners.LastOperationUserId = dto.OperationUserId;
-                OnUpdateAsync(db, dto, token);
+                vipOwner.RemarkName = dto.RemarkName;
+                vipOwner.LastOperationTime = dto.OperationTime;
+                vipOwner.LastOperationUserId = dto.OperationUserId;
+                await OnUpdateAsync(db, vipOwner, token);
                 await db.SaveChangesAsync(token);
             }
         }
 
-        private void OnUpdateAsync(GuoGuoCommunityContext db, VipOwnerDto dto, CancellationToken token = default)
+        private async Task OnUpdateAsync(GuoGuoCommunityContext db, VipOwner dto, CancellationToken token = default)
         {
+            VipOwnerIncrementer incrementer = new VipOwnerIncrementer();
 
+            VipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository = new VipOwnerCertificationRecordRepository();
+            vipOwnerCertificationRecordRepository.OnSubscribe(incrementer);
+
+            await incrementer.OnUpdate(db, dto, token);
         }
 
         private bool OnDeleteAsync(GuoGuoCommunityContext db, VipOwnerDto dto, CancellationToken token = default)
         {
+
             return false;
+        }
+
+        public void OnSubscribe(SmallDistrictIncrementer incrementer)
+        {
+            incrementer.SmallDistrictEvent += SmallDistrictChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void SmallDistrictChanging(GuoGuoCommunityContext dbs, SmallDistrict smallDistrict, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.VipOwners.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new VipOwner { SmallDistrictName = smallDistrict.Name });
+            }
         }
     }
 }

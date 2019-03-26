@@ -118,8 +118,8 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("业委会职能信息不正确！");
                 }
-                var vipOwnerStructures = await db.VipOwnerStructures.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
-                if (vipOwnerStructures == null)
+                var vipOwnerStructure = await db.VipOwnerStructures.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (vipOwnerStructure == null)
                 {
                     throw new NotImplementedException("该业委会职能不存在！");
                 }
@@ -128,20 +128,25 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该业委会职能已存在！");
                 }
-                vipOwnerStructures.Name = dto.Name;
-                vipOwnerStructures.Description = dto.Description;
-                vipOwnerStructures.Weights = dto.Weights;
-                vipOwnerStructures.IsReview = dto.IsReview.Value;
-                vipOwnerStructures.LastOperationTime = dto.OperationTime;
-                vipOwnerStructures.LastOperationUserId = dto.OperationUserId;
-                OnUpdateAsync(db, dto, token);
+                vipOwnerStructure.Name = dto.Name;
+                vipOwnerStructure.Description = dto.Description;
+                vipOwnerStructure.Weights = dto.Weights;
+                vipOwnerStructure.IsReview = dto.IsReview.Value;
+                vipOwnerStructure.LastOperationTime = dto.OperationTime;
+                vipOwnerStructure.LastOperationUserId = dto.OperationUserId;
+                await OnUpdateAsync(db, vipOwnerStructure, token);
                 await db.SaveChangesAsync(token);
             }
         }
 
-        private void OnUpdateAsync(GuoGuoCommunityContext db, VipOwnerStructureDto dto, CancellationToken token = default)
+        private async Task OnUpdateAsync(GuoGuoCommunityContext db, VipOwnerStructure dto, CancellationToken token = default)
         {
+            VipOwnerStructureIncrementer incrementer = new VipOwnerStructureIncrementer();
 
+            VipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository = new VipOwnerCertificationRecordRepository();
+            vipOwnerCertificationRecordRepository.OnSubscribe(incrementer);
+
+            await incrementer.OnUpdate(db, dto, token);
         }
 
         private bool OnDeleteAsync(GuoGuoCommunityContext db, VipOwnerStructureDto dto, CancellationToken token = default)

@@ -1,4 +1,5 @@
-﻿using GuoGuoCommunity.Domain.Abstractions;
+﻿using EntityFramework.Extensions;
+using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
@@ -60,7 +61,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("站内信Id信息不正确！");
                 }
-                
+
                 return await db.StationLetters.Where(x => x.IsDeleted == false && x.Id == stationLetterId).FirstOrDefaultAsync(token);
             }
         }
@@ -81,6 +82,20 @@ namespace GuoGuoCommunity.Domain.Service
         public Task UpdateAsync(StationLetterDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
+        }
+
+
+        public void OnSubscribe(StreetOfficeIncrementer incrementer)
+        {
+            incrementer.StreetOfficeEvent += StreetOfficeChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void StreetOfficeChanging(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.StationLetters.Where(x => x.StreetOfficeId == streetOffice.Id.ToString()).UpdateAsync(x => new StationLetter { StreetOfficeName = streetOffice.Name });
+            }
         }
     }
 }

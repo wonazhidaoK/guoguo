@@ -124,31 +124,58 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该楼宇不存在！");
                 }
-                if (await db.Buildings.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.SmallDistrictId == building.SmallDistrictId&&x.Id!=uid).FirstOrDefaultAsync(token) != null)
+                if (await db.Buildings.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.SmallDistrictId == building.SmallDistrictId && x.Id != uid).FirstOrDefaultAsync(token) != null)
                 {
                     throw new NotImplementedException("该楼宇名称已存在！");
                 }
                 building.Name = dto.Name;
                 building.LastOperationTime = dto.OperationTime;
                 building.LastOperationUserId = dto.OperationUserId;
-                await OnUpdateAsync(db, dto, token);
+                await OnUpdateAsync(db, building, token);
                 await db.SaveChangesAsync(token);
             }
         }
 
-        private async Task OnUpdateAsync(GuoGuoCommunityContext db, BuildingDto dto, CancellationToken token = default)
+        private async Task OnUpdateAsync(GuoGuoCommunityContext db, Building dto, CancellationToken token = default)
         {
-            await db.Industries.Where(x => x.BuildingId == dto.Id).UpdateAsync(x => new Industry {  BuildingName = dto.Name });
-          
+            BuildingIncrementer incrementer = new BuildingIncrementer();
+            //业主认证记录订阅
+            OwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
+            ownerCertificationRecordRepository.OnSubscribe(incrementer);
+            //业户信息订阅
+            IndustryRepository industryRepository = new IndustryRepository();
+            industryRepository.OnSubscribe(incrementer);
+
+            await incrementer.OnUpdate(db, dto, token);
         }
 
-        private async Task<bool>  OnDeleteAsync(GuoGuoCommunityContext db, BuildingDto dto, CancellationToken token = default)
+        private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, BuildingDto dto, CancellationToken token = default)
         {
+            //业户信息
             if (await db.Industries.Where(x => x.BuildingId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }
+
+            //业主认证记录
+            //if (await db.OwnerCertificationRecords.Where(x => x.BuildingId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
             return false;
+        }
+
+        public void OnSubscribe(SmallDistrictIncrementer incrementer)
+        {
+            incrementer.SmallDistrictEvent += SmallDistrictChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void SmallDistrictChanging(GuoGuoCommunityContext dbs, SmallDistrict smallDistrict, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.Buildings.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new Building { SmallDistrictName = smallDistrict.Name });
+            }
         }
     }
 }

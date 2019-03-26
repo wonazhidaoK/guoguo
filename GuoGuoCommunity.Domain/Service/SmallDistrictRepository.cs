@@ -161,28 +161,101 @@ namespace GuoGuoCommunity.Domain.Service
                 smallDistrict.Name = dto.Name;
                 smallDistrict.LastOperationTime = dto.OperationTime;
                 smallDistrict.LastOperationUserId = dto.OperationUserId;
-                await OnUpdate(db, dto, token);
+                await OnUpdate(db, smallDistrict, token);
                 await db.SaveChangesAsync(token);
             }
         }
 
-        private async Task OnUpdate(GuoGuoCommunityContext db, SmallDistrictDto dto, CancellationToken token = default)
+        private async Task OnUpdate(GuoGuoCommunityContext db, SmallDistrict dto, CancellationToken token = default)
         {
-            await db.Buildings.Where(x => x.SmallDistrictId == dto.Id).UpdateAsync(x => new Building { SmallDistrictName = dto.Name });
-            await db.VipOwners.Where(x => x.SmallDistrictId == dto.Id).UpdateAsync(x => new VipOwner { SmallDistrictName = dto.Name });
+            SmallDistrictIncrementer incrementer = new SmallDistrictIncrementer();
+
+            //业委会
+            VipOwnerRepository vipOwnerRepository = new VipOwnerRepository();
+            vipOwnerRepository.OnSubscribe(incrementer);
+
+            //楼宇订阅
+            BuildingRepository buildingRepository = new BuildingRepository();
+            buildingRepository.OnSubscribe(incrementer);
+
+            //公告订阅
+            AnnouncementRepository announcementRepository = new AnnouncementRepository();
+            announcementRepository.OnSubscribe(incrementer);
+
+            //业主认证订阅
+            OwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
+            ownerCertificationRecordRepository.OnSubscribe(incrementer);
+
+            //投票订阅
+            VoteRepository voteRepository = new VoteRepository();
+            voteRepository.OnSubscribe(incrementer);
+
+            //业委会成员申请表
+            VipOwnerApplicationRecordRepository vipOwnerApplicationRecordRepository = new VipOwnerApplicationRecordRepository();
+            vipOwnerApplicationRecordRepository.OnSubscribe(incrementer);
+
+            await incrementer.OnUpdate(db, dto, token);
         }
 
         private async Task<bool> OnDelete(GuoGuoCommunityContext db, SmallDistrictDto dto, CancellationToken token = default)
         {
+            //楼宇
             if (await db.Buildings.Where(x => x.SmallDistrictId == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }
+            //业委会
             if (await db.VipOwners.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }
+            ////公告
+            //if (await db.Announcements.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
+            ////业主认证
+            //if (await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
+            ////投票
+            //if (await db.Votes.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
+            ////业委会成员申请
+            //if (await db.VipOwnerApplicationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
             return false;
+        }
+
+        public void OnSubscribe(StreetOfficeIncrementer incrementer)
+        {
+            incrementer.StreetOfficeEvent += StreetOfficeChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void StreetOfficeChanging(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.SmallDistricts.Where(x => x.StreetOfficeId == streetOffice.Id.ToString()).UpdateAsync(x => new SmallDistrict { StreetOfficeName = streetOffice.Name });
+            }
+        }
+
+        public void OnSubscribe(CommunityIncrementer incrementer)
+        {
+            incrementer.CommunityEvent += CommunityChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void CommunityChanging(GuoGuoCommunityContext dbs, Community community, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.SmallDistricts.Where(x => x.CommunityId == community.Id.ToString()).UpdateAsync(x => new SmallDistrict { CommunityName = community.Name });
+            }
         }
     }
 }

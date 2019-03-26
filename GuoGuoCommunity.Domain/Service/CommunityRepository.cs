@@ -8,7 +8,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static GuoGuoCommunity.Domain.Service.StreetOfficeRepository;
 
 namespace GuoGuoCommunity.Domain.Service
 {
@@ -149,46 +148,64 @@ namespace GuoGuoCommunity.Domain.Service
                 community.Name = dto.Name;
                 community.LastOperationTime = dto.OperationTime;
                 community.LastOperationUserId = dto.OperationUserId;
-                await OnUpdate(db, dto, token);
+                await OnUpdate(db, community, token);
                 await db.SaveChangesAsync(token);
             }
         }
 
-        private async Task OnUpdate(GuoGuoCommunityContext db, CommunityDto dto, CancellationToken token = default)
+        private async Task OnUpdate(GuoGuoCommunityContext db, Community dto, CancellationToken token = default)
         {
-            await db.SmallDistricts.Where(x => x.CommunityId == dto.Id).UpdateAsync(x => new SmallDistrict { CommunityName = dto.Name });
+            CommunityIncrementer incrementer = new CommunityIncrementer();
+            //小区订阅
+            SmallDistrictRepository smallDistrictRepository = new SmallDistrictRepository();
+            smallDistrictRepository.OnSubscribe(incrementer);
+            //公告订阅
+            AnnouncementRepository announcementRepository = new AnnouncementRepository();
+            announcementRepository.OnSubscribe(incrementer);
+            //业主认证订阅
+            OwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
+            ownerCertificationRecordRepository.OnSubscribe(incrementer);
+            //投诉订阅
+            VoteRepository voteRepository = new VoteRepository();
+            voteRepository.OnSubscribe(incrementer);
+            await incrementer.OnUpdate(db, dto, token);
         }
 
         private async Task<bool> OnDelete(GuoGuoCommunityContext db, CommunityDto dto, CancellationToken token = default)
         {
-            StreetOfficeRepository streetOfficeRepository = new StreetOfficeRepository();
-
-            streetOfficeRepository.streetOfficeUpdateEvent += new StreetOfficeUpdateHandler(noteMe);//订阅(注册)窗口1的Listener事件
-                                                                                                    //事件处理方法
+            //小区
             if (await db.SmallDistricts.Where(x => x.IsDeleted == false && x.CommunityId == dto.Id).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }
+            ////公告
+            //if (await db.Announcements.Where(x => x.IsDeleted == false && x.CommunityId == dto.Id).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
+            ////业主认证
+            //if (await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.CommunityId == dto.Id).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
+            ////投诉
+            //if (await db.Votes.Where(x => x.IsDeleted == false && x.CommunityId == dto.Id).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
             return false;
 
         }
 
-        private void noteMe(Object sender)
+        public void OnSubscribe(StreetOfficeIncrementer incrementer)
         {
-            //窗口1的Listener事件出发后执行
-        }
-
-        public void OnE(Incrementer incrementer)
-        {
-            incrementer.CountedADozen += IncrementDozensCount;//在发布者私有委托里增加方法
+            incrementer.StreetOfficeEvent += StreetOfficeChanging;//在发布者私有委托里增加方法
         }
 
-
-        public async void IncrementDozensCount(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)//事件成员被触发时要调用的方法
-        {
+        public async void StreetOfficeChanging(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)
+        {
             using (var db = new GuoGuoCommunityContext())
             {
-
                 await db.Communities.Where(x => x.StreetOfficeId == streetOffice.Id.ToString()).UpdateAsync(x => new Community { StreetOfficeName = streetOffice.Name });
             }
         }

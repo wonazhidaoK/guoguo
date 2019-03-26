@@ -1,4 +1,5 @@
-﻿using GuoGuoCommunity.Domain.Abstractions;
+﻿using EntityFramework.Extensions;
+using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using GuoGuoCommunity.Domain.Models.Enum;
@@ -125,6 +126,47 @@ namespace GuoGuoCommunity.Domain.Service
         public Task UpdateAsync(AnnouncementDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
+        }
+
+
+
+        public void OnSubscribe(StreetOfficeIncrementer incrementer)
+        {
+            incrementer.StreetOfficeEvent += StreetOfficeChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void StreetOfficeChanging(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.Announcements.Where(x => x.StreetOfficeId == streetOffice.Id.ToString()).UpdateAsync(x => new Announcement { StreetOfficeName = streetOffice.Name });
+            }
+        }
+
+        public void OnSubscribe(CommunityIncrementer incrementer)
+        {
+            incrementer.CommunityEvent += CommunityChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void CommunityChanging(GuoGuoCommunityContext dbs, Community  community, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.Announcements.Where(x => x.CommunityId == community.Id.ToString()).UpdateAsync(x => new Announcement { CommunityName = community.Name });
+            }
+        }
+
+        public void OnSubscribe(SmallDistrictIncrementer incrementer)
+        {
+            incrementer.SmallDistrictEvent += SmallDistrictChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void SmallDistrictChanging(GuoGuoCommunityContext dbs, SmallDistrict  smallDistrict, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.Announcements.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new Announcement { SmallDistrictName = smallDistrict.Name });
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using EntityFramework.Extensions;
-using GuoGuoCommunity.Domain.Abstractions;
+﻿using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
@@ -137,23 +136,38 @@ namespace GuoGuoCommunity.Domain.Service
                 buildingUnit.NumberOfLayers = dto.NumberOfLayers;
                 buildingUnit.LastOperationTime = dto.OperationTime;
                 buildingUnit.LastOperationUserId = dto.OperationUserId;
-                await OnUpdateAsync(db, dto, token);
+                await OnUpdateAsync(db, buildingUnit, token);
                 await db.SaveChangesAsync(token);
             }
         }
 
-        private async Task OnUpdateAsync(GuoGuoCommunityContext db, BuildingUnitDto dto, CancellationToken token = default)
+        private async Task OnUpdateAsync(GuoGuoCommunityContext db, BuildingUnit dto, CancellationToken token = default)
         {
-            await db.Industries.Where(x => x.BuildingUnitId == dto.Id).UpdateAsync(x => new Industry { BuildingUnitName = dto.UnitName });
 
+            BuildingUnitIncrementer incrementer = new BuildingUnitIncrementer();
+            //业主认证记录订阅
+            OwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
+            ownerCertificationRecordRepository.OnSubscribe(incrementer);
+            //业户信息订阅
+            IndustryRepository industryRepository = new IndustryRepository();
+            industryRepository.OnSubscribe(incrementer);
+
+            await incrementer.OnUpdate(db, dto, token);
         }
 
         private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, BuildingUnitDto dto, CancellationToken token = default)
         {
+            //业户信息
             if (await db.Industries.Where(x => x.BuildingUnitId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }
+
+            //业主认证记录
+            //if (await db.OwnerCertificationRecords.Where(x => x.BuildingId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
             return false;
         }
     }

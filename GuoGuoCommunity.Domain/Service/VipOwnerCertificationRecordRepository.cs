@@ -1,4 +1,5 @@
-﻿using GuoGuoCommunity.Domain.Abstractions;
+﻿using EntityFramework.Extensions;
+using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Service
 {
-    class VipOwnerCertificationRecordRepository : IVipOwnerCertificationRecordRepository
+    public class VipOwnerCertificationRecordRepository : IVipOwnerCertificationRecordRepository
     {
         public async Task<VipOwnerCertificationRecord> AddAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default)
         {
@@ -86,6 +87,32 @@ namespace GuoGuoCommunity.Domain.Service
         public Task UpdateAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
+        }
+
+        public void OnSubscribe(VipOwnerIncrementer incrementer)
+        {
+            incrementer.VipOwnerEvent += VipOwnerChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void VipOwnerChanging(GuoGuoCommunityContext dbs, VipOwner vipOwner, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.VipOwnerCertificationRecords.Where(x => x.VipOwnerId == vipOwner.Id.ToString()).UpdateAsync(x => new VipOwnerCertificationRecord { VipOwnerName = vipOwner.Name });
+            }
+        }
+
+        public void OnSubscribe(VipOwnerStructureIncrementer incrementer)
+        {
+            incrementer.VipOwnerStructureEvent += VipOwnerStructureChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void VipOwnerStructureChanging(GuoGuoCommunityContext dbs, VipOwnerStructure vipOwnerStructure, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.VipOwnerCertificationRecords.Where(x => x.VipOwnerStructureId == vipOwnerStructure.Id.ToString()).UpdateAsync(x => new VipOwnerCertificationRecord { VipOwnerStructureName = vipOwnerStructure.Name });
+            }
         }
     }
 }

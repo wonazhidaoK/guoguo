@@ -173,7 +173,13 @@
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AnnouncementAnnex.cs" />
     <Compile Include="Models\Enum\OwnerCertificationAnnexType.cs" />
-    <Compile Include="Models\event\Incrementer.cs" />
+    <Compile Include="Models\event\BuildingUnitIncrementer.cs" />
+    <Compile Include="Models\event\BuildingIncrementer.cs" />
+    <Compile Include="Models\event\SmallDistrictIncrementer.cs" />
+    <Compile Include="Models\event\CommunityIncrementer.cs" />
+    <Compile Include="Models\event\VipOwnerStructureIncrementer.cs" />
+    <Compile Include="Models\event\VipOwnerIncrementer.cs" />
+    <Compile Include="Models\event\StreetOfficeIncrementer.cs" />
     <Compile Include="Models\OwnerCertificationAnnex.cs" />
     <Compile Include="Models\StationLetter.cs" />
     <Compile Include="Models\StationLetterAnnex.cs" />
