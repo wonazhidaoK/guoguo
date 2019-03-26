@@ -722,6 +722,46 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
+        /// 获取街道办用角色列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("role/getAllForStreetOffice")]
+        public async Task<ApiResult<List<GetAllRoleOutput>>> GetAllRoleForStreetOffice(CancellationToken cancelToken)
+        {
+            var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.JieDaoBan.Value }, cancelToken)).Select(
+                 x => new GetAllRoleOutput
+                 {
+                     Id = x.Id.ToString(),
+                     Name = x.Name,
+                     DepartmentName = x.DepartmentName,
+                     DepartmentValue = x.DepartmentValue,
+                     Description = x.Description
+                 }).ToList();
+            return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success, data);
+        }
+
+        /// <summary>
+        /// 获取物业用角色列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("role/getAllForProperty")]
+        public async Task<ApiResult<List<GetAllRoleOutput>>> GetAllRoleForProperty(CancellationToken cancelToken)
+        {
+            var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.WuYe.Value }, cancelToken)).Select(
+                 x => new GetAllRoleOutput
+                 {
+                     Id = x.Id.ToString(),
+                     Name = x.Name,
+                     DepartmentName = x.DepartmentName,
+                     DepartmentValue = x.DepartmentValue,
+                     Description = x.Description
+                 }).ToList();
+            return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success, data);
+        }
+
+        /// <summary>
         /// 删除角色信息
         /// </summary>
         /// <param name="id"></param>
