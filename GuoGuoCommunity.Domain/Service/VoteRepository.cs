@@ -2,6 +2,7 @@
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
+using GuoGuoCommunity.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -74,9 +75,64 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<List<Vote>> GetAllAsync(VoteDto dto, CancellationToken token = default)
+        public async Task<List<Vote>> GetAllForStreetOfficeAsync(VoteDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.Votes.Where(x => x.IsDeleted == false && x.StreetOfficeId == dto.StreetOfficeId).ToListAsync(token);
+                if (!string.IsNullOrWhiteSpace(dto.SmallDistrictArray))
+                {
+                    list = list.Where(x => x.SmallDistrictArray.Split(',').Contains(dto.SmallDistrictArray)).ToList();
+                }
+
+                if (!string.IsNullOrWhiteSpace(dto.Title))
+                {
+                    list = list.Where(x => x.Title.Contains(dto.Title)).ToList();
+                }
+                return list;
+            }
+        }
+
+        public async Task<List<Vote>> GetAllForPropertyAsync(VoteDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.Votes.Where(x => x.IsDeleted == false&&x.DepartmentValue== Department.WuYe.Value && x.StreetOfficeId == dto.StreetOfficeId && x.CommunityId == dto.CommunityId && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
+
+                if (!string.IsNullOrWhiteSpace(dto.Title))
+                {
+                    list = list.Where(x => x.Title.Contains(dto.Title)).ToList();
+                }
+                return list;
+            }
+        }
+
+        public async Task<List<Vote>> GetAllForVipOwnerAsync(VoteDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.Votes.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.YeZhuWeiYuanHui.Value && x.StreetOfficeId == dto.StreetOfficeId && x.CommunityId == dto.CommunityId && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
+
+                if (!string.IsNullOrWhiteSpace(dto.Title))
+                {
+                    list = list.Where(x => x.Title.Contains(dto.Title)).ToList();
+                }
+                return list;
+            }
+        }
+
+        public async Task<List<Vote>> GetAllForOwnerAsync(VoteDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.Votes.Where(x => x.IsDeleted == false && x.DepartmentValue == dto.DepartmentValue && x.StreetOfficeId == dto.StreetOfficeId && x.CommunityId == dto.CommunityId && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
+
+                if (!string.IsNullOrWhiteSpace(dto.Title))
+                {
+                    list = list.Where(x => x.Title.Contains(dto.Title)).ToList();
+                }
+                return list;
+            }
         }
 
         public Task<Vote> GetAsync(string id, CancellationToken token = default)
@@ -132,5 +188,7 @@ namespace GuoGuoCommunity.Domain.Service
                 await db.Votes.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new Vote { SmallDistrictName = smallDistrict.Name });
             }
         }
+
+       
     }
 }

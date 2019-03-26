@@ -169,6 +169,10 @@
     <Compile Include="Migrations\201903251509318_Add-Vote.Designer.cs">
       <DependentUpon>201903251509318_Add-Vote.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903260829591_update-vote.cs" />
+    <Compile Include="Migrations\201903260829591_update-vote.Designer.cs">
+      <DependentUpon>201903260829591_update-vote.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AnnouncementAnnex.cs" />
@@ -281,6 +285,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903251509318_Add-Vote.resx">
       <DependentUpon>201903251509318_Add-Vote.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903260829591_update-vote.resx">
+      <DependentUpon>201903260829591_update-vote.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,9 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 
-namespace GuoGuoCommunity.Domain.Dto
+namespace GuoGuoCommunity.API.Models
 {
-    public class VoteDto
+    /// <summary>
+    /// 
+    /// </summary>
+    public class GetForStreetOfficeOutput
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string Id { get; set; }
 
         /// <summary>
@@ -27,21 +36,6 @@ namespace GuoGuoCommunity.Domain.Dto
         public string SmallDistrictArray { get; set; }
 
         /// <summary>
-        /// 街道办Id
-        /// </summary>
-        public string StreetOfficeId { get; set; }
-
-        /// <summary>
-        /// 社区Id
-        /// </summary>
-        public string CommunityId { get; set; }
-
-        /// <summary>
-        /// 小区Id
-        /// </summary>
-        public string SmallDistrictId { get; set; }
-
-        /// <summary>
         /// 部门名称
         /// </summary>
         public string DepartmentName { get; set; }
@@ -50,15 +44,5 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 部门值
         /// </summary>
         public string DepartmentValue { get; set; }
-
-        /// <summary>
-        /// 操作人Id
-        /// </summary>
-        public string OperationUserId { get; set; }
-
-        /// <summary>
-        /// 操作时间
-        /// </summary>
-        public DateTimeOffset? OperationTime { get; set; }
     }
 }
