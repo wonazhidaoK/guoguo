@@ -395,6 +395,7 @@
     <Compile Include="Models\Vote\AddVoteForVipOwnerInput.cs" />
     <Compile Include="Models\Vote\AddVoteForVipOwnerOutput.cs" />
     <Compile Include="Models\VoteRecord\AddVoteRecordIntput.cs" />
+    <Compile Include="Models\Vote\AddVoteResultRecordInput.cs" />
     <Compile Include="Models\Vote\GetAllForOwnerInput.cs" />
     <Compile Include="Models\Vote\GetAllForOwnerOutput.cs" />
     <Compile Include="Models\Vote\GetAllForPropertyInput.cs" />

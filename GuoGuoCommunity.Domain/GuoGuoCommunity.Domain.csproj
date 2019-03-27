@@ -121,6 +121,7 @@
     <Compile Include="Abstractions\IVoteRecordDetailRepository.cs" />
     <Compile Include="Abstractions\IVoteRecordRepository.cs" />
     <Compile Include="Abstractions\IVoteRepository.cs" />
+    <Compile Include="Abstractions\IVoteResultRecordRepository.cs" />
     <Compile Include="Abstractions\IWeiXinUserRepository.cs" />
     <Compile Include="Abstractions\Models\ICreateOperation.cs" />
     <Compile Include="Abstractions\Models\IDeleted.cs" />
@@ -159,6 +160,7 @@
     <Compile Include="Dto\VoteQuestionOptionDto.cs" />
     <Compile Include="Dto\VoteRecordDetailDto.cs" />
     <Compile Include="Dto\VoteRecordDto.cs" />
+    <Compile Include="Dto\VoteResultRecordDto.cs" />
     <Compile Include="Dto\WeiXinUserDto.cs" />
     <Compile Include="GuoGuoCommunityContext.cs" />
     <Compile Include="Migrations\201903250136020_initialization.cs" />
@@ -240,6 +242,7 @@
     <Compile Include="Service\VoteRecordDetailRepository.cs" />
     <Compile Include="Service\VoteRecordRepository.cs" />
     <Compile Include="Service\VoteRepository.cs" />
+    <Compile Include="Service\VoteResultRecordRepository.cs" />
     <Compile Include="Token\Payload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\BuildingRepository.cs" />

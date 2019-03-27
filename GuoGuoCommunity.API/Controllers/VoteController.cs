@@ -4,6 +4,10 @@ using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
+using Hangfire;
+using Senparc.Weixin.MP.AdvancedAPIs;
+using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
+using Senparc.Weixin.MP.Containers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -696,6 +700,50 @@ namespace GuoGuoCommunity.API.Controllers
             catch (Exception e)
             {
                 return new ApiResult(APIResultCode.Success_NoB, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        [Route("vote/addVoteResultRecord")]
+        public void AddVoteResultRecord([FromBody]AddVoteResultRecordInput input)
+        {
+            BackgroundJob.Schedule(() => Seed(), input.SeedTime);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static readonly string AppId = "wx0bfc9becbe59d710";//与微信公众账号后台的AppId设置保持一致，区分大小写。
+        public static void Seed()
+        {
+            try
+            {
+                var accessToken = AccessTokenContainer.GetAccessToken(WXController.AppId);
+                //更换成你需要的模板消息ID
+                string templateId = "eTflBDVcaZzGtjEbXvHzkQq--Rfnc12-VT4iNMjjlf0";//ConfigurationManager.AppSettings["WXTemplate_EmployeeRegisterRemind"].ToString();
+                                                                                  //更换成对应的模板消息格式
+                var templateData = new
+                {
+                    first = new TemplateDataItem("门店员工注册通知"),
+                    //  account = new TemplateDataItem(wxNickName),
+                    time = new TemplateDataItem(DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
+                    type = new TemplateDataItem("系统通知"),
+                    remark = new TemplateDataItem(">>点击完成注册<<", "#FF0000")
+                };
+
+                var miniProgram = new TempleteModel_MiniProgram()
+                {
+                    appid = "wx7f36e41455caec1b",//ZhiShiHuLian_WxOpenAppId,
+                                                 //pagepath = "pages/editmyinfo/editmyinfo?id=" + employeeID
+                };
+
+                TemplateApi.SendTemplateMessage(AppId, "oTK8q0-mRSd44GbjJeknfz0vLv6I", templateId, null, templateData, miniProgram);
+            }
+            catch (Exception e)
+            {
+                throw new NotImplementedException(e.Message);
             }
         }
     }
