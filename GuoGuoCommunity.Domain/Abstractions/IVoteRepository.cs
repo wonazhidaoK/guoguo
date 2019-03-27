@@ -12,6 +12,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task UpdateAsync(VoteDto dto, CancellationToken token = default);
 
+        Task UpdateCalculationMethodAsync(VoteDto dto, CancellationToken token = default);
+
         Task<List<Vote>> GetAllForStreetOfficeAsync(VoteDto dto, CancellationToken token = default);
 
         Task<List<Vote>> GetAllForPropertyAsync(VoteDto dto, CancellationToken token = default);

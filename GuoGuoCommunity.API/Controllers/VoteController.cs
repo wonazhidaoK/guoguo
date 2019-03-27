@@ -51,8 +51,8 @@ namespace GuoGuoCommunity.API.Controllers
          *  4.街道办展示投票列表
          *  5.物业展示投票列表
          *  6.业委会查看投票列表
-         * 7.干预投票结果计算方式
-         * 8.业主投票
+         *  7.干预投票结果计算方式
+         *  8.业主投票
          * 9.业主查看投票详情
          *  10.业主查看投票列表
          *  11.投票详情
@@ -98,7 +98,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<AddVoteForStreetOfficeOutput>(APIResultCode.Unknown, new AddVoteForStreetOfficeOutput { }, APIResultMessage.TokenError);
                 }
 
-                //增加投票主题
+                //增加投票主体
                 var entity = await _voteRepository.AddAsync(new VoteDto
                 {
                     Deadline = input.Deadline,
@@ -196,7 +196,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<AddVoteForPropertyOutput>(APIResultCode.Unknown, new AddVoteForPropertyOutput { }, APIResultMessage.TokenError);
                 }
 
-                //增加投票主题
+                //增加投票主体
                 var entity = await _voteRepository.AddAsync(new VoteDto
                 {
                     Deadline = input.Deadline,
@@ -294,7 +294,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<AddVoteForVipOwnerOutput>(APIResultCode.Unknown, new AddVoteForVipOwnerOutput { }, APIResultMessage.TokenError);
                 }
 
-                //增加投票主题
+                //增加投票主体
                 var entity = await _voteRepository.AddAsync(new VoteDto
                 {
                     Deadline = input.Deadline,
@@ -617,7 +617,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 if (string.IsNullOrWhiteSpace(id))
                 {
-                    throw new NotImplementedException("楼宇Id信息为空！");
+                    throw new NotImplementedException("投票Id信息为空！");
                 }
                 var vote = await _voteRepository.GetAsync(id, cancelToken);
                 var voteQuestionList = await _voteQuestionRepository.GetListAsync(new VoteQuestionDto { VoteId = vote?.Id.ToString() }, cancelToken);
@@ -654,6 +654,48 @@ namespace GuoGuoCommunity.API.Controllers
             catch (Exception e)
             {
                 return new ApiResult<GetVoteOutput>(APIResultCode.Success_NoB, new GetVoteOutput { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 更改投票结果计算方式
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("vote/updateCalculationMethod")]
+        public async Task<ApiResult> UpdateCalculationMethod([FromUri]string id, CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+                }
+
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    throw new NotImplementedException("投票Id信息为空！");
+                }
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+                }
+                await _voteRepository.UpdateCalculationMethodAsync(new VoteDto
+                {
+                    Id = id,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+                return new ApiResult(APIResultCode.Success);
+
+            }
+            catch (Exception e)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, e.Message);
             }
         }
     }

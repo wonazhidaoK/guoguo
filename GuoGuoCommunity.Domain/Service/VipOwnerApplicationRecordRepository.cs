@@ -47,12 +47,22 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("小区信息不存在！");
                 }
 
+                if (!Guid.TryParse(dto.OwnerCertificationId, out var ownerCertificationId))
+                {
+                    throw new NotImplementedException("业主认证Id信息不正确！");
+                }
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (ownerCertificationRecord == null)
+                {
+                    throw new NotImplementedException("业主认证信息不存在！");
+                }
+
                 var ownerName = await db.OwnerCertificationRecords.Where(x => x.UserId == dto.UserId && x.SmallDistrictId == dto.SmallDistrictId && x.IsDeleted == false).Select(x => x.OwnerName).FirstOrDefaultAsync(token);
 
                 var vipOwnerApplicationRecord = await db.VipOwnerApplicationRecords.Where(x => x.UserId == dto.UserId && (x.IsDeleted == false || x.IsInvalid == false)).FirstOrDefaultAsync(token);
                 if (vipOwnerApplicationRecord != null)
                 {
-                    throw new NotImplementedException("存在职能申请！");
+                    throw new NotImplementedException("存在申请！");
                 }
 
                 var entity = db.VipOwnerApplicationRecords.Add(new VipOwnerApplicationRecord
@@ -67,7 +77,8 @@ namespace GuoGuoCommunity.Domain.Service
                     SmallDistrictName = smallDistricts.Name,
                     LastOperationTime = dto.OperationTime,
                     Name = ownerName,
-                    LastOperationUserId = dto.OperationUserId
+                    LastOperationUserId = dto.OperationUserId,
+                    OwnerCertificationId = dto.OwnerCertificationId
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -139,7 +150,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.VipOwnerApplicationRecords.Where(x => x.IsInvalid == false && x.IsDeleted == false && x.UserId==userId).ToListAsync(token);
+                return await db.VipOwnerApplicationRecords.Where(x => x.IsInvalid == false && x.IsDeleted == false && x.UserId == userId).ToListAsync(token);
             }
         }
 
@@ -169,6 +180,6 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-       
+
     }
 }

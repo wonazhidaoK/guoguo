@@ -176,5 +176,10 @@ namespace GuoGuoCommunity.Domain
         /// 投票管理
         /// </summary>
         public DbSet<Vote> Votes { get; set; }
+
+        /// <summary>
+        /// 投票结果记录
+        /// </summary>
+        public DbSet<VoteResultRecord> VoteResultRecords { get; set; }
     }
 }

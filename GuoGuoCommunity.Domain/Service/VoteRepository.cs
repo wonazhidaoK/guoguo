@@ -60,6 +60,8 @@ namespace GuoGuoCommunity.Domain.Service
                     StreetOfficeName = streetOffice.Name,
                     Summary = dto.Summary,
                     Title = dto.Title,
+                    CalculationMethodValue = CalculationMethod.EndorsedNumber.Value,
+                    CalculationMethodName = CalculationMethod.Opposition.Name,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
@@ -196,6 +198,25 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-
+        public async Task UpdateCalculationMethodAsync(VoteDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("投票Id信息不正确！");
+                }
+                var vote = await db.Votes.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (vote == null)
+                {
+                    throw new NotImplementedException("该投票不存在！");
+                }
+                vote.CalculationMethodValue = CalculationMethod.Opposition.Value;
+                vote.CalculationMethodName = CalculationMethod.Opposition.Name;
+                vote.LastOperationTime = dto.OperationTime;
+                vote.LastOperationUserId = dto.OperationUserId;
+                await db.SaveChangesAsync(token);
+            }
+        }
     }
 }

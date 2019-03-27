@@ -122,7 +122,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.Industries.Where(x => x.IsDeleted == false && x.BuildingId == dto.BuildingId && x.NumberOfLayers == dto.NumberOfLayers).ToListAsync(token);
+                return await db.Industries.Where(x => x.IsDeleted == false && x.BuildingUnitId == dto.BuildingUnitId && x.NumberOfLayers == dto.NumberOfLayers).ToListAsync(token);
             }
         }
 
@@ -168,8 +168,8 @@ namespace GuoGuoCommunity.Domain.Service
 
         public void OnSubscribe(BuildingIncrementer incrementer)
         {
-            incrementer.BuildingEvent += BuildingChanging; 
-        }
+            incrementer.BuildingEvent += BuildingChanging;
+        }
 
         public async void BuildingChanging(GuoGuoCommunityContext dbs, Building building, CancellationToken token = default)
         {

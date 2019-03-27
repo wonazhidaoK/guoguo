@@ -26,11 +26,11 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("业户信息不存在！");
                 }
 
-                var owner = await db.Owners.Where(x => x.IDCard == dto.IDCard && x.IsDeleted == false && x.IndustryId == dto.IndustryId).FirstOrDefaultAsync(token);
-                if (owner != null)
-                {
-                    throw new NotImplementedException("该业主信息已存在！");
-                }
+                //var owner = await db.Owners.Where(x => x.IDCard == dto.IDCard && x.IsDeleted == false && x.IndustryId == dto.IndustryId).FirstOrDefaultAsync(token);
+                //if (owner != null)
+                //{
+                //    throw new NotImplementedException("该业主信息已存在！");
+                //}
                 var entity = db.Owners.Add(new Owner
                 {
                     Name = dto.Name,

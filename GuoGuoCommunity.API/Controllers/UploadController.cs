@@ -57,11 +57,12 @@ namespace GuoGuoCommunity.API.Controllers
 
 
         /// <summary>
-        /// 上传
+        /// 业主认证上传文件
         /// </summary>
         /// <returns></returns>
-        [Route("api/upload")]
-        public async Task<ApiResult<UploadOutput>> Upload([FromBody]UploadInput input, CancellationToken cancelToken)
+        [HttpPost]
+        [Route("api/uploadOwnerCertification")]
+        public async Task<ApiResult<UploadOutput>> UploadOwnerCertification(CancellationToken cancelToken)
         {
             try
             {
@@ -79,26 +80,26 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 #endregion
 
-                if (string.IsNullOrWhiteSpace(input?.Type))
-                {
-                    throw new NotImplementedException("上传附件类型为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(type))
+                //{
+                //    throw new NotImplementedException("上传附件类型为空！");
+                //}
 
-                string typeName = "";
-                switch (input.Type)
-                {
-                    case "Owner":
-                        typeName = "OwnerCertification";
-                        break;
-                    case "VipOwner":
-                        typeName = "VipOwnerCertification";
-                        break;
-                    case "Announcement":
-                        typeName = "Announcement";
-                        break;
-                    default:
-                        break;
-                }
+                string typeName = "OwnerCertification";
+                //switch (type)
+                //{
+                //    case "Owner":
+                //        typeName = "OwnerCertification";
+                //        break;
+                //    case "VipOwner":
+                //        typeName = "VipOwnerCertification";
+                //        break;
+                //    case "Announcement":
+                //        typeName = "Announcement";
+                //        break;
+                //    default:
+                //        break;
+                //}
 
                 // Check whether the POST operation is MultiPart?
                 if (!Request.Content.IsMimeMultipartContent())

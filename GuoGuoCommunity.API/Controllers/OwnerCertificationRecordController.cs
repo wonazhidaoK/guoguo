@@ -120,7 +120,7 @@ namespace GuoGuoCommunity.API.Controllers
                           });
                     if (itemEntity.OwnerCertificationAnnexTypeValue == OwnerCertificationAnnexType.IDCardFront.Value)
                     {
-                        BackgroundJob.Enqueue(() => Send(itemEntity.Id.ToString()));
+                        //BackgroundJob.Enqueue(() => Send(itemEntity.Id.ToString()));
                     }
                 }
 
@@ -155,7 +155,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 var data = await _ownerCertificationRecordRepository.GetListAsync(new OwnerCertificationRecordDto
                 {
-                    CertificationStatusValue = OwnerCertification.Success.Value,
+                    //CertificationStatusValue = OwnerCertification.Success.Value,
                     UserId = user.Id.ToString()
                 }, cancelToken);
                 return new ApiResult<GetListOwnerCertificationRecordInput>(APIResultCode.Success, new GetListOwnerCertificationRecordInput

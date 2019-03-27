@@ -24,6 +24,11 @@ namespace GuoGuoCommunity.API.Models
         public string SmallDistrictId { get; set; }
 
         /// <summary>
+        /// 业主认证Id
+        /// </summary>
+        public string OwnerCertificationId { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         public List<Model>  Models { get; set; }

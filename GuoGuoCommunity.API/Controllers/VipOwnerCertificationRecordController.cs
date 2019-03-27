@@ -36,7 +36,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 提交高级申请
+        /// 提交高级认证申请
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>
@@ -50,6 +50,10 @@ namespace GuoGuoCommunity.API.Controllers
                 if (string.IsNullOrWhiteSpace(input.StructureId))
                 {
                     throw new NotImplementedException("职能Id信息为空！");
+                }
+                if (string.IsNullOrWhiteSpace(input.OwnerCertificationId))
+                {
+                    throw new NotImplementedException("业主认证Id信息为空！");
                 }
                 if (input.Models.Count < 3)
                 {
@@ -74,7 +78,8 @@ namespace GuoGuoCommunity.API.Controllers
                           OperationUserId = user.Id.ToString(),
                           Reason = input.Reason,
                           OperationTime = DateTimeOffset.Now,
-                          UserId = user.Id.ToString()
+                          UserId = user.Id.ToString(),
+                          OwnerCertificationId = input.OwnerCertificationId
                       }, cancelToken);
 
 

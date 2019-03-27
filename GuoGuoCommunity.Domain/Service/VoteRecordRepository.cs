@@ -30,6 +30,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     Feedback = dto.Feedback,
                     VoteId = dto.VoteId,
+                    OwnerCertificationId = dto.OwnerCertificationId,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,

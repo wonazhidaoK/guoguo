@@ -173,9 +173,18 @@
     <Compile Include="Migrations\201903260829591_update-vote.Designer.cs">
       <DependentUpon>201903260829591_update-vote.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903270206386_update-VoteRecord.cs" />
+    <Compile Include="Migrations\201903270206386_update-VoteRecord.Designer.cs">
+      <DependentUpon>201903270206386_update-VoteRecord.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903270757386_Add-VoteResultRecord.cs" />
+    <Compile Include="Migrations\201903270757386_Add-VoteResultRecord.Designer.cs">
+      <DependentUpon>201903270757386_Add-VoteResultRecord.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AnnouncementAnnex.cs" />
+    <Compile Include="Models\Enum\CalculationMethod.cs" />
     <Compile Include="Models\Enum\OwnerCertificationAnnexType.cs" />
     <Compile Include="Models\event\BuildingUnitIncrementer.cs" />
     <Compile Include="Models\event\BuildingIncrementer.cs" />
@@ -218,6 +227,7 @@
     <Compile Include="Models\VoteQuestionOption.cs" />
     <Compile Include="Models\VoteRecord.cs" />
     <Compile Include="Models\VoteRecordDetail.cs" />
+    <Compile Include="Models\VoteResultRecord.cs" />
     <Compile Include="Models\WeiXinUser.cs" />
     <Compile Include="Service\AnnouncementAnnexRepository.cs" />
     <Compile Include="Service\AnnouncementRepository.cs" />
@@ -288,6 +298,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903260829591_update-vote.resx">
       <DependentUpon>201903260829591_update-vote.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903270206386_update-VoteRecord.resx">
+      <DependentUpon>201903270206386_update-VoteRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903270757386_Add-VoteResultRecord.resx">
+      <DependentUpon>201903270757386_Add-VoteResultRecord.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

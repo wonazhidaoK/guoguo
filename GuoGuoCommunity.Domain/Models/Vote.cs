@@ -48,9 +48,14 @@ namespace GuoGuoCommunity.Domain.Models
         public string DepartmentValue { get; set; }
 
         /// <summary>
-        /// 结果计算方式
+        /// 结果计算方式值
         /// </summary>
-        public string CalculationMethod { get; set; }
+        public string CalculationMethodValue { get; set; }
+
+        /// <summary>
+        /// 结果计算方式名称
+        /// </summary>
+        public string CalculationMethodName { get; set; }
 
         #region 街道办结构
 

@@ -32,6 +32,27 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public async Task<VoteQuestionOption> AddCountAsync(string id, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(id, out var uid))
+                {
+                    throw new NotImplementedException("选项Id信息不正确！");
+                }
+                var voteQuestionOption = await db.VoteQuestionOptions.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (voteQuestionOption == null)
+                {
+                    throw new NotImplementedException("该选项不存在！");
+                }
+
+                voteQuestionOption.Votes = voteQuestionOption.Votes + 1;
+                
+                await db.SaveChangesAsync(token);
+                return voteQuestionOption;
+            }
+        }
+
         public Task DeleteAsync(VoteQuestionOptionDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();

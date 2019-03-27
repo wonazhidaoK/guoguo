@@ -42,6 +42,11 @@ namespace GuoGuoCommunity.Domain.Dto
         public string OperationUserId { get; set; }
 
         /// <summary>
+        /// 业主认证Id
+        /// </summary>
+        public string OwnerCertificationId { get; set; }
+
+        /// <summary>
         /// 操作时间
         /// </summary>
         public DateTimeOffset? OperationTime { get; set; }
