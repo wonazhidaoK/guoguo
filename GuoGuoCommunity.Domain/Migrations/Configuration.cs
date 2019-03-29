@@ -17,11 +17,11 @@ namespace GuoGuoCommunity.Domain.Migrations
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data.
 
-            context.Tests.AddOrUpdate(x => x.Id,
+            context.Tests.AddOrUpdate(x => x.Name,
                 new Test() { Id = 1, Name = "Jane Austen" },
                 new Test() { Id = 2, Name = "Charles Dickens" }
                 );
-            context.Menus.AddOrUpdate(x => x.Id,
+            context.Menus.AddOrUpdate(x => x.Name,
                 new Menu() { Name = "物业后台-业户信息", Key = "wy_house_info" },
                 new Menu() { Name = "物业后台-认证中心", Key = "wy_rz" },
                 new Menu() { Name = "物业后台-业主认证", Key = "wy_rz_yz" },
@@ -34,7 +34,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                 new Menu() { Name = "街道办后台-站内信", Key = "jdb_complaint" },
                 new Menu() { Name = "系统管理员", Key = "authorityMax" }
                 );
-            context.Users.AddOrUpdate(x => x.Id,
+            context.Users.AddOrUpdate(x => x.Name,
                 new User()
                 {
                     Name = "admin",

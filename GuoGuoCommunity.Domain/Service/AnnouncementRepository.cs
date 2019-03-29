@@ -148,7 +148,7 @@ namespace GuoGuoCommunity.Domain.Service
             incrementer.CommunityEvent += CommunityChanging;//在发布者私有委托里增加方法
         }
 
-        public async void CommunityChanging(GuoGuoCommunityContext dbs, Community  community, CancellationToken token = default)
+        public async void CommunityChanging(GuoGuoCommunityContext dbs, Community community, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
@@ -161,11 +161,50 @@ namespace GuoGuoCommunity.Domain.Service
             incrementer.SmallDistrictEvent += SmallDistrictChanging;//在发布者私有委托里增加方法
         }
 
-        public async void SmallDistrictChanging(GuoGuoCommunityContext dbs, SmallDistrict  smallDistrict, CancellationToken token = default)
+        public async void SmallDistrictChanging(GuoGuoCommunityContext dbs, SmallDistrict smallDistrict, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
                 await db.Announcements.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new Announcement { SmallDistrictName = smallDistrict.Name });
+            }
+        }
+
+        public async Task<Announcement> AddVipOwnerAsync(AnnouncementDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.OwnerCertificationId, out var ownerCertificationId))
+                {
+                    throw new NotImplementedException("业主认证Id不正确！");
+                }
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (ownerCertificationRecord == null)
+                {
+                    throw new NotImplementedException("业主认证信息不存在！");
+                }
+
+                var entity = db.Announcements.Add(new Announcement
+                {
+                    Content = dto.Content,
+                    SmallDistrictArray = dto.SmallDistrictArray,
+                    DepartmentName = dto.DepartmentName,
+                    DepartmentValue = dto.DepartmentValue,
+                    Summary = dto.Summary,
+                    Title = dto.Title,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                    LastOperationTime = dto.OperationTime,
+                    LastOperationUserId = dto.OperationUserId,
+                    CommunityId = dto.CommunityId,
+                    CommunityName = dto.CommunityName,
+                    SmallDistrictId = dto.SmallDistrictId,
+                    SmallDistrictName = dto.SmallDistrictName,
+                    StreetOfficeId = dto.StreetOfficeId,
+                    StreetOfficeName = dto.StreetOfficeName,
+                    OwnerCertificationId = dto.OwnerCertificationId
+                });
+                await db.SaveChangesAsync(token);
+                return entity;
             }
         }
     }

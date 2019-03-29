@@ -4,8 +4,8 @@ using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -22,6 +22,8 @@ namespace GuoGuoCommunity.API.Controllers
     {
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private readonly IOwnerCertificationAnnexRepository _ownerCertificationAnnexRepository;
+        private readonly IOwnerRepository _ownerRepository;
+        private readonly IIndustryRepository _industryRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -29,12 +31,18 @@ namespace GuoGuoCommunity.API.Controllers
         /// </summary>
         /// <param name="ownerCertificationRecordRepository"></param>
         /// <param name="ownerCertificationAnnexRepository"></param>
+        /// <param name="ownerRepository"></param>
+        /// <param name="industryRepository"></param>
         public OwnerCertificationRecordController(
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
-            IOwnerCertificationAnnexRepository ownerCertificationAnnexRepository)
+            IOwnerCertificationAnnexRepository ownerCertificationAnnexRepository,
+            IOwnerRepository ownerRepository,
+            IIndustryRepository industryRepository)
         {
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _ownerCertificationAnnexRepository = ownerCertificationAnnexRepository;
+            _ownerRepository = ownerRepository;
+            _industryRepository = industryRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -138,58 +146,69 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("ownerCertificationRecord/getList")]
-        public async Task<ApiResult<GetListOwnerCertificationRecordInput>> GetList(CancellationToken cancelToken)
+        public async Task<ApiResult<GetListOwnerCertificationRecordOutput>> GetList(CancellationToken cancelToken)
         {
             try
             {
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
                 {
-                    return new ApiResult<GetListOwnerCertificationRecordInput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordInput { }, APIResultMessage.TokenNull);
+                    return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordOutput { }, APIResultMessage.TokenNull);
                 }
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
-                    return new ApiResult<GetListOwnerCertificationRecordInput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordInput { }, APIResultMessage.TokenError);
+                    return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordOutput { }, APIResultMessage.TokenError);
                 }
                 var data = await _ownerCertificationRecordRepository.GetListAsync(new OwnerCertificationRecordDto
                 {
-                    //CertificationStatusValue = OwnerCertification.Success.Value,
                     UserId = user.Id.ToString()
                 }, cancelToken);
-                return new ApiResult<GetListOwnerCertificationRecordInput>(APIResultCode.Success, new GetListOwnerCertificationRecordInput
+                List<GetOwnerCertificationRecordOutput> list = new List<GetOwnerCertificationRecordOutput>();
+
+                foreach (var item in data)
                 {
-                    List = data.Select(x => new GetOwnerCertificationRecordInput
+                    var owner = await _ownerRepository.GetAsync(item.OwnerId, cancelToken);
+                    var industry = await _industryRepository.GetAsync(item.IndustryId, cancelToken);
+                    list.Add(new GetOwnerCertificationRecordOutput
                     {
-                        BuildingId = x.BuildingId,
-                        BuildingName = x.BuildingName,
-                        BuildingUnitId = x.BuildingUnitId,
-                        BuildingUnitName = x.BuildingUnitName,
-                        CertificationResult = x.CertificationResult,
-                        CertificationStatusName = x.CertificationStatusName,
-                        CertificationStatusValue = x.CertificationStatusValue,
-                        CertificationTime = x.CertificationTime,
-                        CommunityId = x.CommunityId,
-                        CommunityName = x.CommunityName,
-                        Id = x.Id.ToString(),
-                        IndustryId = x.IndustryId,
-                        IndustryName = x.IndustryName,
-                        OwnerId = x.OwnerId,
-                        OwnerName = x.OwnerName,
-                        SmallDistrictId = x.SmallDistrictId,
-                        SmallDistrictName = x.SmallDistrictName,
-                        StreetOfficeId = x.StreetOfficeId,
-                        StreetOfficeName = x.StreetOfficeName,
-                        UserId = x.UserId,
-                        PhoneNumber = "13112345678",//TODO获取业主手机号
-                        Acreage = "99.99"//TODO获取业户面积
-                        //TODO 业主信息获取
-                    }).ToList()
+                        BuildingId = item.BuildingId,
+                        BuildingName = item.BuildingName,
+                        BuildingUnitId = item.BuildingUnitId,
+                        BuildingUnitName = item.BuildingUnitName,
+                        CertificationResult = item.CertificationResult,
+                        CertificationStatusName = item.CertificationStatusName,
+                        CertificationStatusValue = item.CertificationStatusValue,
+                        CertificationTime = item.CertificationTime,
+                        CommunityId = item.CommunityId,
+                        CommunityName = item.CommunityName,
+                        Id = item.Id.ToString(),
+                        IndustryId = item.IndustryId,
+                        IndustryName = item.IndustryName,
+                        OwnerId = item.OwnerId,
+                        OwnerName = item.OwnerName,
+                        SmallDistrictId = item.SmallDistrictId,
+                        SmallDistrictName = item.SmallDistrictName,
+                        StreetOfficeId = item.StreetOfficeId,
+                        StreetOfficeName = item.StreetOfficeName,
+                        UserId = item.UserId,
+                        Name = owner?.Name,
+                        Birthday = owner?.Birthday,
+                        Gender = owner?.Gender,
+                        IDCard = owner?.IDCard,
+                        PhoneNumber = owner?.PhoneNumber,
+                        NumberOfLayers = industry?.NumberOfLayers,
+                        Acreage = industry?.Acreage
+                    });
+                }
+                return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Success, new GetListOwnerCertificationRecordOutput
+                {
+                    List = list
                 });
             }
             catch (Exception e)
             {
-                return new ApiResult<GetListOwnerCertificationRecordInput>(APIResultCode.Success_NoB, new GetListOwnerCertificationRecordInput { }, e.Message);
+                return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Success_NoB, new GetListOwnerCertificationRecordOutput { }, e.Message);
             }
         }
 

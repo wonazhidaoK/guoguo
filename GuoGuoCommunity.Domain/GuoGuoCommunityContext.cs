@@ -181,5 +181,10 @@ namespace GuoGuoCommunity.Domain
         /// 投票结果记录
         /// </summary>
         public DbSet<VoteResultRecord> VoteResultRecords { get; set; }
+
+        /// <summary>
+        ///投票业委会关联表
+        /// </summary>
+        public DbSet<VoteAssociationVipOwner> VoteAssociationVipOwners { get; set; }
     }
 }

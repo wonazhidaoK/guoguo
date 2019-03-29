@@ -183,6 +183,10 @@
     <Compile Include="Migrations\201903270757386_Add-VoteResultRecord.Designer.cs">
       <DependentUpon>201903270757386_Add-VoteResultRecord.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903291444589_add-VoteAssociationVipOwner.cs" />
+    <Compile Include="Migrations\201903291444589_add-VoteAssociationVipOwner.Designer.cs">
+      <DependentUpon>201903291444589_add-VoteAssociationVipOwner.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AnnouncementAnnex.cs" />
@@ -226,6 +230,7 @@
     <Compile Include="Models\VipOwnerStructure.cs" />
     <Compile Include="Models\Vote.cs" />
     <Compile Include="Models\VoteAnnex.cs" />
+    <Compile Include="Models\VoteAssociationVipOwner.cs" />
     <Compile Include="Models\VoteQuestion.cs" />
     <Compile Include="Models\VoteQuestionOption.cs" />
     <Compile Include="Models\VoteRecord.cs" />
@@ -308,6 +313,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903270757386_Add-VoteResultRecord.resx">
       <DependentUpon>201903270757386_Add-VoteResultRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903291444589_add-VoteAssociationVipOwner.resx">
+      <DependentUpon>201903291444589_add-VoteAssociationVipOwner.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

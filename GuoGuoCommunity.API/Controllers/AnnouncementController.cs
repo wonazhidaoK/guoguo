@@ -81,7 +81,6 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("公告标题信息为空！");
                 }
-
                 if (string.IsNullOrWhiteSpace(input.Summary))
                 {
                     throw new NotImplementedException("公告摘要信息为空！");
@@ -90,13 +89,17 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("公告小区范围信息为空！");
                 }
+                if (string.IsNullOrWhiteSpace(input.OwnerCertificationId))
+                {
+                    throw new NotImplementedException("业主认证Id信息为空！");
+                }
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
                     return new ApiResult<AddVipOwnerAnnouncementOutput>(APIResultCode.Unknown, new AddVipOwnerAnnouncementOutput { }, APIResultMessage.TokenError);
                 }
 
-                var entity = await _announcementRepository.AddAsync(new AnnouncementDto
+                var entity = await _announcementRepository.AddVipOwnerAsync(new AnnouncementDto
                 {
                     Content = input.Content,
                     Summary = input.Summary,
@@ -111,7 +114,8 @@ namespace GuoGuoCommunity.API.Controllers
                     SmallDistrictId = user.SmallDistrictId,
                     SmallDistrictName = user.SmallDistrictName,
                     StreetOfficeId = user.StreetOfficeId,
-                    StreetOfficeName = user.StreetOfficeName
+                    StreetOfficeName = user.StreetOfficeName,
+                    OwnerCertificationId = input.OwnerCertificationId
                 }, cancelToken);
 
                 await _announcementAnnexRepository.AddAsync(new AnnouncementAnnexDto

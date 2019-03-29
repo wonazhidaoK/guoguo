@@ -71,6 +71,11 @@ namespace GuoGuoCommunity.Domain.Dto
         #endregion
 
         /// <summary>
+        /// 业主认证Id
+        /// </summary>
+        public string OwnerCertificationId { get; set; }
+
+        /// <summary>
         /// 操作人Id
         /// </summary>
         public string OperationUserId { get; set; }

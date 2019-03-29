@@ -303,7 +303,7 @@
     <Compile Include="Models\Menu\GetAllMenuOutput.cs" />
     <Compile Include="Models\OwnerCertificationRecord\AddOwnerCertificationRecordInput.cs" />
     <Compile Include="Models\OwnerCertificationRecord\AddOwnerCertificationRecordOutput.cs" />
-    <Compile Include="Models\OwnerCertificationRecord\GetListOwnerCertificationRecordInput.cs" />
+    <Compile Include="Models\OwnerCertificationRecord\GetListOwnerCertificationRecordOutput.cs" />
     <Compile Include="Models\Owner\AddOwnerInput.cs" />
     <Compile Include="Models\Owner\AddOwnerOutput.cs" />
     <Compile Include="Models\Owner\GetAllOwnerInput.cs" />
@@ -536,7 +536,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>64177</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://192.168.2.133:2223</IISUrl>
+          <IISUrl>http://localhost:2223</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -5,18 +5,19 @@ namespace GuoGuoCommunity.API.Models
     /// <summary>
     /// 
     /// </summary>
-    public class GetListOwnerCertificationRecordInput
+    public class GetListOwnerCertificationRecordOutput
     {
         /// <summary>
         /// 
         /// </summary>
-        public List<GetOwnerCertificationRecordInput> List { get; set; }
+        public List<GetOwnerCertificationRecordOutput> List { get; set; }
     }
 
     /// <summary>
     /// 
     /// </summary>
-    public class GetOwnerCertificationRecordInput {
+    public class GetOwnerCertificationRecordOutput
+    {
         /// <summary>
         /// 
         /// </summary>
@@ -90,11 +91,6 @@ namespace GuoGuoCommunity.API.Models
         public string IndustryName { get; set; }
 
         /// <summary>
-        /// 面积
-        /// </summary>
-        public string Acreage { get; set; }
-
-        /// <summary>
         /// 业主Id
         /// </summary>
         public string OwnerId { get; set; }
@@ -126,9 +122,49 @@ namespace GuoGuoCommunity.API.Models
         /// </summary>
         public string CertificationStatusValue { get; set; }
 
+        #region 业主信息
+
+        /// <summary>
+        /// 姓名
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 生日
+        /// </summary>
+        public string Birthday { get; set; }
+
+        /// <summary>
+        /// 性别
+        /// </summary>
+        public string Gender { get; set; }
+
         /// <summary>
         /// 手机号
         /// </summary>
         public string PhoneNumber { get; set; }
+
+        /// <summary>
+        /// 身份证号
+        /// </summary>
+        public string IDCard { get; set; }
+
+        #endregion
+
+
+        #region 业户信息
+
+        /// <summary>
+        /// 面积
+        /// </summary>
+        public string Acreage { get; set; }
+
+        /// <summary>
+        /// 层数
+        /// </summary>
+        public string NumberOfLayers { get; set; }
+
+        #endregion
+
     }
 }
