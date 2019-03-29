@@ -26,7 +26,7 @@ namespace GuoGuoCommunity.API.Models
         /// <summary>
         /// 小区范围
         /// </summary>
-        public List<string> SmallDistricts { get; set; }
+        public string SmallDistrict { get; set; }
 
         /// <summary>
         /// 问题集合

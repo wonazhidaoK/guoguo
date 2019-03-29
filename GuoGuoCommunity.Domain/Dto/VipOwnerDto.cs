@@ -27,6 +27,11 @@ namespace GuoGuoCommunity.Domain.Dto
         public string SmallDistrictName { get; set; }
 
         /// <summary>
+        /// 街道办Id
+        /// </summary>
+        public string StreetOfficeId { get; set; }
+
+        /// <summary>
         /// 操作人Id
         /// </summary>
         public string OperationUserId { get; set; }

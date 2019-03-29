@@ -31,17 +31,25 @@ namespace GuoGuoCommunity.API.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IWeiXinUserRepository _weiXinUserRepository;
+        private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
+        private readonly IVipOwnerCertificationRecordRepository _vipOwnerCertificationRecordRepository;
         private TokenManager _tokenManager;
         /// <summary>
         /// 
         /// </summary>
         /// <param name="userRepository"></param>
         /// <param name="weiXinUserRepository"></param>
+        /// <param name="ownerCertificationRecordRepository"></param>
+        /// <param name="vipOwnerCertificationRecordRepository"></param>
         public WXController(IUserRepository userRepository,
-            IWeiXinUserRepository weiXinUserRepository)
+            IWeiXinUserRepository weiXinUserRepository,
+            IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
+            IVipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository)
         {
             _userRepository = userRepository;
             _weiXinUserRepository = weiXinUserRepository;
+            _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
+            _vipOwnerCertificationRecordRepository = vipOwnerCertificationRecordRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -297,13 +305,15 @@ namespace GuoGuoCommunity.API.Controllers
                     OpenId = user.OpenId,
                     Token = token.Access_token,
                     Headimgurl = weiXinUser?.Headimgurl,
-                    Nickname = weiXinUser?.Nickname
+                    Nickname = weiXinUser?.Nickname,
+                    IsSubscription = weiXinUser == null ? false : true,
+                    IsOwner = (await _ownerCertificationRecordRepository.GetListAsync(new OwnerCertificationRecordDto() { UserId = user.Id.ToString() })).Any(),
+                    IsVipOwner = false//(await _vipOwnerCertificationRecordRepository.GetListAsync(new  VipOwnerCertificationRecordDto() { UserId = user.Id.ToString() })).Any()
                 }, APIResultMessage.Success);
 
             }
             catch (Exception e)
             {
-
                 return new ApiResult<WXLoginOutput>(APIResultCode.Success_NoB, new WXLoginOutput() { }, e.Message);
             }
         }

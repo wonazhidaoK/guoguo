@@ -186,6 +186,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AnnouncementAnnex.cs" />
+    <Compile Include="Models\Enum\VoteResult.cs" />
     <Compile Include="Models\Enum\CalculationMethod.cs" />
     <Compile Include="Models\Enum\OwnerCertificationAnnexType.cs" />
     <Compile Include="Models\event\BuildingUnitIncrementer.cs" />

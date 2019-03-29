@@ -31,5 +31,13 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<List<OwnerCertificationRecord>> GetListForOwnerAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
 
         Task UpdateInvalidAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
+
+        /// <summary>
+        /// 根据小区Id获取有效认证人列表
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task<List<OwnerCertificationRecord>> GetListForSmallDistrictIdAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
     }
 }

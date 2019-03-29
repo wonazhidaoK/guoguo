@@ -180,5 +180,19 @@ namespace GuoGuoCommunity.Domain.Service
                 await db.VipOwners.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new VipOwner { SmallDistrictName = smallDistrict.Name });
             }
         }
+
+        public async Task<List<VipOwner>> GetListForStreetOfficeIdAsync(VipOwnerDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+
+                if (!Guid.TryParse(dto.SmallDistrictId, out var smallDistrictId))
+                {
+                    throw new NotImplementedException("小区Id信息不正确！");
+                }
+                var smallDistricts = await db.SmallDistricts.Where(x => x.Id == smallDistrictId).Select(x => x.Id).ToListAsync(token);
+                return await db.VipOwners.Where(x => smallDistricts.Contains(x.Id)).ToListAsync(token);
+            }
+        }
     }
 }

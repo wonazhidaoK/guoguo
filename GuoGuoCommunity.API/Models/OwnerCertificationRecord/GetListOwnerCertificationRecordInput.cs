@@ -90,6 +90,11 @@ namespace GuoGuoCommunity.API.Models
         public string IndustryName { get; set; }
 
         /// <summary>
+        /// 面积
+        /// </summary>
+        public string Acreage { get; set; }
+
+        /// <summary>
         /// 业主Id
         /// </summary>
         public string OwnerId { get; set; }
@@ -120,5 +125,10 @@ namespace GuoGuoCommunity.API.Models
         /// 认证状态值
         /// </summary>
         public string CertificationStatusValue { get; set; }
+
+        /// <summary>
+        /// 手机号
+        /// </summary>
+        public string PhoneNumber { get; set; }
     }
 }

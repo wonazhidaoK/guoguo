@@ -3,7 +3,6 @@ using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
-using Hangfire;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -181,7 +180,10 @@ namespace GuoGuoCommunity.API.Controllers
                         SmallDistrictName = x.SmallDistrictName,
                         StreetOfficeId = x.StreetOfficeId,
                         StreetOfficeName = x.StreetOfficeName,
-                        UserId = x.UserId
+                        UserId = x.UserId,
+                        PhoneNumber = "13112345678",//TODO获取业主手机号
+                        Acreage = "99.99"//TODO获取业户面积
+                        //TODO 业主信息获取
                     }).ToList()
                 });
             }

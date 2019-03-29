@@ -122,10 +122,15 @@ namespace GuoGuoCommunity.Domain.Models
         public bool IsInvalid { get; set; }
 
         public string LastOperationUserId { get; set; }
+
         public DateTimeOffset? LastOperationTime { get; set; }
+
         public string CreateOperationUserId { get; set; }
+
         public DateTimeOffset? CreateOperationTime { get; set; }
+
         public bool IsDeleted { get; set; }
+
         public DateTimeOffset? DeletedTime { get; set; }
     }
 }

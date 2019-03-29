@@ -20,6 +20,14 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<List<VipOwner>> GetListAsync(VipOwnerDto dto, CancellationToken token = default);
 
+        /// <summary>
+        /// 根据街道办获取业委会
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task<List<VipOwner>> GetListForStreetOfficeIdAsync(VipOwnerDto dto, CancellationToken token = default);
+
         Task<List<VipOwner>> GetIsValidAsync(VipOwnerDto dto, CancellationToken token = default);
     }
 }

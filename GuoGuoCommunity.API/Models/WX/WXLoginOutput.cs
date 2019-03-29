@@ -34,5 +34,10 @@
         /// 用户的昵称
         /// </summary>
         public string Nickname { get; set; }
+
+        /// <summary>
+        /// 是否关注
+        /// </summary>
+        public bool IsSubscription { get; set; }
     }
 }

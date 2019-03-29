@@ -79,9 +79,12 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<List<VipOwnerCertificationRecord>> GetListAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default)
+        public async Task<List<VipOwnerCertificationRecord>> GetListAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VipOwnerCertificationRecords.Where(x => x.IsDeleted == false && x.UserId == dto.UserId).ToListAsync(token);
+            }
         }
 
         public Task UpdateAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default)

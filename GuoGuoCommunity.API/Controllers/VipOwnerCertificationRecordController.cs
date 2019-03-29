@@ -76,6 +76,7 @@ namespace GuoGuoCommunity.API.Controllers
                       {
                           StructureId = input.StructureId,
                           OperationUserId = user.Id.ToString(),
+                          SmallDistrictId = input.SmallDistrictId,
                           Reason = input.Reason,
                           OperationTime = DateTimeOffset.Now,
                           UserId = user.Id.ToString(),

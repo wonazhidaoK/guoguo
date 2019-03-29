@@ -169,7 +169,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.UserId == dto.UserId & x.CertificationStatusValue == dto.CertificationStatusValue).ToListAsync(token);
+                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.UserId == dto.UserId).ToListAsync(token);
             }
         }
 
@@ -305,6 +305,14 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 await db.OwnerCertificationRecords.Where(x => x.BuildingUnitId == buildingUnit.Id.ToString()).UpdateAsync(x => new OwnerCertificationRecord {  BuildingUnitName = buildingUnit.UnitName });
+            }
+        }
+
+        public async Task<List<OwnerCertificationRecord>> GetListForSmallDistrictIdAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
             }
         }
     }
