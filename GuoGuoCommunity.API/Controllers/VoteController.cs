@@ -712,6 +712,7 @@ namespace GuoGuoCommunity.API.Controllers
         {
             BackgroundJob.Schedule(() => Seed(), input.SeedTime);
         }
+
         /// <summary>
         /// 
         /// </summary>

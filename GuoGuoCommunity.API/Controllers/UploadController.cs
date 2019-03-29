@@ -25,6 +25,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IUploadRepository _uploadRepository;
         private TokenManager _tokenManager;
         private static readonly string host = ConfigurationManager.AppSettings["Host"];
+
         /// <summary>
         /// 
         /// </summary>
@@ -66,7 +67,6 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-
                 #region Token
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
@@ -122,6 +122,55 @@ namespace GuoGuoCommunity.API.Controllers
                 }
 
                 // Send OK Response along with saved file names to the client.
+                return new ApiResult<UploadOutput>(APIResultCode.Success, files[0], APIResultMessage.Success);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<UploadOutput>(APIResultCode.Error, new UploadOutput { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 高级认证上传文件
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/uploadVipOwnerCertificationRecord")]
+        public async Task<ApiResult<UploadOutput>> UploadVipOwnerCertificationRecord(CancellationToken cancelToken)
+        {
+            try
+            {
+                #region Token
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenNull);
+                }
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenError);
+                }
+                #endregion
+
+                string typeName = "VipOwnerCertification";
+
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                }
+
+                string fileSaveLocation = HttpContext.Current.Server.MapPath("~/Upload/" + typeName);
+                CustomMultipartFormDataStreamProvider provider = new CustomMultipartFormDataStreamProvider(fileSaveLocation);
+                List<UploadOutput> files = new List<UploadOutput>();
+
+                await Request.Content.ReadAsMultipartAsync(provider, cancelToken);
+
+                foreach (MultipartFileData file in provider.FileData)
+                {
+                    files.Add(await AddUpload(typeName, file.Headers.ContentDisposition.FileName.Trim('"'), user.Id.ToString(), cancelToken));
+                }
+
                 return new ApiResult<UploadOutput>(APIResultCode.Success, files[0], APIResultMessage.Success);
             }
             catch (Exception e)
