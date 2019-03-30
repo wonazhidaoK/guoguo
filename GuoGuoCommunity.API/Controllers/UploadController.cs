@@ -179,6 +179,54 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
+        /// <summary>
+        /// 公告上传文件
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/uploadAnnouncement")]
+        public async Task<ApiResult<UploadOutput>> UploadAnnouncement(CancellationToken cancelToken)
+        {
+            try
+            {
+                #region Token
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenNull);
+                }
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenError);
+                }
+                #endregion
+
+                string typeName = "Announcement";
+
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                }
+
+                string fileSaveLocation = HttpContext.Current.Server.MapPath("~/Upload/" + typeName);
+                CustomMultipartFormDataStreamProvider provider = new CustomMultipartFormDataStreamProvider(fileSaveLocation);
+                List<UploadOutput> files = new List<UploadOutput>();
+
+                await Request.Content.ReadAsMultipartAsync(provider, cancelToken);
+
+                foreach (MultipartFileData file in provider.FileData)
+                {
+                    files.Add(await AddUpload(typeName, file.Headers.ContentDisposition.FileName.Trim('"'), user.Id.ToString(), cancelToken));
+                }
+
+                return new ApiResult<UploadOutput>(APIResultCode.Success, files[0], APIResultMessage.Success);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<UploadOutput>(APIResultCode.Error, new UploadOutput { }, e.Message);
+            }
+        }
 
         /// <summary>
         /// 
