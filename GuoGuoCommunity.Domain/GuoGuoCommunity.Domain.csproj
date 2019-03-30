@@ -116,6 +116,7 @@
     <Compile Include="Abstractions\IVipOwnerRepository.cs" />
     <Compile Include="Abstractions\IVipOwnerStructureRepository.cs" />
     <Compile Include="Abstractions\IVoteAnnexRepository.cs" />
+    <Compile Include="Abstractions\IVoteAssociationVipOwnerRepository.cs" />
     <Compile Include="Abstractions\IVoteQuestionOptionRepository.cs" />
     <Compile Include="Abstractions\IVoteQuestionRepository.cs" />
     <Compile Include="Abstractions\IVoteRecordDetailRepository.cs" />
@@ -155,6 +156,7 @@
     <Compile Include="Dto\VipOwnerDto.cs" />
     <Compile Include="Dto\VipOwnerStructureDto.cs" />
     <Compile Include="Dto\VoteAnnexDto.cs" />
+    <Compile Include="Dto\VoteAssociationVipOwnerDto.cs" />
     <Compile Include="Dto\VoteDto.cs" />
     <Compile Include="Dto\VoteQuestionDto.cs" />
     <Compile Include="Dto\VoteQuestionOptionDto.cs" />
@@ -186,6 +188,14 @@
     <Compile Include="Migrations\201903291444589_add-VoteAssociationVipOwner.cs" />
     <Compile Include="Migrations\201903291444589_add-VoteAssociationVipOwner.Designer.cs">
       <DependentUpon>201903291444589_add-VoteAssociationVipOwner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903300243287_update-vipOwnerApplicationRecord.cs" />
+    <Compile Include="Migrations\201903300243287_update-vipOwnerApplicationRecord.Designer.cs">
+      <DependentUpon>201903300243287_update-vipOwnerApplicationRecord.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903300638239_updata-smallDistrict.cs" />
+    <Compile Include="Migrations\201903300638239_updata-smallDistrict.Designer.cs">
+      <DependentUpon>201903300638239_updata-smallDistrict.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
@@ -243,6 +253,7 @@
     <Compile Include="Service\StationLetterBrowseRecordRepository.cs" />
     <Compile Include="Service\StationLetterRepository.cs" />
     <Compile Include="Service\VoteAnnexRepository.cs" />
+    <Compile Include="Service\VoteAssociationVipOwnerRepository.cs" />
     <Compile Include="Service\VoteQuestionOptionRepository.cs" />
     <Compile Include="Service\VoteQuestionRepository.cs" />
     <Compile Include="Service\VoteRecordDetailRepository.cs" />
@@ -316,6 +327,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903291444589_add-VoteAssociationVipOwner.resx">
       <DependentUpon>201903291444589_add-VoteAssociationVipOwner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903300243287_update-vipOwnerApplicationRecord.resx">
+      <DependentUpon>201903300243287_update-vipOwnerApplicationRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903300638239_updata-smallDistrict.resx">
+      <DependentUpon>201903300638239_updata-smallDistrict.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

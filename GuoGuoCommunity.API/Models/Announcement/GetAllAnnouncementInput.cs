@@ -8,6 +8,11 @@ namespace GuoGuoCommunity.API.Models
     public class GetAllAnnouncementInput
     {
         /// <summary>
+        /// 业主认证Id
+        /// </summary>
+        public string OwnerCertificationId { get; set; }
+
+        /// <summary>
         /// 标题
         /// </summary>
         public string Title { get; set; }

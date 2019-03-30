@@ -4,6 +4,7 @@ using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -73,22 +74,22 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("公告内容信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.AnnexId))
-                {
-                    throw new NotImplementedException("附件Id信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.AnnexId))
+                //{
+                //    throw new NotImplementedException("附件Id信息为空！");
+                //}
                 if (string.IsNullOrWhiteSpace(input.Title))
                 {
                     throw new NotImplementedException("公告标题信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.Summary))
-                {
-                    throw new NotImplementedException("公告摘要信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.SmallDistrict))
-                {
-                    throw new NotImplementedException("公告小区范围信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.Summary))
+                //{
+                //    throw new NotImplementedException("公告摘要信息为空！");
+                //}
+                //if (string.IsNullOrWhiteSpace(input.SmallDistrict))
+                //{
+                //    throw new NotImplementedException("公告小区范围信息为空！");
+                //}
                 if (string.IsNullOrWhiteSpace(input.OwnerCertificationId))
                 {
                     throw new NotImplementedException("业主认证Id信息为空！");
@@ -106,7 +107,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Title = input.Title,
                     DepartmentValue = Department.YeZhuWeiYuanHui.Value,
                     DepartmentName = Department.YeZhuWeiYuanHui.Name,
-                    SmallDistrictArray = input.SmallDistrict,
+                    //SmallDistrictArray = input.SmallDistrict,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString(),
                     CommunityId = user.CommunityId,
@@ -117,14 +118,17 @@ namespace GuoGuoCommunity.API.Controllers
                     StreetOfficeName = user.StreetOfficeName,
                     OwnerCertificationId = input.OwnerCertificationId
                 }, cancelToken);
-
-                await _announcementAnnexRepository.AddAsync(new AnnouncementAnnexDto
+                if (!string.IsNullOrWhiteSpace(input.AnnexId))
                 {
-                    AnnexContent = input.AnnexId,
-                    AnnouncementId = entity.Id.ToString(),
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
+                    await _announcementAnnexRepository.AddAsync(new AnnouncementAnnexDto
+                    {
+                        AnnexContent = input.AnnexId,
+                        AnnouncementId = entity.Id.ToString(),
+                        OperationTime = DateTimeOffset.Now,
+                        OperationUserId = user.Id.ToString()
+                    }, cancelToken);
+                }
+
                 return new ApiResult<AddVipOwnerAnnouncementOutput>(APIResultCode.Success, new AddVipOwnerAnnouncementOutput { Id = entity.Id.ToString() });
             }
             catch (Exception e)
@@ -342,6 +346,10 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(input.OwnerCertificationId))
+                {
+                    throw new NotImplementedException("业主认证Id信息为空！");
+                }
                 if (input.PageIndex < 1)
                 {
                     input.PageIndex = 1;
@@ -366,25 +374,32 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Unknown, new GetAllAnnouncementOutput { }, APIResultMessage.TokenError);
                 }
 
-                var data = await _announcementRepository.GetAllAsync(new AnnouncementDto
+                var data = await _announcementRepository.GetAllForVipOwnerAsync(new AnnouncementDto
                 {
                     Title = input.Title,
-                    SmallDistrictArray = user.SmallDistrictId,
-                    DepartmentValue = Department.YeZhuWeiYuanHui.Value
+                    // SmallDistrictArray = user.SmallDistrictId,
+                    DepartmentValue = Department.YeZhuWeiYuanHui.Value,
+                    OwnerCertificationId = input.OwnerCertificationId
                 }, cancelToken);
+                List<GetVipOwnerAnnouncementOutput> list = new List<GetVipOwnerAnnouncementOutput>();
+                foreach (var item in data)
+                {
+                    var url = _announcementAnnexRepository.GetUrl(item.Id.ToString());
 
+                    list.Add(new GetVipOwnerAnnouncementOutput
+                    {
+                        Id = item.Id.ToString(),
+                        Title = item.Title,
+                        Content = item.Content,
+                        ReleaseTime = item.CreateOperationTime.Value,
+                        Summary = item.Summary,
+                        Url = url
+                    });
+                }
 
                 return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Success, new GetAllAnnouncementOutput
                 {
-                    List = data.Select(x => new GetVipOwnerAnnouncementOutput
-                    {
-                        Id = x.Id.ToString(),
-                        Title = x.Title,
-                        Content = x.Content,
-                        ReleaseTime = x.CreateOperationTime.Value,
-                        Summary = x.Summary,
-                        Url = _announcementAnnexRepository.GetUrl(x.Id.ToString())
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
+                    List = list.Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
             }
@@ -434,21 +449,28 @@ namespace GuoGuoCommunity.API.Controllers
                 var data = await _announcementRepository.GetAllAsync(new AnnouncementDto
                 {
                     Title = input.Title,
-                    SmallDistrictArray = user.SmallDistrictId,
+                    OwnerCertificationId = input.OwnerCertificationId,
                     DepartmentValue = Department.WuYe.Value
                 }, cancelToken);
+                List<GetVipOwnerAnnouncementOutput> list = new List<GetVipOwnerAnnouncementOutput>();
+                foreach (var item in data)
+                {
+                    var url = _announcementAnnexRepository.GetUrl(item.Id.ToString());
+
+                    list.Add(new GetVipOwnerAnnouncementOutput
+                    {
+                        Id = item.Id.ToString(),
+                        Title = item.Title,
+                        Content = item.Content,
+                        ReleaseTime = item.CreateOperationTime.Value,
+                        Summary = item.Summary,
+                        Url = url
+                    });
+                }
 
                 return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Success, new GetAllAnnouncementOutput
                 {
-                    List = data.Select(x => new GetVipOwnerAnnouncementOutput
-                    {
-                        Id = x.Id.ToString(),
-                        Title = x.Title,
-                        Content = x.Content,
-                        ReleaseTime = x.CreateOperationTime.Value,
-                        Summary = x.Summary,
-                        Url = _announcementAnnexRepository.GetUrl(x.Id.ToString())
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
+                    List = list.Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
             }
@@ -497,21 +519,27 @@ namespace GuoGuoCommunity.API.Controllers
                 var data = await _announcementRepository.GetAllAsync(new AnnouncementDto
                 {
                     Title = input.Title,
-                    SmallDistrictArray = user.SmallDistrictId,
+                    OwnerCertificationId = input.OwnerCertificationId,
                     DepartmentValue = Department.JieDaoBan.Value
                 }, cancelToken);
+                List<GetVipOwnerAnnouncementOutput> list = new List<GetVipOwnerAnnouncementOutput>();
+                foreach (var item in data)
+                {
+                    var url = _announcementAnnexRepository.GetUrl(item.Id.ToString());
 
+                    list.Add(new GetVipOwnerAnnouncementOutput
+                    {
+                        Id = item.Id.ToString(),
+                        Title = item.Title,
+                        Content = item.Content,
+                        ReleaseTime = item.CreateOperationTime.Value,
+                        Summary = item.Summary,
+                        Url = url
+                    });
+                }
                 return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Success, new GetAllAnnouncementOutput
                 {
-                    List = data.Select(x => new GetVipOwnerAnnouncementOutput
-                    {
-                        Id = x.Id.ToString(),
-                        Title = x.Title,
-                        Content = x.Content,
-                        ReleaseTime = x.CreateOperationTime.Value,
-                        Summary = x.Summary,
-                        Url = _announcementAnnexRepository.GetUrl(x.Id.ToString())
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
+                    List = list.Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
             }

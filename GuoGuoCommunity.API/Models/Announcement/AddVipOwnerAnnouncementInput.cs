@@ -25,10 +25,10 @@
         /// </summary>
         public string Content { get; set; }
 
-        /// <summary>
-        /// 小区范围
-        /// </summary>
-        public string SmallDistrict { get; set; }
+        ///// <summary>
+        ///// 小区范围
+        ///// </summary>
+        //public string SmallDistrict { get; set; }
 
         /// <summary>
         /// 附件Id

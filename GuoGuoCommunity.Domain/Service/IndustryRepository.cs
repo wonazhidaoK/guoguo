@@ -114,7 +114,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     return await db.Industries.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
                 }
-                throw new NotImplementedException("该业户信息不正确！");
+                return null;
             }
         }
 

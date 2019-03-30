@@ -114,7 +114,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     return await db.Owners.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
                 }
-                throw new NotImplementedException("该业主信息不正确！");
+                return null;
             }
         }
 

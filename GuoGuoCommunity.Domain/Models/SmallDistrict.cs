@@ -65,6 +65,16 @@ namespace GuoGuoCommunity.Domain.Models
         [Required]
         public string CommunityName { get; set; }
 
+        /// <summary>
+        /// 是否有效
+        /// </summary>
+        public string IsInvalid { get; set; }
+
+        /// <summary>
+        /// 是否选举
+        /// </summary>
+        public string IsElection { get; set; }
+
         public bool IsDeleted { get; set; }
         public DateTimeOffset? DeletedTime { get; set; }
         public string LastOperationUserId { get; set; }

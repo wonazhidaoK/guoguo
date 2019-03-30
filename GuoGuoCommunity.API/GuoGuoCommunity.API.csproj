@@ -392,6 +392,8 @@
     <Compile Include="Models\Vote\AddVoteForPropertyOutput.cs" />
     <Compile Include="Models\Vote\AddVoteForStreetOfficeInput.cs" />
     <Compile Include="Models\Vote\AddVoteForStreetOfficeOutput.cs" />
+    <Compile Include="Models\Vote\AddVoteForVipOwnerElectionInput.cs" />
+    <Compile Include="Models\Vote\AddVoteForVipOwnerElectionOutput.cs" />
     <Compile Include="Models\Vote\AddVoteForVipOwnerInput.cs" />
     <Compile Include="Models\Vote\AddVoteForVipOwnerOutput.cs" />
     <Compile Include="Models\VoteRecord\AddVoteRecordIntput.cs" />

@@ -308,7 +308,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Nickname = weiXinUser?.Nickname,
                     IsSubscription = weiXinUser == null ? false : true,
                     IsOwner = (await _ownerCertificationRecordRepository.GetListAsync(new OwnerCertificationRecordDto() { UserId = user.Id.ToString() })).Any(),
-                    IsVipOwner = false//(await _vipOwnerCertificationRecordRepository.GetListAsync(new  VipOwnerCertificationRecordDto() { UserId = user.Id.ToString() })).Any()
+                    IsVipOwner = true//(await _vipOwnerCertificationRecordRepository.GetListAsync(new  VipOwnerCertificationRecordDto() { UserId = user.Id.ToString() })).Any()
                 }, APIResultMessage.Success);
 
             }

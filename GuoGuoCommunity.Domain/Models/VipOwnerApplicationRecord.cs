@@ -67,6 +67,16 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public string OwnerCertificationId { get; set; }
 
+        /// <summary>
+        /// 投票Id
+        /// </summary>
+        public string VoteId { get; set; }
+
+        /// <summary>
+        /// 投票问题Id
+        /// </summary>
+        public string VoteQuestionId { get; set; }
+
         public string LastOperationUserId { get; set; }
 
         public DateTimeOffset? LastOperationTime { get; set; }

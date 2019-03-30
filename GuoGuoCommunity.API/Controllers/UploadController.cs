@@ -25,6 +25,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IUploadRepository _uploadRepository;
         private TokenManager _tokenManager;
         private static readonly string host = ConfigurationManager.AppSettings["Host"];
+        private static readonly string agreement = ConfigurationManager.AppSettings["Agreement"];
 
         /// <summary>
         /// 
@@ -240,7 +241,7 @@ namespace GuoGuoCommunity.API.Controllers
             var upload = await _uploadRepository.AddAsync(
                   new UploadDto
                   {
-                      Agreement = "http://",
+                      Agreement = agreement + "://",
                       Host = host + "/",
                       Domain = "/Upload",
                       Directory = "/" + directory,

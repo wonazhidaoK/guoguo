@@ -68,6 +68,15 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
+                if (!Guid.TryParse(dto.OwnerCertificationId, out var ownerCertificationId))
+                {
+                    throw new NotImplementedException("业主认证Id不正确！");
+                }
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (ownerCertificationRecord == null)
+                {
+                    throw new NotImplementedException("业主认证信息不存在！");
+                }
                 var list = await db.Announcements.Where(x => x.IsDeleted == false && x.DepartmentValue == dto.DepartmentValue).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.Title))
                 {
@@ -75,11 +84,11 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 if (dto.DepartmentValue != Department.JieDaoBan.Value)
                 {
-                    list = list.Where(x => x.SmallDistrictArray == dto.SmallDistrictArray).ToList();
+                    list = list.Where(x => x.SmallDistrictArray == ownerCertificationRecord.SmallDistrictId).ToList();
                 }
                 else
                 {
-                    list = list.Where(x => x.SmallDistrictArray.Split(',').Contains(dto.SmallDistrictArray)).ToList();
+                    list = list.Where(x => x.SmallDistrictArray.Split(',').Contains(ownerCertificationRecord.SmallDistrictId)).ToList();
                 }
                 return list;
             }
@@ -186,7 +195,7 @@ namespace GuoGuoCommunity.Domain.Service
                 var entity = db.Announcements.Add(new Announcement
                 {
                     Content = dto.Content,
-                    SmallDistrictArray = dto.SmallDistrictArray,
+                    SmallDistrictArray = ownerCertificationRecord.SmallDistrictId.ToString(),
                     DepartmentName = dto.DepartmentName,
                     DepartmentValue = dto.DepartmentValue,
                     Summary = dto.Summary,
@@ -205,6 +214,31 @@ namespace GuoGuoCommunity.Domain.Service
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
+            }
+        }
+
+        public async Task<List<Announcement>> GetAllForVipOwnerAsync(AnnouncementDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.OwnerCertificationId, out var ownerCertificationId))
+                {
+                    throw new NotImplementedException("业主认证Id不正确！");
+                }
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (ownerCertificationRecord == null)
+                {
+                    throw new NotImplementedException("业主认证信息不存在！");
+                }
+                var list = await db.Announcements.Where(x => x.IsDeleted == false && x.DepartmentValue == dto.DepartmentValue).ToListAsync(token);
+                if (!string.IsNullOrWhiteSpace(dto.Title))
+                {
+                    list = list.Where(x => x.Title.Contains(dto.Title)).ToList();
+                }
+
+                list = list.Where(x => x.SmallDistrictArray == ownerCertificationRecord.SmallDistrictId).ToList();
+
+                return list;
             }
         }
     }
