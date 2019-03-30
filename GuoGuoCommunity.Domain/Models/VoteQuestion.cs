@@ -28,7 +28,7 @@ namespace GuoGuoCommunity.Domain.Models
         public string Title { get; set; }
 
         /// <summary>
-        /// 选项方式
+        /// 选项方式0单选1多选
         /// </summary>
         public string OptionMode { get; set; }
 

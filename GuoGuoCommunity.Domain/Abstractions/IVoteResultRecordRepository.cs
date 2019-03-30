@@ -10,6 +10,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
     {
         Task<VoteResultRecord> AddAsync(VoteResultRecordDto dto, CancellationToken token = default);
 
+        Task<VoteResultRecord> AddVipOwnerElectionAsync(VoteResultRecordDto dto, CancellationToken token = default);
+
         Task UpdateAsync(VoteResultRecordDto dto, CancellationToken token = default);
 
         Task<List<VoteResultRecord>> GetAllAsync(AnnouncementAnnexDto dto, CancellationToken token = default);

@@ -29,7 +29,7 @@ namespace GuoGuoCommunity.API.Models
         public string SmallDistrictId { get; set; }
 
         /// <summary>
-        /// 人员集合
+        /// 人员集合(业委会成员申请记录Id)
         /// </summary>
         public List<string> List { get; set; }
 

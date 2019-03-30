@@ -29,5 +29,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task Adopt(VipOwnerApplicationRecordDto dto, CancellationToken token = default);
 
         Task<List<VipOwnerApplicationRecord>> GetListAdoptAsync(List<string> dto, CancellationToken token = default);
+
+        Task UpdateVoteAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default);
     }
 }

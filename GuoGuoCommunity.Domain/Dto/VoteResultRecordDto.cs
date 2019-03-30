@@ -32,6 +32,11 @@ namespace GuoGuoCommunity.Domain.Dto
         public string ResultName { get; set; }
 
         /// <summary>
+        /// 投票问题Id
+        /// </summary>
+        public string VoteQuestionId { get; set; }
+
+        /// <summary>
         /// 操作人Id
         /// </summary>
         public string OperationUserId { get; set; }

@@ -125,9 +125,16 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public Task<VipOwnerApplicationRecord> GetAsync(string id, CancellationToken token = default)
+        public async Task<VipOwnerApplicationRecord> GetAsync(string id, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (Guid.TryParse(id, out var uid))
+                {
+                    return await db.VipOwnerApplicationRecords.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                }
+                return new VipOwnerApplicationRecord();
+            }
         }
 
         public async Task<List<VipOwnerApplicationRecord>> GetListAdoptAsync(List<string> dto, CancellationToken token = default)
@@ -180,6 +187,26 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public async Task UpdateVoteAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("申请记录Id信息不正确！");
+                }
+                var vipOwnerApplicationRecord = await db.VipOwnerApplicationRecords.Where(x => x.Id == uid && x.IsDeleted == false && x.IsAdopt == false).FirstOrDefaultAsync(token);
+                if (vipOwnerApplicationRecord == null)
+                {
+                    throw new NotImplementedException("该申请记录不存在！");
+                }
 
+                vipOwnerApplicationRecord.VoteId = dto.VoteId;
+                vipOwnerApplicationRecord.VoteQuestionId = dto.VoteQuestionId;
+                vipOwnerApplicationRecord.LastOperationTime = dto.OperationTime;
+                vipOwnerApplicationRecord.LastOperationUserId = dto.OperationUserId;
+                await db.SaveChangesAsync(token);
+            }
+        }
     }
 }

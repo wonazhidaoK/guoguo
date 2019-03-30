@@ -20,13 +20,13 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("投票Id信息不正确！");
                 }
-                var vote = await db.Votes.Where(x => x.Id == voteId  && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var vote = await db.Votes.Where(x => x.Id == voteId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (vote == null)
                 {
                     throw new NotImplementedException("投票信息不存在！");
                 }
 
-                var duilding = await db.VoteResultRecords.Where(x => x.VoteId == dto.VoteId && x.IsDeleted == false ).FirstOrDefaultAsync(token);
+                var duilding = await db.VoteResultRecords.Where(x => x.VoteId == dto.VoteId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (duilding != null)
                 {
                     throw new NotImplementedException("该投票结果信息已存在！");
@@ -42,6 +42,43 @@ namespace GuoGuoCommunity.Domain.Service
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
                     LastOperationUserId = dto.OperationUserId
+                });
+                await db.SaveChangesAsync(token);
+                return entity;
+            }
+        }
+
+        public async Task<VoteResultRecord> AddVipOwnerElectionAsync(VoteResultRecordDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.VoteId, out var voteId))
+                {
+                    throw new NotImplementedException("投票Id信息不正确！");
+                }
+                var vote = await db.Votes.Where(x => x.Id == voteId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (vote == null)
+                {
+                    throw new NotImplementedException("投票信息不存在！");
+                }
+
+                var duilding = await db.VoteResultRecords.Where(x => x.VoteId == dto.VoteId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (duilding != null)
+                {
+                    throw new NotImplementedException("该投票结果信息已存在！");
+                }
+                var entity = db.VoteResultRecords.Add(new VoteResultRecord
+                {
+                    CalculationMethodName = dto.CalculationMethodName,
+                    CalculationMethodValue = dto.CalculationMethodValue,
+                    ResultName = dto.ResultName,
+                    ResultValue = dto.ResultValue,
+                    VoteId = dto.VoteId,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                    LastOperationTime = dto.OperationTime,
+                    LastOperationUserId = dto.OperationUserId,
+                    VoteQuestionId = dto.VoteQuestionId
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
