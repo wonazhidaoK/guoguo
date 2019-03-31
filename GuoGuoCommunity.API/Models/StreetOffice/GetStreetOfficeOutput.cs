@@ -1,4 +1,6 @@
-﻿namespace GuoGuoCommunity.API.Models
+﻿using System;
+
+namespace GuoGuoCommunity.API.Models
 {
     /// <summary>
     /// 

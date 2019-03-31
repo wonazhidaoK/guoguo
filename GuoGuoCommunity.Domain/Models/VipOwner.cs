@@ -44,6 +44,11 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public bool IsValid { get; set; }
 
+        /// <summary>
+        /// 是否选举
+        /// </summary>
+        public bool IsElection { get; set; }
+
         public string LastOperationUserId { get; set; }
 
         public DateTimeOffset? LastOperationTime { get; set; }

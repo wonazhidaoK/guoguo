@@ -32,5 +32,10 @@ namespace GuoGuoCommunity.API.Models
         /// 附件Id
         /// </summary>
         public string AnnexId { get; set; }
+
+        /// <summary>
+        /// 业主认证Id
+        /// </summary>
+        public string OwnerCertificationId { get; set; }
     }
 }

@@ -7,13 +7,13 @@ namespace GuoGuoCommunity.Domain.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class AddVote : IMigrationMetadata
+    public sealed partial class Initialization : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddVote));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initialization));
         
         string IMigrationMetadata.Id
         {
-            get { return "201903251509318_Add-Vote"; }
+            get { return "201903310759425_Initialization"; }
         }
         
         string IMigrationMetadata.Source

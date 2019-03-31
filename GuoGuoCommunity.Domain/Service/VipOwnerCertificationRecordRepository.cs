@@ -57,7 +57,8 @@ namespace GuoGuoCommunity.Domain.Service
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
-                    LastOperationUserId = dto.OperationUserId
+                    LastOperationUserId = dto.OperationUserId,
+                    OwnerCertificationId = dto.OwnerCertificationId
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -92,6 +93,8 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        #region 事件
+
         public void OnSubscribe(VipOwnerIncrementer incrementer)
         {
             incrementer.VipOwnerEvent += VipOwnerChanging;//在发布者私有委托里增加方法
@@ -117,5 +120,7 @@ namespace GuoGuoCommunity.Domain.Service
                 await db.VipOwnerCertificationRecords.Where(x => x.VipOwnerStructureId == vipOwnerStructure.Id.ToString()).UpdateAsync(x => new VipOwnerCertificationRecord { VipOwnerStructureName = vipOwnerStructure.Name });
             }
         }
+
+        #endregion
     }
 }

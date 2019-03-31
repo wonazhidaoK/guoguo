@@ -12,9 +12,9 @@ namespace GuoGuoCommunity.Domain.Migrations
 
         protected override void Seed(GuoGuoCommunityContext context)
         {
-            //  This method will be called after migrating to the latest version.
+            //This method will be called after migrating to the latest version.
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
+            //  You can use the DbSet<T>.AddOrUpdate() helper extension method
             //  to avoid creating duplicate seed data.
 
             context.Tests.AddOrUpdate(x => x.Name,
@@ -43,6 +43,28 @@ namespace GuoGuoCommunity.Domain.Migrations
                     State = "黑龙江",
                     City = "哈尔滨",
                     Region = "南岗区"
+                });
+            context.VipOwnerCertificationConditions.AddOrUpdate(x => x.Title,
+                new VipOwnerCertificationCondition()
+                {
+                    Title = "无犯罪证明",
+                    Description = "辖区内派出所出具无犯罪证明",
+                    TypeName = "图片",
+                    TypeValue = "Image",
+                },
+                new VipOwnerCertificationCondition()
+                {
+                    Title = "单位介绍信",
+                    Description = "业主提供现所在单位介绍信",
+                    TypeName = "图片",
+                    TypeValue = "Image",
+                },
+                new VipOwnerCertificationCondition()
+                {
+                    Title = "物业缴费票据",
+                    Description = "提供业主三年的物业费缴费票据",
+                    TypeName = "图片",
+                    TypeValue = "Image",
                 });
         }
     }

@@ -47,6 +47,11 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public bool IsInvalid { get; set; }
 
+        /// <summary>
+        /// 业主认证Id
+        /// </summary>
+        public string OwnerCertificationId { get; set; }
+
         public string LastOperationUserId { get; set; }
 
         public DateTimeOffset? LastOperationTime { get; set; }

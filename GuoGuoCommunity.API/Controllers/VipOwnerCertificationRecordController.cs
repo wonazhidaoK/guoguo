@@ -157,6 +157,8 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
+        //TODO街道办通过高级认证
+
         /// <summary>
         /// 查询高级申请列表(小程序用户)
         /// </summary>

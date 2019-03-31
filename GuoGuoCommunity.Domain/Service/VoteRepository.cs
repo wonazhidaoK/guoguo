@@ -72,6 +72,78 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public async Task<Vote> AddForVipOwnerAsync(VoteDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.OwnerCertificationId, out var ownerCertificationId))
+                {
+                    throw new NotImplementedException("业主认证Id信息不正确！");
+                }
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (ownerCertificationRecord == null)
+                {
+                    throw new NotImplementedException("业主认证信息不存在！");
+                }
+
+                if (!Guid.TryParse(ownerCertificationRecord.SmallDistrictId, out var smallDistrictId))
+                {
+                    throw new NotImplementedException("小区信息不正确！");
+                }
+                var smallDistrict = await db.SmallDistricts.Where(x => x.Id == smallDistrictId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (smallDistrict == null)
+                {
+                    throw new NotImplementedException("小区信息不存在！");
+                }
+
+                if (!Guid.TryParse(ownerCertificationRecord.CommunityId, out var communityId))
+                {
+                    throw new NotImplementedException("社区信息不正确！");
+                }
+                var communitie = await db.Communities.Where(x => x.Id == communityId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (communitie == null)
+                {
+                    throw new NotImplementedException("社区信息不存在！");
+                }
+
+                if (!Guid.TryParse(ownerCertificationRecord.StreetOfficeId, out var streetOfficeId))
+                {
+                    throw new NotImplementedException("街道办信息不正确！");
+                }
+                var streetOffice = await db.StreetOffices.Where(x => x.Id == streetOfficeId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (streetOffice == null)
+                {
+                    throw new NotImplementedException("街道办信息不存在！");
+                }
+
+                var entity = db.Votes.Add(new Vote
+                {
+                    CommunityId = dto.CommunityId,
+                    CommunityName = communitie.Name,
+                    SmallDistrictId = dto.SmallDistrictId,
+                    SmallDistrictName = smallDistrict.Name,
+                    StreetOfficeId = dto.StreetOfficeId,
+                    StreetOfficeName = streetOffice.Name,
+                    SmallDistrictArray = ownerCertificationRecord.SmallDistrictId,
+                    Deadline = dto.Deadline,
+                    Summary = dto.Summary,
+                    Title = dto.Title,
+                    CalculationMethodValue = CalculationMethod.EndorsedNumber.Value,
+                    CalculationMethodName = CalculationMethod.EndorsedNumber.Name,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                    LastOperationTime = dto.OperationTime,
+                    LastOperationUserId = dto.OperationUserId,
+                    OwnerCertificationId = dto.OwnerCertificationId,
+                    DepartmentName = dto.DepartmentName,
+                    DepartmentValue = dto.DepartmentValue
+
+                });
+                await db.SaveChangesAsync(token);
+                return entity;
+            }
+        }
+
         public Task DeleteAsync(VoteDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
@@ -127,14 +199,27 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Votes.Where(x => x.IsDeleted == false && x.DepartmentValue == dto.DepartmentValue && x.StreetOfficeId == dto.StreetOfficeId && x.CommunityId == dto.CommunityId && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
-
+                if (!Guid.TryParse(dto.OwnerCertificationId, out var ownerCertificationId))
+                {
+                    throw new NotImplementedException("业主认证Id不正确！");
+                }
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (ownerCertificationRecord == null)
+                {
+                    throw new NotImplementedException("业主认证信息不存在！");
+                }
+                var list = await db.Votes.Where(x => x.IsDeleted == false && x.DepartmentValue == dto.DepartmentValue && x.SmallDistrictArray == ownerCertificationRecord.SmallDistrictId).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.Title))
                 {
                     list = list.Where(x => x.Title.Contains(dto.Title)).ToList();
                 }
                 return list;
             }
+        }
+
+        public Task<List<Vote>> GetListAsync(VoteDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<Vote> GetAsync(string id, CancellationToken token = default)
@@ -149,15 +234,33 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public Task<List<Vote>> GetListAsync(VoteDto dto, CancellationToken token = default)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task UpdateAsync(VoteDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }
+
+        public async Task UpdateCalculationMethodAsync(VoteDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("投票Id信息不正确！");
+                }
+                var vote = await db.Votes.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (vote == null)
+                {
+                    throw new NotImplementedException("该投票不存在！");
+                }
+                vote.CalculationMethodValue = CalculationMethod.Opposition.Value;
+                vote.CalculationMethodName = CalculationMethod.Opposition.Name;
+                vote.LastOperationTime = dto.OperationTime;
+                vote.LastOperationUserId = dto.OperationUserId;
+                await db.SaveChangesAsync(token);
+            }
+        }
+
+        #region 事件
 
         public void OnSubscribe(StreetOfficeIncrementer incrementer)
         {
@@ -198,25 +301,6 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async Task UpdateCalculationMethodAsync(VoteDto dto, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                if (!Guid.TryParse(dto.Id, out var uid))
-                {
-                    throw new NotImplementedException("投票Id信息不正确！");
-                }
-                var vote = await db.Votes.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
-                if (vote == null)
-                {
-                    throw new NotImplementedException("该投票不存在！");
-                }
-                vote.CalculationMethodValue = CalculationMethod.Opposition.Value;
-                vote.CalculationMethodName = CalculationMethod.Opposition.Name;
-                vote.LastOperationTime = dto.OperationTime;
-                vote.LastOperationUserId = dto.OperationUserId;
-                await db.SaveChangesAsync(token);
-            }
-        }
+        #endregion
     }
 }

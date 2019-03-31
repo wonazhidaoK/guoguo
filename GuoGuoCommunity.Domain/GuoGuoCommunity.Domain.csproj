@@ -165,37 +165,9 @@
     <Compile Include="Dto\VoteResultRecordDto.cs" />
     <Compile Include="Dto\WeiXinUserDto.cs" />
     <Compile Include="GuoGuoCommunityContext.cs" />
-    <Compile Include="Migrations\201903250136020_initialization.cs" />
-    <Compile Include="Migrations\201903250136020_initialization.Designer.cs">
-      <DependentUpon>201903250136020_initialization.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903251509318_Add-Vote.cs" />
-    <Compile Include="Migrations\201903251509318_Add-Vote.Designer.cs">
-      <DependentUpon>201903251509318_Add-Vote.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903260829591_update-vote.cs" />
-    <Compile Include="Migrations\201903260829591_update-vote.Designer.cs">
-      <DependentUpon>201903260829591_update-vote.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903270206386_update-VoteRecord.cs" />
-    <Compile Include="Migrations\201903270206386_update-VoteRecord.Designer.cs">
-      <DependentUpon>201903270206386_update-VoteRecord.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903270757386_Add-VoteResultRecord.cs" />
-    <Compile Include="Migrations\201903270757386_Add-VoteResultRecord.Designer.cs">
-      <DependentUpon>201903270757386_Add-VoteResultRecord.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903291444589_add-VoteAssociationVipOwner.cs" />
-    <Compile Include="Migrations\201903291444589_add-VoteAssociationVipOwner.Designer.cs">
-      <DependentUpon>201903291444589_add-VoteAssociationVipOwner.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903300243287_update-vipOwnerApplicationRecord.cs" />
-    <Compile Include="Migrations\201903300243287_update-vipOwnerApplicationRecord.Designer.cs">
-      <DependentUpon>201903300243287_update-vipOwnerApplicationRecord.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903300638239_updata-smallDistrict.cs" />
-    <Compile Include="Migrations\201903300638239_updata-smallDistrict.Designer.cs">
-      <DependentUpon>201903300638239_updata-smallDistrict.cs</DependentUpon>
+    <Compile Include="Migrations\201903310759425_Initialization.cs" />
+    <Compile Include="Migrations\201903310759425_Initialization.Designer.cs">
+      <DependentUpon>201903310759425_Initialization.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
@@ -310,29 +282,8 @@
     <Content Include="Models\city\Area_List.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201903250136020_initialization.resx">
-      <DependentUpon>201903250136020_initialization.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903251509318_Add-Vote.resx">
-      <DependentUpon>201903251509318_Add-Vote.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903260829591_update-vote.resx">
-      <DependentUpon>201903260829591_update-vote.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903270206386_update-VoteRecord.resx">
-      <DependentUpon>201903270206386_update-VoteRecord.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903270757386_Add-VoteResultRecord.resx">
-      <DependentUpon>201903270757386_Add-VoteResultRecord.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903291444589_add-VoteAssociationVipOwner.resx">
-      <DependentUpon>201903291444589_add-VoteAssociationVipOwner.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903300243287_update-vipOwnerApplicationRecord.resx">
-      <DependentUpon>201903300243287_update-vipOwnerApplicationRecord.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903300638239_updata-smallDistrict.resx">
-      <DependentUpon>201903300638239_updata-smallDistrict.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201903310759425_Initialization.resx">
+      <DependentUpon>201903310759425_Initialization.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

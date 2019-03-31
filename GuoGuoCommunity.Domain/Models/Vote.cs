@@ -91,6 +91,11 @@ namespace GuoGuoCommunity.Domain.Models
 
         #endregion
 
+        /// <summary>
+        /// 业主认证Id
+        /// </summary>
+        public string OwnerCertificationId { get; set; }
+
         public string LastOperationUserId { get; set; }
 
         public DateTimeOffset? LastOperationTime { get; set; }

@@ -110,12 +110,12 @@ namespace GuoGuoCommunity.API.Controllers
                     //SmallDistrictArray = input.SmallDistrict,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString(),
-                    CommunityId = user.CommunityId,
-                    CommunityName = user.CommunityName,
-                    SmallDistrictId = user.SmallDistrictId,
-                    SmallDistrictName = user.SmallDistrictName,
-                    StreetOfficeId = user.StreetOfficeId,
-                    StreetOfficeName = user.StreetOfficeName,
+                    // CommunityId = user.CommunityId,
+                    // CommunityName = user.CommunityName,
+                    // SmallDistrictId = user.SmallDistrictId,
+                    // SmallDistrictName = user.SmallDistrictName,
+                    // StreetOfficeId = user.StreetOfficeId,
+                    // StreetOfficeName = user.StreetOfficeName,
                     OwnerCertificationId = input.OwnerCertificationId
                 }, cancelToken);
                 if (!string.IsNullOrWhiteSpace(input.AnnexId))

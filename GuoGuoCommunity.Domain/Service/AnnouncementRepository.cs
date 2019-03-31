@@ -42,6 +42,45 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public async Task<Announcement> AddVipOwnerAsync(AnnouncementDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.OwnerCertificationId, out var ownerCertificationId))
+                {
+                    throw new NotImplementedException("业主认证Id不正确！");
+                }
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (ownerCertificationRecord == null)
+                {
+                    throw new NotImplementedException("业主认证信息不存在！");
+                }
+
+                var entity = db.Announcements.Add(new Announcement
+                {
+                    Content = dto.Content,
+                    SmallDistrictArray = ownerCertificationRecord.SmallDistrictId.ToString(),
+                    DepartmentName = dto.DepartmentName,
+                    DepartmentValue = dto.DepartmentValue,
+                    Summary = dto.Summary,
+                    Title = dto.Title,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                    LastOperationTime = dto.OperationTime,
+                    LastOperationUserId = dto.OperationUserId,
+                    CommunityId = ownerCertificationRecord.CommunityId,
+                    CommunityName = ownerCertificationRecord.CommunityName,
+                    SmallDistrictId = ownerCertificationRecord.SmallDistrictId,
+                    SmallDistrictName = ownerCertificationRecord.SmallDistrictName,
+                    StreetOfficeId = ownerCertificationRecord.StreetOfficeId,
+                    StreetOfficeName = ownerCertificationRecord.StreetOfficeName,
+                    OwnerCertificationId = dto.OwnerCertificationId
+                });
+                await db.SaveChangesAsync(token);
+                return entity;
+            }
+        }
+
         public async Task DeleteAsync(AnnouncementDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -94,12 +133,30 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public Task<Announcement> GetAsync(string id, CancellationToken token = default)
+        public async Task<List<Announcement>> GetAllForVipOwnerAsync(AnnouncementDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.OwnerCertificationId, out var ownerCertificationId))
+                {
+                    throw new NotImplementedException("业主认证Id不正确！");
+                }
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (ownerCertificationRecord == null)
+                {
+                    throw new NotImplementedException("业主认证信息不存在！");
+                }
+                var list = await db.Announcements.Where(x => x.IsDeleted == false && x.DepartmentValue == dto.DepartmentValue).ToListAsync(token);
+                if (!string.IsNullOrWhiteSpace(dto.Title))
+                {
+                    list = list.Where(x => x.Title.Contains(dto.Title)).ToList();
+                }
+
+                list = list.Where(x => x.SmallDistrictArray == ownerCertificationRecord.SmallDistrictId).ToList();
+
+                return list;
+            }
         }
-
-
 
         public async Task<List<Announcement>> GetListForStreetOfficeAsync(AnnouncementDto dto, CancellationToken token = default)
         {
@@ -132,12 +189,17 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public Task<Announcement> GetAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task UpdateAsync(AnnouncementDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }
 
-
+        #region 事件
 
         public void OnSubscribe(StreetOfficeIncrementer incrementer)
         {
@@ -178,68 +240,7 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async Task<Announcement> AddVipOwnerAsync(AnnouncementDto dto, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                if (!Guid.TryParse(dto.OwnerCertificationId, out var ownerCertificationId))
-                {
-                    throw new NotImplementedException("业主认证Id不正确！");
-                }
-                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
-                if (ownerCertificationRecord == null)
-                {
-                    throw new NotImplementedException("业主认证信息不存在！");
-                }
+        #endregion
 
-                var entity = db.Announcements.Add(new Announcement
-                {
-                    Content = dto.Content,
-                    SmallDistrictArray = ownerCertificationRecord.SmallDistrictId.ToString(),
-                    DepartmentName = dto.DepartmentName,
-                    DepartmentValue = dto.DepartmentValue,
-                    Summary = dto.Summary,
-                    Title = dto.Title,
-                    CreateOperationTime = dto.OperationTime,
-                    CreateOperationUserId = dto.OperationUserId,
-                    LastOperationTime = dto.OperationTime,
-                    LastOperationUserId = dto.OperationUserId,
-                    CommunityId = dto.CommunityId,
-                    CommunityName = dto.CommunityName,
-                    SmallDistrictId = dto.SmallDistrictId,
-                    SmallDistrictName = dto.SmallDistrictName,
-                    StreetOfficeId = dto.StreetOfficeId,
-                    StreetOfficeName = dto.StreetOfficeName,
-                    OwnerCertificationId = dto.OwnerCertificationId
-                });
-                await db.SaveChangesAsync(token);
-                return entity;
-            }
-        }
-
-        public async Task<List<Announcement>> GetAllForVipOwnerAsync(AnnouncementDto dto, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                if (!Guid.TryParse(dto.OwnerCertificationId, out var ownerCertificationId))
-                {
-                    throw new NotImplementedException("业主认证Id不正确！");
-                }
-                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
-                if (ownerCertificationRecord == null)
-                {
-                    throw new NotImplementedException("业主认证信息不存在！");
-                }
-                var list = await db.Announcements.Where(x => x.IsDeleted == false && x.DepartmentValue == dto.DepartmentValue).ToListAsync(token);
-                if (!string.IsNullOrWhiteSpace(dto.Title))
-                {
-                    list = list.Where(x => x.Title.Contains(dto.Title)).ToList();
-                }
-
-                list = list.Where(x => x.SmallDistrictArray == ownerCertificationRecord.SmallDistrictId).ToList();
-
-                return list;
-            }
-        }
     }
 }

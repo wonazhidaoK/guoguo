@@ -3,6 +3,8 @@ using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -39,6 +41,18 @@ namespace GuoGuoCommunity.Domain.Service
         public Task<VoteAssociationVipOwner> GetAsync(string id, CancellationToken token = default)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<VoteAssociationVipOwner> GetForVoteIdAsync(string id, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (Guid.TryParse(id, out var uid))
+                {
+                    return await db.VoteAssociationVipOwners.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                }
+                return new VoteAssociationVipOwner();
+            }
         }
 
         public Task<List<VoteAssociationVipOwner>> GetListAsync(VoteAssociationVipOwnerDto dto, CancellationToken token = default)

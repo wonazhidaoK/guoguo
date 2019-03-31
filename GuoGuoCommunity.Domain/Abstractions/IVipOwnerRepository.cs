@@ -12,6 +12,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task UpdateAsync(VipOwnerDto dto, CancellationToken token = default);
 
+        Task UpdateIsElectionAsync(VipOwnerDto dto, CancellationToken token = default);
+
         Task<List<VipOwner>> GetAllAsync(VipOwnerDto dto, CancellationToken token = default);
 
         Task DeleteAsync(VipOwnerDto dto, CancellationToken token = default);

@@ -1,8 +1,9 @@
 namespace GuoGuoCommunity.Domain.Migrations
 {
+    using System;
     using System.Data.Entity.Migrations;
-
-    public partial class initialization : DbMigration
+    
+    public partial class Initialization : DbMigration
     {
         public override void Up()
         {
@@ -35,6 +36,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         CommunityName = c.String(),
                         SmallDistrictId = c.String(),
                         SmallDistrictName = c.String(),
+                        OwnerCertificationId = c.String(),
                         CreateOperationUserId = c.String(),
                         CreateOperationTime = c.DateTimeOffset(precision: 7),
                         LastOperationUserId = c.String(),
@@ -254,6 +256,8 @@ namespace GuoGuoCommunity.Domain.Migrations
                         StreetOfficeName = c.String(nullable: false),
                         CommunityId = c.String(nullable: false),
                         CommunityName = c.String(nullable: false),
+                        IsInvalid = c.String(),
+                        IsElection = c.Boolean(nullable: false),
                         IsDeleted = c.Boolean(nullable: false),
                         DeletedTime = c.DateTimeOffset(precision: 7),
                         LastOperationUserId = c.String(),
@@ -418,6 +422,9 @@ namespace GuoGuoCommunity.Domain.Migrations
                         SmallDistrictId = c.String(),
                         SmallDistrictName = c.String(),
                         Name = c.String(),
+                        OwnerCertificationId = c.String(),
+                        VoteId = c.String(),
+                        VoteQuestionId = c.String(),
                         LastOperationUserId = c.String(),
                         LastOperationTime = c.DateTimeOffset(precision: 7),
                         IsDeleted = c.Boolean(nullable: false),
@@ -469,6 +476,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         VipOwnerStructureName = c.String(),
                         UserId = c.String(),
                         IsInvalid = c.Boolean(nullable: false),
+                        OwnerCertificationId = c.String(),
                         LastOperationUserId = c.String(),
                         LastOperationTime = c.DateTimeOffset(precision: 7),
                         IsDeleted = c.Boolean(nullable: false),
@@ -488,6 +496,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         SmallDistrictId = c.String(nullable: false),
                         SmallDistrictName = c.String(nullable: false),
                         IsValid = c.Boolean(nullable: false),
+                        IsElection = c.Boolean(nullable: false),
                         LastOperationUserId = c.String(),
                         LastOperationTime = c.DateTimeOffset(precision: 7),
                         IsDeleted = c.Boolean(nullable: false),
@@ -506,6 +515,148 @@ namespace GuoGuoCommunity.Domain.Migrations
                         Weights = c.String(),
                         IsReview = c.Boolean(nullable: false),
                         Description = c.String(),
+                        LastOperationUserId = c.String(),
+                        LastOperationTime = c.DateTimeOffset(precision: 7),
+                        CreateOperationUserId = c.String(),
+                        CreateOperationTime = c.DateTimeOffset(precision: 7),
+                        IsDeleted = c.Boolean(nullable: false),
+                        DeletedTime = c.DateTimeOffset(precision: 7),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.VoteAnnexes",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false, identity: true),
+                        VoteId = c.String(),
+                        AnnexContent = c.String(),
+                        CreateOperationUserId = c.String(),
+                        CreateOperationTime = c.DateTimeOffset(precision: 7),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.VoteAssociationVipOwners",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false, identity: true),
+                        VoteId = c.String(),
+                        VipOwnerId = c.String(),
+                        CreateOperationUserId = c.String(),
+                        CreateOperationTime = c.DateTimeOffset(precision: 7),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.VoteQuestionOptions",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false, identity: true),
+                        VoteId = c.String(),
+                        VoteQuestionId = c.String(),
+                        Describe = c.String(),
+                        Votes = c.Int(nullable: false),
+                        LastOperationUserId = c.String(),
+                        LastOperationTime = c.DateTimeOffset(precision: 7),
+                        CreateOperationUserId = c.String(),
+                        CreateOperationTime = c.DateTimeOffset(precision: 7),
+                        IsDeleted = c.Boolean(nullable: false),
+                        DeletedTime = c.DateTimeOffset(precision: 7),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.VoteQuestions",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false, identity: true),
+                        VoteId = c.String(),
+                        Title = c.String(),
+                        OptionMode = c.String(),
+                        LastOperationUserId = c.String(),
+                        LastOperationTime = c.DateTimeOffset(precision: 7),
+                        CreateOperationUserId = c.String(),
+                        CreateOperationTime = c.DateTimeOffset(precision: 7),
+                        IsDeleted = c.Boolean(nullable: false),
+                        DeletedTime = c.DateTimeOffset(precision: 7),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.VoteRecordDetails",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false, identity: true),
+                        VoteId = c.String(),
+                        VoteQuestionId = c.String(),
+                        VoteQuestionOptionId = c.String(),
+                        LastOperationUserId = c.String(),
+                        LastOperationTime = c.DateTimeOffset(precision: 7),
+                        IsDeleted = c.Boolean(nullable: false),
+                        DeletedTime = c.DateTimeOffset(precision: 7),
+                        CreateOperationUserId = c.String(),
+                        CreateOperationTime = c.DateTimeOffset(precision: 7),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.VoteRecords",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false, identity: true),
+                        VoteId = c.String(),
+                        Feedback = c.String(),
+                        OwnerCertificationId = c.String(),
+                        CreateOperationUserId = c.String(),
+                        CreateOperationTime = c.DateTimeOffset(precision: 7),
+                        LastOperationUserId = c.String(),
+                        LastOperationTime = c.DateTimeOffset(precision: 7),
+                        IsDeleted = c.Boolean(nullable: false),
+                        DeletedTime = c.DateTimeOffset(precision: 7),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.VoteResultRecords",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false, identity: true),
+                        VoteId = c.String(),
+                        CalculationMethodValue = c.String(),
+                        CalculationMethodName = c.String(),
+                        ResultValue = c.String(),
+                        ResultName = c.String(),
+                        VoteQuestionId = c.String(),
+                        LastOperationUserId = c.String(),
+                        LastOperationTime = c.DateTimeOffset(precision: 7),
+                        CreateOperationUserId = c.String(),
+                        CreateOperationTime = c.DateTimeOffset(precision: 7),
+                        IsDeleted = c.Boolean(nullable: false),
+                        DeletedTime = c.DateTimeOffset(precision: 7),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.Votes",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false, identity: true),
+                        Title = c.String(),
+                        Summary = c.String(),
+                        Deadline = c.DateTimeOffset(nullable: false, precision: 7),
+                        SmallDistrictArray = c.String(),
+                        DepartmentName = c.String(),
+                        DepartmentValue = c.String(),
+                        CalculationMethodValue = c.String(),
+                        CalculationMethodName = c.String(),
+                        StreetOfficeId = c.String(),
+                        StreetOfficeName = c.String(),
+                        CommunityId = c.String(),
+                        CommunityName = c.String(),
+                        SmallDistrictId = c.String(),
+                        SmallDistrictName = c.String(),
+                        OwnerCertificationId = c.String(),
                         LastOperationUserId = c.String(),
                         LastOperationTime = c.DateTimeOffset(precision: 7),
                         CreateOperationUserId = c.String(),
@@ -551,6 +702,14 @@ namespace GuoGuoCommunity.Domain.Migrations
         public override void Down()
         {
             DropTable("dbo.WeiXinUsers");
+            DropTable("dbo.Votes");
+            DropTable("dbo.VoteResultRecords");
+            DropTable("dbo.VoteRecords");
+            DropTable("dbo.VoteRecordDetails");
+            DropTable("dbo.VoteQuestions");
+            DropTable("dbo.VoteQuestionOptions");
+            DropTable("dbo.VoteAssociationVipOwners");
+            DropTable("dbo.VoteAnnexes");
             DropTable("dbo.VipOwnerStructures");
             DropTable("dbo.VipOwners");
             DropTable("dbo.VipOwnerCertificationRecords");

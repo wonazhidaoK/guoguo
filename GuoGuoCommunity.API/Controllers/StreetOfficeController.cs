@@ -286,8 +286,8 @@ namespace GuoGuoCommunity.API.Controllers
                 var data = await _streetOfficeRepository.GetListAsync(new StreetOfficeDto
                 {
                     Region = input?.Region,
-                     City=input?.City,
-                      State=input?.State
+                    City = input?.City,
+                    State = input?.State
                 }, cancelToken);
 
                 return new ApiResult<List<GetListStreetOfficeOutput>>(APIResultCode.Success, data.Select(x => new GetListStreetOfficeOutput

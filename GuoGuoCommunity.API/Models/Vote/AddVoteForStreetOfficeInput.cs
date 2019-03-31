@@ -49,10 +49,10 @@ namespace GuoGuoCommunity.API.Models
         /// </summary>
         public string Title { get; set; }
 
-        /// <summary>
-        /// 选项方式0:单选1:多选
-        /// </summary>
-        public string OptionMode { get; set; }
+        ///// <summary>
+        ///// 选项方式0:单选1:多选
+        ///// </summary>
+        //public string OptionMode { get; set; }
 
         /// <summary>
         /// 选项集合

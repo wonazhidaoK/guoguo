@@ -1,4 +1,5 @@
 ﻿using Logs;
+using Newtonsoft.Json.Converters;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -69,6 +70,10 @@ namespace GuoGuoCommunity.API
            );
 
             AutoFacBootStrapper.CoreAutoFacInit();
+            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new IsoDateTimeConverter
+            {
+                DateTimeFormat = "yyyy'-'MM'-'dd' 'HH':'mm':'ss"
+            });
         }
 
         class CancelledTaskBugWorkaroundMessageHandler : DelegatingHandler

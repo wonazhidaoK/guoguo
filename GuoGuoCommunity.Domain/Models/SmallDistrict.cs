@@ -73,13 +73,18 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 是否选举
         /// </summary>
-        public string IsElection { get; set; }
+        public bool IsElection { get; set; }
 
         public bool IsDeleted { get; set; }
+
         public DateTimeOffset? DeletedTime { get; set; }
+
         public string LastOperationUserId { get; set; }
+
         public DateTimeOffset? LastOperationTime { get; set; }
+
         public string CreateOperationUserId { get; set; }
+
         public DateTimeOffset? CreateOperationTime { get; set; }
     }
 }

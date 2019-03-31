@@ -20,6 +20,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<VipOwnerApplicationRecord> GetAsync(string id, CancellationToken token = default);
 
+        Task<VipOwnerApplicationRecord> GetForVoteQuestionIdAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default);
+
         Task<List<VipOwnerApplicationRecord>> GetListAsync(List<string> dto, CancellationToken token = default);
 
         Task<List<VipOwnerApplicationRecord>> GetListAsync(string userId, CancellationToken token = default);

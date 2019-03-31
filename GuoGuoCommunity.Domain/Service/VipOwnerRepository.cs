@@ -15,6 +15,7 @@ namespace GuoGuoCommunity.Domain.Service
     {
         public async Task<VipOwner> AddAsync(VipOwnerDto dto, CancellationToken token = default)
         {
+            //TODO检查是否存在未竞选业委会信息
             using (var db = new GuoGuoCommunityContext())
             {
                 if (!Guid.TryParse(dto.SmallDistrictId, out var smallDistrictId))
@@ -192,6 +193,32 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 var smallDistricts = await db.SmallDistricts.Where(x => x.Id == smallDistrictId).Select(x => x.Id).ToListAsync(token);
                 return await db.VipOwners.Where(x => smallDistricts.Contains(x.Id)).ToListAsync(token);
+            }
+        }
+
+        public async Task UpdateIsElectionAsync(VipOwnerDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("业委会Id信息不正确！");
+                }
+                var vipOwner = await db.VipOwners.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (vipOwner == null)
+                {
+                    throw new NotImplementedException("该业委会不存在！");
+                }
+                var entity = await db.VipOwners.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId && x.Id != uid).FirstOrDefaultAsync(token);
+                if (entity != null)
+                {
+                    throw new NotImplementedException("该业委会已存在！");
+                }
+                vipOwner.IsElection = true;
+                vipOwner.LastOperationTime = dto.OperationTime;
+                vipOwner.LastOperationUserId = dto.OperationUserId;
+                await OnUpdateAsync(db, vipOwner, token);
+                await db.SaveChangesAsync(token);
             }
         }
     }
