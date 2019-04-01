@@ -57,6 +57,16 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public string CalculationMethodName { get; set; }
 
+        /// <summary>
+        /// 状态值
+        /// </summary>
+        public string StatusValue { get; set; }
+
+        /// <summary>
+        /// 状态名称
+        /// </summary>
+        public string StatusName { get; set; }
+
         #region 街道办结构
 
         /// <summary>

@@ -21,7 +21,7 @@ namespace GuoGuoCommunity.API.Models
         /// <summary>
         /// 结束时间
         /// </summary>
-        public DateTimeOffset Deadline { get; set; }
+        public string Deadline { get; set; }
 
         /// <summary>
         /// 问题集合

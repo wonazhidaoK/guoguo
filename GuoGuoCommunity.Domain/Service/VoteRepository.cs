@@ -65,7 +65,9 @@ namespace GuoGuoCommunity.Domain.Service
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
-                    LastOperationUserId = dto.OperationUserId
+                    LastOperationUserId = dto.OperationUserId,
+                    StatusName = VoteStatus.Processing.Name,
+                    StatusValue = VoteStatus.Processing.Value
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -136,8 +138,9 @@ namespace GuoGuoCommunity.Domain.Service
                     LastOperationUserId = dto.OperationUserId,
                     OwnerCertificationId = dto.OwnerCertificationId,
                     DepartmentName = dto.DepartmentName,
-                    DepartmentValue = dto.DepartmentValue
-
+                    DepartmentValue = dto.DepartmentValue,
+                    StatusName = VoteStatus.Processing.Name,
+                    StatusValue = VoteStatus.Processing.Value
                 });
                 await db.SaveChangesAsync(token);
                 return entity;

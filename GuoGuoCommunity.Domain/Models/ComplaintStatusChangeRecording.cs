@@ -6,9 +6,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GuoGuoCommunity.Domain.Models
 {
     /// <summary>
-    /// 公告附件
+    /// 投诉记录变更记录
     /// </summary>
-    public class AnnouncementAnnex : ICreateOperation
+    public class ComplaintStatusChangeRecording : ICreateOperation
     {
         /// <summary>
         /// 
@@ -18,14 +18,24 @@ namespace GuoGuoCommunity.Domain.Models
         public Guid Id { get; set; }
 
         /// <summary>
-        /// 公告Id
+        /// 旧状态
         /// </summary>
-        public string AnnouncementId { get; set; }
+        public string OldStatus { get; set; }
 
         /// <summary>
-        ///  附件内容
+        /// 新状态
         /// </summary>
-        public string AnnexContent { get; set; }
+        public string NewStatus { get; set; }
+
+        /// <summary>
+        /// 投诉跟进id
+        /// </summary>
+        public string ComplaintFollowUpId { get; set; }
+
+        /// <summary>
+        /// 投诉Id
+        /// </summary>
+        public string ComplaintId { get; set; }
 
         public string CreateOperationUserId { get; set; }
 

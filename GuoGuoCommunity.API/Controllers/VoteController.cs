@@ -319,13 +319,17 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("投票业主认证信息为空！");
                 }
-                if (input.List.Count == 1)
+                if (input.List.Count != 1)
                 {
                     throw new NotImplementedException("投票问题数量信息不正确！");
                 }
-                if (input.List[0].List.Count == 2)
+                if (input.List[0].List.Count != 2)
                 {
                     throw new NotImplementedException("投票问题选项数量信息不正确！");
+                }
+                if (!DateTimeOffset.TryParse(input.Deadline, out DateTimeOffset dateTime))
+                {
+                    throw new NotImplementedException("投票结束时间转换失败！");
                 }
 
                 var user = _tokenManager.GetUser(token);
@@ -337,7 +341,7 @@ namespace GuoGuoCommunity.API.Controllers
                 //增加投票主体
                 var entity = await _voteRepository.AddForVipOwnerAsync(new VoteDto
                 {
-                    Deadline = input.Deadline,
+                    Deadline = dateTime,
                     Title = input.Title,
                     Summary = input.Summary,
                     OwnerCertificationId = input.OwnerCertificationId,
@@ -442,7 +446,11 @@ namespace GuoGuoCommunity.API.Controllers
                         SmallDistrictArray = x.SmallDistrictArray,
                         DepartmentName = x.DepartmentName,
                         DepartmentValue = x.DepartmentValue,
-                        Summary = x.Summary
+                        Summary = x.Summary,
+                        StatusValue = x.StatusValue,
+                        StatusName = x.StatusName,
+                        CreateTime = x.CreateOperationTime.Value,
+                        IsCreateUser = x.CreateOperationUserId == user.Id.ToString()
                     }).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
@@ -504,7 +512,11 @@ namespace GuoGuoCommunity.API.Controllers
                         SmallDistrictArray = x.SmallDistrictArray,
                         DepartmentName = x.DepartmentName,
                         DepartmentValue = x.DepartmentValue,
-                        Summary = x.Summary
+                        Summary = x.Summary,
+                        StatusValue = x.StatusValue,
+                        StatusName = x.StatusName,
+                        CreateTime = x.CreateOperationTime.Value,
+                        IsCreateUser = x.CreateOperationUserId == user.Id.ToString()
                     }).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
@@ -630,7 +642,11 @@ namespace GuoGuoCommunity.API.Controllers
                         SmallDistrictArray = x.SmallDistrictArray,
                         DepartmentName = x.DepartmentName,
                         DepartmentValue = x.DepartmentValue,
-                        Summary = x.Summary
+                        Summary = x.Summary,
+                        StatusValue = x.StatusValue,
+                        StatusName = x.StatusName,
+                        CreateTime = x.CreateOperationTime.Value,
+                        IsCreateUser = x.CreateOperationUserId == user.Id.ToString()
                     }).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });

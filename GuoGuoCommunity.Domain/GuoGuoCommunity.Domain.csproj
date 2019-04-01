@@ -169,13 +169,26 @@
     <Compile Include="Migrations\201903310759425_Initialization.Designer.cs">
       <DependentUpon>201903310759425_Initialization.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201904010634135_updata-Vote.cs" />
+    <Compile Include="Migrations\201904010634135_updata-Vote.Designer.cs">
+      <DependentUpon>201904010634135_updata-Vote.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904010730029_add-Complaint.cs" />
+    <Compile Include="Migrations\201904010730029_add-Complaint.Designer.cs">
+      <DependentUpon>201904010730029_add-Complaint.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AnnouncementAnnex.cs" />
     <Compile Include="Models\Complaint.cs" />
+    <Compile Include="Models\ComplaintAnnex.cs" />
+    <Compile Include="Models\ComplaintFollowUp.cs" />
+    <Compile Include="Models\ComplaintStatusChangeRecording.cs" />
     <Compile Include="Models\Enum\VoteResult.cs" />
     <Compile Include="Models\Enum\CalculationMethod.cs" />
     <Compile Include="Models\Enum\OwnerCertificationAnnexType.cs" />
+    <Compile Include="Models\Enum\ComplaintStatus.cs" />
+    <Compile Include="Models\Enum\VoteStatus.cs" />
     <Compile Include="Models\event\BuildingUnitIncrementer.cs" />
     <Compile Include="Models\event\BuildingIncrementer.cs" />
     <Compile Include="Models\event\SmallDistrictIncrementer.cs" />
@@ -285,6 +298,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201903310759425_Initialization.resx">
       <DependentUpon>201903310759425_Initialization.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904010634135_updata-Vote.resx">
+      <DependentUpon>201904010634135_updata-Vote.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904010730029_add-Complaint.resx">
+      <DependentUpon>201904010730029_add-Complaint.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

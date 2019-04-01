@@ -52,11 +52,22 @@ namespace GuoGuoCommunity.Domain.Service
 
         public string GetUrl(string id)
         {
-            using (var db = new GuoGuoCommunityContext())
+            try
             {
-                var entity = db.AnnouncementAnnices.Where(x => x.AnnouncementId == id).FirstOrDefault();
-                var upload = db.Uploads.Where(x => x.Id == Guid.Parse(entity.AnnexContent)).FirstOrDefault();
-                return upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
+                using (var db = new GuoGuoCommunityContext())
+                {
+                    var entity = db.AnnouncementAnnices.Where(x => x.AnnouncementId == id).FirstOrDefault();
+                    if (!Guid.TryParse(entity.AnnexContent, out var annexContent))
+                    {
+                        throw new NotImplementedException("投票附件id信息不正确！");
+                    }
+                    var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
+                    return upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
+                }
+            }
+            catch (Exception)
+            {
+                return "";
             }
         }
 

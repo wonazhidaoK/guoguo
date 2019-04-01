@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace GuoGuoCommunity.API.Models
 {
@@ -31,6 +28,11 @@ namespace GuoGuoCommunity.API.Models
         public DateTimeOffset Deadline { get; set; }
 
         /// <summary>
+        /// 创建时间
+        /// </summary>
+        public DateTimeOffset CreateTime { get; set; }
+
+        /// <summary>
         /// 小区范围
         /// </summary>
         public string SmallDistrictArray { get; set; }
@@ -44,5 +46,20 @@ namespace GuoGuoCommunity.API.Models
         /// 部门值
         /// </summary>
         public string DepartmentValue { get; set; }
+
+        /// <summary>
+        /// 状态名称
+        /// </summary>
+        public string StatusName { get; set; }
+
+        /// <summary>
+        /// 状态值
+        /// </summary>
+        public string StatusValue { get; set; }
+
+        /// <summary>
+        /// 是否是创建人
+        /// </summary>
+        public bool IsCreateUser { get; set; }
     }
 }
