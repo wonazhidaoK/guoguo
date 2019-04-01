@@ -502,6 +502,7 @@
     <Folder Include="Upload\Announcement\" />
     <Folder Include="Upload\OwnerCertification\" />
     <Folder Include="Upload\VipOwnerCertification\" />
+    <Folder Include="Upload\Vote\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
