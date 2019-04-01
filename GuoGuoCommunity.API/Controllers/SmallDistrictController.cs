@@ -20,14 +20,18 @@ namespace GuoGuoCommunity.API.Controllers
     public class SmallDistrictController : ApiController
     {
         private readonly ISmallDistrictRepository _smallDistrictRepository;
+        private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="smallDistrictRepository"></param>
-        public SmallDistrictController(ISmallDistrictRepository smallDistrictRepository)
+        /// <param name="ownerCertificationRecordRepository"></param>
+        public SmallDistrictController(ISmallDistrictRepository smallDistrictRepository,
+            IOwnerCertificationRecordRepository ownerCertificationRecordRepository)
         {
+            _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _smallDistrictRepository = smallDistrictRepository;
             _tokenManager = new TokenManager();
         }
@@ -321,5 +325,45 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<List<GetListSmallDistrictOutput>>(APIResultCode.Success_NoB, new List<GetListSmallDistrictOutput> { }, e.Message);
             }
         }
+
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="input"></param>
+        ///// <param name="cancelToken"></param>
+        ///// <returns></returns>
+        //[HttpGet]
+        //[Route("smallDistrict/getList")]
+        //public async Task<ApiResult<List<GetListSmallDistrictOutput>>> GetList(CancellationToken cancelToken)
+        //{
+        //    try
+        //    {
+        //        var token = HttpContext.Current.Request.Headers["Authorization"];
+        //        if (token == null)
+        //        {
+        //            return new ApiResult<List<GetListSmallDistrictOutput>>(APIResultCode.Unknown, new List<GetListSmallDistrictOutput> { }, APIResultMessage.TokenNull);
+        //        }
+        //        var user = _tokenManager.GetUser(token);
+        //        if (user == null)
+        //        {
+        //            return new ApiResult<List<GetListSmallDistrictOutput>>(APIResultCode.Unknown, new List<GetListSmallDistrictOutput> { }, APIResultMessage.TokenError);
+        //        }
+
+        //        var data = await _smallDistrictRepository.GetListAsync(new SmallDistrictDto
+        //        {
+        //            CommunityId = input?.CommunityId
+        //        }, cancelToken);
+
+        //        return new ApiResult<List<GetListSmallDistrictOutput>>(APIResultCode.Success, data.Select(x => new GetListSmallDistrictOutput
+        //        {
+        //            Id = x.Id.ToString(),
+        //            Name = x.Name
+        //        }).ToList());
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return new ApiResult<List<GetListSmallDistrictOutput>>(APIResultCode.Success_NoB, new List<GetListSmallDistrictOutput> { }, e.Message);
+        //    }
+        //}
     }
 }

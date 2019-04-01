@@ -47,6 +47,11 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public string VoteQuestionId { get; set; }
 
+        /// <summary>
+        /// 应参与人数
+        /// </summary>
+        public string ShouldParticipateCount { get; set; }
+
         public string LastOperationUserId { get; set; }
 
         public DateTimeOffset? LastOperationTime { get; set; }

@@ -89,7 +89,7 @@ namespace GuoGuoCommunity.API.Controllers
                     {
                         VoteQuestionId = item.VoteQuestionId,
                         VoteQuestionOptionId = item.VoteQuestionOptionId,
-                        VoteId = entity.Id.ToString(),
+                        VoteId = input.VoteId,
                         OperationTime = DateTimeOffset.Now,
                         OperationUserId = user.Id.ToString()
                     }, cancelToken);

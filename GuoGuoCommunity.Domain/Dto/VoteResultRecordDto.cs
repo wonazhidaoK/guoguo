@@ -37,6 +37,11 @@ namespace GuoGuoCommunity.Domain.Dto
         public string VoteQuestionId { get; set; }
 
         /// <summary>
+        /// 应参与人数
+        /// </summary>
+        public string ShouldParticipateCount { get; set; }
+
+        /// <summary>
         /// 操作人Id
         /// </summary>
         public string OperationUserId { get; set; }

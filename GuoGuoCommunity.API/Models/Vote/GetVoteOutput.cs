@@ -52,12 +52,31 @@ namespace GuoGuoCommunity.API.Models
         /// 问题集合
         /// </summary>
         public List<GetVoteQuestionModel> List { get; set; }
+
+        /// <summary>
+        /// 应参与人数
+        /// </summary>
+        public string ShouldParticipateCount { get; set; }
+
+        /// <summary>
+        /// 当前人投票状态
+        /// </summary>
+        public bool IsVoted { get; set; }
+
+        /// <summary>
+        /// 投票状态
+        /// </summary>
+        public string StatusValue { get; set; }
     }
     /// <summary>
     /// 投票问题
     /// </summary>
     public class GetVoteQuestionModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Id { get; set; }
         /// <summary>
         /// 标题
         /// </summary>
@@ -79,6 +98,10 @@ namespace GuoGuoCommunity.API.Models
     /// </summary>
     public class GetVoteQuestionOptionModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Id { get; set; }
         /// <summary>
         /// 选项描述
         /// </summary>

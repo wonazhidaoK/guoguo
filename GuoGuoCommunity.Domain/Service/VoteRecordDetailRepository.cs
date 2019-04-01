@@ -40,7 +40,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("投票问题选项Id信息不正确！");
                 }
-                var voteRecordDetail = await db.VoteRecordDetails.Where(x => x.Id == voteQuestionOptionId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var voteRecordDetail = await db.VoteQuestionOptions.Where(x => x.Id == voteQuestionOptionId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (voteRecordDetail == null)
                 {
                     throw new NotImplementedException("投票问题选项信息不存在！");
@@ -76,9 +76,12 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<List<VoteRecordDetail>> GetListAsync(VoteRecordDetailDto dto, CancellationToken token = default)
+        public async Task<List<VoteRecordDetail>> GetListAsync(VoteRecordDetailDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VoteRecordDetails.Where(x => x.IsDeleted == false && x.VoteId == dto.VoteId&&x.CreateOperationUserId==dto.OperationUserId).ToListAsync(token);
+            }
         }
 
         public Task UpdateAsync(VoteRecordDetailDto dto, CancellationToken token = default)

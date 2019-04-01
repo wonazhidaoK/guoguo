@@ -93,6 +93,10 @@
     <Compile Include="Abstractions\IBuildingUnitRepository.cs" />
     <Compile Include="Abstractions\ICityRepository.cs" />
     <Compile Include="Abstractions\ICommunityRepository.cs" />
+    <Compile Include="Abstractions\IComplaintAnnexRepository.cs" />
+    <Compile Include="Abstractions\IComplaintFollowUpRepository.cs" />
+    <Compile Include="Abstractions\IComplaintRepository.cs" />
+    <Compile Include="Abstractions\IComplaintStatusChangeRecordingRepository.cs" />
     <Compile Include="Abstractions\IComplaintTypeRepository.cs" />
     <Compile Include="Abstractions\IIndustryRepository.cs" />
     <Compile Include="Abstractions\IMenuRepository.cs" />
@@ -132,6 +136,10 @@
     <Compile Include="Dto\BuildingDto.cs" />
     <Compile Include="Dto\BuildingUnitDto.cs" />
     <Compile Include="Dto\CommunityDto.cs" />
+    <Compile Include="Dto\ComplaintAnnexDto.cs" />
+    <Compile Include="Dto\ComplaintDto.cs" />
+    <Compile Include="Dto\ComplaintFollowUpDto.cs" />
+    <Compile Include="Dto\ComplaintStatusChangeRecordingDto.cs" />
     <Compile Include="Dto\ComplaintTypeDto.cs" />
     <Compile Include="Dto\IndustryDto.cs" />
     <Compile Include="Dto\OwnerCertificationAnnexDto.cs" />
@@ -176,6 +184,10 @@
     <Compile Include="Migrations\201904010730029_add-Complaint.cs" />
     <Compile Include="Migrations\201904010730029_add-Complaint.Designer.cs">
       <DependentUpon>201904010730029_add-Complaint.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904010817521_update-VoteResultRecord.cs" />
+    <Compile Include="Migrations\201904010817521_update-VoteResultRecord.Designer.cs">
+      <DependentUpon>201904010817521_update-VoteResultRecord.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
@@ -235,6 +247,10 @@
     <Compile Include="Models\WeiXinUser.cs" />
     <Compile Include="Service\AnnouncementAnnexRepository.cs" />
     <Compile Include="Service\AnnouncementRepository.cs" />
+    <Compile Include="Service\ComplaintAnnexRepository.cs" />
+    <Compile Include="Service\ComplaintFollowUpRepository.cs" />
+    <Compile Include="Service\ComplaintRepository.cs" />
+    <Compile Include="Service\ComplaintStatusChangeRecordingRepository.cs" />
     <Compile Include="Service\StationLetterAnnexRepository.cs" />
     <Compile Include="Service\StationLetterBrowseRecordRepository.cs" />
     <Compile Include="Service\StationLetterRepository.cs" />
@@ -304,6 +320,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201904010730029_add-Complaint.resx">
       <DependentUpon>201904010730029_add-Complaint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904010817521_update-VoteResultRecord.resx">
+      <DependentUpon>201904010817521_update-VoteResultRecord.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

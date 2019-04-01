@@ -32,6 +32,8 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IVoteAssociationVipOwnerRepository _voteAssociationVipOwnerRepository;
         private readonly IVipOwnerApplicationRecordRepository _vipOwnerApplicationRecordRepository;
         private readonly IVipOwnerCertificationRecordRepository _vipOwnerCertificationRecordRepository;
+        private readonly IVoteRecordDetailRepository _voteRecordDetailRepository;
+        private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -45,6 +47,8 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="voteAssociationVipOwnerRepository"></param>
         /// <param name="vipOwnerApplicationRecordRepository"></param>
         /// <param name="vipOwnerCertificationRecordRepository"></param>
+        /// <param name="voteRecordDetailRepository"></param>
+        /// <param name="ownerCertificationRecordRepository"></param>
         public VoteController(IVoteRepository voteRepository,
             IVoteQuestionRepository voteQuestionRepository,
             IVoteQuestionOptionRepository voteQuestionOptionRepository,
@@ -52,7 +56,9 @@ namespace GuoGuoCommunity.API.Controllers
             IVipOwnerRepository vipOwnerRepository,
             IVoteAssociationVipOwnerRepository voteAssociationVipOwnerRepository,
             IVipOwnerApplicationRecordRepository vipOwnerApplicationRecordRepository,
-            IVipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository)
+            IVipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository,
+            IVoteRecordDetailRepository voteRecordDetailRepository,
+            IOwnerCertificationRecordRepository ownerCertificationRecordRepository)
         {
             _voteRepository = voteRepository;
             _voteQuestionRepository = voteQuestionRepository;
@@ -62,6 +68,8 @@ namespace GuoGuoCommunity.API.Controllers
             _voteAssociationVipOwnerRepository = voteAssociationVipOwnerRepository;
             _vipOwnerApplicationRecordRepository = vipOwnerApplicationRecordRepository;
             _vipOwnerCertificationRecordRepository = vipOwnerCertificationRecordRepository;
+            _voteRecordDetailRepository = voteRecordDetailRepository;
+            _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -673,7 +681,20 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("投票Id信息为空！");
                 }
+
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<GetVoteOutput>(APIResultCode.Unknown, new GetVoteOutput { }, APIResultMessage.TokenNull);
+                }
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult<GetVoteOutput>(APIResultCode.Unknown, new GetVoteOutput { }, APIResultMessage.TokenError);
+                }
                 var vote = await _voteRepository.GetAsync(id, cancelToken);
+                var voteRecordDetails = await _voteRecordDetailRepository.GetListAsync(new VoteRecordDetailDto { VoteId = vote.Id.ToString(), OperationUserId = user.Id.ToString() });
+                var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto { SmallDistrictId = vote.SmallDistrictArray });
                 var voteQuestionList = await _voteQuestionRepository.GetListAsync(new VoteQuestionDto { VoteId = vote?.Id.ToString() }, cancelToken);
                 List<GetVoteQuestionModel> list = new List<GetVoteQuestionModel>();
                 foreach (var item in voteQuestionList)
@@ -685,13 +706,16 @@ namespace GuoGuoCommunity.API.Controllers
                     {
                         GetVoteQuestionOptionModel model = new GetVoteQuestionOptionModel
                         {
+                            Id = voteQuestionOptionItem.Id.ToString(),
                             Describe = voteQuestionOptionItem.Describe,
-                            Votes = voteQuestionOptionItem.Votes
+                            Votes = voteQuestionOptionItem.Votes,
                         };
                         voteQuestionOptionModels.Add(model);
                     }
+                    questionModel.Id = item.Id.ToString();
                     questionModel.List = voteQuestionOptionModels;
                     questionModel.Title = item.Title;
+                    questionModel.OptionMode = item.OptionMode;
                     list.Add(questionModel);
                 }
 
@@ -702,7 +726,13 @@ namespace GuoGuoCommunity.API.Controllers
                     Deadline = vote.Deadline,
                     SmallDistrictArray = vote.SmallDistrictArray,
                     Summary = vote.Summary,
-                    Url = _voteAnnexRepository.GetUrl(vote.Id.ToString())
+                    Url = _voteAnnexRepository.GetUrl(vote.Id.ToString()),
+                    DepartmentName = vote.DepartmentName,
+                    DepartmentValue = vote.DepartmentValue,
+                    Id = vote.Id.ToString(),
+                    IsVoted = voteRecordDetails.Count > 0,
+                    StatusValue = vote.StatusValue,
+                    ShouldParticipateCount = ownerCertificationRecordList.Count.ToString()
                 });
             }
             catch (Exception e)
