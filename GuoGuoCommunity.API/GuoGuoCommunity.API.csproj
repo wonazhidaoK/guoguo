@@ -326,6 +326,7 @@
     <Compile Include="Models\SmallDistrict\AddSmallDistrictOutput.cs" />
     <Compile Include="Models\SmallDistrict\GetAllSmallDistrictInput.cs" />
     <Compile Include="Models\SmallDistrict\GetAllSmallDistrictOutput.cs" />
+    <Compile Include="Models\SmallDistrict\GetListForUserIdOutput.cs" />
     <Compile Include="Models\SmallDistrict\GetListSmallDistrictInput.cs" />
     <Compile Include="Models\SmallDistrict\GetListSmallDistrictOutput.cs" />
     <Compile Include="Models\SmallDistrict\GetSmallDistrictOutput.cs" />
@@ -540,7 +541,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>64177</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://192.168.2.133:2223</IISUrl>
+          <IISUrl>http://localhost:2223</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

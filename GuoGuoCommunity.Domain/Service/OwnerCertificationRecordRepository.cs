@@ -315,5 +315,13 @@ namespace GuoGuoCommunity.Domain.Service
                 return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
             }
         }
+
+        public async Task<List<OwnerCertificationRecord>> GetAllForSmallDistrictIdAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId&&x.UserId==dto.UserId).ToListAsync(token);
+            }
+        }
     }
 }
