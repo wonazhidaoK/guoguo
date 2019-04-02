@@ -166,13 +166,13 @@ namespace GuoGuoCommunity.API.Controllers
 
 
         /// <summary>
-        /// 添加投诉信息
+        /// 业委会添加投诉信息
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("complaint/add")]
+        [Route("complaint/addForVipOwner")]
         public async Task<ApiResult<AddComplaintOutput>> AddForVipOwner([FromBody]AddComplaintInput input, CancellationToken cancelToken)
         {
             try

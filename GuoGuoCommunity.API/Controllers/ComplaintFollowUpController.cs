@@ -129,7 +129,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 申诉投诉信息
+        /// 申诉投诉
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>
