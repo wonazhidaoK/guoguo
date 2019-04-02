@@ -3,6 +3,8 @@ using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,8 +12,36 @@ namespace GuoGuoCommunity.Domain.Service
 {
     public class ComplaintFollowUpRepository : IComplaintFollowUpRepository
     {
-        public Task<ComplaintFollowUp> AddAsync(ComplaintFollowUpDto dto, CancellationToken token = default)
+        public async Task<ComplaintFollowUp> AddAsync(ComplaintFollowUpDto dto, CancellationToken token = default)
         {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.ComplaintId, out var complaintId))
+                {
+                    throw new NotImplementedException("投诉Id信息不正确！");
+                }
+
+                var complaintFollowUp = await db.ComplaintFollowUps.Where(x => x.Id == complaintId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (complaintFollowUp == null)
+                {
+                    throw new NotImplementedException("投诉不存在！");
+                }
+
+                var entity = db.ComplaintFollowUps.Add(new ComplaintFollowUp
+                {
+                    ComplaintId = dto.ComplaintId,
+                    Description = dto.Description,
+                    OperationDepartmentName = dto.OperationDepartmentName,
+                    OperationDepartmentValue = dto.OperationDepartmentValue,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                    LastOperationTime = dto.OperationTime,
+                    LastOperationUserId = dto.OperationUserId,
+                    OwnerCertificationId = dto.OwnerCertificationId
+                });
+                await db.SaveChangesAsync(token);
+                return entity;
+            }
             throw new NotImplementedException();
         }
 

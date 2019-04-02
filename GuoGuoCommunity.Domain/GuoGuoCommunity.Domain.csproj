@@ -189,6 +189,18 @@
     <Compile Include="Migrations\201904010817521_update-VoteResultRecord.Designer.cs">
       <DependentUpon>201904010817521_update-VoteResultRecord.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201904020249541_upadate-complaintType.cs" />
+    <Compile Include="Migrations\201904020249541_upadate-complaintType.Designer.cs">
+      <DependentUpon>201904020249541_upadate-complaintType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904020613084_upadte-Vote.cs" />
+    <Compile Include="Migrations\201904020613084_upadte-Vote.Designer.cs">
+      <DependentUpon>201904020613084_upadte-Vote.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904020758058_update-Complaint.cs" />
+    <Compile Include="Migrations\201904020758058_update-Complaint.Designer.cs">
+      <DependentUpon>201904020758058_update-Complaint.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AnnouncementAnnex.cs" />
@@ -200,6 +212,7 @@
     <Compile Include="Models\Enum\CalculationMethod.cs" />
     <Compile Include="Models\Enum\OwnerCertificationAnnexType.cs" />
     <Compile Include="Models\Enum\ComplaintStatus.cs" />
+    <Compile Include="Models\Enum\VoteTypes.cs" />
     <Compile Include="Models\Enum\VoteStatus.cs" />
     <Compile Include="Models\event\BuildingUnitIncrementer.cs" />
     <Compile Include="Models\event\BuildingIncrementer.cs" />
@@ -323,6 +336,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201904010817521_update-VoteResultRecord.resx">
       <DependentUpon>201904010817521_update-VoteResultRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904020249541_upadate-complaintType.resx">
+      <DependentUpon>201904020249541_upadate-complaintType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904020613084_upadte-Vote.resx">
+      <DependentUpon>201904020613084_upadte-Vote.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904020758058_update-Complaint.resx">
+      <DependentUpon>201904020758058_update-Complaint.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

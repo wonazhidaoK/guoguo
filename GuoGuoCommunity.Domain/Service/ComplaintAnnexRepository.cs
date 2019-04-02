@@ -10,9 +10,37 @@ namespace GuoGuoCommunity.Domain.Service
 {
     public class ComplaintAnnexRepository : IComplaintAnnexRepository
     {
-        public Task<ComplaintAnnex> AddAsync(ComplaintAnnexDto dto, CancellationToken token = default)
+        public async Task<ComplaintAnnex> AddAsync(ComplaintAnnexDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var entity = db.ComplaintAnnices.Add(new ComplaintAnnex
+                {
+                    ComplaintId = dto.ComplaintId,
+                    AnnexContent = dto.AnnexContent,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                });
+                await db.SaveChangesAsync(token);
+                return entity;
+            }
+        }
+
+        public async Task<ComplaintAnnex> AddForFollowUpIdAsync(ComplaintAnnexDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var entity = db.ComplaintAnnices.Add(new ComplaintAnnex
+                {
+                    ComplaintId = dto.ComplaintId,
+                    AnnexContent = dto.AnnexContent,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                    ComplaintFollowUpId = dto.ComplaintFollowUpId
+                });
+                await db.SaveChangesAsync(token);
+                return entity;
+            }
         }
 
         public Task DeleteAsync(ComplaintAnnexDto dto, CancellationToken token = default)

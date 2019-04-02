@@ -140,7 +140,9 @@ namespace GuoGuoCommunity.Domain.Service
                     DepartmentName = dto.DepartmentName,
                     DepartmentValue = dto.DepartmentValue,
                     StatusName = VoteStatus.Processing.Name,
-                    StatusValue = VoteStatus.Processing.Value
+                    StatusValue = VoteStatus.Processing.Value,
+                    VoteTypeName = dto.VoteTypeName,
+                    VoteTypeValue = dto.VoteTypeValue
                 });
                 await db.SaveChangesAsync(token);
                 return entity;

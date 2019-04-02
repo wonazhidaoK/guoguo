@@ -11,6 +11,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<Complaint> AddAsync(ComplaintDto dto, CancellationToken token = default);
 
         Task UpdateAsync(ComplaintDto dto, CancellationToken token = default);
+        Task UpdateForAppealAsync(ComplaintDto dto, CancellationToken token = default);
 
         Task<List<Complaint>> GetAllAsync(ComplaintDto dto, CancellationToken token = default);
 

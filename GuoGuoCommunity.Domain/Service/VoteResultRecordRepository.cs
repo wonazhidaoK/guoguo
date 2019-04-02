@@ -100,6 +100,14 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public async Task<VoteResultRecord> GetForVoteQuestionIdAsync(VoteResultRecordDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VoteResultRecords.Where(x => x.VoteId == dto.VoteId && x.VoteQuestionId == dto.VoteQuestionId).FirstOrDefaultAsync(token);
+            }
+        }
+
         public Task<List<VoteResultRecord>> GetListAsync(VoteResultRecordDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();

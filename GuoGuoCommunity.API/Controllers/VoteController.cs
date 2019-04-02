@@ -34,6 +34,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IVipOwnerCertificationRecordRepository _vipOwnerCertificationRecordRepository;
         private readonly IVoteRecordDetailRepository _voteRecordDetailRepository;
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
+        private readonly IVoteResultRecordRepository _voteResultRecordRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -49,6 +50,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="vipOwnerCertificationRecordRepository"></param>
         /// <param name="voteRecordDetailRepository"></param>
         /// <param name="ownerCertificationRecordRepository"></param>
+        /// <param name="voteResultRecordRepository"></param>
         public VoteController(IVoteRepository voteRepository,
             IVoteQuestionRepository voteQuestionRepository,
             IVoteQuestionOptionRepository voteQuestionOptionRepository,
@@ -58,7 +60,8 @@ namespace GuoGuoCommunity.API.Controllers
             IVipOwnerApplicationRecordRepository vipOwnerApplicationRecordRepository,
             IVipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository,
             IVoteRecordDetailRepository voteRecordDetailRepository,
-            IOwnerCertificationRecordRepository ownerCertificationRecordRepository)
+            IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
+            IVoteResultRecordRepository voteResultRecordRepository)
         {
             _voteRepository = voteRepository;
             _voteQuestionRepository = voteQuestionRepository;
@@ -70,6 +73,7 @@ namespace GuoGuoCommunity.API.Controllers
             _vipOwnerCertificationRecordRepository = vipOwnerCertificationRecordRepository;
             _voteRecordDetailRepository = voteRecordDetailRepository;
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
+            _voteResultRecordRepository = voteResultRecordRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -339,13 +343,21 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("投票结束时间转换失败！");
                 }
-
+                if (string.IsNullOrWhiteSpace(input.VoteTypeValue))
+                {
+                    throw new NotImplementedException("投票类型信息为空！");
+                }
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
                     return new ApiResult<AddVoteForVipOwnerOutput>(APIResultCode.Unknown, new AddVoteForVipOwnerOutput { }, APIResultMessage.TokenError);
                 }
 
+                var voteType = VoteTypes.GetAllForVipOwner().Where(x => x.Value == input.VoteTypeValue).FirstOrDefault();
+                if (voteType == null)
+                {
+                    throw new NotImplementedException("投票类型信息不准确！");
+                }
                 //增加投票主体
                 var entity = await _voteRepository.AddForVipOwnerAsync(new VoteDto
                 {
@@ -356,7 +368,9 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString(),
                     DepartmentValue = Department.YeZhuWeiYuanHui.Value,
-                    DepartmentName = Department.YeZhuWeiYuanHui.Name
+                    DepartmentName = Department.YeZhuWeiYuanHui.Name,
+                    VoteTypeValue = voteType.Value,
+                    VoteTypeName = voteType.Name
                 }, cancelToken);
 
                 //增加投票附件
@@ -614,7 +628,14 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<GetAllForOwnerOutput>(APIResultCode.Unknown, new GetAllForOwnerOutput { }, APIResultMessage.TokenNull);
                 }
-
+                if (string.IsNullOrWhiteSpace(input.OwnerCertificationId))
+                {
+                    throw new NotImplementedException("业主认证Id信息为空！");
+                }
+                if (string.IsNullOrWhiteSpace(input.DepartmentValue))
+                {
+                    throw new NotImplementedException("部门值信息为空！");
+                }
                 if (input.PageIndex < 1)
                 {
                     input.PageIndex = 1;
@@ -712,10 +733,18 @@ namespace GuoGuoCommunity.API.Controllers
                         };
                         voteQuestionOptionModels.Add(model);
                     }
+                    var voteResult = await _voteResultRecordRepository.GetForVoteQuestionIdAsync(new VoteResultRecordDto
+                    {
+                        VoteId = vote.Id.ToString(),
+                        VoteQuestionId = item.Id.ToString()
+                    });
+
                     questionModel.Id = item.Id.ToString();
                     questionModel.List = voteQuestionOptionModels;
                     questionModel.Title = item.Title;
                     questionModel.OptionMode = item.OptionMode;
+                    questionModel.VoteResultName = voteResult != null ? voteResult.ResultName : "";
+                    questionModel.VoteResultValue = voteResult != null ? voteResult.ResultValue : "";
                     list.Add(questionModel);
                 }
 
@@ -732,7 +761,9 @@ namespace GuoGuoCommunity.API.Controllers
                     Id = vote.Id.ToString(),
                     IsVoted = voteRecordDetails.Count > 0,
                     StatusValue = vote.StatusValue,
-                    ShouldParticipateCount = ownerCertificationRecordList.Count.ToString()
+                    ShouldParticipateCount = ownerCertificationRecordList.Count.ToString(),
+                    VoteTypeName = vote.VoteTypeName,
+                    VoteTypeValue = vote.VoteTypeValue
                 });
             }
             catch (Exception e)
@@ -840,7 +871,8 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationUserId = "system",
                     VoteId = voteEntity.Id.ToString(),
                     ResultValue = result.Value,
-                    ResultName = result.Name
+                    ResultName = result.Name,
+                    VoteQuestionId = voteQuestion.Id.ToString()
                 });
 
             }
@@ -1143,7 +1175,8 @@ namespace GuoGuoCommunity.API.Controllers
                             OperationUserId = "system",
                             VoteId = voteEntity.Id.ToString(),
                             ResultValue = result.Value,
-                            ResultName = result.Name
+                            ResultName = result.Name,
+                            VoteQuestionId = item.Id.ToString()
                         });
                     }
                     if (voteEntity.DepartmentValue == CalculationMethod.Opposition.Value)
@@ -1176,7 +1209,8 @@ namespace GuoGuoCommunity.API.Controllers
                             OperationUserId = "system",
                             VoteId = voteEntity.Id.ToString(),
                             ResultValue = result.Value,
-                            ResultName = result.Name
+                            ResultName = result.Name,
+                            VoteQuestionId = item.Id.ToString()
                         });
                     }
                 }

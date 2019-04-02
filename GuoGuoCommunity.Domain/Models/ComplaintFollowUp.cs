@@ -38,6 +38,11 @@ namespace GuoGuoCommunity.Domain.Models
         public string OperationDepartmentValue { get; set; }
 
         /// <summary>
+        /// 业主认证Id
+        /// </summary>
+        public string OwnerCertificationId { get; set; }
+
+        /// <summary>
         /// 是否是申诉操作
         /// </summary>
         public string Aappeal { get; set; }

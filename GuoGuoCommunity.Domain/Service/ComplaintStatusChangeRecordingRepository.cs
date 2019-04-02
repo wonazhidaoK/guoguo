@@ -10,9 +10,22 @@ namespace GuoGuoCommunity.Domain.Service
 {
     public class ComplaintStatusChangeRecordingRepository : IComplaintStatusChangeRecordingRepository
     {
-        public Task<ComplaintStatusChangeRecording> AddAsync(ComplaintStatusChangeRecordingDto dto, CancellationToken token = default)
+        public async Task<ComplaintStatusChangeRecording> AddAsync(ComplaintStatusChangeRecordingDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var entity = db.StatusChangeRecordings.Add(new ComplaintStatusChangeRecording
+                {
+                    ComplaintFollowUpId = dto.ComplaintFollowUpId,
+                    ComplaintId = dto.ComplaintId,
+                    NewStatus = dto.NewStatus,
+                    OldStatus = dto.OldStatus,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                });
+                await db.SaveChangesAsync(token);
+                return entity;
+            }
         }
 
         public Task DeleteAsync(ComplaintStatusChangeRecordingDto dto, CancellationToken token = default)

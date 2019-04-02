@@ -50,13 +50,13 @@ namespace GuoGuoCommunity.Domain.Models
         /// 处理期限
         /// </summary>
         [Required]
-        public string ProcessingPeriod { get; set; }
+        public int ProcessingPeriod { get; set; }
 
         /// <summary>
         /// 申诉期限
         /// </summary>
         [Required]
-        public string ComplaintPeriod { get; set; }
+        public int ComplaintPeriod { get; set; }
 
         public string LastOperationUserId { get; set; }
         public DateTimeOffset? LastOperationTime { get; set; }

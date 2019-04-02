@@ -24,6 +24,11 @@ namespace GuoGuoCommunity.API.Models
         public string Deadline { get; set; }
 
         /// <summary>
+        /// 投票类型 RecallProperty罢免物业，Ordinary普通投票
+        /// </summary>
+        public string VoteTypeValue { get; set; }
+
+        /// <summary>
         /// 问题集合
         /// </summary>
         public List<AddVoteQuestionModel> List { get; set; }

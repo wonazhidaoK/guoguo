@@ -35,6 +35,21 @@ namespace GuoGuoCommunity.Domain.Models.Enum
         public static ComplaintStatus Finished { get; set; }
 
         /// <summary>
+        /// 街道办未受理
+        /// </summary>
+        public static ComplaintStatus StreetOfficeNotAccepted { get; set; }
+
+        /// <summary>
+        /// 街道办处理中
+        /// </summary>
+        public static ComplaintStatus StreetOfficeProcessing { get; set; }
+
+        /// <summary>
+        /// 街道办已完结
+        /// </summary>
+        public static ComplaintStatus StreetOfficeFinished { get; set; }
+
+        /// <summary>
         /// 已完成
         /// </summary>
         public static ComplaintStatus Completed { get; set; }

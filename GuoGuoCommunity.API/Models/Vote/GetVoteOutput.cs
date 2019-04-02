@@ -67,6 +67,18 @@ namespace GuoGuoCommunity.API.Models
         /// 投票状态
         /// </summary>
         public string StatusValue { get; set; }
+
+        /// <summary>
+        /// 投票类型值
+        /// </summary>
+        public string VoteTypeValue { get; set; }
+
+        /// <summary>
+        /// 投票类型名称
+        /// </summary>
+        public string VoteTypeName { get; set; }
+
+
     }
     /// <summary>
     /// 投票问题
@@ -91,6 +103,16 @@ namespace GuoGuoCommunity.API.Models
         /// 选项集合
         /// </summary>
         public List<GetVoteQuestionOptionModel> List { get; set; }
+
+        /// <summary>
+        /// 投票结果名称
+        /// </summary>
+        public string VoteResultName { get; set; }
+
+        /// <summary>
+        /// 投票结果名称值
+        /// </summary>
+        public string VoteResultValue { get; set; }
     }
 
     /// <summary>

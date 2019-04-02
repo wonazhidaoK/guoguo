@@ -40,6 +40,9 @@ namespace GuoGuoCommunity.Domain.Models.Enum
         public static Department JieDaoBan { get; set; }
 
         public static IEnumerable<Department> GetAll() => new List<Department>() { YeZhu, YeZhuWeiYuanHui, WuYe, JieDaoBan };
-        
+
+        public static IEnumerable<Department> GetAllForVipOwner() => new List<Department>() { WuYe, JieDaoBan };
+
+        public static IEnumerable<Department> GetAllForOwner() => new List<Department>() { YeZhuWeiYuanHui, WuYe };
     }
 }

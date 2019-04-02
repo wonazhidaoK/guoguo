@@ -67,6 +67,16 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public string StatusName { get; set; }
 
+        /// <summary>
+        /// 投票类型值
+        /// </summary>
+        public string VoteTypeValue { get; set; }
+
+        /// <summary>
+        /// 投票类型名称
+        /// </summary>
+        public string VoteTypeName { get; set; }
+
         #region 街道办结构
 
         /// <summary>

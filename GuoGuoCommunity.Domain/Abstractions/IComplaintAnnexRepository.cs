@@ -10,6 +10,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
     {
         Task<ComplaintAnnex> AddAsync(ComplaintAnnexDto dto, CancellationToken token = default);
 
+        Task<ComplaintAnnex> AddForFollowUpIdAsync(ComplaintAnnexDto dto, CancellationToken token = default);
+
         Task UpdateAsync(ComplaintAnnexDto dto, CancellationToken token = default);
 
         Task<List<ComplaintAnnex>> GetAllAsync(ComplaintAnnexDto dto, CancellationToken token = default);

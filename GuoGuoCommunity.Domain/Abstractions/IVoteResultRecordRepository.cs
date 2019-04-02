@@ -19,7 +19,9 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task DeleteAsync(VoteResultRecordDto dto, CancellationToken token = default);
 
         Task<VoteResultRecord> GetAsync(string id, CancellationToken token = default);
-        
+
+        Task<VoteResultRecord> GetForVoteQuestionIdAsync(VoteResultRecordDto dto, CancellationToken token = default);
+
         Task<List<VoteResultRecord>> GetListAsync(VoteResultRecordDto dto, CancellationToken token = default);
     }
 }

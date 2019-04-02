@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace GuoGuoCommunity.API.Models
+﻿namespace GuoGuoCommunity.API.Models
 {
     /// <summary>
     /// 
@@ -43,11 +38,11 @@ namespace GuoGuoCommunity.API.Models
         /// <summary>
         /// 处理期限
         /// </summary>
-        public string ProcessingPeriod { get; set; }
+        public int ProcessingPeriod { get; set; }
 
         /// <summary>
         /// 申诉期限
         /// </summary>
-        public string ComplaintPeriod { get; set; }
+        public int ComplaintPeriod { get; set; }
     }
 }

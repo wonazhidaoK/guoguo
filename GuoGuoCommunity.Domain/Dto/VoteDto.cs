@@ -22,6 +22,16 @@ namespace GuoGuoCommunity.Domain.Dto
         public DateTimeOffset Deadline { get; set; }
 
         /// <summary>
+        /// 投票类型值
+        /// </summary>
+        public string VoteTypeValue { get; set; }
+
+        /// <summary>
+        /// 投票类型名称
+        /// </summary>
+        public string VoteTypeName { get; set; }
+
+        /// <summary>
         /// 小区范围
         /// </summary>
         public string SmallDistrictArray { get; set; }

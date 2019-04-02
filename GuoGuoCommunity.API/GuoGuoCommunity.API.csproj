@@ -224,6 +224,7 @@
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\CommunityController.cs" />
     <Compile Include="Controllers\ComplaintController.cs" />
+    <Compile Include="Controllers\ComplaintFollowUpController.cs" />
     <Compile Include="Controllers\ComplaintTypeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\CompetenceController.cs" />
@@ -283,6 +284,9 @@
     <Compile Include="Models\Community\GetListCommunityInput.cs" />
     <Compile Include="Models\Community\GetListCommunityOutput.cs" />
     <Compile Include="Models\Community\UpdateCommunityInput.cs" />
+    <Compile Include="Models\ComplaintFollowUp\AddComplaintFollowUpInput.cs" />
+    <Compile Include="Models\ComplaintFollowUp\AddComplaintFollowUpOutput.cs" />
+    <Compile Include="Models\ComplaintFollowUp\AppealComplaintFollowUpInput.cs" />
     <Compile Include="Models\ComplaintType\AddComplaintTypeInput.cs" />
     <Compile Include="Models\ComplaintType\AddComplaintTypeOutput.cs" />
     <Compile Include="Models\ComplaintType\GetAllComplaintTypeInput.cs" />
@@ -291,6 +295,8 @@
     <Compile Include="Models\ComplaintType\GetListComplaintTypeInput.cs" />
     <Compile Include="Models\ComplaintType\GetListComplaintTypeOutput.cs" />
     <Compile Include="Models\ComplaintType\UpdateComplaintTypeInput.cs" />
+    <Compile Include="Models\Complaint\AddComplaintInput.cs" />
+    <Compile Include="Models\Complaint\AddComplaintOutput.cs" />
     <Compile Include="Models\Industry\AddIndustryInput.cs" />
     <Compile Include="Models\Industry\AddIndustryOutput.cs" />
     <Compile Include="Models\Industry\GetAllIndustryInput.cs" />
@@ -501,6 +507,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Hangfire\" />
     <Folder Include="Upload\Announcement\" />
+    <Folder Include="Upload\Complaint\" />
     <Folder Include="Upload\OwnerCertification\" />
     <Folder Include="Upload\VipOwnerCertification\" />
     <Folder Include="Upload\Vote\" />

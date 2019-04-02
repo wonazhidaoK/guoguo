@@ -58,7 +58,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("department/getAll")]
+        [Route("department/getAllForOwner")]
         public ApiResult<List<Department>> GetAllForOwner() => new ApiResult<List<Department>>(APIResultCode.Success, new List<Department>
         {
             Department.YeZhuWeiYuanHui,
@@ -70,7 +70,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("department/getAll")]
+        [Route("department/getAllForVipOwner")]
         public ApiResult<List<Department>> GetAllForVipOwner() => new ApiResult<List<Department>>(APIResultCode.Success, new List<Department>
         {
             Department.JieDaoBan,
@@ -158,7 +158,7 @@ namespace GuoGuoCommunity.API.Controllers
         // 当前用户有效认证业主认证记录
 
         /// <summary>
-        /// 根据小区id获取用户id
+        /// 根据小区id获取用户认证记录
         /// </summary>
         /// <param name="SmallDistrictId"></param>
         /// <param name="cancelToken"></param>

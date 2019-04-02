@@ -56,7 +56,7 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 using (var db = new GuoGuoCommunityContext())
                 {
-                    var entity = db.AnnouncementAnnices.Where(x => x.AnnouncementId == id).FirstOrDefault();
+                    var entity = db.VoteAnnices.Where(x => x.VoteId == id).FirstOrDefault();
                     if (!Guid.TryParse(entity.AnnexContent, out var annexContent))
                     {
                         throw new NotImplementedException("投票附件id信息不正确！");

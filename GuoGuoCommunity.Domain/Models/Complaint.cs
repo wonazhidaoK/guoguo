@@ -28,6 +28,11 @@ namespace GuoGuoCommunity.Domain.Models
         public string ComplaintTypeId { get; set; }
 
         /// <summary>
+        /// 投诉类型Id
+        /// </summary>
+        public string ComplaintTypeName { get; set; }
+
+        /// <summary>
         /// 部门名称
         /// </summary>
         public string DepartmentName { get; set; }
@@ -48,7 +53,7 @@ namespace GuoGuoCommunity.Domain.Models
         public DateTimeOffset? ClosedTime { get; set; }
 
         /// <summary>
-        /// 过期时间
+        /// 过期时间(申诉截至时间)
         /// </summary>
         public DateTimeOffset? ExpiredTime { get; set; }
 
@@ -105,6 +110,16 @@ namespace GuoGuoCommunity.Domain.Models
         public string SmallDistrictName { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// 操作人部门名称
+        /// </summary>
+        public string OperationDepartmentName { get; set; }
+
+        /// <summary>
+        /// 操作人部门值
+        /// </summary>
+        public string OperationDepartmentValue { get; set; }
 
         public bool IsDeleted { get; set; }
 

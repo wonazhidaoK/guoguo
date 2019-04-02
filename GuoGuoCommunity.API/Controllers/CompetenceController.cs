@@ -709,7 +709,9 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("role/getAll")]
         public async Task<ApiResult<List<GetAllRoleOutput>>> GetAllRole([FromUri]GetAllRoleInput input, CancellationToken cancelToken)
         {
-            var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = input?.DepartmentValue, Name = input?.Name }, cancelToken)).Select(
+            try
+            {
+                var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = input?.DepartmentValue, Name = input?.Name }, cancelToken)).Select(
                  x => new GetAllRoleOutput
                  {
                      Id = x.Id.ToString(),
@@ -718,7 +720,13 @@ namespace GuoGuoCommunity.API.Controllers
                      DepartmentValue = x.DepartmentValue,
                      Description = x.Description
                  }).ToList();
-            return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success, data);
+                return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success, data);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success_NoB, new List<GetAllRoleOutput>(),e.Message);
+            }
+            
         }
 
         /// <summary>

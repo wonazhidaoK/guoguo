@@ -25,8 +25,8 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     Name = dto.Name,
                     Level = dto.Level,
-                    ProcessingPeriod = "7",
-                    ComplaintPeriod = "15",
+                    ProcessingPeriod = 7,
+                    ComplaintPeriod = 15,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
