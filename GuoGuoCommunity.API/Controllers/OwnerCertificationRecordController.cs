@@ -212,80 +212,80 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
-        /// <summary>
-        /// 根据小区id获取用户id
-        /// </summary>
-        /// <param name="SmallDistrictId"></param>
-        /// <param name="cancelToken"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("ownerCertificationRecord/getAllForSmallDistrictId")]
-        public async Task<ApiResult<GetListOwnerCertificationRecordOutput>> GetAllForSmallDistrictId([FromUri]string SmallDistrictId, CancellationToken cancelToken)
-        {
-            try
-            {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordOutput { }, APIResultMessage.TokenNull);
-                }
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordOutput { }, APIResultMessage.TokenError);
-                }
-                var data = await _ownerCertificationRecordRepository.GetAllForSmallDistrictIdAsync(new OwnerCertificationRecordDto
-                {
-                    UserId = user.Id.ToString(),
-                    SmallDistrictId = SmallDistrictId
-                }, cancelToken);
-                List<GetOwnerCertificationRecordOutput> list = new List<GetOwnerCertificationRecordOutput>();
+        ///// <summary>
+        ///// 根据小区id获取用户id
+        ///// </summary>
+        ///// <param name="SmallDistrictId"></param>
+        ///// <param name="cancelToken"></param>
+        ///// <returns></returns>
+        //[HttpGet]
+        //[Route("ownerCertificationRecord/getAllForSmallDistrictId")]
+        //public async Task<ApiResult<GetListOwnerCertificationRecordOutput>> GetAllForSmallDistrictId([FromUri]string SmallDistrictId, CancellationToken cancelToken)
+        //{
+        //    try
+        //    {
+        //        var token = HttpContext.Current.Request.Headers["Authorization"];
+        //        if (token == null)
+        //        {
+        //            return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordOutput { }, APIResultMessage.TokenNull);
+        //        }
+        //        var user = _tokenManager.GetUser(token);
+        //        if (user == null)
+        //        {
+        //            return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordOutput { }, APIResultMessage.TokenError);
+        //        }
+        //        var data = await _ownerCertificationRecordRepository.GetAllForSmallDistrictIdAsync(new OwnerCertificationRecordDto
+        //        {
+        //            UserId = user.Id.ToString(),
+        //            SmallDistrictId = SmallDistrictId
+        //        }, cancelToken);
+        //        List<GetOwnerCertificationRecordOutput> list = new List<GetOwnerCertificationRecordOutput>();
 
-                foreach (var item in data)
-                {
-                    var owner = await _ownerRepository.GetAsync(item.OwnerId, cancelToken);
-                    var industry = await _industryRepository.GetAsync(item.IndustryId, cancelToken);
-                    list.Add(new GetOwnerCertificationRecordOutput
-                    {
-                        BuildingId = item.BuildingId,
-                        BuildingName = item.BuildingName,
-                        BuildingUnitId = item.BuildingUnitId,
-                        BuildingUnitName = item.BuildingUnitName,
-                        CertificationResult = item.CertificationResult,
-                        CertificationStatusName = item.CertificationStatusName,
-                        CertificationStatusValue = item.CertificationStatusValue,
-                        CertificationTime = item.CertificationTime,
-                        CommunityId = item.CommunityId,
-                        CommunityName = item.CommunityName,
-                        Id = item.Id.ToString(),
-                        IndustryId = item.IndustryId,
-                        IndustryName = item.IndustryName,
-                        OwnerId = item.OwnerId,
-                        OwnerName = item.OwnerName,
-                        SmallDistrictId = item.SmallDistrictId,
-                        SmallDistrictName = item.SmallDistrictName,
-                        StreetOfficeId = item.StreetOfficeId,
-                        StreetOfficeName = item.StreetOfficeName,
-                        UserId = item.UserId,
-                        Name = owner?.Name,
-                        Birthday = owner?.Birthday,
-                        Gender = owner?.Gender,
-                        IDCard = owner?.IDCard,
-                        PhoneNumber = owner?.PhoneNumber,
-                        NumberOfLayers = industry?.NumberOfLayers,
-                        Acreage = industry?.Acreage
-                    });
-                }
-                return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Success, new GetListOwnerCertificationRecordOutput
-                {
-                    List = list
-                });
-            }
-            catch (Exception e)
-            {
-                return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Success_NoB, new GetListOwnerCertificationRecordOutput { }, e.Message);
-            }
-        }
+        //        foreach (var item in data)
+        //        {
+        //            var owner = await _ownerRepository.GetAsync(item.OwnerId, cancelToken);
+        //            var industry = await _industryRepository.GetAsync(item.IndustryId, cancelToken);
+        //            list.Add(new GetOwnerCertificationRecordOutput
+        //            {
+        //                BuildingId = item.BuildingId,
+        //                BuildingName = item.BuildingName,
+        //                BuildingUnitId = item.BuildingUnitId,
+        //                BuildingUnitName = item.BuildingUnitName,
+        //                CertificationResult = item.CertificationResult,
+        //                CertificationStatusName = item.CertificationStatusName,
+        //                CertificationStatusValue = item.CertificationStatusValue,
+        //                CertificationTime = item.CertificationTime,
+        //                CommunityId = item.CommunityId,
+        //                CommunityName = item.CommunityName,
+        //                Id = item.Id.ToString(),
+        //                IndustryId = item.IndustryId,
+        //                IndustryName = item.IndustryName,
+        //                OwnerId = item.OwnerId,
+        //                OwnerName = item.OwnerName,
+        //                SmallDistrictId = item.SmallDistrictId,
+        //                SmallDistrictName = item.SmallDistrictName,
+        //                StreetOfficeId = item.StreetOfficeId,
+        //                StreetOfficeName = item.StreetOfficeName,
+        //                UserId = item.UserId,
+        //                Name = owner?.Name,
+        //                Birthday = owner?.Birthday,
+        //                Gender = owner?.Gender,
+        //                IDCard = owner?.IDCard,
+        //                PhoneNumber = owner?.PhoneNumber,
+        //                NumberOfLayers = industry?.NumberOfLayers,
+        //                Acreage = industry?.Acreage
+        //            });
+        //        }
+        //        return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Success, new GetListOwnerCertificationRecordOutput
+        //        {
+        //            List = list
+        //        });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Success_NoB, new GetListOwnerCertificationRecordOutput { }, e.Message);
+        //    }
+        //}
 
         /// <summary>
         /// 这个是用来发送消息的静态方法
