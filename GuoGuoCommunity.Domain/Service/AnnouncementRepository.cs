@@ -181,10 +181,10 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     list = list.Where(x => x.Title.Contains(dto.Title)).ToList();
                 }
-                if (dto.DepartmentValue != Department.JieDaoBan.Value)
-                {
-                    list = list.Where(x => x.StreetOfficeId == dto.SmallDistrictArray).ToList();
-                }
+                //if (dto.DepartmentValue != Department.JieDaoBan.Value)
+                //{
+                //    list = list.Where(x => x.StreetOfficeId == dto.SmallDistrictArray).ToList();
+                //}
                 return list.Where(x => x.SmallDistrictId == dto.SmallDistrictId).ToList();
             }
         }

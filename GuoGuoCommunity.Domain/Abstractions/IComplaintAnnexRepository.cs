@@ -21,5 +21,9 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<ComplaintAnnex> GetAsync(string id, CancellationToken token = default);
 
         Task<List<ComplaintAnnex>> GetListAsync(ComplaintAnnexDto dto, CancellationToken token = default);
+
+        string GetUrl(string id);
+
+        string GetUrlForFollowUpId(string id);
     }
 }

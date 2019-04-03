@@ -11,14 +11,24 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<Complaint> AddAsync(ComplaintDto dto, CancellationToken token = default);
 
         Task UpdateAsync(ComplaintDto dto, CancellationToken token = default);
+
         Task UpdateForAppealAsync(ComplaintDto dto, CancellationToken token = default);
 
+        Task UpdateForFinishedAsync(ComplaintDto dto, CancellationToken token = default);
+
         Task<List<Complaint>> GetAllAsync(ComplaintDto dto, CancellationToken token = default);
+
+        Task<List<Complaint>> GetAllForVipOwnerAsync(ComplaintDto dto, CancellationToken token = default);
 
         Task DeleteAsync(ComplaintDto dto, CancellationToken token = default);
 
         Task<Complaint> GetAsync(string id, CancellationToken token = default);
 
         Task<List<Complaint>> GetListAsync(ComplaintDto dto, CancellationToken token = default);
+
+        Task ClosedAsync(ComplaintDto dto, CancellationToken token = default);
+
+        Task ViewForVipOwnerAsync(ComplaintDto dto, CancellationToken token = default);
+        
     }
 }

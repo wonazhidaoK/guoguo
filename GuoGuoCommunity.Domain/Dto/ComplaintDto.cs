@@ -53,5 +53,24 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 操作时间
         /// </summary>
         public DateTimeOffset? OperationTime { get; set; }
+
+        #region 街道办结构
+
+        /// <summary>
+        /// 街道办Id
+        /// </summary>
+        public string StreetOfficeId { get; set; }
+
+        /// <summary>
+        /// 社区Id
+        /// </summary>
+        public string CommunityId { get; set; }
+        
+        /// <summary>
+        /// 小区Id
+        /// </summary>
+        public string SmallDistrictId { get; set; }
+
+        #endregion
     }
 }

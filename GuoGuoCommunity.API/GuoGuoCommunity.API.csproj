@@ -287,6 +287,9 @@
     <Compile Include="Models\ComplaintFollowUp\AddComplaintFollowUpInput.cs" />
     <Compile Include="Models\ComplaintFollowUp\AddComplaintFollowUpOutput.cs" />
     <Compile Include="Models\ComplaintFollowUp\AppealComplaintFollowUpInput.cs" />
+    <Compile Include="Models\ComplaintFollowUp\GetAllComplaintFollowUpOutput.cs" />
+    <Compile Include="Models\ComplaintFollowUp\GetComplaintFollowUpOutput.cs" />
+    <Compile Include="Models\Complaint\ClosedComplaintFollowUpInput.cs" />
     <Compile Include="Models\ComplaintType\AddComplaintTypeInput.cs" />
     <Compile Include="Models\ComplaintType\AddComplaintTypeOutput.cs" />
     <Compile Include="Models\ComplaintType\GetAllComplaintTypeInput.cs" />
@@ -297,6 +300,9 @@
     <Compile Include="Models\ComplaintType\UpdateComplaintTypeInput.cs" />
     <Compile Include="Models\Complaint\AddComplaintInput.cs" />
     <Compile Include="Models\Complaint\AddComplaintOutput.cs" />
+    <Compile Include="Models\Complaint\GetAllComplaintInput.cs" />
+    <Compile Include="Models\Complaint\GetAllComplaintOutput.cs" />
+    <Compile Include="Models\Complaint\GetComplaintOutput.cs" />
     <Compile Include="Models\Industry\AddIndustryInput.cs" />
     <Compile Include="Models\Industry\AddIndustryOutput.cs" />
     <Compile Include="Models\Industry\GetAllIndustryInput.cs" />
@@ -548,7 +554,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>64177</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:2223</IISUrl>
+          <IISUrl>http://192.168.2.133:2223</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

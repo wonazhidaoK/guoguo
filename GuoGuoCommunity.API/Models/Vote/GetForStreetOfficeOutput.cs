@@ -61,5 +61,10 @@ namespace GuoGuoCommunity.API.Models
         /// 是否是创建人
         /// </summary>
         public bool IsCreateUser { get; set; }
+
+        /// <summary>
+        /// 投票是否进行中
+        /// </summary>
+        public bool IsProcessing { get; set; }
     }
 }

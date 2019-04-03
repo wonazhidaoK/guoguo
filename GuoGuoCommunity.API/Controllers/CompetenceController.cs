@@ -89,7 +89,13 @@ namespace GuoGuoCommunity.API.Controllers
                         token = token.Access_token,
                         City = user.City,
                         Region = user.Region,
-                        State = user.State
+                        State = user.State,
+                        CommunityId = user.CommunityId,
+                        CommunityName = user.CommunityName,
+                        SmallDistrictId = user.SmallDistrictId,
+                        SmallDistrictName = user.SmallDistrictName,
+                        StreetOfficeId = user.StreetOfficeId,
+                        StreetOfficeName = user.StreetOfficeName
                         //refresh_token=token.refresh_token
                     });
                 }
@@ -114,7 +120,13 @@ namespace GuoGuoCommunity.API.Controllers
                         token = token.Access_token,
                         City = user.City,
                         Region = user.Region,
-                        State = user.State
+                        State = user.State,
+                        CommunityId = user.CommunityId,
+                        CommunityName = user.CommunityName,
+                        SmallDistrictId = user.SmallDistrictId,
+                        SmallDistrictName = user.SmallDistrictName,
+                        StreetOfficeId = user.StreetOfficeId,
+                        StreetOfficeName = user.StreetOfficeName
                         // refresh_token = token.refresh_token
                     });
             }
@@ -149,7 +161,13 @@ namespace GuoGuoCommunity.API.Controllers
                     avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
                     City = user.City,
                     Region = user.Region,
-                    State = user.State
+                    State = user.State,
+                    CommunityId = user.CommunityId,
+                    CommunityName = user.CommunityName,
+                    SmallDistrictId = user.SmallDistrictId,
+                    SmallDistrictName = user.SmallDistrictName,
+                    StreetOfficeId = user.StreetOfficeId,
+                    StreetOfficeName = user.StreetOfficeName
                 });
             }
 
@@ -172,7 +190,13 @@ namespace GuoGuoCommunity.API.Controllers
                     avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
                     City = user.City,
                     Region = user.Region,
-                    State = user.State
+                    State = user.State,
+                    CommunityId = user.CommunityId,
+                    CommunityName = user.CommunityName,
+                    SmallDistrictId = user.SmallDistrictId,
+                    SmallDistrictName = user.SmallDistrictName,
+                    StreetOfficeId = user.StreetOfficeId,
+                    StreetOfficeName = user.StreetOfficeName
                 });
         }
 
@@ -724,9 +748,9 @@ namespace GuoGuoCommunity.API.Controllers
             }
             catch (Exception e)
             {
-                return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success_NoB, new List<GetAllRoleOutput>(),e.Message);
+                return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success_NoB, new List<GetAllRoleOutput>(), e.Message);
             }
-            
+
         }
 
         /// <summary>

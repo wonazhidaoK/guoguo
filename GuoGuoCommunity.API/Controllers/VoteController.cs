@@ -472,7 +472,8 @@ namespace GuoGuoCommunity.API.Controllers
                         StatusValue = x.StatusValue,
                         StatusName = x.StatusName,
                         CreateTime = x.CreateOperationTime.Value,
-                        IsCreateUser = x.CreateOperationUserId == user.Id.ToString()
+                        IsCreateUser = x.CreateOperationUserId == user.Id.ToString(),
+                        IsProcessing = DateTimeOffset.Now < x.CreateOperationTime.Value
                     }).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
@@ -538,7 +539,8 @@ namespace GuoGuoCommunity.API.Controllers
                         StatusValue = x.StatusValue,
                         StatusName = x.StatusName,
                         CreateTime = x.CreateOperationTime.Value,
-                        IsCreateUser = x.CreateOperationUserId == user.Id.ToString()
+                        IsCreateUser = x.CreateOperationUserId == user.Id.ToString(),
+                        IsProcessing = DateTimeOffset.Now < x.CreateOperationTime.Value
                     }).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
@@ -675,7 +677,8 @@ namespace GuoGuoCommunity.API.Controllers
                         StatusValue = x.StatusValue,
                         StatusName = x.StatusName,
                         CreateTime = x.CreateOperationTime.Value,
-                        IsCreateUser = x.CreateOperationUserId == user.Id.ToString()
+                        IsCreateUser = x.CreateOperationUserId == user.Id.ToString(),
+                        IsProcessing = DateTimeOffset.Now < x.CreateOperationTime.Value
                     }).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });

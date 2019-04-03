@@ -19,5 +19,6 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<ComplaintFollowUp> GetAsync(string id, CancellationToken token = default);
 
         Task<List<ComplaintFollowUp>> GetListAsync(ComplaintFollowUpDto dto, CancellationToken token = default);
+
     }
 }

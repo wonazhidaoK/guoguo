@@ -4,6 +4,7 @@ using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -54,7 +55,6 @@ namespace GuoGuoCommunity.API.Controllers
         /*
          * 1.跟进投诉
          * 2.申诉投诉
-         * 3.关闭投诉
          */
 
         /// <summary>
@@ -96,7 +96,17 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<AddComplaintFollowUpOutput>(APIResultCode.Unknown, new AddComplaintFollowUpOutput { }, APIResultMessage.TokenError);
                 }
+                //查询跟进记录达到两条不允许在进行跟进
+                var complaintFollowUpList = await _complaintFollowUpRepository.GetListAsync(new ComplaintFollowUpDto
+                {
+                    ComplaintId = input.ComplaintId,
+                    OwnerCertificationId = input.OwnerCertificationId
+                }, cancelToken);
 
+                if (complaintFollowUpList.Count>1)
+                {
+                    throw new NotImplementedException("投诉跟进达到上限！");
+                }
                 var entity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
                 {
                     Description = input.Description,
@@ -197,16 +207,141 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
+        ///// <summary>
+        ///// 获取投诉跟进详情
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <param name="cancelToken"></param>
+        ///// <returns></returns>
+        //[HttpGet]
+        //[Route("complaintFollowUp/get")]
+        //public async Task<ApiResult<List<GetComplaintFollowUpOutput>>> Get([FromUri]string id, CancellationToken cancelToken)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrWhiteSpace(id))
+        //        {
+        //            throw new NotImplementedException("楼宇Id信息为空！");
+        //        }
+        //        var data = await _complaintFollowUpRepository.GetAsync(id, cancelToken);
+        //        foreach (var item in data)
+        //        {
+                     
+        //        }
+        //        return new ApiResult<List<GetComplaintFollowUpOutput>>(APIResultCode.Success, new  
+        //        {
+        //            Id = data.Id.ToString(),
+        //            Name = data.Name,
+        //            SmallDistrictId = data.SmallDistrictId,
+        //            SmallDistrictName = data.SmallDistrictName
+        //        });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return new ApiResult<GetBuildingOutput>(APIResultCode.Success_NoB, new GetBuildingOutput { }, e.Message);
+        //    }
+        //}
         #endregion
 
         #region 业委会端
 
         /*
-         * 1.跟进业委会发起的投诉
+         * 
          * 2.处理业主投诉
-         * 3.浏览业主投诉
+         * 
+         * 1.跟进业委会发起的投诉
          * 4.申诉
          */
+
+        /// <summary>
+        /// 处理业主投诉投诉信息
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("complaintFollowUp/add")]
+        public async Task<ApiResult<AddComplaintFollowUpOutput>> AddForVipOwner([FromBody]AddComplaintFollowUpInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<AddComplaintFollowUpOutput>(APIResultCode.Unknown, new AddComplaintFollowUpOutput { }, APIResultMessage.TokenNull);
+                }
+                if (string.IsNullOrWhiteSpace(input.ComplaintId))
+                {
+                    throw new NotImplementedException("投诉Id信息为空！");
+                }
+                if (string.IsNullOrWhiteSpace(input.Description))
+                {
+                    throw new NotImplementedException("描述信息为空！");
+                }
+                if (string.IsNullOrWhiteSpace(input.OwnerCertificationId))
+                {
+                    throw new NotImplementedException("业主认证Id信息为空！");
+                }
+                if (string.IsNullOrWhiteSpace(input.AnnexId))
+                {
+                    throw new NotImplementedException("投诉附件信息为空！");
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult<AddComplaintFollowUpOutput>(APIResultCode.Unknown, new AddComplaintFollowUpOutput { }, APIResultMessage.TokenError);
+                }
+                
+                var entity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
+                {
+                    Description = input.Description,
+                    OwnerCertificationId = input.OwnerCertificationId,
+                    ComplaintId = input.ComplaintId,
+                    OperationDepartmentName = Department.YeZhuWeiYuanHui.Name,
+                    OperationDepartmentValue = Department.YeZhuWeiYuanHui.Value,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+
+                if (!string.IsNullOrWhiteSpace(input.AnnexId))
+                {
+                    await _complaintAnnexRepository.AddForFollowUpIdAsync(new ComplaintAnnexDto
+                    {
+                        AnnexContent = input.AnnexId,
+                        ComplaintId = entity.Id.ToString(),
+                        OperationTime = DateTimeOffset.Now,
+                        OperationUserId = user.Id.ToString(),
+                        ComplaintFollowUpId = entity.Id.ToString()
+                    }, cancelToken);
+                }
+                var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
+
+                await _complaintStatusChangeRecordingRepository.AddAsync(new ComplaintStatusChangeRecordingDto
+                {
+                    ComplaintFollowUpId = entity.Id.ToString(),
+                    ComplaintId = input.ComplaintId,
+                    OldStatus = complaintEntity.StatusValue,
+                    NewStatus = ComplaintStatus.Finished.Value,
+                    OperationUserId = user.Id.ToString(),
+                    OperationTime = DateTimeOffset.Now,
+                }, cancelToken);
+
+                await _complaintRepository.UpdateForFinishedAsync(new ComplaintDto
+                {
+                    Id = input.ComplaintId,
+                    OperationUserId = user.Id.ToString(),
+                    OperationTime = DateTimeOffset.Now,
+                });
+                return new ApiResult<AddComplaintFollowUpOutput>(APIResultCode.Success, new AddComplaintFollowUpOutput { Id = entity.Id.ToString() });
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<AddComplaintFollowUpOutput>(APIResultCode.Success_NoB, new AddComplaintFollowUpOutput { }, e.Message);
+            }
+        }
+
+      
 
         #endregion
     }

@@ -45,6 +45,11 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public Task<ComplaintFollowUp> ClosedAsync(ComplaintFollowUpDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task DeleteAsync(ComplaintFollowUpDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
@@ -55,14 +60,24 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<ComplaintFollowUp> GetAsync(string id, CancellationToken token = default)
+        public async Task<ComplaintFollowUp> GetAsync(string id, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (Guid.TryParse(id, out var uid))
+                {
+                    return await db.ComplaintFollowUps.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                }
+                throw new NotImplementedException("该投诉Id信息不正确！");
+            }
         }
 
-        public Task<List<ComplaintFollowUp>> GetListAsync(ComplaintFollowUpDto dto, CancellationToken token = default)
+        public async Task<List<ComplaintFollowUp>> GetListAsync(ComplaintFollowUpDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId == dto.ComplaintId&&x.OwnerCertificationId==dto.OwnerCertificationId).ToListAsync(token);
+            }
         }
 
         public Task UpdateAsync(ComplaintFollowUpDto dto, CancellationToken token = default)

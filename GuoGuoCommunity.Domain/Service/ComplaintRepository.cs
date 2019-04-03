@@ -37,8 +37,8 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("业主认证不存在！");
                 }
 
-               
-              
+
+
                 var entity = db.Complaints.Add(new Complaint
                 {
                     CommunityId = ownerCertificationRecord.CommunityId,
@@ -69,14 +69,47 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public async Task ClosedAsync(ComplaintDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out Guid guid))
+                {
+                    throw new NotImplementedException("投诉id信息不正确");
+                }
+                var entity = await db.Complaints.Where(x => x.IsDeleted == false && x.Id == guid && x.OwnerCertificationId == dto.OwnerCertificationId).FirstOrDefaultAsync(token);
+                if (entity == null)
+                {
+                    throw new NotImplementedException("投诉信息不存在");
+                }
+                entity.LastOperationTime = dto.OperationTime;
+                entity.LastOperationUserId = dto.OperationUserId;
+                entity.ClosedTime = dto.OperationTime;
+                entity.StatusValue = ComplaintStatus.Completed.Value;
+                entity.StatusName = ComplaintStatus.Completed.Name;
+                await db.SaveChangesAsync(token);
+            }
+        }
+
         public Task DeleteAsync(ComplaintDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Complaint>> GetAllAsync(ComplaintDto dto, CancellationToken token = default)
+        public async Task<List<Complaint>> GetAllAsync(ComplaintDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.Complaints.Where(x => x.IsDeleted == false && x.OwnerCertificationId == dto.OwnerCertificationId).ToListAsync(token);
+            }
+        }
+
+        public async Task<List<Complaint>> GetAllForVipOwnerAsync(ComplaintDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.Complaints.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.YeZhuWeiYuanHui.Value&&x.SmallDistrictId==dto.SmallDistrictId).ToListAsync(token);
+            }
         }
 
         public async Task<Complaint> GetAsync(string id, CancellationToken token = default)
@@ -114,11 +147,54 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("投诉信息不存在！");
                 }
-                 
+
                 complaint.DepartmentValue = Department.JieDaoBan.Value;
                 complaint.DepartmentName = Department.JieDaoBan.Name;
                 complaint.LastOperationTime = dto.OperationTime;
                 complaint.LastOperationUserId = dto.OperationUserId;
+                await db.SaveChangesAsync(token);
+            }
+        }
+
+        public async Task UpdateForFinishedAsync(ComplaintDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("投诉信息不正确！");
+                }
+                var complaint = await db.Complaints.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (complaint == null)
+                {
+                    throw new NotImplementedException("投诉信息不存在！");
+                }
+
+                complaint.StatusValue = ComplaintStatus.Finished.Value;
+                complaint.StatusName = ComplaintStatus.Finished.Name;
+                complaint.LastOperationTime = dto.OperationTime;
+                complaint.LastOperationUserId = dto.OperationUserId;
+                await db.SaveChangesAsync(token);
+            }
+        }
+
+        public async Task ViewForVipOwnerAsync(ComplaintDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out Guid guid))
+                {
+                    throw new NotImplementedException("投诉id信息不正确");
+                }
+                var entity = await db.Complaints.Where(x => x.IsDeleted == false && x.Id == guid).FirstOrDefaultAsync(token);
+                if (entity == null)
+                {
+                    throw new NotImplementedException("投诉信息不存在");
+                }
+                entity.LastOperationTime = dto.OperationTime;
+                entity.LastOperationUserId = dto.OperationUserId;
+                entity.StatusValue = ComplaintStatus.Processing.Value;
+                entity.StatusName = ComplaintStatus.Processing.Name;
                 await db.SaveChangesAsync(token);
             }
         }
