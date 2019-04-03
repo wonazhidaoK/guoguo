@@ -350,8 +350,26 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-
                 return await db.Users.Where(x => x.UnionId == dto.UnionId).FirstOrDefaultAsync(token);
+            }
+        }
+
+        public async Task<User> GetForIdAsync(string id, CancellationToken token = default)
+        {
+            try
+            {
+                using (var db = new GuoGuoCommunityContext())
+                {
+                    if (Guid.TryParse(id, out var uid))
+                    {
+                        return await db.Users.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                    }
+                    throw new NotImplementedException("该用户Id信息不正确！");
+                }
+            }
+            catch (Exception)
+            {
+                return new User();
             }
         }
     }

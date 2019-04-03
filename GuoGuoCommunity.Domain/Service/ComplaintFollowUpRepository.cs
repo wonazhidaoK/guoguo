@@ -80,6 +80,14 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public async Task<List<ComplaintFollowUp>> GetListForComplaintIdAsync(string complaintId, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId == complaintId).ToListAsync(token);
+            }
+        }
+
         public Task UpdateAsync(ComplaintFollowUpDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();

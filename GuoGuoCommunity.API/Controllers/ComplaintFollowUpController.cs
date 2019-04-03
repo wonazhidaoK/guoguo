@@ -21,6 +21,8 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IComplaintFollowUpRepository _complaintFollowUpRepository;
         private readonly IComplaintAnnexRepository _complaintAnnexRepository;
         private readonly IComplaintStatusChangeRecordingRepository _complaintStatusChangeRecordingRepository;
+        private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
+        private readonly IUserRepository _userRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -30,16 +32,22 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="complaintFollowUpRepository"></param>
         /// <param name="complaintAnnexRepository"></param>
         /// <param name="complaintStatusChangeRecordingRepository"></param>
+        /// <param name="ownerCertificationRecordRepository"></param>
+        /// <param name="userRepository"></param>
         public ComplaintFollowUpController(
             IComplaintRepository complaintRepository,
             IComplaintFollowUpRepository complaintFollowUpRepository,
             IComplaintAnnexRepository complaintAnnexRepository,
-            IComplaintStatusChangeRecordingRepository complaintStatusChangeRecordingRepository)
+            IComplaintStatusChangeRecordingRepository complaintStatusChangeRecordingRepository,
+             IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
+             IUserRepository userRepository)
         {
             _complaintRepository = complaintRepository;
             _complaintAnnexRepository = complaintAnnexRepository;
             _complaintStatusChangeRecordingRepository = complaintStatusChangeRecordingRepository;
             _complaintFollowUpRepository = complaintFollowUpRepository;
+            _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
+            _userRepository = userRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -103,7 +111,7 @@ namespace GuoGuoCommunity.API.Controllers
                     OwnerCertificationId = input.OwnerCertificationId
                 }, cancelToken);
 
-                if (complaintFollowUpList.Count>1)
+                if (complaintFollowUpList.Count > 1)
                 {
                     throw new NotImplementedException("投诉跟进达到上限！");
                 }
@@ -207,40 +215,52 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
-        ///// <summary>
-        ///// 获取投诉跟进详情
-        ///// </summary>
-        ///// <param name="id"></param>
-        ///// <param name="cancelToken"></param>
-        ///// <returns></returns>
-        //[HttpGet]
-        //[Route("complaintFollowUp/get")]
-        //public async Task<ApiResult<List<GetComplaintFollowUpOutput>>> Get([FromUri]string id, CancellationToken cancelToken)
-        //{
-        //    try
-        //    {
-        //        if (string.IsNullOrWhiteSpace(id))
-        //        {
-        //            throw new NotImplementedException("楼宇Id信息为空！");
-        //        }
-        //        var data = await _complaintFollowUpRepository.GetAsync(id, cancelToken);
-        //        foreach (var item in data)
-        //        {
-                     
-        //        }
-        //        return new ApiResult<List<GetComplaintFollowUpOutput>>(APIResultCode.Success, new  
-        //        {
-        //            Id = data.Id.ToString(),
-        //            Name = data.Name,
-        //            SmallDistrictId = data.SmallDistrictId,
-        //            SmallDistrictName = data.SmallDistrictName
-        //        });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return new ApiResult<GetBuildingOutput>(APIResultCode.Success_NoB, new GetBuildingOutput { }, e.Message);
-        //    }
-        //}
+        /// <summary>
+        /// 获取投诉跟进详情
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("complaintFollowUp/get")]
+        public async Task<ApiResult<List<GetComplaintFollowUpOutput>>> Get([FromUri]string id, CancellationToken cancelToken)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    throw new NotImplementedException("楼宇Id信息为空！");
+                }
+                var data = await _complaintFollowUpRepository.GetListForComplaintIdAsync(id, cancelToken);
+                List<GetComplaintFollowUpOutput> list = new List<GetComplaintFollowUpOutput>();
+                foreach (var item in data)
+                {
+                    string OperationName = "";
+                    if (item.OperationDepartmentValue == Department.YeZhu.Value)
+                    {
+                        OperationName = (await _ownerCertificationRecordRepository.GetAsync(item.OwnerCertificationId, cancelToken))?.OwnerName;
+                    }
+                    else
+                    {
+                        OperationName = (await _userRepository.GetForIdAsync(item.CreateOperationUserId, cancelToken)).Name;
+                    }
+                    var entity = new GetComplaintFollowUpOutput
+                    {
+                        Aappeal = item.Aappeal,
+                        Description = item.Description,
+                        OperationDepartmentName = item.OperationDepartmentName,
+                        OperationName = OperationName,
+                        Url = _complaintAnnexRepository.GetUrlForFollowUpId(item.Id.ToString())
+                    };
+                    list.Add(entity);
+                }
+                return new ApiResult<List<GetComplaintFollowUpOutput>>(APIResultCode.Success, list);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<List<GetComplaintFollowUpOutput>>(APIResultCode.Success_NoB, new List<GetComplaintFollowUpOutput> { }, e.Message);
+            }
+        }
         #endregion
 
         #region 业委会端
@@ -260,7 +280,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("complaintFollowUp/add")]
+        [Route("complaintFollowUp/addForVipOwner")]
         public async Task<ApiResult<AddComplaintFollowUpOutput>> AddForVipOwner([FromBody]AddComplaintFollowUpInput input, CancellationToken cancelToken)
         {
             try
@@ -292,7 +312,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<AddComplaintFollowUpOutput>(APIResultCode.Unknown, new AddComplaintFollowUpOutput { }, APIResultMessage.TokenError);
                 }
-                
+
                 var entity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
                 {
                     Description = input.Description,
@@ -341,7 +361,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
-      
+
 
         #endregion
     }

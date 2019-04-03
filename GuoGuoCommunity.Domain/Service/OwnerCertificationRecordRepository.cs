@@ -160,9 +160,23 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<OwnerCertificationRecord> GetAsync(string id, CancellationToken token = default)
+        public async Task<OwnerCertificationRecord> GetAsync(string id, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (var db = new GuoGuoCommunityContext())
+                {
+                    if (Guid.TryParse(id, out var uid))
+                    {
+                        return await db.OwnerCertificationRecords.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                    }
+                    throw new NotImplementedException("该认证Id信息不正确！");
+                }
+            }
+            catch (Exception)
+            {
+                return new OwnerCertificationRecord();
+            }
         }
 
         public async Task<List<OwnerCertificationRecord>> GetListAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
