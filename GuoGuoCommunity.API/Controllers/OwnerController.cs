@@ -160,7 +160,6 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("owner/update")]
-        [Obsolete]
         public async Task<ApiResult> Update([FromBody]UpdateOwnerInput input, CancellationToken cancellationToken)
         {
             try
@@ -179,8 +178,12 @@ namespace GuoGuoCommunity.API.Controllers
 
                 await _ownerRepository.UpdateAsync(new OwnerDto
                 {
-                    //Id = input.Id,
-                    //Name = input.Name,
+                    Id = input.Id,
+                    Name = input.Name,
+                    Birthday = input.Birthday,
+                    Gender = input.Gender,
+                    IDCard = input.Name,
+                    PhoneNumber = input.PhoneNumber,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
                 });
@@ -208,7 +211,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 if (string.IsNullOrWhiteSpace(id))
                 {
-                    throw new NotImplementedException("楼宇Id信息为空！");
+                    throw new NotImplementedException("业主Id信息为空！");
                 }
                 var data = await _ownerRepository.GetAsync(id, cancelToken);
 
@@ -221,7 +224,7 @@ namespace GuoGuoCommunity.API.Controllers
                     IDCard = data.IDCard,
                     IndustryId = data.IndustryId,
                     IndustryName = data.IndustryName,
-                    PhoneNumber = data.PhoneNumber,
+                    PhoneNumber = data.PhoneNumber
                 });
             }
             catch (Exception e)

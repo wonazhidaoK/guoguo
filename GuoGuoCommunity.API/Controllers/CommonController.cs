@@ -232,7 +232,35 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
+        /// <summary>
+        /// 获取后台用投诉状态
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("complaintStatus/getAll")]
+        public ApiResult<List<ComplaintStatusModel>> ComplaintStatusGetAll() => new ApiResult<List<ComplaintStatusModel>>(APIResultCode.Success, new List<ComplaintStatusModel>
+        {
+             new ComplaintStatusModel{ Name="未处理", Value=ComplaintStatus.NotAccepted.Value },
+              new ComplaintStatusModel{ Name="待反馈", Value=ComplaintStatus.Processing.Value },
+               new ComplaintStatusModel{ Name="已处理", Value=ComplaintStatus.Finished.Value },
+                new ComplaintStatusModel{ Name="已完结", Value=ComplaintStatus.Completed.Value }
+        });
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public class ComplaintStatusModel
+        {
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Name { get; set; }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Value { get; set; }
+        }
         //TODO 当前用户有效高级认证记录
     }
 }

@@ -134,19 +134,27 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("业主信息不正确！");
                 }
-                var owners = await db.Owners.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
-                if (owners == null)
+                var owner = await db.Owners.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (owner == null)
                 {
                     throw new NotImplementedException("该社区不存在！");
                 }
 
-                if (await db.Owners.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.IndustryId == owners.IndustryId && x.Id != uid).FirstOrDefaultAsync(token) != null)
+                if (await db.Owners.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.IndustryId == owner.IndustryId && x.Id != uid).FirstOrDefaultAsync(token) != null)
                 {
                     throw new NotImplementedException("该业主名称已存在！");
                 }
-               
-                owners.LastOperationTime = dto.OperationTime;
-                owners.LastOperationUserId = dto.OperationUserId;
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.OwnerId == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (ownerCertificationRecord==null)
+                {
+                    owner.Birthday = dto.Birthday;
+                    owner.Gender = dto.Gender;
+                    owner.IDCard = dto.IDCard;
+                    owner.Name = dto.Name;
+                }
+                owner.PhoneNumber = dto.PhoneNumber;
+                owner.LastOperationTime = dto.OperationTime;
+                owner.LastOperationUserId = dto.OperationUserId;
                 OnUpdate(db, dto, token);
                 await db.SaveChangesAsync(token);
             }

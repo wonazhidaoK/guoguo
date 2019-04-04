@@ -39,8 +39,8 @@ namespace GuoGuoCommunity.API.Controllers
             IComplaintFollowUpRepository complaintFollowUpRepository,
             IComplaintAnnexRepository complaintAnnexRepository,
             IComplaintStatusChangeRecordingRepository complaintStatusChangeRecordingRepository,
-             IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
-             IUserRepository userRepository)
+            IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
+            IUserRepository userRepository)
         {
             _complaintRepository = complaintRepository;
             _complaintAnnexRepository = complaintAnnexRepository;
@@ -261,6 +261,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<List<GetComplaintFollowUpOutput>>(APIResultCode.Success_NoB, new List<GetComplaintFollowUpOutput> { }, e.Message);
             }
         }
+
         #endregion
 
         #region 业委会端

@@ -167,6 +167,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     list = list.Where(x => x.Title.Contains(dto.Title)).ToList();
                 }
+                list = list.Where(x => x.CreateOperationTime >= dto.StartTime && x.CreateOperationTime <= dto.EndTime).ToList();
 
                 return list.Where(x => x.StreetOfficeId == dto.StreetOfficeId).ToList();
             }
@@ -181,10 +182,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     list = list.Where(x => x.Title.Contains(dto.Title)).ToList();
                 }
-                //if (dto.DepartmentValue != Department.JieDaoBan.Value)
-                //{
-                //    list = list.Where(x => x.StreetOfficeId == dto.SmallDistrictArray).ToList();
-                //}
+                list = list.Where(x => x.CreateOperationTime >= dto.StartTime && x.CreateOperationTime <= dto.EndTime).ToList();
                 return list.Where(x => x.SmallDistrictId == dto.SmallDistrictId).ToList();
             }
         }

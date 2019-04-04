@@ -276,6 +276,7 @@ namespace GuoGuoCommunity.API.Controllers
          * 1.业委会添加投诉
          * 2.业务会添加投诉关闭投诉
          * 3.浏览业主投诉
+         * 4.投诉无效
          */
 
         /// <summary>
@@ -317,7 +318,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     ComplaintId = input.ComplaintId,
                     OperationDepartmentName = Department.YeZhuWeiYuanHui.Name,
-                    OperationDepartmentValue = Department.YeZhuWeiYuanHui.Name,
+                    OperationDepartmentValue = Department.YeZhuWeiYuanHui.Value,
                     Description = "业主委员会已查看正在处理！",
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString(),
@@ -399,6 +400,282 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
+        /*
+         * 投诉主体置为无效，状态置为已完结，添加状态变更记录，添加跟进记录
+         */
+
+        /// <summary>
+        /// 业委会将投票置为无效
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("complaint/invalidVipOwner")]
+        public async Task<ApiResult> InvalidVipOwner([FromBody]ClosedComplaintFollowUpInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+                }
+                if (string.IsNullOrWhiteSpace(input.ComplaintId))
+                {
+                    throw new NotImplementedException("投诉Id信息为空！");
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+                }
+                var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
+
+                await _complaintRepository.InvalidAsync(new ComplaintDto
+                {
+                    Id = input.ComplaintId,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+
+                var complaintFollowUpEntity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
+                {
+                    ComplaintId = input.ComplaintId,
+                    OperationDepartmentName = Department.YeZhuWeiYuanHui.Name,
+                    OperationDepartmentValue = Department.YeZhuWeiYuanHui.Value,
+                    Description = "业主委成员将投诉置为无效，投诉关闭！",
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString(),
+                    OwnerCertificationId = input.OwnerCertificationId
+                }, cancelToken);
+
+                await _complaintStatusChangeRecordingRepository.AddAsync(new ComplaintStatusChangeRecordingDto
+                {
+                    ComplaintFollowUpId = complaintFollowUpEntity.Id.ToString(),
+                    ComplaintId = input.ComplaintId,
+                    OldStatus = complaintEntity.StatusValue,
+                    NewStatus = ComplaintStatus.Completed.Value,
+                    OperationUserId = user.Id.ToString(),
+                    OperationTime = DateTimeOffset.Now,
+                }, cancelToken);
+
+                return new ApiResult(APIResultCode.Success);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+            }
+        }
+
+        #endregion
+
+        #region 街道办端
+        /*
+         * 1.街道办投诉列表(搜索条件：时间，状态，标题)
+         * 2.查看投诉
+         * 3.处理投诉
+         * 4.投诉无效
+         */
+
+
+        #endregion
+
+        #region 物业端
+        /*
+         * 1.物业投诉列表(搜索条件：时间，状态，标题)
+         * 2.查看投诉
+         * 3.处理投诉
+         * 4.投诉无效
+         */
+
+        /// <summary>
+        /// 物业查询投诉列表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("complaint/getAllForProperty")]
+        public async Task<ApiResult<GetAllComplaintForPropertyOutput>> GetAllForProperty([FromUri]GetAllComplaintForPropertyInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<GetAllComplaintForPropertyOutput>(APIResultCode.Unknown, new GetAllComplaintForPropertyOutput { }, APIResultMessage.TokenNull);
+                }
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult<GetAllComplaintForPropertyOutput>(APIResultCode.Unknown, new GetAllComplaintForPropertyOutput { }, APIResultMessage.TokenError);
+                }
+
+                if (input.PageIndex < 1)
+                {
+                    input.PageIndex = 1;
+                }
+                if (input.PageSize < 1)
+                {
+                    input.PageSize = 10;
+                }
+                int startRow = (input.PageIndex - 1) * input.PageSize;
+                var data = await _complaintRepository.GetAllForPropertyAsync(new ComplaintDto
+                {
+                    SmallDistrictId = user.SmallDistrictId
+                }, cancelToken);
+
+                return new ApiResult<GetAllComplaintForPropertyOutput>(APIResultCode.Success, new GetAllComplaintForPropertyOutput
+                {
+                    List = data.Select(x => new GetComplaintOutput
+                    {
+                        Id = x.Id.ToString(),
+                        CreateTime = x.CreateOperationTime.Value,
+                        Description = x.Description,
+                        StatusName = x.StatusName,
+                        StatusValue = x.StatusValue,
+                        Url = _complaintAnnexRepository.GetUrl(x.Id.ToString())
+                    }).Skip(startRow).Take(input.PageSize).ToList(),
+                    TotalCount = data.Count()
+                });
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<GetAllComplaintForPropertyOutput>(APIResultCode.Success_NoB, new GetAllComplaintForPropertyOutput { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 物业查看投诉
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("complaint/viewForProperty")]
+        public async Task<ApiResult> ViewForProperty([FromBody]ViewForPropertyInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+                }
+                if (string.IsNullOrWhiteSpace(input.ComplaintId))
+                {
+                    throw new NotImplementedException("投诉Id信息为空！");
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+                }
+                var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
+
+                await _complaintRepository.ViewForPropertyAsync(new ComplaintDto
+                {
+                    Id = input.ComplaintId,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+
+
+                var complaintFollowUpEntity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
+                {
+                    ComplaintId = input.ComplaintId,
+                    OperationDepartmentName = Department.WuYe.Name,
+                    OperationDepartmentValue = Department.WuYe.Value,
+                    Description = "物业已查看正在处理！",
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+
+                await _complaintStatusChangeRecordingRepository.AddAsync(new ComplaintStatusChangeRecordingDto
+                {
+                    ComplaintFollowUpId = complaintFollowUpEntity.Id.ToString(),
+                    ComplaintId = input.ComplaintId,
+                    OldStatus = complaintEntity.StatusValue,
+                    NewStatus = ComplaintStatus.Processing.Value,
+                    OperationUserId = user.Id.ToString(),
+                    OperationTime = DateTimeOffset.Now,
+                }, cancelToken);
+
+                return new ApiResult(APIResultCode.Success);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 物业将投票置为无效
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("complaint/invalidProperty")]
+        public async Task<ApiResult> InvalidProperty([FromBody]InvalidPropertyInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+                }
+                if (string.IsNullOrWhiteSpace(input.ComplaintId))
+                {
+                    throw new NotImplementedException("投诉Id信息为空！");
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+                }
+                var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
+
+                await _complaintRepository.InvalidAsync(new ComplaintDto
+                {
+                    Id = input.ComplaintId,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+
+                var complaintFollowUpEntity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
+                {
+                    ComplaintId = input.ComplaintId,
+                    OperationDepartmentName = Department.WuYe.Name,
+                    OperationDepartmentValue = Department.WuYe.Value,
+                    Description = "物业管理员将投诉置为无效，投诉关闭！",
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString(),
+                    //OwnerCertificationId = input.OwnerCertificationId
+                }, cancelToken);
+
+                await _complaintStatusChangeRecordingRepository.AddAsync(new ComplaintStatusChangeRecordingDto
+                {
+                    ComplaintFollowUpId = complaintFollowUpEntity.Id.ToString(),
+                    ComplaintId = input.ComplaintId,
+                    OldStatus = complaintEntity.StatusValue,
+                    NewStatus = ComplaintStatus.Completed.Value,
+                    OperationUserId = user.Id.ToString(),
+                    OperationTime = DateTimeOffset.Now,
+                }, cancelToken);
+
+                return new ApiResult(APIResultCode.Success);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+            }
+        }
         #endregion
     }
 }

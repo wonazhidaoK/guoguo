@@ -20,6 +20,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<List<Complaint>> GetAllForVipOwnerAsync(ComplaintDto dto, CancellationToken token = default);
 
+        Task<List<Complaint>> GetAllForPropertyAsync(ComplaintDto dto, CancellationToken token = default);
+
         Task DeleteAsync(ComplaintDto dto, CancellationToken token = default);
 
         Task<Complaint> GetAsync(string id, CancellationToken token = default);
@@ -29,6 +31,9 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task ClosedAsync(ComplaintDto dto, CancellationToken token = default);
 
         Task ViewForVipOwnerAsync(ComplaintDto dto, CancellationToken token = default);
-        
+
+        Task ViewForPropertyAsync(ComplaintDto dto, CancellationToken token = default);
+
+        Task InvalidAsync(ComplaintDto dto, CancellationToken token = default);
     }
 }

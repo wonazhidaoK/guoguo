@@ -22,6 +22,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<Announcement> GetAsync(string id, CancellationToken token = default);
 
         Task<List<Announcement>> GetListForStreetOfficeAsync(AnnouncementDto dto, CancellationToken token = default);
+
         Task<List<Announcement>> GetListPropertyAsync(AnnouncementDto dto, CancellationToken token = default);
     }
 }

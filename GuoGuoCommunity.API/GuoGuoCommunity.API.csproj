@@ -257,6 +257,8 @@
     <Compile Include="Models\Announcement\AddVipOwnerAnnouncementOutput.cs" />
     <Compile Include="Models\Announcement\GetAllAnnouncementInput.cs" />
     <Compile Include="Models\Announcement\GetAllAnnouncementOutput.cs" />
+    <Compile Include="Models\Announcement\GetListPropertyAnnouncementInput.cs" />
+    <Compile Include="Models\Announcement\GetListStreetOfficeAnnouncementInput.cs" />
     <Compile Include="Models\Announcement\GetVipOwnerAnnouncementOutput.cs" />
     <Compile Include="Models\BuildingUnit\AddBuildingUnitInput.cs" />
     <Compile Include="Models\BuildingUnit\AddBuildingUnitOutput.cs" />
@@ -300,9 +302,14 @@
     <Compile Include="Models\ComplaintType\UpdateComplaintTypeInput.cs" />
     <Compile Include="Models\Complaint\AddComplaintInput.cs" />
     <Compile Include="Models\Complaint\AddComplaintOutput.cs" />
+    <Compile Include="Models\Complaint\GetAllComplaintForPropertyInput.cs" />
+    <Compile Include="Models\Complaint\GetAllComplaintForPropertyOutput.cs" />
     <Compile Include="Models\Complaint\GetAllComplaintInput.cs" />
     <Compile Include="Models\Complaint\GetAllComplaintOutput.cs" />
     <Compile Include="Models\Complaint\GetComplaintOutput.cs" />
+    <Compile Include="Models\Complaint\InvalidPropertyInput.cs" />
+    <Compile Include="Models\Complaint\InvalidVipOwnerInput.cs" />
+    <Compile Include="Models\Complaint\ViewForPropertyInput.cs" />
     <Compile Include="Models\Industry\AddIndustryInput.cs" />
     <Compile Include="Models\Industry\AddIndustryOutput.cs" />
     <Compile Include="Models\Industry\GetAllIndustryInput.cs" />

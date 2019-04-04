@@ -84,5 +84,15 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 操作时间
         /// </summary>
         public DateTimeOffset? OperationTime { get; set; }
+
+        /// <summary>
+        /// 开始时间
+        /// </summary>
+        public DateTimeOffset? StartTime { get; set; }
+
+        /// <summary>
+        /// 结束时间
+        /// </summary>
+        public DateTimeOffset? EndTime { get; set; }
     }
 }

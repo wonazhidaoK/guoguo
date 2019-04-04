@@ -104,6 +104,14 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public async Task<List<Complaint>> GetAllForPropertyAsync(ComplaintDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.Complaints.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.WuYe.Value && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
+            }
+        }
+
         public async Task<List<Complaint>> GetAllForVipOwnerAsync(ComplaintDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -127,6 +135,30 @@ namespace GuoGuoCommunity.Domain.Service
         public Task<List<Complaint>> GetListAsync(ComplaintDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task InvalidAsync(ComplaintDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out Guid guid))
+                {
+                    throw new NotImplementedException("投诉id信息不正确");
+                }
+                var entity = await db.Complaints.Where(x => x.IsDeleted == false && x.Id == guid && x.OwnerCertificationId == dto.OwnerCertificationId).FirstOrDefaultAsync(token);
+                if (entity == null)
+                {
+                    throw new NotImplementedException("投诉信息不存在");
+                }
+                
+                entity.LastOperationTime = dto.OperationTime;
+                entity.LastOperationUserId = dto.OperationUserId;
+                entity.IsInvalid = "true";
+                entity.ClosedTime = dto.OperationTime;
+                entity.StatusValue = ComplaintStatus.Completed.Value;
+                entity.StatusName = ComplaintStatus.Completed.Name;
+                await db.SaveChangesAsync(token);
+            }
         }
 
         public Task UpdateAsync(ComplaintDto dto, CancellationToken token = default)
@@ -174,6 +206,27 @@ namespace GuoGuoCommunity.Domain.Service
                 complaint.StatusName = ComplaintStatus.Finished.Name;
                 complaint.LastOperationTime = dto.OperationTime;
                 complaint.LastOperationUserId = dto.OperationUserId;
+                await db.SaveChangesAsync(token);
+            }
+        }
+
+        public async Task ViewForPropertyAsync(ComplaintDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out Guid guid))
+                {
+                    throw new NotImplementedException("投诉id信息不正确");
+                }
+                var entity = await db.Complaints.Where(x => x.IsDeleted == false && x.Id == guid).FirstOrDefaultAsync(token);
+                if (entity == null)
+                {
+                    throw new NotImplementedException("投诉信息不存在");
+                }
+                entity.LastOperationTime = dto.OperationTime;
+                entity.LastOperationUserId = dto.OperationUserId;
+                entity.StatusValue = ComplaintStatus.Processing.Value;
+                entity.StatusName = ComplaintStatus.Processing.Name;
                 await db.SaveChangesAsync(token);
             }
         }

@@ -25,6 +25,8 @@ namespace GuoGuoCommunity.Domain.Migrations
                 new Menu() { Name = "物业后台-业户信息", Key = "wy_house_info" },
                 //new Menu() { Name = "物业后台-认证中心", Key = "wy_rz" },
                 //new Menu() { Name = "物业后台-业主认证", Key = "wy_rz_yz" },
+                new Menu() { Name = "物业后台-公告", Key = "wy_notice" },
+                
                 new Menu() { Name = "物业后台-投票", Key = "wy_vote" },
                 new Menu() { Name = "物业后台-投诉", Key = "wy_complaint" },
                 new Menu() { Name = "物业后台-站内信", Key = "wy_letter" },
@@ -43,7 +45,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                     PhoneNumber = "13888888888",
                     State = "黑龙江",
                     City = "哈尔滨",
-                    Region = "南岗区"
+                    Region = "道里区"
                 });
             context.VipOwnerCertificationConditions.AddOrUpdate(x => x.Title,
                 new VipOwnerCertificationCondition()

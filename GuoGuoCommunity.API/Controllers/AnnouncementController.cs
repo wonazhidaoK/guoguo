@@ -561,7 +561,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("announcement/getListStreetOfficeAnnouncement")]
-        public async Task<ApiResult<GetAllAnnouncementOutput>> GetListStreetOfficeAnnouncement([FromUri]GetAllAnnouncementInput input, CancellationToken cancelToken)
+        public async Task<ApiResult<GetAllAnnouncementOutput>> GetListStreetOfficeAnnouncement([FromUri]GetListStreetOfficeAnnouncementInput input, CancellationToken cancelToken)
         {
             try
             {
@@ -589,8 +589,23 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Unknown, new GetAllAnnouncementOutput { }, APIResultMessage.TokenError);
                 }
 
+                var startTime = DateTimeOffset.Parse("1997-01-01");
+
+                var endTime = DateTimeOffset.Parse("2997-01-01");
+
+                if (DateTimeOffset.TryParse(input.StartTime, out DateTimeOffset startTimeSet))
+                {
+                    startTime = startTimeSet;
+                }
+                if (DateTimeOffset.TryParse(input.EndTime, out DateTimeOffset endTimeSet))
+                {
+                    endTime = endTimeSet;
+                }
+
                 var data = await _announcementRepository.GetListForStreetOfficeAsync(new AnnouncementDto
                 {
+                    StartTime = startTime,
+                    EndTime = endTime,
                     Title = input.Title,
                     StreetOfficeId = user.StreetOfficeId,
                     DepartmentValue = Department.JieDaoBan.Value
@@ -628,7 +643,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("announcement/getListPropertyAnnouncement")]
-        public async Task<ApiResult<GetAllAnnouncementOutput>> GetListPropertyAnnouncement([FromUri]GetAllAnnouncementInput input, CancellationToken cancelToken)
+        public async Task<ApiResult<GetAllAnnouncementOutput>> GetListPropertyAnnouncement([FromUri]GetListPropertyAnnouncementInput input, CancellationToken cancelToken)
         {
             try
             {
@@ -640,7 +655,18 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     input.PageSize = 10;
                 }
+                var startTime = DateTimeOffset.Parse("1997-01-01");
 
+                var endTime = DateTimeOffset.Parse("2997-01-01");
+
+                if (DateTimeOffset.TryParse(input.StartTime, out DateTimeOffset startTimeSet))
+                {
+                    startTime = startTimeSet;
+                }
+                if (DateTimeOffset.TryParse(input.EndTime, out DateTimeOffset endTimeSet))
+                {
+                    endTime = endTimeSet;
+                }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
                 var token = HttpContext.Current.Request.Headers["Authorization"];
 
@@ -658,6 +684,8 @@ namespace GuoGuoCommunity.API.Controllers
 
                 var data = await _announcementRepository.GetListPropertyAsync(new AnnouncementDto
                 {
+                    StartTime = startTime,
+                    EndTime = endTime,
                     Title = input.Title,
                     SmallDistrictId = user.SmallDistrictId,
                     DepartmentValue = Department.WuYe.Value
