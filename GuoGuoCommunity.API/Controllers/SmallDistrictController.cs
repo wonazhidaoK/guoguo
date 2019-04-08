@@ -26,7 +26,6 @@ namespace GuoGuoCommunity.API.Controllers
         /// 
         /// </summary>
         /// <param name="smallDistrictRepository"></param>
-        /// <param name="ownerCertificationRecordRepository"></param>
         public SmallDistrictController(ISmallDistrictRepository smallDistrictRepository)
         {
             _smallDistrictRepository = smallDistrictRepository;
@@ -320,6 +319,46 @@ namespace GuoGuoCommunity.API.Controllers
             catch (Exception e)
             {
                 return new ApiResult<List<GetListSmallDistrictOutput>>(APIResultCode.Success_NoB, new List<GetListSmallDistrictOutput> { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 根据街道办id查询小区列表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("smallDistrict/getAllForStreetOfficeId")]
+        public async Task<ApiResult<GetAllSmallDistrictOutput>> GetAllForStreetOfficeId([FromUri]GetAllForStreetOfficeIdInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                var data = await _smallDistrictRepository.GetAllAsync(new SmallDistrictDto
+                {
+                    StreetOfficeId = input?.StreetOfficeId
+                }, cancelToken);
+
+                return new ApiResult<GetAllSmallDistrictOutput>(APIResultCode.Success, new GetAllSmallDistrictOutput
+                {
+                    List = data.Select(x => new GetSmallDistrictOutput
+                    {
+                        Id = x.Id.ToString(),
+                        State = x.State,
+                        City = x.City,
+                        Region = x.Region,
+                        Name = x.Name,
+                        CommunityId = x.CommunityId,
+                        CommunityName = x.CommunityName,
+                        StreetOfficeId = x.StreetOfficeId,
+                        StreetOfficeName = x.StreetOfficeName
+                    }).ToList(),
+                    TotalCount = data.Count()
+                });
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<GetAllSmallDistrictOutput>(APIResultCode.Success_NoB, new GetAllSmallDistrictOutput { }, e.Message);
             }
         }
     }

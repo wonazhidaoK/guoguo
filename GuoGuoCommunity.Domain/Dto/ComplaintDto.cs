@@ -72,5 +72,20 @@ namespace GuoGuoCommunity.Domain.Dto
         public string SmallDistrictId { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// 状态值
+        /// </summary>
+        public string StatusValue { get; set; }
+
+        /// <summary>
+        /// 开始时间
+        /// </summary>
+        public DateTimeOffset? StartTime { get; set; }
+
+        /// <summary>
+        /// 结束时间
+        /// </summary>
+        public DateTimeOffset? EndTime { get; set; }
     }
 }

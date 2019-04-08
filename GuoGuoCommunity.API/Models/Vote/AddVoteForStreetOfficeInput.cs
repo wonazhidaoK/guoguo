@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GuoGuoCommunity.API.Models
 {
@@ -21,7 +20,7 @@ namespace GuoGuoCommunity.API.Models
         /// <summary>
         /// 结束时间
         /// </summary>
-        public DateTimeOffset Deadline { get; set; }
+        public string Deadline { get; set; }
 
         /// <summary>
         /// 小区范围
@@ -37,6 +36,11 @@ namespace GuoGuoCommunity.API.Models
         /// 附件Id
         /// </summary>
         public string AnnexId { get; set; }
+
+        /// <summary>
+        /// 投票类型 RecallProperty罢免物业，Ordinary普通投票,VipOwnerElection业委会重组
+        /// </summary>
+        public string VoteTypeValue { get; set; }
     }
 
     /// <summary>
@@ -57,7 +61,7 @@ namespace GuoGuoCommunity.API.Models
         /// <summary>
         /// 选项集合
         /// </summary>
-        public List<AddVoteQuestionOptionModel>  List { get; set; }
+        public List<AddVoteQuestionOptionModel> List { get; set; }
     }
 
     /// <summary>

@@ -3,6 +3,7 @@ using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IStationLetterRepository _stationLetterRepository;
         private readonly IStationLetterAnnexRepository _stationLetterAnnexRepository;
         private readonly IStationLetterBrowseRecordRepository _stationLetterBrowseRecordRepository;
+        private readonly IUserRepository _userRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -27,17 +29,20 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="stationLetterRepository"></param>
         /// <param name="stationLetterAnnexRepository"></param>
         /// <param name="stationLetterBrowseRecordRepository"></param>
-        /// <param name="tokenManager"></param>
-        public StationLetterController(IStationLetterRepository stationLetterRepository,
+        /// <param name="userRepository"></param>
+        public StationLetterController(
+            IStationLetterRepository stationLetterRepository,
             IStationLetterAnnexRepository stationLetterAnnexRepository,
             IStationLetterBrowseRecordRepository stationLetterBrowseRecordRepository,
-            TokenManager tokenManager)
+            IUserRepository userRepository)
         {
             _stationLetterRepository = stationLetterRepository;
             _stationLetterAnnexRepository = stationLetterAnnexRepository;
             _stationLetterBrowseRecordRepository = stationLetterBrowseRecordRepository;
-            _tokenManager = tokenManager;
+            _userRepository = userRepository;
+            _tokenManager = new TokenManager();
         }
+
         /*
          * 1.街道办后台添加站内信
          * 2.街道办后台展示站内信列表
@@ -216,19 +221,26 @@ namespace GuoGuoCommunity.API.Controllers
                     //ReleaseTimeEnd = input.ReleaseTimeEnd,
                     //ReleaseTimeStart = input.ReleaseTimeStart,
                     StreetOfficeId = user.StreetOfficeId,
-                    SmallDistrictArray = input.SmallDistrict
+                   // SmallDistrictArray = input.SmallDistrict
                 }, cancelToken);
-
+                List<GetPropertyStationLetterOutput> list = new List<GetPropertyStationLetterOutput>();
+                foreach (var item in data)
+                {
+                    var userEntity = await _userRepository.GetForIdAsync(item.CreateOperationUserId);
+                    list.Add(new GetPropertyStationLetterOutput
+                    {
+                        Id = item.Id.ToString(),
+                        Title = item.Title,
+                        StreetOfficeId = item.StreetOfficeId,
+                        Summary = item.Summary,
+                        StreetOfficeName = item.StreetOfficeName,
+                        ReleaseTime = item.CreateOperationTime.Value,
+                        CreateUserName = userEntity?.Name
+                    });
+                }
                 return new ApiResult<GetAllPropertyStationLetterOutput>(APIResultCode.Success, new GetAllPropertyStationLetterOutput
                 {
-                    List = data.Select(x => new GetPropertyStationLetterOutput
-                    {
-                        Id = x.Id.ToString(),
-                        Title = x.Title,
-                        StreetOfficeId = x.StreetOfficeId,
-                        Summary = x.Summary,
-                        StreetOfficeName = x.StreetOfficeName,
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
+                    List = list.Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
             }

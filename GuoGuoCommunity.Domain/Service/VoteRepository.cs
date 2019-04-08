@@ -61,13 +61,17 @@ namespace GuoGuoCommunity.Domain.Service
                     Summary = dto.Summary,
                     Title = dto.Title,
                     CalculationMethodValue = CalculationMethod.EndorsedNumber.Value,
-                    CalculationMethodName = CalculationMethod.Opposition.Name,
+                    CalculationMethodName = CalculationMethod.EndorsedNumber.Name,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
                     LastOperationUserId = dto.OperationUserId,
                     StatusName = VoteStatus.Processing.Name,
-                    StatusValue = VoteStatus.Processing.Value
+                    StatusValue = VoteStatus.Processing.Value,
+                    VoteTypeName = dto.VoteTypeName,
+                    VoteTypeValue = dto.VoteTypeValue,
+                    DepartmentName = dto.DepartmentName,
+                    DepartmentValue = dto.DepartmentValue
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -120,11 +124,11 @@ namespace GuoGuoCommunity.Domain.Service
 
                 var entity = db.Votes.Add(new Vote
                 {
-                    CommunityId = dto.CommunityId,
+                    CommunityId = ownerCertificationRecord.CommunityId,
                     CommunityName = communitie.Name,
-                    SmallDistrictId = dto.SmallDistrictId,
+                    SmallDistrictId = ownerCertificationRecord.SmallDistrictId,
                     SmallDistrictName = smallDistrict.Name,
-                    StreetOfficeId = dto.StreetOfficeId,
+                    StreetOfficeId = ownerCertificationRecord.StreetOfficeId,
                     StreetOfficeName = streetOffice.Name,
                     SmallDistrictArray = ownerCertificationRecord.SmallDistrictId,
                     Deadline = dto.Deadline,

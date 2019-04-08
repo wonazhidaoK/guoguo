@@ -222,6 +222,10 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
+                if (string.IsNullOrWhiteSpace(input.BuildingId))
+                {
+                    throw new NotImplementedException("楼宇Id信息为空！");
+                }
                 var data = await _buildingUnitRepository.GetAllAsync(new BuildingUnitDto
                 {
                     BuildingId = input.BuildingId,

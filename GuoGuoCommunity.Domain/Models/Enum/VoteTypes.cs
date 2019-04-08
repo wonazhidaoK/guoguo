@@ -3,7 +3,7 @@
 namespace GuoGuoCommunity.Domain.Models.Enum
 {
     /// <summary>
-    /// 投票状态
+    /// 投票类型
     /// </summary>
     public class VoteTypes
     {
@@ -36,5 +36,7 @@ namespace GuoGuoCommunity.Domain.Models.Enum
         public static IEnumerable<VoteTypes> GetAll() => new List<VoteTypes>() { RecallProperty, Ordinary, VipOwnerElection };
 
         public static IEnumerable<VoteTypes> GetAllForVipOwner() => new List<VoteTypes>() { RecallProperty, Ordinary };
+
+        public static IEnumerable<VoteTypes> GetAllForStreetOffice() => new List<VoteTypes>() { RecallProperty, Ordinary, VipOwnerElection };
     }
 }

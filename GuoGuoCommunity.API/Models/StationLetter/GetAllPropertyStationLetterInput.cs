@@ -7,10 +7,10 @@ namespace GuoGuoCommunity.API.Models
     /// </summary>
     public class GetAllPropertyStationLetterInput
     {
-        /// <summary>
-        /// 小区范围
-        /// </summary>
-        public string SmallDistrict { get; set; }
+        ///// <summary>
+        ///// 小区范围
+        ///// </summary>
+        //public string SmallDistrict { get; set; }
 
         ///// <summary>
         ///// 发布时间（开始时间）

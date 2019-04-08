@@ -78,7 +78,10 @@ namespace GuoGuoCommunity.API.Models
         /// </summary>
         public string VoteTypeName { get; set; }
 
-
+        /// <summary>
+        /// 创建人
+        /// </summary>
+        public string CreateUserName { get; set; }
     }
     /// <summary>
     /// 投票问题

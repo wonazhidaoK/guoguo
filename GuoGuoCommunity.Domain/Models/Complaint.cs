@@ -112,12 +112,12 @@ namespace GuoGuoCommunity.Domain.Models
         #endregion
 
         /// <summary>
-        /// 操作人部门名称
+        /// 创建操作人部门名称
         /// </summary>
         public string OperationDepartmentName { get; set; }
 
         /// <summary>
-        /// 操作人部门值
+        /// 创建操作人部门值
         /// </summary>
         public string OperationDepartmentValue { get; set; }
 

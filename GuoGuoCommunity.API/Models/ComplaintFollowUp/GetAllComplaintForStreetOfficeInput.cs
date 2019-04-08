@@ -5,7 +5,7 @@ namespace GuoGuoCommunity.API.Models
     /// <summary>
     /// 
     /// </summary>
-    public class GetAllComplaintForPropertyInput
+    public class GetAllComplaintForStreetOfficeInput
     {
         /// <summary>
         /// 状态值

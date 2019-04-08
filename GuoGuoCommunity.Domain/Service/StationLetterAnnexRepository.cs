@@ -49,11 +49,18 @@ namespace GuoGuoCommunity.Domain.Service
 
         public string GetUrl(string id)
         {
-            using (var db = new GuoGuoCommunityContext())
+            try
             {
-                var entity = db.StationLetterAnnices.Where(x => x.StationLetterId == id).FirstOrDefault();
-                var upload = db.Uploads.Where(x => x.Id == Guid.Parse(entity.AnnexContent)).FirstOrDefault();
-                return upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
+                using (var db = new GuoGuoCommunityContext())
+                {
+                    var entity = db.StationLetterAnnices.Where(x => x.StationLetterId == id).FirstOrDefault();
+                    var upload = db.Uploads.Where(x => x.Id == Guid.Parse(entity.AnnexContent)).FirstOrDefault();
+                    return upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
+                }
+            }
+            catch (Exception)
+            {
+                return "";
             }
         }
 

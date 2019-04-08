@@ -286,10 +286,13 @@
     <Compile Include="Models\Community\GetListCommunityInput.cs" />
     <Compile Include="Models\Community\GetListCommunityOutput.cs" />
     <Compile Include="Models\Community\UpdateCommunityInput.cs" />
+    <Compile Include="Models\ComplaintFollowUp\AddComplaintFollowUpForPropertyInput.cs" />
     <Compile Include="Models\ComplaintFollowUp\AddComplaintFollowUpInput.cs" />
     <Compile Include="Models\ComplaintFollowUp\AddComplaintFollowUpOutput.cs" />
     <Compile Include="Models\ComplaintFollowUp\AppealComplaintFollowUpInput.cs" />
     <Compile Include="Models\ComplaintFollowUp\GetAllComplaintFollowUpOutput.cs" />
+    <Compile Include="Models\ComplaintFollowUp\GetAllComplaintForStreetOfficeInput.cs" />
+    <Compile Include="Models\ComplaintFollowUp\GetAllComplaintForStreetOfficeOutput.cs" />
     <Compile Include="Models\ComplaintFollowUp\GetComplaintFollowUpOutput.cs" />
     <Compile Include="Models\Complaint\ClosedComplaintFollowUpInput.cs" />
     <Compile Include="Models\ComplaintType\AddComplaintTypeInput.cs" />
@@ -343,6 +346,7 @@
     <Compile Include="Models\Role\GetAllRoleOutput.cs" />
     <Compile Include="Models\SmallDistrict\AddSmallDistrictInput.cs" />
     <Compile Include="Models\SmallDistrict\AddSmallDistrictOutput.cs" />
+    <Compile Include="Models\SmallDistrict\GetAllForStreetOfficeIdInput.cs" />
     <Compile Include="Models\SmallDistrict\GetAllSmallDistrictInput.cs" />
     <Compile Include="Models\SmallDistrict\GetAllSmallDistrictOutput.cs" />
     <Compile Include="Models\SmallDistrict\GetListForUserIdOutput.cs" />

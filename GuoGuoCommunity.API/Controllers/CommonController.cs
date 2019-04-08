@@ -240,10 +240,10 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("complaintStatus/getAll")]
         public ApiResult<List<ComplaintStatusModel>> ComplaintStatusGetAll() => new ApiResult<List<ComplaintStatusModel>>(APIResultCode.Success, new List<ComplaintStatusModel>
         {
-             new ComplaintStatusModel{ Name="未处理", Value=ComplaintStatus.NotAccepted.Value },
-              new ComplaintStatusModel{ Name="待反馈", Value=ComplaintStatus.Processing.Value },
-               new ComplaintStatusModel{ Name="已处理", Value=ComplaintStatus.Finished.Value },
-                new ComplaintStatusModel{ Name="已完结", Value=ComplaintStatus.Completed.Value }
+            new ComplaintStatusModel{ Name="未处理", Value=ComplaintStatus.NotAccepted.Value },
+            new ComplaintStatusModel{ Name="待反馈", Value=ComplaintStatus.Processing.Value },
+            new ComplaintStatusModel{ Name="已处理", Value=ComplaintStatus.Finished.Value },
+            new ComplaintStatusModel{ Name="已完结", Value=ComplaintStatus.Completed.Value }
         });
 
         /// <summary>

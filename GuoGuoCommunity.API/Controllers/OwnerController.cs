@@ -254,6 +254,10 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
+                if (string.IsNullOrWhiteSpace(input.IndustryId))
+                {
+                    throw new NotImplementedException("业户Id信息为空！");
+                }
                 var data = await _ownerRepository.GetAllAsync(new OwnerDto
                 {
                     Name = input?.Name,

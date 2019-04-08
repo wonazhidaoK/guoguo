@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GuoGuoCommunity.API.Models
 {
@@ -21,7 +20,7 @@ namespace GuoGuoCommunity.API.Models
         /// <summary>
         /// 结束时间
         /// </summary>
-        public DateTimeOffset Deadline { get; set; }
+        public string Deadline { get; set; }
 
         /// <summary>
         /// 问题集合

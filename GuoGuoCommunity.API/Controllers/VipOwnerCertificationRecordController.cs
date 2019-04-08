@@ -19,6 +19,7 @@ namespace GuoGuoCommunity.API.Controllers
     {
         private readonly IVipOwnerApplicationRecordRepository _vipOwnerApplicationRecordRepository;
         private readonly IVipOwnerCertificationAnnexRepository _vipOwnerCertificationAnnexRepository;
+        private readonly IVipOwnerCertificationConditionRepository _vipOwnerCertificationConditionRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -26,10 +27,13 @@ namespace GuoGuoCommunity.API.Controllers
         /// </summary>
         /// <param name="vipOwnerApplicationRecordRepository"></param>
         /// <param name="vipOwnerCertificationAnnexRepository"></param>
+        /// <param name="vipOwnerCertificationConditionRepository"></param>
         public VipOwnerCertificationRecordController(
             IVipOwnerApplicationRecordRepository vipOwnerApplicationRecordRepository,
-            IVipOwnerCertificationAnnexRepository vipOwnerCertificationAnnexRepository)
+            IVipOwnerCertificationAnnexRepository vipOwnerCertificationAnnexRepository,
+            IVipOwnerCertificationConditionRepository vipOwnerCertificationConditionRepository)
         {
+            _vipOwnerCertificationConditionRepository = vipOwnerCertificationConditionRepository;
             _vipOwnerApplicationRecordRepository = vipOwnerApplicationRecordRepository;
             _vipOwnerCertificationAnnexRepository = vipOwnerCertificationAnnexRepository;
             _tokenManager = new TokenManager();
@@ -59,6 +63,17 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("提交申请凭证信息不准确！");
                 }
+                var data = await _vipOwnerCertificationConditionRepository.GetListAsync(cancelToken);
+                foreach (var item in data)
+                {
+                    var entity =   input.Models.Where(x => x.ConditionId == item.Id.ToString()).FirstOrDefault();
+                    
+                    if(string.IsNullOrWhiteSpace(entity?.AnnexContent))
+                    {
+                        throw new NotImplementedException("提交"+item.Title+"申请凭证信息不准确！");
+                    }
+                }
+
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
                 {

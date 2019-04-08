@@ -35,6 +35,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IVoteRecordDetailRepository _voteRecordDetailRepository;
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private readonly IVoteResultRecordRepository _voteResultRecordRepository;
+        private readonly IUserRepository _userRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -51,6 +52,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="voteRecordDetailRepository"></param>
         /// <param name="ownerCertificationRecordRepository"></param>
         /// <param name="voteResultRecordRepository"></param>
+        /// <param name="userRepository"></param>
         public VoteController(IVoteRepository voteRepository,
             IVoteQuestionRepository voteQuestionRepository,
             IVoteQuestionOptionRepository voteQuestionOptionRepository,
@@ -61,7 +63,8 @@ namespace GuoGuoCommunity.API.Controllers
             IVipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository,
             IVoteRecordDetailRepository voteRecordDetailRepository,
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
-            IVoteResultRecordRepository voteResultRecordRepository)
+            IVoteResultRecordRepository voteResultRecordRepository,
+            IUserRepository userRepository)
         {
             _voteRepository = voteRepository;
             _voteQuestionRepository = voteQuestionRepository;
@@ -74,6 +77,7 @@ namespace GuoGuoCommunity.API.Controllers
             _voteRecordDetailRepository = voteRecordDetailRepository;
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _voteResultRecordRepository = voteResultRecordRepository;
+            _userRepository = userRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -121,34 +125,50 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("投票范围小区信息为空！");
                 }
-                if (input.List.Count == 1)
+                if (input.List.Count < 1)
                 {
                     throw new NotImplementedException("投票问题数量信息不正确！");
                 }
-                if (input.List[0].List.Count == 2)
+                if (input.List[0].List.Count < 2)
                 {
                     throw new NotImplementedException("投票问题选项数量信息不正确！");
+                }
+                if (!DateTimeOffset.TryParse(input.Deadline, out DateTimeOffset dateTime))
+                {
+                    throw new NotImplementedException("投票结束时间转换失败！");
                 }
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
                     return new ApiResult<AddVoteForStreetOfficeOutput>(APIResultCode.Unknown, new AddVoteForStreetOfficeOutput { }, APIResultMessage.TokenError);
                 }
+                var voteType = VoteTypes.GetAllForStreetOffice().Where(x => x.Value == input.VoteTypeValue).FirstOrDefault();
+                if (voteType == null)
+                {
+                    throw new NotImplementedException("投票类型信息不准确！");
+                }
 
+                var nowTime = DateTimeOffset.Now;
+                if (dateTime < nowTime)
+                {
+                    throw new NotImplementedException("投票结束时间小于投票创建时间！");
+                }
                 //增加投票主体
                 var entity = await _voteRepository.AddAsync(new VoteDto
                 {
-                    Deadline = input.Deadline,
+                    Deadline = dateTime,
                     Title = input.Title,
                     Summary = input.Summary,
                     SmallDistrictArray = input.SmallDistrict,
                     SmallDistrictId = user.SmallDistrictId,
                     CommunityId = user.CommunityId,
                     StreetOfficeId = user.StreetOfficeId,
-                    OperationTime = DateTimeOffset.Now,
+                    OperationTime = nowTime,
                     OperationUserId = user.Id.ToString(),
                     DepartmentValue = Department.JieDaoBan.Value,
-                    DepartmentName = Department.JieDaoBan.Name
+                    DepartmentName = Department.JieDaoBan.Name,
+                    VoteTypeName = voteType.Name,
+                    VoteTypeValue = voteType.Value
                 }, cancelToken);
 
                 //增加投票附件
@@ -158,7 +178,7 @@ namespace GuoGuoCommunity.API.Controllers
                     {
                         AnnexContent = input.AnnexId,
                         VoteId = entity.Id.ToString(),
-                        OperationTime = DateTimeOffset.Now,
+                        OperationTime = nowTime,
                         OperationUserId = user.Id.ToString()
                     }, cancelToken);
                 }
@@ -171,7 +191,7 @@ namespace GuoGuoCommunity.API.Controllers
                         Title = item.Title,
                         OptionMode = "0",
                         VoteId = entity.Id.ToString(),
-                        OperationTime = DateTimeOffset.Now,
+                        OperationTime = nowTime,
                         OperationUserId = user.Id.ToString()
                     }, cancelToken);
 
@@ -181,7 +201,7 @@ namespace GuoGuoCommunity.API.Controllers
                         var questionOption = await _voteQuestionOptionRepository.AddAsync(new VoteQuestionOptionDto
                         {
                             Describe = questionOptions.Describe,
-                            OperationTime = DateTimeOffset.Now,
+                            OperationTime = nowTime,
                             OperationUserId = user.Id.ToString(),
                             VoteId = entity.Id.ToString(),
                             VoteQuestionId = entityQuestion.Id.ToString()
@@ -191,7 +211,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 //TODO发布投票同步推送
                 //TODO发布投票添加定时任务计算投票结果
-                BackgroundJob.Schedule(() => AddVoteResultRecordAsync(entity.Id), entity.Deadline);
+                //BackgroundJob.Schedule(() => AddVoteResultRecordAsync(entity.Id), entity.Deadline);
                 return new ApiResult<AddVoteForStreetOfficeOutput>(APIResultCode.Success, new AddVoteForStreetOfficeOutput { Id = entity.Id.ToString() });
             }
             catch (Exception e)
@@ -225,16 +245,23 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("投票标题信息为空！");
                 }
-
-                if (input.List.Count == 1)
+                if (!DateTimeOffset.TryParse(input.Deadline, out DateTimeOffset dateTime))
+                {
+                    throw new NotImplementedException("投票结束时间转换失败！");
+                }
+                if (input.List.Count != 1)
                 {
                     throw new NotImplementedException("投票问题数量信息不正确！");
                 }
-                if (input.List[0].List.Count == 2)
+                if (input.List[0].List.Count != 2)
                 {
                     throw new NotImplementedException("投票问题选项数量信息不正确！");
                 }
-
+                var nowTime = DateTimeOffset.Now;
+                if (dateTime < nowTime)
+                {
+                    throw new NotImplementedException("投票结束时间小于投票创建时间！");
+                }
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
@@ -244,17 +271,19 @@ namespace GuoGuoCommunity.API.Controllers
                 //增加投票主体
                 var entity = await _voteRepository.AddAsync(new VoteDto
                 {
-                    Deadline = input.Deadline,
+                    Deadline = dateTime,
                     Title = input.Title,
                     Summary = input.Summary,
                     SmallDistrictArray = user.SmallDistrictId,
                     SmallDistrictId = user.SmallDistrictId,
                     CommunityId = user.CommunityId,
                     StreetOfficeId = user.StreetOfficeId,
-                    OperationTime = DateTimeOffset.Now,
+                    OperationTime = nowTime,
                     OperationUserId = user.Id.ToString(),
                     DepartmentValue = Department.WuYe.Value,
-                    DepartmentName = Department.WuYe.Name
+                    DepartmentName = Department.WuYe.Name,
+                    VoteTypeValue = VoteTypes.Ordinary.Value,
+                    VoteTypeName = VoteTypes.Ordinary.Name
                 }, cancelToken);
 
                 //增加投票附件
@@ -264,7 +293,7 @@ namespace GuoGuoCommunity.API.Controllers
                     {
                         AnnexContent = input.AnnexId,
                         VoteId = entity.Id.ToString(),
-                        OperationTime = DateTimeOffset.Now,
+                        OperationTime = nowTime,
                         OperationUserId = user.Id.ToString()
                     }, cancelToken);
                 }
@@ -277,7 +306,7 @@ namespace GuoGuoCommunity.API.Controllers
                         Title = item.Title,
                         OptionMode = "0",
                         VoteId = entity.Id.ToString(),
-                        OperationTime = DateTimeOffset.Now,
+                        OperationTime = nowTime,
                         OperationUserId = user.Id.ToString()
                     }, cancelToken);
 
@@ -287,7 +316,7 @@ namespace GuoGuoCommunity.API.Controllers
                         var questionOption = await _voteQuestionOptionRepository.AddAsync(new VoteQuestionOptionDto
                         {
                             Describe = questionOptions.Describe,
-                            OperationTime = DateTimeOffset.Now,
+                            OperationTime = nowTime,
                             OperationUserId = user.Id.ToString(),
                             VoteId = entity.Id.ToString(),
                             VoteQuestionId = entityQuestion.Id.ToString()
@@ -358,6 +387,11 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("投票类型信息不准确！");
                 }
+                var nowTime = DateTimeOffset.Now;
+                if (dateTime < nowTime)
+                {
+                    throw new NotImplementedException("投票结束时间小于投票创建时间！");
+                }
                 //增加投票主体
                 var entity = await _voteRepository.AddForVipOwnerAsync(new VoteDto
                 {
@@ -365,12 +399,13 @@ namespace GuoGuoCommunity.API.Controllers
                     Title = input.Title,
                     Summary = input.Summary,
                     OwnerCertificationId = input.OwnerCertificationId,
-                    OperationTime = DateTimeOffset.Now,
+                    OperationTime = nowTime,
                     OperationUserId = user.Id.ToString(),
                     DepartmentValue = Department.YeZhuWeiYuanHui.Value,
                     DepartmentName = Department.YeZhuWeiYuanHui.Name,
                     VoteTypeValue = voteType.Value,
-                    VoteTypeName = voteType.Name
+                    VoteTypeName = voteType.Name,
+
                 }, cancelToken);
 
                 //增加投票附件
@@ -380,7 +415,7 @@ namespace GuoGuoCommunity.API.Controllers
                     {
                         AnnexContent = input.AnnexId,
                         VoteId = entity.Id.ToString(),
-                        OperationTime = DateTimeOffset.Now,
+                        OperationTime = nowTime,
                         OperationUserId = user.Id.ToString()
                     }, cancelToken);
                 }
@@ -393,7 +428,7 @@ namespace GuoGuoCommunity.API.Controllers
                         Title = item.Title,
                         OptionMode = "0",
                         VoteId = entity.Id.ToString(),
-                        OperationTime = DateTimeOffset.Now,
+                        OperationTime = nowTime,
                         OperationUserId = user.Id.ToString()
                     }, cancelToken);
 
@@ -403,7 +438,7 @@ namespace GuoGuoCommunity.API.Controllers
                         var questionOption = await _voteQuestionOptionRepository.AddAsync(new VoteQuestionOptionDto
                         {
                             Describe = questionOptions.Describe,
-                            OperationTime = DateTimeOffset.Now,
+                            OperationTime = nowTime,
                             OperationUserId = user.Id.ToString(),
                             VoteId = entity.Id.ToString(),
                             VoteQuestionId = entityQuestion.Id.ToString()
@@ -718,7 +753,11 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 var vote = await _voteRepository.GetAsync(id, cancelToken);
                 var voteRecordDetails = await _voteRecordDetailRepository.GetListAsync(new VoteRecordDetailDto { VoteId = vote.Id.ToString(), OperationUserId = user.Id.ToString() });
-                var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto { SmallDistrictId = vote.SmallDistrictArray });
+                var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto
+                {
+                    SmallDistrictId = vote.SmallDistrictArray
+                });
+                var userEntity = await _userRepository.GetForIdAsync(vote.CreateOperationUserId, cancelToken);
                 var voteQuestionList = await _voteQuestionRepository.GetListAsync(new VoteQuestionDto { VoteId = vote?.Id.ToString() }, cancelToken);
                 List<GetVoteQuestionModel> list = new List<GetVoteQuestionModel>();
                 foreach (var item in voteQuestionList)
@@ -766,7 +805,8 @@ namespace GuoGuoCommunity.API.Controllers
                     StatusValue = vote.StatusValue,
                     ShouldParticipateCount = ownerCertificationRecordList.Count.ToString(),
                     VoteTypeName = vote.VoteTypeName,
-                    VoteTypeValue = vote.VoteTypeValue
+                    VoteTypeValue = vote.VoteTypeValue,
+                    CreateUserName = userEntity?.Name
                 });
             }
             catch (Exception e)

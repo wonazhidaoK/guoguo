@@ -719,9 +719,9 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<AddRoleOutput>(APIResultCode.Success, new AddRoleOutput { Id = entity.Id.ToString() }, APIResultMessage.Success);
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return new ApiResult<AddRoleOutput>(APIResultCode.Unknown, new AddRoleOutput { }, APIResultMessage.TokenError);
+                return new ApiResult<AddRoleOutput>(APIResultCode.Success_NoB, new AddRoleOutput { }, e.Message);
             }
         }
 

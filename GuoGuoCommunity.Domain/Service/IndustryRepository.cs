@@ -96,7 +96,10 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     list = list.Where(x => x.BuildingId == dto.BuildingId).ToList();
                 }
-
+                if (!string.IsNullOrWhiteSpace(dto.BuildingUnitId))
+                {
+                    list = list.Where(x => x.BuildingUnitId == dto.BuildingUnitId).ToList();
+                }
                 if (!string.IsNullOrWhiteSpace(dto.Name))
                 {
                     list = list.Where(x => x.Name.Contains(dto.Name)).ToList();

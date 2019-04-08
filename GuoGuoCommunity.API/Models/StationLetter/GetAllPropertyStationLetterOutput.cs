@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GuoGuoCommunity.API.Models
 {
@@ -51,5 +52,15 @@ namespace GuoGuoCommunity.API.Models
         /// 街道办名称
         /// </summary>
         public string StreetOfficeName { get; set; }
+
+        /// <summary>
+        /// 创建人
+        /// </summary>
+        public string CreateUserName { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTimeOffset ReleaseTime { get; set; }
     }
 }
