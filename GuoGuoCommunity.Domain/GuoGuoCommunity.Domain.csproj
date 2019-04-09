@@ -173,6 +173,7 @@
     <Compile Include="Dto\VoteResultRecordDto.cs" />
     <Compile Include="Dto\WeiXinUserDto.cs" />
     <Compile Include="GuoGuoCommunityContext.cs" />
+    <Compile Include="IDCardPhotoRecord.cs" />
     <Compile Include="Migrations\201903310759425_Initialization.cs" />
     <Compile Include="Migrations\201903310759425_Initialization.Designer.cs">
       <DependentUpon>201903310759425_Initialization.cs</DependentUpon>

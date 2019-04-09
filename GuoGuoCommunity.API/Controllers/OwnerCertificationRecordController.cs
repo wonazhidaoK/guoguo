@@ -139,6 +139,14 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
+        /*
+         * 添加后台任务
+         * 1.调用阿里云接口
+         * 2.存储阿里云接口返回数据
+         * 3.调用对比认证申请记录业户信息的业主记录
+         * 4.完成认证结果
+         */
+
         /// <summary>
         /// 获取用户认证列表
         /// </summary>

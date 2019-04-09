@@ -62,7 +62,7 @@ namespace GuoGuoCommunity.API.Controllers
             return Ok();
         }
 
-        public static string a()
+        public string a()
         {
             string url = "http://dm-51.data.aliyun.com/rest/160601/ocr/ocr_idcard.json";
             string appcode = "9b5eda2cae234efdb318b4344af42782";
@@ -79,100 +79,103 @@ namespace GuoGuoCommunity.API.Controllers
 
             string querys = "";
 
-            FileStream fs = new FileStream(img_file, FileMode.Open);
-            BinaryReader br = new BinaryReader(fs);
-            byte[] contentBytes = br.ReadBytes(Convert.ToInt32(fs.Length));
-            string base64 = Convert.ToBase64String(contentBytes);
-            string bodys;
-            if (is_old_format)
+            using (FileStream fs = new FileStream(img_file, FileMode.Open))
             {
-                bodys = "{\"inputs\" :" +
-                                    "[{\"image\" :" +
+                BinaryReader br = new BinaryReader(fs);
+                byte[] contentBytes = br.ReadBytes(Convert.ToInt32(fs.Length));
+                string base64 = Convert.ToBase64String(contentBytes);
+                string bodys;
+                if (is_old_format)
+                {
+                    bodys = "{\"inputs\" :" +
+                                        "[{\"image\" :" +
+                                            "{\"dataType\" : 50," +
+                                             "\"dataValue\" :\"" + base64 + "\"" +
+                                             "}";
+                    if (config.Length > 0)
+                    {
+                        bodys += ",\"configure\" :" +
                                         "{\"dataType\" : 50," +
-                                         "\"dataValue\" :\"" + base64 + "\"" +
+                                         "\"dataValue\" : \"" + config + "\"}" +
                                          "}";
-                if (config.Length > 0)
-                {
-                    bodys += ",\"configure\" :" +
-                                    "{\"dataType\" : 50," +
-                                     "\"dataValue\" : \"" + config + "\"}" +
-                                     "}";
+                    }
+                    bodys += "]}";
                 }
-                bodys += "]}";
-            }
-            else
-            {
-                bodys = "{\"image\":\"" + base64 + "\"";
-                if (config.Length > 0)
+                else
                 {
-                    bodys += ",\"configure\" :\"" + config + "\"";
+                    bodys = "{\"image\":\"" + base64 + "\"";
+                    if (config.Length > 0)
+                    {
+                        bodys += ",\"configure\" :\"" + config + "\"";
+                    }
+                    bodys += "}";
                 }
-                bodys += "}";
-            }
-            HttpWebRequest httpRequest = null;
-            HttpWebResponse httpResponse = null;
+                HttpWebRequest httpRequest = null;
+                HttpWebResponse httpResponse = null;
 
-            if (0 < querys.Length)
-            {
-                url = url + "?" + querys;
-            }
-
-            if (url.Contains("https://"))
-            {
-                ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
-                httpRequest = (HttpWebRequest)WebRequest.CreateDefault(new Uri(url));
-            }
-            else
-            {
-                httpRequest = (HttpWebRequest)WebRequest.Create(url);
-            }
-            httpRequest.Method = method;
-            httpRequest.Headers.Add("Authorization", "APPCODE " + appcode);
-            //根据API的要求，定义相对应的Content-Type
-            httpRequest.ContentType = "application/json; charset=UTF-8";
-            if (0 < bodys.Length)
-            {
-                byte[] data = Encoding.UTF8.GetBytes(bodys);
-                using (Stream stream = httpRequest.GetRequestStream())
+                if (0 < querys.Length)
                 {
-                    stream.Write(data, 0, data.Length);
+                    url = url + "?" + querys;
                 }
-            }
-            try
-            {
-                httpResponse = (HttpWebResponse)httpRequest.GetResponse();
-            }
-            catch (WebException ex)
-            {
-                httpResponse = (HttpWebResponse)ex.Response;
-            }
 
-            if (httpResponse.StatusCode != HttpStatusCode.OK)
-            {
-                Console.WriteLine("http error code: " + httpResponse.StatusCode);
-                Console.WriteLine("error in header: " + httpResponse.GetResponseHeader("X-Ca-Error-Message"));
-                Console.WriteLine("error in body: ");
-                Stream st = httpResponse.GetResponseStream();
-                StreamReader reader = new StreamReader(st, Encoding.GetEncoding("utf-8"));
-                var json = reader.ReadToEnd();
-                Console.WriteLine(reader.ReadToEnd());
-                return json;
+                if (url.Contains("https://"))
+                {
+                    ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
+                    httpRequest = (HttpWebRequest)WebRequest.CreateDefault(new Uri(url));
+                }
+                else
+                {
+                    httpRequest = (HttpWebRequest)WebRequest.Create(url);
+                }
+                httpRequest.Method = method;
+                httpRequest.Headers.Add("Authorization", "APPCODE " + appcode);
+                //根据API的要求，定义相对应的Content-Type
+                httpRequest.ContentType = "application/json; charset=UTF-8";
+                if (0 < bodys.Length)
+                {
+                    byte[] data = Encoding.UTF8.GetBytes(bodys);
+                    using (Stream stream = httpRequest.GetRequestStream())
+                    {
+                        stream.Write(data, 0, data.Length);
+                    }
+                }
+                try
+                {
+                    httpResponse = (HttpWebResponse)httpRequest.GetResponse();
+                }
+                catch (WebException ex)
+                {
+                    httpResponse = (HttpWebResponse)ex.Response;
+                }
+
+                if (httpResponse.StatusCode != HttpStatusCode.OK)
+                {
+                    Console.WriteLine("http error code: " + httpResponse.StatusCode);
+                    Console.WriteLine("error in header: " + httpResponse.GetResponseHeader("X-Ca-Error-Message"));
+                    Console.WriteLine("error in body: ");
+                    Stream st = httpResponse.GetResponseStream();
+                    StreamReader reader = new StreamReader(st, Encoding.GetEncoding("utf-8"));
+                    var json = reader.ReadToEnd();
+                    Console.WriteLine(reader.ReadToEnd());
+                    return json;
+                }
+                else
+                {
+
+                    Stream st = httpResponse.GetResponseStream();
+                    StreamReader reader = new StreamReader(st, Encoding.GetEncoding("utf-8"));
+
+                    var json = reader.ReadToEnd();
+                    JavaScriptSerializer js = new JavaScriptSerializer();
+                    //JsonClass jo = (JsonClass)JsonConvert.DeserializeObject(json);
+                    JsonClass s = JsonConvert.DeserializeObject<JsonClass>(json);
+                    List<JsonClass> jc = js.Deserialize<List<JsonClass>>(json);
+                    return json;
+
+                }
+                Console.WriteLine("\n");
             }
-            else
-            {
-
-                Stream st = httpResponse.GetResponseStream();
-                StreamReader reader = new StreamReader(st, Encoding.GetEncoding("utf-8"));
-
-                var json = reader.ReadToEnd();
-                JavaScriptSerializer js = new JavaScriptSerializer();
-                //JsonClass jo = (JsonClass)JsonConvert.DeserializeObject(json);
-                JsonClass s = JsonConvert.DeserializeObject<JsonClass>(json);
-                List<JsonClass> jc = js.Deserialize<List<JsonClass>>(json);
-                return json;
-
-            }
-            Console.WriteLine("\n");
+           
         }
         public class JsonClass
         {
