@@ -62,5 +62,10 @@ namespace GuoGuoCommunity.API.Models
         /// 
         /// </summary>
         public DateTimeOffset ReleaseTime { get; set; }
+
+        /// <summary>
+        /// 是否已读
+        /// </summary>
+        public bool IsRead { get; set; }
     }
 }

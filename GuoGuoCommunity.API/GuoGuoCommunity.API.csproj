@@ -259,6 +259,7 @@
     <Compile Include="Models\Announcement\GetAllAnnouncementOutput.cs" />
     <Compile Include="Models\Announcement\GetListPropertyAnnouncementInput.cs" />
     <Compile Include="Models\Announcement\GetListStreetOfficeAnnouncementInput.cs" />
+    <Compile Include="Models\Announcement\GetListStreetOfficeAnnouncementOutput.cs" />
     <Compile Include="Models\Announcement\GetVipOwnerAnnouncementOutput.cs" />
     <Compile Include="Models\BuildingUnit\AddBuildingUnitInput.cs" />
     <Compile Include="Models\BuildingUnit\AddBuildingUnitOutput.cs" />
@@ -393,9 +394,12 @@
     <Compile Include="Models\VipOwnerCertificationCondition\GetListVipOwnerCertificationConditionOutpu.cs" />
     <Compile Include="Models\VipOwnerCertificationRecord\AddVipOwnerCertificationRecordInput.cs" />
     <Compile Include="Models\VipOwnerCertificationRecord\AddVipOwnerCertificationRecordOutput.cs" />
+    <Compile Include="Models\VipOwnerCertificationRecord\AdoptVipOwnerCertificationInput.cs" />
     <Compile Include="Models\VipOwnerCertificationRecord\GetAllVipOwnerCertificationInput.cs" />
     <Compile Include="Models\VipOwnerCertificationRecord\GetAllForWeiXinVipOwnerCertificationOutput.cs" />
     <Compile Include="Models\VipOwnerCertificationRecord\GetAllVipOwnerCertificationOutput.cs" />
+    <Compile Include="Models\VipOwnerCertificationRecord\GetVipOwnerCertificationInput.cs" />
+    <Compile Include="Models\VipOwnerCertificationRecord\GetAllVipOwnerCertificationModel.cs" />
     <Compile Include="Models\VipOwnerCertificationRecord\GetVipOwnerCertificationOutput.cs" />
     <Compile Include="Models\VipOwnerStructure\AddVipOwnerStructureInput.cs" />
     <Compile Include="Models\VipOwnerStructure\AddVipOwnerStructureOutput.cs" />
@@ -526,6 +530,7 @@
     <Folder Include="Upload\Announcement\" />
     <Folder Include="Upload\Complaint\" />
     <Folder Include="Upload\OwnerCertification\" />
+    <Folder Include="Upload\StationLetter\" />
     <Folder Include="Upload\VipOwnerCertification\" />
     <Folder Include="Upload\Vote\" />
   </ItemGroup>
@@ -565,7 +570,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>64177</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:2223</IISUrl>
+          <IISUrl>http://192.168.2.133:2223</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -98,6 +98,7 @@
     <Compile Include="Abstractions\IComplaintRepository.cs" />
     <Compile Include="Abstractions\IComplaintStatusChangeRecordingRepository.cs" />
     <Compile Include="Abstractions\IComplaintTypeRepository.cs" />
+    <Compile Include="Abstractions\IIDCardPhotoRecordRepository.cs" />
     <Compile Include="Abstractions\IIndustryRepository.cs" />
     <Compile Include="Abstractions\IMenuRepository.cs" />
     <Compile Include="Abstractions\IOwnerCertificationAnnexRepository.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="Dto\ComplaintFollowUpDto.cs" />
     <Compile Include="Dto\ComplaintStatusChangeRecordingDto.cs" />
     <Compile Include="Dto\ComplaintTypeDto.cs" />
+    <Compile Include="Dto\IDCardPhotoRecordDto.cs" />
     <Compile Include="Dto\IndustryDto.cs" />
     <Compile Include="Dto\OwnerCertificationAnnexDto.cs" />
     <Compile Include="Dto\OwnerCertificationRecordDto.cs" />
@@ -173,7 +175,15 @@
     <Compile Include="Dto\VoteResultRecordDto.cs" />
     <Compile Include="Dto\WeiXinUserDto.cs" />
     <Compile Include="GuoGuoCommunityContext.cs" />
-    <Compile Include="IDCardPhotoRecord.cs" />
+    <Compile Include="Migrations\201904090321162_add-IDCardPhotoRecords.cs" />
+    <Compile Include="Migrations\201904090321162_add-IDCardPhotoRecords.Designer.cs">
+      <DependentUpon>201904090321162_add-IDCardPhotoRecords.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904090814401_update-ownerCertificationRecord.cs" />
+    <Compile Include="Migrations\201904090814401_update-ownerCertificationRecord.Designer.cs">
+      <DependentUpon>201904090814401_update-ownerCertificationRecord.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IDCardPhotoRecord.cs" />
     <Compile Include="Migrations\201903310759425_Initialization.cs" />
     <Compile Include="Migrations\201903310759425_Initialization.Designer.cs">
       <DependentUpon>201903310759425_Initialization.cs</DependentUpon>
@@ -265,6 +275,7 @@
     <Compile Include="Service\ComplaintFollowUpRepository.cs" />
     <Compile Include="Service\ComplaintRepository.cs" />
     <Compile Include="Service\ComplaintStatusChangeRecordingRepository.cs" />
+    <Compile Include="Service\IDCardPhotoRecordRepository.cs" />
     <Compile Include="Service\StationLetterAnnexRepository.cs" />
     <Compile Include="Service\StationLetterBrowseRecordRepository.cs" />
     <Compile Include="Service\StationLetterRepository.cs" />
@@ -346,6 +357,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201904020758058_update-Complaint.resx">
       <DependentUpon>201904020758058_update-Complaint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904090321162_add-IDCardPhotoRecords.resx">
+      <DependentUpon>201904090321162_add-IDCardPhotoRecords.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904090814401_update-ownerCertificationRecord.resx">
+      <DependentUpon>201904090814401_update-ownerCertificationRecord.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

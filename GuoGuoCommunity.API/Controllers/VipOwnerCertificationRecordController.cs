@@ -4,6 +4,7 @@ using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -66,11 +67,11 @@ namespace GuoGuoCommunity.API.Controllers
                 var data = await _vipOwnerCertificationConditionRepository.GetListAsync(cancelToken);
                 foreach (var item in data)
                 {
-                    var entity =   input.Models.Where(x => x.ConditionId == item.Id.ToString()).FirstOrDefault();
-                    
-                    if(string.IsNullOrWhiteSpace(entity?.AnnexContent))
+                    var entity = input.Models.Where(x => x.ConditionId == item.Id.ToString()).FirstOrDefault();
+
+                    if (string.IsNullOrWhiteSpace(entity?.AnnexContent))
                     {
-                        throw new NotImplementedException("提交"+item.Title+"申请凭证信息不准确！");
+                        throw new NotImplementedException("提交" + item.Title + "申请凭证信息不准确！");
                     }
                 }
 
@@ -144,6 +145,10 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
+                if (string.IsNullOrWhiteSpace(input.SmallDistrictId))
+                {
+                    throw new NotImplementedException("小区Id信息为空！");
+                }
                 var data = await _vipOwnerApplicationRecordRepository.GetAllAsync(new VipOwnerApplicationRecordDto
                 {
                     SmallDistrictId = input.SmallDistrictId
@@ -172,7 +177,98 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
-        //TODO街道办通过高级认证
+        /// <summary>
+        /// 街道办查询详情
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("vipOwnerCertification/get")]
+        public async Task<ApiResult<GetVipOwnerCertificationOutput>> Get([FromUri]GetVipOwnerCertificationInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                var data = await _vipOwnerApplicationRecordRepository.GetAsync(input.Id, cancelToken);
+                GetVipOwnerCertificationOutput output = new GetVipOwnerCertificationOutput
+                {
+                    Id = data.Id.ToString(),
+                    Name = data.Name,
+                    SmallDistrictId = data.SmallDistrictId,
+                    SmallDistrictName = data.SmallDistrictName,
+                    IsAdopt = data.IsAdopt,
+                    Reason = data.Reason,
+                    StructureId = data.StructureId,
+                    StructureName = data.StructureName,
+                    UserId = data.UserId
+                };
+                var annexList = await _vipOwnerCertificationAnnexRepository.GetListAsync(new VipOwnerCertificationAnnexDto
+                {
+                    ApplicationRecordId = data.Id.ToString()
+                }, cancelToken);
+                List<AnnexModel> list = new List<AnnexModel>();
+                foreach (var item in annexList)
+                {
+                    var certificationCondition = await _vipOwnerCertificationConditionRepository.GetAsync(item.CertificationConditionId, cancelToken);
+                    list.Add(new AnnexModel
+                    {
+                        CertificationConditionName = certificationCondition.Title,
+                        CertificationConditionId = item.ApplicationRecordId,
+                        ID = item.Id.ToString(),
+                        Url = _vipOwnerCertificationAnnexRepository.GetUrlAsync(item.Id.ToString(), cancelToken),
+                    });
+                }
+                output.AnnexModels = list;
+                return new ApiResult<GetVipOwnerCertificationOutput>(APIResultCode.Success, output);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<GetVipOwnerCertificationOutput>(APIResultCode.Success_NoB, new GetVipOwnerCertificationOutput { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 街道办通过高级认证申请
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("vipOwnerCertification/adopt")]
+        public async Task<ApiResult> Adopt([FromBody]AdoptVipOwnerCertificationInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(input.Id))
+                {
+                    throw new NotImplementedException("高级认证Id信息为空！");
+                }
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+                }
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+                }
+                await _vipOwnerApplicationRecordRepository.Adopt(new VipOwnerApplicationRecordDto
+                {
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString(),
+                    Id = input.Id
+                }, cancelToken);
+
+                return new ApiResult(APIResultCode.Success, APIResultMessage.Success);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+            }
+
+
+        }
 
         /// <summary>
         /// 查询高级申请列表(小程序用户)

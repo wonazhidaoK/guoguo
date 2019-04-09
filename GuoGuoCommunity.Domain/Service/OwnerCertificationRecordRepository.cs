@@ -173,7 +173,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该认证Id信息不正确！");
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return new OwnerCertificationRecord();
             }
@@ -200,11 +200,14 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该认证信息不存在！");
                 }
-
+                ownerCertificationRecord.OwnerId = dto.OwnerId;
+                ownerCertificationRecord.OwnerName = dto.OwnerName;
                 ownerCertificationRecord.CertificationStatusName = dto.CertificationStatusName;
                 ownerCertificationRecord.CertificationStatusValue = dto.CertificationStatusValue;
+                ownerCertificationRecord.CertificationResult = "已认证";
                 ownerCertificationRecord.LastOperationTime = dto.OperationTime;
                 ownerCertificationRecord.LastOperationUserId = dto.OperationUserId;
+                ownerCertificationRecord.CertificationTime= dto.OperationTime;
                 OnUpdate(db, dto, token);
                 await db.SaveChangesAsync(token);
             }

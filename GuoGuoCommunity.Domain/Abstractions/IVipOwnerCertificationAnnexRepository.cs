@@ -18,7 +18,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<VipOwnerCertificationAnnex> GetAsync(string id, CancellationToken token = default);
 
-        Task<string> GetUrlAsync(string id, CancellationToken token = default);
+        string GetUrlAsync(string id, CancellationToken token = default);
 
         Task<List<VipOwnerCertificationAnnex>> GetListAsync(VipOwnerCertificationAnnexDto dto, CancellationToken token = default);
     }

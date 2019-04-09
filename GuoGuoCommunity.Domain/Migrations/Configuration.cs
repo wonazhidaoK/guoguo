@@ -34,7 +34,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                 new Menu() { Name = "街道办-高级认证", Key = "jdb_rz_gj" },
                 new Menu() { Name = "街道办后台-投票", Key = "jdb_vote" },
                 new Menu() { Name = "街道办后台-投诉", Key = "jdb_complaint" },
-                new Menu() { Name = "街道办后台-站内信", Key = "jdb_complaint" },
+                new Menu() { Name = "街道办后台-站内信", Key = "jdb_letter" },
                 new Menu() { Name = "系统管理员", Key = "authorityMax" }
                 );
             context.Users.AddOrUpdate(x => x.Name,

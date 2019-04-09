@@ -199,7 +199,7 @@ namespace GuoGuoCommunity.API.Controllers
                         CertificationResult = item.CertificationResult,
                         CertificationStatusName = item.CertificationStatusName,
                         CertificationStatusValue = item.CertificationStatusValue,
-                        CertificationTime = item.CertificationTime,
+                        //CertificationTime = item.CertificationTime,
                         CommunityId = item.CommunityId,
                         CommunityName = item.CommunityName,
                         Id = item.Id.ToString(),

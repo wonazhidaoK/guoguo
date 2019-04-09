@@ -66,7 +66,7 @@ namespace GuoGuoCommunity.API.Controllers
         {
             string url = "http://dm-51.data.aliyun.com/rest/160601/ocr/ocr_idcard.json";
             string appcode = "9b5eda2cae234efdb318b4344af42782";
-            string img_file = "G:\\Download\\20190319215127.jpg";
+            string img_file = "D:\\20190409144755.jpg";
 
             //如果输入带有inputs, 设置为True，否则设为False
             bool is_old_format = false;

@@ -35,6 +35,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IVoteRecordDetailRepository _voteRecordDetailRepository;
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private readonly IVoteResultRecordRepository _voteResultRecordRepository;
+        private readonly ISmallDistrictRepository _smallDistrictRepository;
         private readonly IUserRepository _userRepository;
         private TokenManager _tokenManager;
 
@@ -53,6 +54,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="ownerCertificationRecordRepository"></param>
         /// <param name="voteResultRecordRepository"></param>
         /// <param name="userRepository"></param>
+        /// <param name="smallDistrictRepository"></param>
         public VoteController(IVoteRepository voteRepository,
             IVoteQuestionRepository voteQuestionRepository,
             IVoteQuestionOptionRepository voteQuestionOptionRepository,
@@ -64,7 +66,8 @@ namespace GuoGuoCommunity.API.Controllers
             IVoteRecordDetailRepository voteRecordDetailRepository,
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
             IVoteResultRecordRepository voteResultRecordRepository,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            ISmallDistrictRepository smallDistrictRepository)
         {
             _voteRepository = voteRepository;
             _voteQuestionRepository = voteQuestionRepository;
@@ -78,6 +81,7 @@ namespace GuoGuoCommunity.API.Controllers
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _voteResultRecordRepository = voteResultRecordRepository;
             _userRepository = userRepository;
+            _smallDistrictRepository = smallDistrictRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -154,14 +158,14 @@ namespace GuoGuoCommunity.API.Controllers
                     throw new NotImplementedException("投票结束时间小于投票创建时间！");
                 }
                 //增加投票主体
-                var entity = await _voteRepository.AddAsync(new VoteDto
+                var entity = await _voteRepository.AddForStreetOfficeAsync(new VoteDto
                 {
                     Deadline = dateTime,
                     Title = input.Title,
                     Summary = input.Summary,
                     SmallDistrictArray = input.SmallDistrict,
-                    SmallDistrictId = user.SmallDistrictId,
-                    CommunityId = user.CommunityId,
+                    //SmallDistrictId = user.SmallDistrictId,
+                    //CommunityId = user.CommunityId,
                     StreetOfficeId = user.StreetOfficeId,
                     OperationTime = nowTime,
                     OperationUserId = user.Id.ToString(),
@@ -757,6 +761,8 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     SmallDistrictId = vote.SmallDistrictArray
                 });
+                //获取小区名称
+                var smallDistrictEntity = await _smallDistrictRepository.GetAsync(vote.SmallDistrictArray, cancelToken);
                 var userEntity = await _userRepository.GetForIdAsync(vote.CreateOperationUserId, cancelToken);
                 var voteQuestionList = await _voteQuestionRepository.GetListAsync(new VoteQuestionDto { VoteId = vote?.Id.ToString() }, cancelToken);
                 List<GetVoteQuestionModel> list = new List<GetVoteQuestionModel>();
@@ -806,7 +812,8 @@ namespace GuoGuoCommunity.API.Controllers
                     ShouldParticipateCount = ownerCertificationRecordList.Count.ToString(),
                     VoteTypeName = vote.VoteTypeName,
                     VoteTypeValue = vote.VoteTypeValue,
-                    CreateUserName = userEntity?.Name
+                    CreateUserName = userEntity?.Name,
+                    SmallDistrictArrayName = smallDistrictEntity.Name
                 });
             }
             catch (Exception e)

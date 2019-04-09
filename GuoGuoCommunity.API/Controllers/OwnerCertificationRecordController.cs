@@ -2,15 +2,26 @@
 using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
+using GuoGuoCommunity.Domain.Models;
 using GuoGuoCommunity.Domain.Models.Enum;
+using GuoGuoCommunity.Domain.Service;
+using Hangfire;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Configuration;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Web.Script.Serialization;
 
 namespace GuoGuoCommunity.API.Controllers
 {
@@ -20,10 +31,21 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class OwnerCertificationRecordController : ApiController
     {
+        /// <summary>
+        /// 阿里云接口地址
+        /// </summary>
+        public static readonly string ALiYunApiUrl = ConfigurationManager.AppSettings["ALiYunApiUrl"];
+
+        /// <summary>
+        /// 阿里云AppCode
+        /// </summary>
+        public static readonly string ALiYunApiAppCode = ConfigurationManager.AppSettings["ALiYunApiAppCode"];
+
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private readonly IOwnerCertificationAnnexRepository _ownerCertificationAnnexRepository;
         private readonly IOwnerRepository _ownerRepository;
         private readonly IIndustryRepository _industryRepository;
+        private readonly IIDCardPhotoRecordRepository _iDCardPhotoRecordRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -33,16 +55,19 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="ownerCertificationAnnexRepository"></param>
         /// <param name="ownerRepository"></param>
         /// <param name="industryRepository"></param>
+        /// <param name="iDCardPhotoRecordRepository"></param>
         public OwnerCertificationRecordController(
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
             IOwnerCertificationAnnexRepository ownerCertificationAnnexRepository,
             IOwnerRepository ownerRepository,
-            IIndustryRepository industryRepository)
+            IIndustryRepository industryRepository,
+            IIDCardPhotoRecordRepository iDCardPhotoRecordRepository)
         {
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _ownerCertificationAnnexRepository = ownerCertificationAnnexRepository;
             _ownerRepository = ownerRepository;
             _industryRepository = industryRepository;
+            _iDCardPhotoRecordRepository = iDCardPhotoRecordRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -102,7 +127,6 @@ namespace GuoGuoCommunity.API.Controllers
 
                 var entity = await _ownerCertificationRecordRepository.AddAsync(new OwnerCertificationRecordDto
                 {
-
                     SmallDistrictId = input.SmallDistrictId,
                     IndustryId = input.IndustryId,
                     CommunityId = input.CommunityId,
@@ -127,7 +151,7 @@ namespace GuoGuoCommunity.API.Controllers
                           });
                     if (itemEntity.OwnerCertificationAnnexTypeValue == OwnerCertificationAnnexType.IDCardFront.Value)
                     {
-                        //BackgroundJob.Enqueue(() => Send(itemEntity.Id.ToString()));
+                        BackgroundJob.Enqueue(() => Send(itemEntity));
                     }
                 }
 
@@ -187,7 +211,7 @@ namespace GuoGuoCommunity.API.Controllers
                         CertificationResult = item.CertificationResult,
                         CertificationStatusName = item.CertificationStatusName,
                         CertificationStatusValue = item.CertificationStatusValue,
-                        CertificationTime = item.CertificationTime,
+                        //CertificationTime = item.CertificationTime,
                         CommunityId = item.CommunityId,
                         CommunityName = item.CommunityName,
                         Id = item.Id.ToString(),
@@ -298,10 +322,197 @@ namespace GuoGuoCommunity.API.Controllers
         /// <summary>
         /// 这个是用来发送消息的静态方法
         /// </summary>
+        /// <param name="annex"></param>
         /// <param name="message"></param>
-        public static void Send(string message)
+        public static void Send(OwnerCertificationAnnex annex)
         {
-            EventLog.WriteEntry("EventSystem", string.Format("这里要处理一个图像识别任务:{0},时间为:{1}", message, DateTime.Now));
+            /*
+             * 调用阿里云
+             * 根据返回结果查询是否符合认证数据
+             */
+            //EventLog.WriteEntry("EventSystem", string.Format("这里要处理一个图像识别任务:{0},时间为:{1}", message, DateTime.Now));
+            var entity = PostALiYun(annex);
+            JsonClass json = JsonConvert.DeserializeObject<JsonClass>(entity.Message);
+
+            IOwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
+            var ownerCertificationRecordEntity = ownerCertificationRecordRepository.GetAsync(annex.ApplicationRecordId).Result;
+            IOwnerRepository ownerRepository = new OwnerRepository();
+            var owner = ownerRepository.GetListAsync(new OwnerDto { IndustryId = ownerCertificationRecordEntity.IndustryId }).Result.Where(x => x.IDCard == json.num).FirstOrDefault();
+            OwnerCertificationRecordDto dto = new OwnerCertificationRecordDto
+            {
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = "system",
+                Id = ownerCertificationRecordEntity.Id.ToString()
+            };
+            if (owner != null)
+            {
+                dto.CertificationStatusValue = OwnerCertification.Success.Value;
+                dto.CertificationStatusName = OwnerCertification.Success.Name;
+                dto.OwnerId = owner.Id.ToString();
+                dto.OwnerName = owner.Name.ToString();
+            }
+            else
+            {
+                dto.CertificationStatusValue = OwnerCertification.Failure.Value;
+                dto.CertificationStatusName = OwnerCertification.Failure.Name;
+                //dto.OwnerId = owner.Id.ToString();
+                //dto.OwnerName = owner.Name.ToString();
+            }
+            ownerCertificationRecordRepository.UpdateAsync(dto);
+        }
+
+        /// <summary>
+        /// 调用阿里云接口
+        /// </summary>
+        /// <param name="annex"></param>
+        /// <returns></returns>
+        public static IDCardPhotoRecord PostALiYun(OwnerCertificationAnnex annex)
+        {
+            string aLiYunApiUrl = ALiYunApiUrl;
+            string appcode = ALiYunApiAppCode;
+            //查询附件url
+            IOwnerCertificationAnnexRepository ownerCertificationAnnexRepository = new OwnerCertificationAnnexRepository();
+            var url = ownerCertificationAnnexRepository.GetPath(annex.ApplicationRecordId);
+            string img_file = url;
+
+
+            //如果输入带有inputs, 设置为True，否则设为False
+            bool is_old_format = false;
+
+            //如果没有configure字段，config设为''
+            //String config = '';
+            string config = "{\\\"side\\\":\\\"face\\\"}";
+
+            string method = "POST";
+
+            string querys = "";
+
+            using (FileStream fs = new FileStream(img_file, FileMode.Open))
+            {
+                BinaryReader br = new BinaryReader(fs);
+                byte[] contentBytes = br.ReadBytes(Convert.ToInt32(fs.Length));
+                string base64 = Convert.ToBase64String(contentBytes);
+                string bodys;
+                if (is_old_format)
+                {
+                    bodys = "{\"inputs\" :" +
+                                        "[{\"image\" :" +
+                                            "{\"dataType\" : 50," +
+                                             "\"dataValue\" :\"" + base64 + "\"" +
+                                             "}";
+                    if (config.Length > 0)
+                    {
+                        bodys += ",\"configure\" :" +
+                                        "{\"dataType\" : 50," +
+                                         "\"dataValue\" : \"" + config + "\"}" +
+                                         "}";
+                    }
+                    bodys += "]}";
+                }
+                else
+                {
+                    bodys = "{\"image\":\"" + base64 + "\"";
+                    if (config.Length > 0)
+                    {
+                        bodys += ",\"configure\" :\"" + config + "\"";
+                    }
+                    bodys += "}";
+                }
+                HttpWebRequest httpRequest = null;
+                HttpWebResponse httpResponse = null;
+
+                if (0 < querys.Length)
+                {
+                    aLiYunApiUrl = aLiYunApiUrl + "?" + querys;
+                }
+
+                if (aLiYunApiUrl.Contains("https://"))
+                {
+                    ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
+                    httpRequest = (HttpWebRequest)WebRequest.CreateDefault(new Uri(aLiYunApiUrl));
+                }
+                else
+                {
+                    httpRequest = (HttpWebRequest)WebRequest.Create(aLiYunApiUrl);
+                }
+                httpRequest.Method = method;
+                httpRequest.Headers.Add("Authorization", "APPCODE " + appcode);
+                //根据API的要求，定义相对应的Content-Type
+                httpRequest.ContentType = "application/json; charset=UTF-8";
+                if (0 < bodys.Length)
+                {
+                    byte[] data = Encoding.UTF8.GetBytes(bodys);
+                    using (Stream stream = httpRequest.GetRequestStream())
+                    {
+                        stream.Write(data, 0, data.Length);
+                    }
+                }
+                try
+                {
+                    httpResponse = (HttpWebResponse)httpRequest.GetResponse();
+                }
+                catch (WebException ex)
+                {
+                    httpResponse = (HttpWebResponse)ex.Response;
+                }
+                string json;
+                if (httpResponse.StatusCode != HttpStatusCode.OK)
+                {
+                    Console.WriteLine("http error code: " + httpResponse.StatusCode);
+                    Console.WriteLine("error in header: " + httpResponse.GetResponseHeader("X-Ca-Error-Message"));
+                    Console.WriteLine("error in body: ");
+                    Stream st = httpResponse.GetResponseStream();
+                    StreamReader reader = new StreamReader(st, Encoding.GetEncoding("utf-8"));
+                    json = reader.ReadToEnd();
+                    Console.WriteLine(reader.ReadToEnd());
+                }
+                else
+                {
+                    Stream st = httpResponse.GetResponseStream();
+                    StreamReader reader = new StreamReader(st, Encoding.GetEncoding("utf-8"));
+                    json = reader.ReadToEnd();
+                    JavaScriptSerializer js = new JavaScriptSerializer();
+                    //JsonClass jo = (JsonClass)JsonConvert.DeserializeObject(json);
+                    JsonClass s = JsonConvert.DeserializeObject<JsonClass>(json);
+                    //List<JsonClass> jc = js.Deserialize<List<JsonClass>>(json);
+                }
+                IIDCardPhotoRecordRepository iDCardPhotoRecordRepository = new IDCardPhotoRecordRepository();
+                var entity = iDCardPhotoRecordRepository.AddAsync(new IDCardPhotoRecordDto
+                {
+                    ApplicationRecordId = annex.ApplicationRecordId,
+                    OwnerCertificationAnnexId = annex.Id.ToString(),
+                    Message = json,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = "system",
+                    PhotoBase64 = base64,
+                });
+                return entity.Result;
+            }
+
+        }
+
+        public class JsonClass
+        {
+            public string address { get; set; }
+            public string config_str { get; set; }
+            //public string face_rect { get; set; }
+            //public string face_rect_vertices { get; set; }
+
+            public string name { get; set; }
+
+            public string nationality { get; set; }
+
+            public string num { get; set; }
+
+            public string sex { get; set; }
+
+            public string birth { get; set; }
+
+            public string success { get; set; }
+        }
+        public static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+        {
+            return true;
         }
     }
 }

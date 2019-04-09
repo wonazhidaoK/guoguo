@@ -23,6 +23,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IAnnouncementRepository _announcementRepository;
         private readonly IAnnouncementAnnexRepository _announcementAnnexRepository;
         private readonly IUploadRepository _uploadRepository;
+        private readonly ISmallDistrictRepository _smallDistrictRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -31,13 +32,16 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="announcementRepository"></param>
         /// <param name="announcementAnnexRepository"></param>
         /// <param name="uploadRepository"></param>
+        /// <param name="smallDistrictRepository"></param>
         public AnnouncementController(IAnnouncementRepository announcementRepository,
             IAnnouncementAnnexRepository announcementAnnexRepository,
-            IUploadRepository uploadRepository)
+            IUploadRepository uploadRepository,
+            ISmallDistrictRepository smallDistrictRepository)
         {
             _announcementRepository = announcementRepository;
             _announcementAnnexRepository = announcementAnnexRepository;
             _uploadRepository = uploadRepository;
+            _smallDistrictRepository = smallDistrictRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -561,7 +565,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("announcement/getListStreetOfficeAnnouncement")]
-        public async Task<ApiResult<GetAllAnnouncementOutput>> GetListStreetOfficeAnnouncement([FromUri]GetListStreetOfficeAnnouncementInput input, CancellationToken cancelToken)
+        public async Task<ApiResult<GetListStreetOfficeAnnouncementOutput>> GetListStreetOfficeAnnouncement([FromUri]GetListStreetOfficeAnnouncementInput input, CancellationToken cancelToken)
         {
             try
             {
@@ -579,14 +583,14 @@ namespace GuoGuoCommunity.API.Controllers
 
                 if (token == null)
                 {
-                    return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Unknown, new GetAllAnnouncementOutput { }, APIResultMessage.TokenNull);
+                    return new ApiResult<GetListStreetOfficeAnnouncementOutput>(APIResultCode.Unknown, new GetListStreetOfficeAnnouncementOutput { }, APIResultMessage.TokenNull);
                 }
 
                 var user = _tokenManager.GetUser(token);
 
                 if (user == null)
                 {
-                    return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Unknown, new GetAllAnnouncementOutput { }, APIResultMessage.TokenError);
+                    return new ApiResult<GetListStreetOfficeAnnouncementOutput>(APIResultCode.Unknown, new GetListStreetOfficeAnnouncementOutput { }, APIResultMessage.TokenError);
                 }
 
                 var startTime = DateTimeOffset.Parse("1997-01-01");
@@ -610,24 +614,42 @@ namespace GuoGuoCommunity.API.Controllers
                     StreetOfficeId = user.StreetOfficeId,
                     DepartmentValue = Department.JieDaoBan.Value
                 }, cancelToken);
-
-                return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Success, new GetAllAnnouncementOutput
+                List<GetListStreetOfficeAnnouncementModelOutput> list = new List<GetListStreetOfficeAnnouncementModelOutput>();
+                foreach (var item in data)
                 {
-                    List = data.Select(x => new GetVipOwnerAnnouncementOutput
+                    List<string> smallDistrictIdList = new List<string>(item.SmallDistrictArray.Split(','));
+                    List<SmallDistrictModel> smallDistrictList = new List<SmallDistrictModel>();
+                    foreach (var smallDistrictId in smallDistrictIdList)
                     {
-                        Id = x.Id.ToString(),
-                        Title = x.Title,
-                        Content = x.Content,
-                        ReleaseTime = x.CreateOperationTime.Value,
-                        Summary = x.Summary,
-                        Url = _announcementAnnexRepository.GetUrl(x.Id.ToString())
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
+                        var smallDistrictEntity = await _smallDistrictRepository.GetAsync(smallDistrictId, cancelToken);
+                        smallDistrictList.Add(
+                            new SmallDistrictModel
+                            {
+                                Id = smallDistrictId,
+                                Name = smallDistrictEntity.Name
+                            });
+                    }
+                    list.Add(
+                        new GetListStreetOfficeAnnouncementModelOutput
+                        {
+                            Id = item.Id.ToString(),
+                            Title = item.Title,
+                            Content = item.Content,
+                            ReleaseTime = item.CreateOperationTime.Value,
+                            Summary = item.Summary,
+                            Url = _announcementAnnexRepository.GetUrl(item.Id.ToString()),
+                            SmallDistrict = smallDistrictList
+                        });
+                }
+                return new ApiResult<GetListStreetOfficeAnnouncementOutput>(APIResultCode.Success, new GetListStreetOfficeAnnouncementOutput
+                {
+                    List = list.Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
             }
             catch (Exception e)
             {
-                return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Success_NoB, new GetAllAnnouncementOutput { }, e.Message);
+                return new ApiResult<GetListStreetOfficeAnnouncementOutput>(APIResultCode.Success_NoB, new GetListStreetOfficeAnnouncementOutput { }, e.Message);
             }
         }
 

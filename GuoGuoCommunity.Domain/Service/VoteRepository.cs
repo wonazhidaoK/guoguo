@@ -162,7 +162,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Votes.Where(x => x.IsDeleted == false && x.StreetOfficeId == dto.StreetOfficeId).ToListAsync(token);
+                var list = await db.Votes.Where(x => x.IsDeleted == false && x.StreetOfficeId == dto.StreetOfficeId&&x.DepartmentValue==dto.DepartmentValue).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.SmallDistrictArray))
                 {
                     list = list.Where(x => x.SmallDistrictArray.Split(',').Contains(dto.SmallDistrictArray)).ToList();
@@ -307,6 +307,70 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 await db.Votes.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new Vote { SmallDistrictName = smallDistrict.Name });
+            }
+        }
+
+        public async Task<Vote> AddForStreetOfficeAsync(VoteDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.SmallDistrictArray, out var smallDistrictId))
+                {
+                    throw new NotImplementedException("小区信息不正确！");
+                }
+                var smallDistrict = await db.SmallDistricts.Where(x => x.Id == smallDistrictId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (smallDistrict == null)
+                {
+                    throw new NotImplementedException("小区信息不存在！");
+                }
+
+                //if (!Guid.TryParse(dto.CommunityId, out var communityId))
+                //{
+                //    throw new NotImplementedException("社区信息不正确！");
+                //}
+                //var communitie = await db.Communities.Where(x => x.Id == communityId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                //if (communitie == null)
+                //{
+                //    throw new NotImplementedException("社区信息不存在！");
+                //}
+
+                if (!Guid.TryParse(dto.StreetOfficeId, out var streetOfficeId))
+                {
+                    throw new NotImplementedException("街道办信息不正确！");
+                }
+                var streetOffice = await db.StreetOffices.Where(x => x.Id == streetOfficeId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (streetOffice == null)
+                {
+                    throw new NotImplementedException("街道办信息不存在！");
+                }
+
+                var entity = db.Votes.Add(new Vote
+                {
+                    //CommunityId = dto.CommunityId,
+                    //CommunityName = communitie.Name,
+                    //SmallDistrictId = dto.SmallDistrictId,
+                    //SmallDistrictName = smallDistrict.Name,
+                    Deadline = dto.Deadline,
+                    SmallDistrictArray = dto.SmallDistrictArray,
+                    StreetOfficeId = dto.StreetOfficeId,
+                    StreetOfficeName = streetOffice.Name,
+                    Summary = dto.Summary,
+                    Title = dto.Title,
+                    CalculationMethodValue = CalculationMethod.EndorsedNumber.Value,
+                    CalculationMethodName = CalculationMethod.EndorsedNumber.Name,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                    LastOperationTime = dto.OperationTime,
+                    LastOperationUserId = dto.OperationUserId,
+                    StatusName = VoteStatus.Processing.Name,
+                    StatusValue = VoteStatus.Processing.Value,
+                    VoteTypeName = dto.VoteTypeName,
+                    VoteTypeValue = dto.VoteTypeValue,
+                    DepartmentName = dto.DepartmentName,
+                    DepartmentValue = dto.DepartmentValue
+                });
+                await db.SaveChangesAsync(token);
+                return entity;
             }
         }
 

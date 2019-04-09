@@ -52,9 +52,25 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public Task<string> GetUrlAsync(string id, CancellationToken token = default)
+        public string GetUrlAsync(string id, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (var db = new GuoGuoCommunityContext())
+                {
+                    var entity = db.VipOwnerCertificationAnnices.Where(x => x.ApplicationRecordId == id).FirstOrDefault();
+                    if (!Guid.TryParse(entity.AnnexContent, out var annexContent))
+                    {
+                        throw new NotImplementedException("高级认证附件id信息不正确！");
+                    }
+                    var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
+                    return upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
+                }
+            }
+            catch (Exception)
+            {
+                return "";
+            }
         }
 
         public Task UpdateAsync(VipOwnerCertificationAnnexDto dto, CancellationToken token = default)

@@ -43,7 +43,7 @@ namespace GuoGuoCommunity.Domain.Service
         public async Task<List<StationLetter>> GetAllAsync(StationLetterDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
-            {
+            { 
                 var list = await db.StationLetters.Where(x => x.IsDeleted == false && x.StreetOfficeId == dto.StreetOfficeId).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.SmallDistrictArray))
                 {

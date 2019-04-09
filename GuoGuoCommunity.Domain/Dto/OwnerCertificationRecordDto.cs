@@ -20,6 +20,11 @@ namespace GuoGuoCommunity.Domain.Dto
         public string OwnerId { get; set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public string OwnerName { get; set; }
+
+        /// <summary>
         /// 认证时间
         /// </summary>
         public string CertificationTime { get; set; }

@@ -156,6 +156,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     //ReleaseTimeEnd = input.ReleaseTimeEnd,
                     //ReleaseTimeStart = input.ReleaseTimeStart,
+                    StreetOfficeId = user.StreetOfficeId,
                     SmallDistrictArray = input.SmallDistrict
                 }, cancelToken);
 
@@ -221,12 +222,17 @@ namespace GuoGuoCommunity.API.Controllers
                     //ReleaseTimeEnd = input.ReleaseTimeEnd,
                     //ReleaseTimeStart = input.ReleaseTimeStart,
                     StreetOfficeId = user.StreetOfficeId,
-                   // SmallDistrictArray = input.SmallDistrict
+                    // SmallDistrictArray = input.SmallDistrict
                 }, cancelToken);
                 List<GetPropertyStationLetterOutput> list = new List<GetPropertyStationLetterOutput>();
                 foreach (var item in data)
                 {
                     var userEntity = await _userRepository.GetForIdAsync(item.CreateOperationUserId);
+                    var stationLetterBrowseRecordList = await _stationLetterBrowseRecordRepository.GetListAsync(new StationLetterBrowseRecordDto
+                    {
+                        StationLetterId = item.Id.ToString(),
+                        OperationUserId = user.Id.ToString()
+                    }, cancelToken);
                     list.Add(new GetPropertyStationLetterOutput
                     {
                         Id = item.Id.ToString(),
@@ -235,7 +241,8 @@ namespace GuoGuoCommunity.API.Controllers
                         Summary = item.Summary,
                         StreetOfficeName = item.StreetOfficeName,
                         ReleaseTime = item.CreateOperationTime.Value,
-                        CreateUserName = userEntity?.Name
+                        CreateUserName = userEntity?.Name,
+                        IsRead = stationLetterBrowseRecordList.Any()
                     });
                 }
                 return new ApiResult<GetAllPropertyStationLetterOutput>(APIResultCode.Success, new GetAllPropertyStationLetterOutput
@@ -279,7 +286,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var entity = await _stationLetterRepository.GetAsync(input.Id, cancelToken);
                 await _stationLetterBrowseRecordRepository.AddAsync(new StationLetterBrowseRecordDto
                 {
-                     StationLetterId= entity.Id.ToString(),
+                    StationLetterId = entity.Id.ToString(),
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
                 });

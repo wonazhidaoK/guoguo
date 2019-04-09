@@ -69,7 +69,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     Reason = dto.Reason,
                     StructureId = dto.StructureId,
-                    StructureName = dto.StructureName,
+                    StructureName = vipOwnerStructure.Name,
                     UserId = dto.UserId,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
@@ -112,9 +112,12 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<List<VipOwnerApplicationRecord>> GetAllAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default)
+        public async Task<List<VipOwnerApplicationRecord>> GetAllAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VipOwnerApplicationRecords.Where(x => x.IsInvalid == false && x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
+            }
         }
 
         public async Task<List<VipOwnerApplicationRecord>> GetAllForSmallDistrictIdAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default)

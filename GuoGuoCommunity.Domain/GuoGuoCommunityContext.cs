@@ -190,21 +190,26 @@ namespace GuoGuoCommunity.Domain
         /// <summary>
         /// 投诉
         /// </summary>
-        public DbSet<Complaint>  Complaints { get; set; }
+        public DbSet<Complaint> Complaints { get; set; }
 
         /// <summary>
         /// 投诉跟进
         /// </summary>
-        public DbSet<ComplaintFollowUp>  ComplaintFollowUps { get; set; }
+        public DbSet<ComplaintFollowUp> ComplaintFollowUps { get; set; }
 
         /// <summary>
         /// 投诉附件
         /// </summary>
-        public DbSet<ComplaintAnnex>  ComplaintAnnices { get; set; }
+        public DbSet<ComplaintAnnex> ComplaintAnnices { get; set; }
 
         /// <summary>
         /// 投诉状态变更记录
         /// </summary>
-        public DbSet<ComplaintStatusChangeRecording>  StatusChangeRecordings { get; set; }
+        public DbSet<ComplaintStatusChangeRecording> StatusChangeRecordings { get; set; }
+
+        /// <summary>
+        /// 身份证照片读取记录
+        /// </summary>
+        public DbSet<IDCardPhotoRecord> IDCardPhotoRecords { get; set; }
     }
 }

@@ -99,7 +99,7 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 认证时间
         /// </summary>
-        public string CertificationTime { get; set; }
+        public DateTimeOffset? CertificationTime { get; set; }
 
         /// <summary>
         /// 认证结果

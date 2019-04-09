@@ -3,6 +3,8 @@ using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,7 +16,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var entity = db.StationLetterBrowseRecords.Add(new  StationLetterBrowseRecord
+                var entity = db.StationLetterBrowseRecords.Add(new StationLetterBrowseRecord
                 {
                     StationLetterId = dto.StationLetterId,
                     CreateOperationTime = dto.OperationTime,
@@ -40,9 +42,12 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<List<StationLetterBrowseRecord>> GetListAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)
+        public async Task<List<StationLetterBrowseRecord>> GetListAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.StationLetterBrowseRecords.Where(x => x.StationLetterId == dto.StationLetterId && x.CreateOperationUserId == dto.OperationUserId).ToListAsync(token);
+            }
         }
 
         public Task UpdateAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)
