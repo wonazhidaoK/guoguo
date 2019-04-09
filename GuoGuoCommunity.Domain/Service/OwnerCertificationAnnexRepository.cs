@@ -65,7 +65,7 @@ namespace GuoGuoCommunity.Domain.Service
                     var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
                     DirectoryInfo rootDir = Directory.GetParent(Environment.CurrentDirectory);
                     string root = rootDir.Parent.Parent.FullName;
-                    return "D:\\project\\gaojie\\GuoGuoCommunity.API\\" + upload.Domain + "\\"+upload.Directory +"\\" +upload.File;
+                    return  upload.Domain + "\\"+upload.Directory +"\\" +upload.File;
                 }
             }
             catch (Exception)

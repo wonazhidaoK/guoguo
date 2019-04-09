@@ -373,7 +373,7 @@ namespace GuoGuoCommunity.API.Controllers
             //查询附件url
             IOwnerCertificationAnnexRepository ownerCertificationAnnexRepository = new OwnerCertificationAnnexRepository();
             var url = ownerCertificationAnnexRepository.GetPath(annex.ApplicationRecordId);
-            string img_file = url;
+            string img_file = HttpRuntime.AppDomainAppPath.ToString() + url;
 
 
             //如果输入带有inputs, 设置为True，否则设为False
@@ -513,6 +513,14 @@ namespace GuoGuoCommunity.API.Controllers
         public static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
         {
             return true;
+        }
+
+        public string GetPath(string id)
+        {
+            DirectoryInfo rootDir = Directory.GetParent(Environment.CurrentDirectory);
+            string root = rootDir.Parent.Parent.FullName;
+            string a = HttpRuntime.AppDomainAppPath.ToString();
+            return a;// _ownerCertificationAnnexRepository.GetPath(id);
         }
     }
 }
