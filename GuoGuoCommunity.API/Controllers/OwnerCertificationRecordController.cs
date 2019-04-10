@@ -323,40 +323,56 @@ namespace GuoGuoCommunity.API.Controllers
         /// 这个是用来发送消息的静态方法
         /// </summary>
         /// <param name="annex"></param>
-        /// <param name="message"></param>
         public static void Send(OwnerCertificationAnnex annex)
         {
             /*
-             * 调用阿里云
-             * 根据返回结果查询是否符合认证数据
+             * 查询认证记录
              */
-            //EventLog.WriteEntry("EventSystem", string.Format("这里要处理一个图像识别任务:{0},时间为:{1}", message, DateTime.Now));
-            var entity = PostALiYun(annex);
-            JsonClass json = JsonConvert.DeserializeObject<JsonClass>(entity.Message);
-
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
             var ownerCertificationRecordEntity = ownerCertificationRecordRepository.GetAsync(annex.ApplicationRecordId).Result;
-            IOwnerRepository ownerRepository = new OwnerRepository();
-            var owner = ownerRepository.GetListAsync(new OwnerDto { IndustryId = ownerCertificationRecordEntity.IndustryId }).Result.Where(x => x.IDCard == json.num).FirstOrDefault();
             OwnerCertificationRecordDto dto = new OwnerCertificationRecordDto
             {
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = "system",
                 Id = ownerCertificationRecordEntity.Id.ToString()
             };
-            if (owner != null)
+            try
             {
-                dto.CertificationStatusValue = OwnerCertification.Success.Value;
-                dto.CertificationStatusName = OwnerCertification.Success.Name;
-                dto.OwnerId = owner.Id.ToString();
-                dto.OwnerName = owner.Name.ToString();
+                /*
+                 * 调用阿里云
+                 * 根据返回结果查询是否符合认证数据
+                 */
+                //EventLog.WriteEntry("EventSystem", string.Format("这里要处理一个图像识别任务:{0},时间为:{1}", message, DateTime.Now));
+                var entity = PostALiYun(annex);
+                JsonClass json = JsonConvert.DeserializeObject<JsonClass>(entity.Message);
+
+
+                IOwnerRepository ownerRepository = new OwnerRepository();
+                var owner = ownerRepository.GetListAsync(new OwnerDto { IndustryId = ownerCertificationRecordEntity.IndustryId }).Result.Where(x => x.IDCard == json.Num).FirstOrDefault();
+
+                if (owner != null)
+                {
+                    dto.CertificationStatusValue = OwnerCertification.Success.Value;
+                    dto.CertificationStatusName = OwnerCertification.Success.Name;
+                    dto.OwnerId = owner.Id.ToString();
+                    dto.OwnerName = owner.Name.ToString();
+                    dto.CertificationResult = "认证通过";
+                }
+                else
+                {
+                    dto.CertificationStatusValue = OwnerCertification.Failure.Value;
+                    dto.CertificationStatusName = OwnerCertification.Failure.Name;
+                    dto.CertificationResult = "未查询到相关业主信息";
+                    //dto.OwnerId = owner.Id.ToString();
+                    //dto.OwnerName = owner.Name.ToString();
+                }
+
             }
-            else
+            catch (Exception e)
             {
                 dto.CertificationStatusValue = OwnerCertification.Failure.Value;
                 dto.CertificationStatusName = OwnerCertification.Failure.Name;
-                //dto.OwnerId = owner.Id.ToString();
-                //dto.OwnerName = owner.Name.ToString();
+                dto.CertificationResult = e.Message;
             }
             ownerCertificationRecordRepository.UpdateAsync(dto);
         }
@@ -372,7 +388,7 @@ namespace GuoGuoCommunity.API.Controllers
             string appcode = ALiYunApiAppCode;
             //查询附件url
             IOwnerCertificationAnnexRepository ownerCertificationAnnexRepository = new OwnerCertificationAnnexRepository();
-            var url = ownerCertificationAnnexRepository.GetPath(annex.ApplicationRecordId);
+            var url = ownerCertificationAnnexRepository.GetPath(annex.Id.ToString());
             string img_file = HttpRuntime.AppDomainAppPath.ToString() + url;
 
 
@@ -491,36 +507,78 @@ namespace GuoGuoCommunity.API.Controllers
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public class JsonClass
         {
-            public string address { get; set; }
-            public string config_str { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Address { get; set; }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Config_str { get; set; }
             //public string face_rect { get; set; }
             //public string face_rect_vertices { get; set; }
 
-            public string name { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Name { get; set; }
 
-            public string nationality { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Nationality { get; set; }
 
-            public string num { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Num { get; set; }
 
-            public string sex { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Sex { get; set; }
 
-            public string birth { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Birth { get; set; }
 
-            public string success { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Success { get; set; }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="certificate"></param>
+        /// <param name="chain"></param>
+        /// <param name="errors"></param>
+        /// <returns></returns>
         public static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
         {
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public string GetPath(string id)
         {
             DirectoryInfo rootDir = Directory.GetParent(Environment.CurrentDirectory);
             string root = rootDir.Parent.Parent.FullName;
             string a = HttpRuntime.AppDomainAppPath.ToString();
-            return a;// _ownerCertificationAnnexRepository.GetPath(id);
+            return HttpRuntime.AppDomainAppPath.ToString();// _ownerCertificationAnnexRepository.GetPath(id);
         }
     }
 }

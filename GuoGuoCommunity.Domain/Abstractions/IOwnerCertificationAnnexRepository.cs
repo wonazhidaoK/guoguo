@@ -21,6 +21,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<List<OwnerCertificationAnnex>> GetListAsync(OwnerCertificationAnnexDto dto, CancellationToken token = default);
 
         string GetUrl(string id);
+
         string GetPath(string id);
     }
 }

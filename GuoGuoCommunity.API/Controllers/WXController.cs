@@ -197,17 +197,18 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-                var accessToken = AccessTokenContainer.GetAccessToken(WXController.AppId);
+                var accessToken = AccessTokenContainer.GetAccessToken(AppId);
                 //更换成你需要的模板消息ID
-                string templateId = "eTflBDVcaZzGtjEbXvHzkQq--Rfnc12-VT4iNMjjlf0";//ConfigurationManager.AppSettings["WXTemplate_EmployeeRegisterRemind"].ToString();
+                string templateId = "AXA-AqlSepXjKzSldchlUXUFtCaVE9cJaX4pMkuhJ-I";//ConfigurationManager.AppSettings["WXTemplate_EmployeeRegisterRemind"].ToString();
                                                                                   //更换成对应的模板消息格式
                 var templateData = new
                 {
                     first = new TemplateDataItem("门店员工注册通知"),
                     //  account = new TemplateDataItem(wxNickName),
-                    time = new TemplateDataItem(DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
-                    type = new TemplateDataItem("系统通知"),
-                    remark = new TemplateDataItem(">>点击完成注册<<", "#FF0000")
+                    keyword1 = new TemplateDataItem(DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
+                    keyword2 = new TemplateDataItem("系统通知"),
+                    keyword3 = new TemplateDataItem(">>点击完成注册<<", "#FF0000")
+
                 };
 
                 var miniProgram = new TempleteModel_MiniProgram()

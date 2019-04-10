@@ -57,7 +57,11 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 using (var db = new GuoGuoCommunityContext())
                 {
-                    var entity = db.OwnerCertificationAnnices.Where(x => x.ApplicationRecordId == id).FirstOrDefault();
+                    if (!Guid.TryParse(id, out var uid))
+                    {
+                        throw new NotImplementedException("认证附件id信息不正确！");
+                    }
+                    var entity = db.OwnerCertificationAnnices.Where(x => x.Id == uid).FirstOrDefault();
                     if (!Guid.TryParse(entity.AnnexContent, out var annexContent))
                     {
                         throw new NotImplementedException("认证附件id信息不正确！");
