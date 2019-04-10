@@ -60,15 +60,15 @@ namespace GuoGuoCommunity.API.Controllers
         /// <summary>
         /// 令牌
         /// </summary>
-        public static readonly string Token = "zhishiweixin";//与微信公众账号后台的Token设置保持一致，区分大小写。
+        public static readonly string Token = ConfigurationManager.AppSettings["GuoGuoCommunity_Token"];//与微信公众账号后台的Token设置保持一致，区分大小写。
         /// <summary>
         /// AESKey
         /// </summary>
-        public static readonly string EncodingAESKey = "CLL32hmcGhJTqXxRRCcQBsK317p19qFFAUiScZrFOrd";//与微信公众账号后台的EncodingAESKey设置保持一致，区分大小写。
+        public static readonly string EncodingAESKey = ConfigurationManager.AppSettings["GuoGuoCommunity_EncodingAESKey"];//与微信公众账号后台的EncodingAESKey设置保持一致，区分大小写。
         /// <summary>
         /// 微信AppID
         /// </summary>
-        public static readonly string AppId = "wx0bfc9becbe59d710";//与微信公众账号后台的AppId设置保持一致，区分大小写。
+        public static readonly string AppId = ConfigurationManager.AppSettings["GuoGuoCommunity_AppId"];//与微信公众账号后台的AppId设置保持一致，区分大小写。
         /// <summary>
         /// 微信Secret
         /// </summary>
@@ -197,24 +197,24 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-                var accessToken = AccessTokenContainer.GetAccessToken(AppId);
+                //var accessToken = AccessTokenContainer.GetAccessToken(AppId);
                 //更换成你需要的模板消息ID
                 string templateId = "AXA-AqlSepXjKzSldchlUXUFtCaVE9cJaX4pMkuhJ-I";//ConfigurationManager.AppSettings["WXTemplate_EmployeeRegisterRemind"].ToString();
                                                                                   //更换成对应的模板消息格式
                 var templateData = new
                 {
-                    first = new TemplateDataItem("门店员工注册通知"),
+                    first = new TemplateDataItem("用户认证通知"),
                     //  account = new TemplateDataItem(wxNickName),
                     keyword1 = new TemplateDataItem(DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
-                    keyword2 = new TemplateDataItem("系统通知"),
-                    keyword3 = new TemplateDataItem(">>点击完成注册<<", "#FF0000")
-
+                    keyword2 = new TemplateDataItem("888"),
+                    keyword3 = new TemplateDataItem(""),
+                    remark = new TemplateDataItem("详情", "#FF0000")
                 };
 
                 var miniProgram = new TempleteModel_MiniProgram()
                 {
-                    appid = "wx7f36e41455caec1b",//ZhiShiHuLian_WxOpenAppId,
-                                                 //pagepath = "pages/editmyinfo/editmyinfo?id=" + employeeID
+                    appid = GuoGuoCommunity_WxOpenAppId,//ZhiShiHuLian_WxOpenAppId,
+                                                        //pagepath = "pages/editmyinfo/editmyinfo?id=" + employeeID
                 };
 
                 TemplateApi.SendTemplateMessage(AppId, "oTK8q0-mRSd44GbjJeknfz0vLv6I", templateId, null, templateData, miniProgram);

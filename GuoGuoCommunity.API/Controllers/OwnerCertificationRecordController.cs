@@ -7,6 +7,8 @@ using GuoGuoCommunity.Domain.Models.Enum;
 using GuoGuoCommunity.Domain.Service;
 using Hangfire;
 using Newtonsoft.Json;
+using Senparc.Weixin.MP.AdvancedAPIs;
+using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -41,11 +43,22 @@ namespace GuoGuoCommunity.API.Controllers
         /// </summary>
         public static readonly string ALiYunApiAppCode = ConfigurationManager.AppSettings["ALiYunApiAppCode"];
 
+        /// <summary>
+        /// 微信AppID
+        /// </summary>
+        public static readonly string AppId = ConfigurationManager.AppSettings["GuoGuoCommunity_AppId"];//与微信公众账号后台的AppId设置保持一致，区分大小写。
+        /// <summary>
+        /// 小程序AppID
+        /// </summary>
+        public static readonly string GuoGuoCommunity_WxOpenAppId = ConfigurationManager.AppSettings["GuoGuoCommunity_WxOpenAppId"];
+
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private readonly IOwnerCertificationAnnexRepository _ownerCertificationAnnexRepository;
         private readonly IOwnerRepository _ownerRepository;
         private readonly IIndustryRepository _industryRepository;
         private readonly IIDCardPhotoRecordRepository _iDCardPhotoRecordRepository;
+
+
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -323,13 +336,13 @@ namespace GuoGuoCommunity.API.Controllers
         /// 这个是用来发送消息的静态方法
         /// </summary>
         /// <param name="annex"></param>
-        public static void Send(OwnerCertificationAnnex annex)
+        public static async Task Send(OwnerCertificationAnnex annex)
         {
             /*
              * 查询认证记录
              */
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
-            var ownerCertificationRecordEntity = ownerCertificationRecordRepository.GetAsync(annex.ApplicationRecordId).Result;
+            var ownerCertificationRecordEntity = await ownerCertificationRecordRepository.GetAsync(annex.ApplicationRecordId);
             OwnerCertificationRecordDto dto = new OwnerCertificationRecordDto
             {
                 OperationTime = DateTimeOffset.Now,
@@ -346,9 +359,8 @@ namespace GuoGuoCommunity.API.Controllers
                 var entity = PostALiYun(annex);
                 JsonClass json = JsonConvert.DeserializeObject<JsonClass>(entity.Message);
 
-
                 IOwnerRepository ownerRepository = new OwnerRepository();
-                var owner = ownerRepository.GetListAsync(new OwnerDto { IndustryId = ownerCertificationRecordEntity.IndustryId }).Result.Where(x => x.IDCard == json.Num).FirstOrDefault();
+                var owner = (await ownerRepository.GetListAsync(new OwnerDto { IndustryId = ownerCertificationRecordEntity.IndustryId })).Where(x => x.IDCard == json.Num).FirstOrDefault();
 
                 if (owner != null)
                 {
@@ -374,7 +386,18 @@ namespace GuoGuoCommunity.API.Controllers
                 dto.CertificationStatusName = OwnerCertification.Failure.Name;
                 dto.CertificationResult = e.Message;
             }
-            ownerCertificationRecordRepository.UpdateAsync(dto);
+
+            var recordEntity = await ownerCertificationRecordRepository.UpdateAsync(dto);
+            IUserRepository userRepository = new UserRepository();
+            var userEntity = await userRepository.GetForIdAsync(recordEntity.UserId);
+            IWeiXinUserRepository weiXinUserRepository = new WeiXinUserRepository();
+            var weiXinUser = await weiXinUserRepository.GetAsync(userEntity.UnionId);
+            SendEmployeeRegisterRemind(new SendModel
+            {
+                OpenId = weiXinUser.Openid,
+                Status = dto.CertificationStatusName,
+                Message = "认证结束"
+            });
         }
 
         /// <summary>
@@ -579,6 +602,60 @@ namespace GuoGuoCommunity.API.Controllers
             string root = rootDir.Parent.Parent.FullName;
             string a = HttpRuntime.AppDomainAppPath.ToString();
             return HttpRuntime.AppDomainAppPath.ToString();// _ownerCertificationAnnexRepository.GetPath(id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void SendEmployeeRegisterRemind(SendModel sendModel)
+        {
+            try
+            {
+                //更换成你需要的模板消息ID
+                string templateId = "AXA-AqlSepXjKzSldchlUXUFtCaVE9cJaX4pMkuhJ-I";
+                var templateData = new
+                {
+                    first = new TemplateDataItem("用户认证通知"),
+                    keyword1 = new TemplateDataItem(DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
+                    keyword2 = new TemplateDataItem(sendModel.Status),
+                    keyword3 = new TemplateDataItem(sendModel.Message),
+                    remark = new TemplateDataItem("详情", "#FF0000")
+                };
+
+                var miniProgram = new TempleteModel_MiniProgram()
+                {
+                    appid = GuoGuoCommunity_WxOpenAppId,//ZhiShiHuLian_WxOpenAppId,
+                                                        //pagepath = "pages/editmyinfo/editmyinfo?id=" + employeeID
+                };
+
+                TemplateApi.SendTemplateMessage(AppId, sendModel.OpenId, templateId, null, templateData, miniProgram);
+            }
+            catch (Exception e)
+            {
+                throw new NotImplementedException(e.Message + sendModel.OpenId);
+            }
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public class SendModel
+        {
+            /// <summary>
+            /// 认证状态
+            /// </summary>
+            public string Status { get; set; }
+
+            /// <summary>
+            /// 认证
+            /// </summary>
+            public string Message { get; set; }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public string OpenId { get; set; }
         }
     }
 }

@@ -183,11 +183,11 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.UserId == dto.UserId).ToListAsync(token);
+                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.UserId == dto.UserId && x.CertificationStatusValue== OwnerCertification.Success.Value).ToListAsync(token);
             }
         }
 
-        public async Task UpdateAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
+        public async Task<OwnerCertificationRecord> UpdateAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
@@ -210,20 +210,10 @@ namespace GuoGuoCommunity.Domain.Service
                 ownerCertificationRecord.CertificationTime= dto.OperationTime;
                 OnUpdate(db, dto, token);
                 await db.SaveChangesAsync(token);
+                return ownerCertificationRecord;
             }
         }
-
-        private void OnUpdate(GuoGuoCommunityContext db, OwnerCertificationRecordDto dto, CancellationToken token = default)
-        {
-
-        }
-
-        private bool OnDelete(GuoGuoCommunityContext db, OwnerCertificationRecordDto dto, CancellationToken token = default)
-        {
-
-            return false;
-        }
-
+        
         public Task UpdateStatusAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
@@ -258,6 +248,18 @@ namespace GuoGuoCommunity.Domain.Service
                 OnUpdate(db, dto, token);
                 await db.SaveChangesAsync(token);
             }
+        }
+
+        #region 事件
+        private void OnUpdate(GuoGuoCommunityContext db, OwnerCertificationRecordDto dto, CancellationToken token = default)
+        {
+
+        }
+
+        private bool OnDelete(GuoGuoCommunityContext db, OwnerCertificationRecordDto dto, CancellationToken token = default)
+        {
+
+            return false;
         }
 
         public void OnSubscribe(StreetOfficeIncrementer incrementer)
@@ -324,6 +326,8 @@ namespace GuoGuoCommunity.Domain.Service
                 await db.OwnerCertificationRecords.Where(x => x.BuildingUnitId == buildingUnit.Id.ToString()).UpdateAsync(x => new OwnerCertificationRecord {  BuildingUnitName = buildingUnit.UnitName });
             }
         }
+
+        #endregion
 
         public async Task<List<OwnerCertificationRecord>> GetListForSmallDistrictIdAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
         {

@@ -10,7 +10,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
     {
         Task<OwnerCertificationRecord> AddAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
 
-        Task UpdateAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
+        Task<OwnerCertificationRecord> UpdateAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
 
         Task UpdateStatusAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
 
