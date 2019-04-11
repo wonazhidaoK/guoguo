@@ -229,7 +229,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 if (string.IsNullOrWhiteSpace(id))
                 {
-                    throw new NotImplementedException("楼宇Id信息为空！");
+                    throw new NotImplementedException("投诉ID为空！");
                 }
                 var data = await _complaintFollowUpRepository.GetListForComplaintIdAsync(id, cancelToken);
                 List<GetComplaintFollowUpOutput> list = new List<GetComplaintFollowUpOutput>();

@@ -9,12 +9,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 投诉管理
     /// </summary>
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class ComplaintController : ApiController
     {
         private readonly IComplaintRepository _complaintRepository;
@@ -30,18 +32,17 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="complaintAnnexRepository"></param>
         /// <param name="complaintFollowUpRepository"></param>
         /// <param name="complaintStatusChangeRecordingRepository"></param>
-        /// <param name="tokenManager"></param>
+   
         public ComplaintController(IComplaintRepository complaintRepository,
             IComplaintAnnexRepository complaintAnnexRepository,
             IComplaintFollowUpRepository complaintFollowUpRepository,
-            IComplaintStatusChangeRecordingRepository complaintStatusChangeRecordingRepository,
-            TokenManager tokenManager)
+            IComplaintStatusChangeRecordingRepository complaintStatusChangeRecordingRepository)
         {
             _complaintRepository = complaintRepository;
             _complaintAnnexRepository = complaintAnnexRepository;
             _complaintFollowUpRepository = complaintFollowUpRepository;
             _complaintStatusChangeRecordingRepository = complaintStatusChangeRecordingRepository;
-            _tokenManager = tokenManager;
+            _tokenManager = new TokenManager();
         }
 
         /* 新增投诉需要提供接口
@@ -120,16 +121,7 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationDepartmentValue = Department.YeZhu.Name
                 }, cancelToken);
 
-                if (!string.IsNullOrWhiteSpace(input.AnnexId))
-                {
-                    await _complaintAnnexRepository.AddAsync(new ComplaintAnnexDto
-                    {
-                        AnnexContent = input.AnnexId,
-                        ComplaintId = entity.Id.ToString(),
-                        OperationTime = DateTimeOffset.Now,
-                        OperationUserId = user.Id.ToString()
-                    }, cancelToken);
-                }
+                
                 var complaintFollowUpEntity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
                 {
                     ComplaintId = entity.Id.ToString(),
@@ -141,6 +133,18 @@ namespace GuoGuoCommunity.API.Controllers
                     OwnerCertificationId = input.OwnerCertificationId
                 }, cancelToken);
 
+                if (!string.IsNullOrWhiteSpace(input.AnnexId))
+                {
+                    await _complaintAnnexRepository.AddAsync(new ComplaintAnnexDto
+                    {
+                        AnnexContent = input.AnnexId,
+                        ComplaintId = entity.Id.ToString(),
+                        OperationTime = DateTimeOffset.Now,
+                        OperationUserId = user.Id.ToString(),
+                        ComplaintFollowUpId = complaintFollowUpEntity.Id.ToString()
+                    }, cancelToken);
+                }
+
                 await _complaintStatusChangeRecordingRepository.AddAsync(new ComplaintStatusChangeRecordingDto
                 {
                     ComplaintFollowUpId = complaintFollowUpEntity.Id.ToString(),
@@ -149,7 +153,7 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationUserId = user.Id.ToString(),
                     OperationTime = DateTimeOffset.Now,
                 }, cancelToken);
-                return new ApiResult<AddComplaintOutput>(APIResultCode.Success, new AddComplaintOutput { Id = entity.Id.ToString() });
+                return new ApiResult<AddComplaintOutput>(APIResultCode.Success, new AddComplaintOutput { Id = entity.Id.ToString(),CreateTime = entity.CreateOperationTime.Value, StatusValue = ComplaintStatus.NotAccepted.Value });
             }
             catch (Exception e)
             {
@@ -257,7 +261,8 @@ namespace GuoGuoCommunity.API.Controllers
                         Description = x.Description,
                         StatusName = x.StatusName,
                         StatusValue = x.StatusValue,
-                        Url = _complaintAnnexRepository.GetUrl(x.Id.ToString())
+                        Url = _complaintAnnexRepository.GetUrl(x.Id.ToString()),
+                        OwnerCertificationId = x.OwnerCertificationId
                     }).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
@@ -425,8 +430,8 @@ namespace GuoGuoCommunity.API.Controllers
                 var complaintFollowUpEntity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
                 {
                     ComplaintId = entity.Id.ToString(),
-                    OperationDepartmentName = Department.YeZhu.Name,
-                    OperationDepartmentValue = Department.YeZhu.Name,
+                    OperationDepartmentName = Department.YeZhuWeiYuanHui.Name,
+                    OperationDepartmentValue = Department.YeZhuWeiYuanHui.Value,
                     Description = "已通过小程序发起了投诉，请尽快处理",
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString(),
@@ -441,7 +446,7 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationUserId = user.Id.ToString(),
                     OperationTime = DateTimeOffset.Now,
                 }, cancelToken);
-                return new ApiResult<AddComplaintOutput>(APIResultCode.Success, new AddComplaintOutput { Id = entity.Id.ToString() });
+                return new ApiResult<AddComplaintOutput>(APIResultCode.Success, new AddComplaintOutput { Id = entity.Id.ToString() , CreateTime = entity.CreateOperationTime.Value , StatusValue = ComplaintStatus.NotAccepted.Value });
             }
             catch (Exception e)
             {

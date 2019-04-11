@@ -21,6 +21,7 @@ namespace GuoGuoCommunity.Domain.Service
                     AnnexContent = dto.AnnexContent,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
+                    ComplaintFollowUpId = dto.ComplaintFollowUpId
                 });
                 await db.SaveChangesAsync(token);
                 return entity;

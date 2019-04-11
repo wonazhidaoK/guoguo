@@ -35,5 +35,10 @@ namespace GuoGuoCommunity.API.Models
         /// 附件url
         /// </summary>
         public string Url { get; set; }
+
+        /// <summary>
+        /// 业主认证ID
+        /// </summary>
+        public string OwnerCertificationId { get; set; }
     }
 }
