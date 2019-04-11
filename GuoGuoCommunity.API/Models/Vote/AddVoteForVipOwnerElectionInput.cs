@@ -28,10 +28,10 @@ namespace GuoGuoCommunity.API.Models
         /// </summary>
         public string SmallDistrictId { get; set; }
 
-        /// <summary>
-        /// 人员集合(业委会成员申请记录Id)
-        /// </summary>
-        public List<string> List { get; set; }
+        ///// <summary>
+        ///// 人员集合(业委会成员申请记录Id)
+        ///// </summary>
+        //public List<string> List { get; set; }
 
         /// <summary>
         /// 附件Id

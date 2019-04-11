@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace GuoGuoCommunity.API.Models
 {
@@ -10,49 +8,50 @@ namespace GuoGuoCommunity.API.Models
     /// </summary>
     public class GetComplaintFollowUpOutput
     {
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        //public string Id { get; set; }
-
-        ///// <summary>
-        ///// 投诉Id
-        ///// </summary>
-        //public string ComplaintId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<GetComplaintFollowUpListOutput>  List { get; set; }
 
         /// <summary>
-        /// 描述
+        /// 过期时间(申诉截至时间)
         /// </summary>
-        public string Description { get; set; }
+        public DateTimeOffset ExpiredTime { get; set; }
 
         /// <summary>
-        /// 操作人部门名称
+        /// 申诉开始日期
         /// </summary>
-        public string OperationDepartmentName { get; set; }
-
-        ///// <summary>
-        ///// 操作人部门值
-        ///// </summary>
-        //public string OperationDepartmentValue { get; set; }
+        public DateTimeOffset ProcessUpTime { get; set; }
 
         /// <summary>
-        /// 操作人姓名
+        /// 处理期限
         /// </summary>
-        public string OperationName { get; set; }
-
-        ///// <summary>
-        ///// 业主认证Id
-        ///// </summary>
-        //public string OwnerCertificationId { get; set; }
+        public int ProcessingPeriod { get; set; }
 
         /// <summary>
-        /// 是否是申诉操作
+        /// 申诉期限
         /// </summary>
-        public string Aappeal { get; set; }
+        public int ComplaintPeriod { get; set; }
 
         /// <summary>
-        /// 附件Url
+        /// 状态名称
         /// </summary>
-        public string Url { get; set; }
+        public string StatusName { get; set; }
+
+        /// <summary>
+        /// 状态值
+        /// </summary>
+        public string StatusValue { get; set; }
+
+        /// <summary>
+        /// 部门名称
+        /// </summary>
+        public string DepartmentName { get; set; }
+
+        /// <summary>
+        /// 部门值
+        /// </summary>
+        public string DepartmentValue { get; set; }
+
     }
 }

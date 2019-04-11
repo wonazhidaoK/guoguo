@@ -35,6 +35,11 @@ namespace GuoGuoCommunity.Domain.Dto
         public string OwnerCertificationId { get; set; }
 
         /// <summary>
+        /// 是否是申诉操作
+        /// </summary>
+        public string Aappeal { get; set; }
+        
+        /// <summary>
         /// 操作人Id
         /// </summary>
         public string OperationUserId { get; set; }

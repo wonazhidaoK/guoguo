@@ -3,8 +3,14 @@ using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
+using GuoGuoCommunity.Domain.Service;
+using Hangfire;
+using Newtonsoft.Json;
+using Senparc.Weixin.MP.AdvancedAPIs;
+using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,10 +26,21 @@ namespace GuoGuoCommunity.API.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class AnnouncementController : ApiController
     {
+        /// <summary>
+        /// 小程序AppID
+        /// </summary>
+        public static readonly string GuoGuoCommunity_WxOpenAppId = ConfigurationManager.AppSettings["GuoGuoCommunity_WxOpenAppId"];
+
+        /// <summary>
+        /// 微信AppID
+        /// </summary>
+        public static readonly string AppId = ConfigurationManager.AppSettings["GuoGuoCommunity_AppId"];//与微信公众账号后台的AppId设置保持一致，区分大小写。
+
         private readonly IAnnouncementRepository _announcementRepository;
         private readonly IAnnouncementAnnexRepository _announcementAnnexRepository;
         private readonly IUploadRepository _uploadRepository;
         private readonly ISmallDistrictRepository _smallDistrictRepository;
+        private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -32,16 +49,19 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="announcementRepository"></param>
         /// <param name="announcementAnnexRepository"></param>
         /// <param name="uploadRepository"></param>
+        /// <param name="ownerCertificationRecordRepository"></param>
         /// <param name="smallDistrictRepository"></param>
         public AnnouncementController(IAnnouncementRepository announcementRepository,
             IAnnouncementAnnexRepository announcementAnnexRepository,
             IUploadRepository uploadRepository,
+            IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
             ISmallDistrictRepository smallDistrictRepository)
         {
             _announcementRepository = announcementRepository;
             _announcementAnnexRepository = announcementAnnexRepository;
             _uploadRepository = uploadRepository;
             _smallDistrictRepository = smallDistrictRepository;
+            _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -133,6 +153,19 @@ namespace GuoGuoCommunity.API.Controllers
                     }, cancelToken);
                 }
 
+                /*
+                 * 微信消息推送
+                 */
+                var url = _announcementAnnexRepository.GetUrl(entity.Id.ToString());
+                BackgroundJob.Enqueue(() => SendEmployeeRegisterRemind(new SendModel
+                {
+                    Content = entity.Content,
+                    Id = entity.Id.ToString(),
+                    ReleaseTime = entity.CreateOperationTime.Value,
+                    Summary = entity.Summary,
+                    Title = entity.Title,
+                    Url = url
+                }, entity.SmallDistrictArray));
                 return new ApiResult<AddVipOwnerAnnouncementOutput>(APIResultCode.Success, new AddVipOwnerAnnouncementOutput { Id = entity.Id.ToString() });
             }
             catch (Exception e)
@@ -208,6 +241,19 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);
 
+                /*
+                 * 微信消息推送
+                 */
+                var url = _announcementAnnexRepository.GetUrl(entity.Id.ToString());
+                BackgroundJob.Enqueue(() => SendEmployeeRegisterRemind(new SendModel
+                {
+                    Content = entity.Content,
+                    Id = entity.Id.ToString(),
+                    ReleaseTime = entity.CreateOperationTime.Value,
+                    Summary = entity.Summary,
+                    Title = entity.Title,
+                    Url = url
+                }, entity.SmallDistrictArray));
                 return new ApiResult<AddPropertyAnnouncementOutput>(APIResultCode.Success, new AddPropertyAnnouncementOutput { Id = entity.Id.ToString() });
             }
             catch (Exception e)
@@ -285,7 +331,23 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);
-
+                
+                /*
+                 * 微信消息推送
+                 */
+                foreach (var item in input.SmallDistricts)
+                {
+                    var url = _announcementAnnexRepository.GetUrl(entity.Id.ToString());
+                    BackgroundJob.Enqueue(() => SendEmployeeRegisterRemind(new SendModel
+                    {
+                        Content = entity.Content,
+                        Id = entity.Id.ToString(),
+                        ReleaseTime = entity.CreateOperationTime.Value,
+                        Summary = entity.Summary,
+                        Title = entity.Title,
+                        Url = url
+                    }, item));
+                }
                 return new ApiResult<AddStreetOfficeAnnouncementOutput>(APIResultCode.Success, new AddStreetOfficeAnnouncementOutput { Id = entity.Id.ToString() });
             }
             catch (Exception e)
@@ -734,5 +796,91 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         #endregion
+
+        /// <summary>
+        /// 发送推送消息
+        /// </summary>
+        /// <param name="sendModel"></param>
+        /// <param name="smallDistrict"></param>
+        public static async Task SendEmployeeRegisterRemind(SendModel sendModel, string smallDistrict)
+        {
+            IOwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
+            IUserRepository userRepository = new UserRepository();
+            var userList = (await ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto
+            {
+                SmallDistrictId = smallDistrict
+            })).Select(x => x.UserId).Distinct().ToList();
+            foreach (var item in userList)
+            {
+                var user = await userRepository.GetForIdAsync(item);
+                IWeiXinUserRepository weiXinUserRepository = new WeiXinUserRepository();
+                var weiXinUser = await weiXinUserRepository.GetAsync(user.UnionId);
+                try
+                {
+
+
+                    //更换成你需要的模板消息ID
+                    string templateId = "AXA-AqlSepXjKzSldchlUXUFtCaVE9cJaX4pMkuhJ-I";
+                    var templateData = new
+                    {
+                        first = new TemplateDataItem("公告通知"),
+                        keyword1 = new TemplateDataItem(DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
+                        keyword2 = new TemplateDataItem(sendModel.Title),
+                        keyword3 = new TemplateDataItem(sendModel.Summary),
+                        remark = new TemplateDataItem("详情", "#FF0000")
+                    };
+
+                    var miniProgram = new TempleteModel_MiniProgram()
+                    {
+                        appid = GuoGuoCommunity_WxOpenAppId,//ZhiShiHuLian_WxOpenAppId,
+                        pagepath = "pages/noticeDetail/noticeDetail?con=" + JsonConvert.SerializeObject(sendModel)                   //pagepath = "pages/editmyinfo/editmyinfo?id=" + employeeID
+                    };
+
+                    TemplateApi.SendTemplateMessage(AppId, weiXinUser.Openid, templateId, null, templateData, miniProgram);
+                }
+                catch (Exception e)
+                {
+                    throw new NotImplementedException(e.Message + weiXinUser.Openid);
+                }
+            }
+
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public class SendModel
+        {
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Id { get; set; }
+
+            /// <summary>
+            /// 标题
+            /// </summary>
+            public string Title { get; set; }
+
+            /// <summary>
+            /// 摘要
+            /// </summary>
+            public string Summary { get; set; }
+
+            /// <summary>
+            /// 内容
+            /// </summary>
+            public string Content { get; set; }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public DateTimeOffset ReleaseTime { get; set; }
+
+            /// <summary>
+            /// 附件url
+            /// </summary>
+            public string Url { get; set; }
+        }
     }
 }

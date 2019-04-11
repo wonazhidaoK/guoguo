@@ -47,6 +47,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// 微信AppID
         /// </summary>
         public static readonly string AppId = ConfigurationManager.AppSettings["GuoGuoCommunity_AppId"];//与微信公众账号后台的AppId设置保持一致，区分大小写。
+
         /// <summary>
         /// 小程序AppID
         /// </summary>
@@ -356,7 +357,7 @@ namespace GuoGuoCommunity.API.Controllers
                  * 根据返回结果查询是否符合认证数据
                  */
                 //EventLog.WriteEntry("EventSystem", string.Format("这里要处理一个图像识别任务:{0},时间为:{1}", message, DateTime.Now));
-                var entity = PostALiYun(annex);
+                var entity =await PostALiYun(annex);
                 JsonClass json = JsonConvert.DeserializeObject<JsonClass>(entity.Message);
 
                 IOwnerRepository ownerRepository = new OwnerRepository();
@@ -405,7 +406,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// </summary>
         /// <param name="annex"></param>
         /// <returns></returns>
-        public static IDCardPhotoRecord PostALiYun(OwnerCertificationAnnex annex)
+        public async static Task<IDCardPhotoRecord> PostALiYun(OwnerCertificationAnnex annex)
         {
             string aLiYunApiUrl = ALiYunApiUrl;
             string appcode = ALiYunApiAppCode;
@@ -516,7 +517,7 @@ namespace GuoGuoCommunity.API.Controllers
                     //List<JsonClass> jc = js.Deserialize<List<JsonClass>>(json);
                 }
                 IIDCardPhotoRecordRepository iDCardPhotoRecordRepository = new IDCardPhotoRecordRepository();
-                var entity = iDCardPhotoRecordRepository.AddAsync(new IDCardPhotoRecordDto
+                var entity =await iDCardPhotoRecordRepository.AddAsync(new IDCardPhotoRecordDto
                 {
                     ApplicationRecordId = annex.ApplicationRecordId,
                     OwnerCertificationAnnexId = annex.Id.ToString(),
@@ -525,7 +526,7 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationUserId = "system",
                     PhotoBase64 = base64,
                 });
-                return entity.Result;
+                return entity;
             }
 
         }

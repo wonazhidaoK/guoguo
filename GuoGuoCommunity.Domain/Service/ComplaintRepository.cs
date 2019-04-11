@@ -144,7 +144,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Complaints.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.JieDaoBan.Value && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
+                var list = await db.Complaints.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.JieDaoBan.Value && x.StreetOfficeId == dto.StreetOfficeId).ToListAsync(token);
                 //TODO 条件筛选 1.状态值 2时间段
                 list = list.Where(x => x.CreateOperationTime >= dto.StartTime && x.CreateOperationTime <= dto.EndTime).ToList();
                 if (!string.IsNullOrWhiteSpace(dto.StatusValue))
@@ -163,7 +163,16 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.Complaints.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.YeZhuWeiYuanHui.Value && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
+                if (!Guid.TryParse(dto.OwnerCertificationId, out var ownerCertificationId))
+                {
+                    throw new NotImplementedException("业主认证Id不正确！");
+                }
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (ownerCertificationRecord == null)
+                {
+                    throw new NotImplementedException("业主认证信息不存在！");
+                }
+                return await db.Complaints.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.YeZhuWeiYuanHui.Value && x.SmallDistrictId == ownerCertificationRecord.SmallDistrictId).ToListAsync(token);
             }
         }
 
@@ -192,7 +201,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("投诉id信息不正确");
                 }
-                var entity = await db.Complaints.Where(x => x.IsDeleted == false && x.Id == guid && x.OwnerCertificationId == dto.OwnerCertificationId).FirstOrDefaultAsync(token);
+                var entity = await db.Complaints.Where(x => x.IsDeleted == false && x.Id == guid ).FirstOrDefaultAsync(token);
                 if (entity == null)
                 {
                     throw new NotImplementedException("投诉信息不存在");

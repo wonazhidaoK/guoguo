@@ -58,7 +58,7 @@ namespace GuoGuoCommunity.Domain.Models
         public DateTimeOffset? ExpiredTime { get; set; }
 
         /// <summary>
-        ///处理截至时间
+        /// 处理截至时间
         /// </summary>
         public DateTimeOffset? ProcessUpTime { get; set; }
 

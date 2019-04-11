@@ -37,7 +37,8 @@ namespace GuoGuoCommunity.Domain.Service
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
                     LastOperationUserId = dto.OperationUserId,
-                    OwnerCertificationId = dto.OwnerCertificationId
+                    OwnerCertificationId = dto.OwnerCertificationId,
+                    Aappeal=dto.Aappeal
                 });
                 await db.SaveChangesAsync(token);
                 return entity;

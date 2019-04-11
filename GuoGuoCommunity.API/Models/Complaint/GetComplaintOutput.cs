@@ -40,5 +40,15 @@ namespace GuoGuoCommunity.API.Models
         /// 业主认证ID
         /// </summary>
         public string OwnerCertificationId { get; set; }
+
+        /// <summary>
+        /// 操作人部门名称
+        /// </summary>
+        public string OperationDepartmentName { get; set; }
+
+        /// <summary>
+        /// 操作人姓名
+        /// </summary>
+        public string OperationName { get; set; }
     }
 }
