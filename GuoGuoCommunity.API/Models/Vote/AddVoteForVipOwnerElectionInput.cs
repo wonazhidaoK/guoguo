@@ -9,6 +9,11 @@ namespace GuoGuoCommunity.API.Models
     public class AddVoteForVipOwnerElectionInput
     {
         /// <summary>
+        /// 小区
+        /// </summary>
+        public string SmallDistrictId { get; set; }
+
+        /// <summary>
         /// 业委会Id
         /// </summary>
         public string VipOwnerId { get; set; }
@@ -22,11 +27,6 @@ namespace GuoGuoCommunity.API.Models
         /// 结束时间
         /// </summary>
         public DateTimeOffset Deadline { get; set; }
-
-        /// <summary>
-        /// 小区
-        /// </summary>
-        public string SmallDistrictId { get; set; }
 
         ///// <summary>
         ///// 人员集合(业委会成员申请记录Id)

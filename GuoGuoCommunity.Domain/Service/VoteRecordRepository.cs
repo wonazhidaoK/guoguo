@@ -56,9 +56,20 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<List<VoteRecord>> GetListAsync(VoteRecordDto dto, CancellationToken token = default)
+        public async Task<VoteRecord> GetForOwnerCertificationIdAsync(VoteRecordDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VoteRecords.Where(x => x.IsDeleted == false && x.VoteId == dto.VoteId&&x.OwnerCertificationId==dto.OwnerCertificationId).FirstOrDefaultAsync(token);
+            }
+        }
+
+        public async Task<List<VoteRecord>> GetListAsync(VoteRecordDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VoteRecords.Where(x => x.IsDeleted == false && x.VoteId == dto.VoteId).ToListAsync(token);
+            }
         }
 
         public Task UpdateAsync(VoteRecordDto dto, CancellationToken token = default)

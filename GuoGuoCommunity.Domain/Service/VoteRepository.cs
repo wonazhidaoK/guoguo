@@ -18,7 +18,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                if (!Guid.TryParse(dto.SmallDistrictId, out var smallDistrictId))
+                if (!Guid.TryParse(dto.SmallDistrictArray, out var smallDistrictId))
                 {
                     throw new NotImplementedException("小区信息不正确！");
                 }
@@ -162,7 +162,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Votes.Where(x => x.IsDeleted == false && x.StreetOfficeId == dto.StreetOfficeId&&x.DepartmentValue==dto.DepartmentValue).ToListAsync(token);
+                var list = await db.Votes.Where(x => x.IsDeleted == false && x.StreetOfficeId == dto.StreetOfficeId && x.DepartmentValue == dto.DepartmentValue).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.SmallDistrictArray))
                 {
                     list = list.Where(x => x.SmallDistrictArray.Split(',').Contains(dto.SmallDistrictArray)).ToList();
@@ -226,9 +226,14 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public Task<List<Vote>> GetListAsync(VoteDto dto, CancellationToken token = default)
+        public async Task<List<Vote>> GetListAsync(VoteDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.Votes.Where(x => x.IsDeleted == false && x.StatusValue == VoteStatus.Processing.Value && x.Deadline < dto.OperationTime).ToListAsync(token);
+
+                return list;
+            }
         }
 
         public async Task<Vote> GetAsync(string id, CancellationToken token = default)

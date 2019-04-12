@@ -18,6 +18,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<VoteRecord> GetAsync(string id, CancellationToken token = default);
 
+        Task<VoteRecord> GetForOwnerCertificationIdAsync(VoteRecordDto dto, CancellationToken token = default);
+
         Task<List<VoteRecord>> GetListAsync(VoteRecordDto dto, CancellationToken token = default);
     }
 }

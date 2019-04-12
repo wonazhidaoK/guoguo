@@ -87,6 +87,11 @@ namespace GuoGuoCommunity.API.Models
         /// 小区范围名称
         /// </summary>
         public string SmallDistrictArrayName { get; set; }
+
+        /// <summary>
+        /// 投票反馈
+        /// </summary>
+        public string Feedback { get; set; }
     }
     /// <summary>
     /// 投票问题

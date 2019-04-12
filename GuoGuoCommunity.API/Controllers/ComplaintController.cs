@@ -96,10 +96,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("投诉描述信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.AnnexId))
-                {
-                    throw new NotImplementedException("投诉附件信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.AnnexId))
+                //{
+                //    throw new NotImplementedException("投诉附件信息为空！");
+                //}
 
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
@@ -269,7 +269,11 @@ namespace GuoGuoCommunity.API.Controllers
                         Url = _complaintAnnexRepository.GetUrl(x.Id.ToString()),
                         OwnerCertificationId = x.OwnerCertificationId
                     }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    TotalCount = data.Count(),
+                    CompletedCount = data.Where(x => x.StatusValue == ComplaintStatus.Completed.Value).ToList().Count(),
+                    FinishedCount = data.Where(x => x.StatusValue == ComplaintStatus.Finished.Value).ToList().Count(),
+                    NotAcceptedCount = data.Where(x => x.StatusValue == ComplaintStatus.NotAccepted.Value).ToList().Count(),
+                    ProcessingCount = data.Where(x => x.StatusValue == ComplaintStatus.Processing.Value).ToList().Count()
                 });
             }
             catch (Exception e)
@@ -309,7 +313,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 if (complaintEntity.StatusValue != ComplaintStatus.NotAccepted.Value)
                 {
-                    return new ApiResult(APIResultCode.Success);
+                    return new ApiResult(APIResultCode.Success_NoB, "投诉以进行处理,不能删除！可选择关闭投诉");
                 }
 
                 await _complaintRepository.DeleteAsync(new ComplaintDto
@@ -538,19 +542,19 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("complaint/getAllForVipOwner")]
-        public async Task<ApiResult<GetAllComplaintOutput>> GetAllForVipOwner([FromUri]GetAllComplaintInput input, CancellationToken cancelToken)
+        public async Task<ApiResult<GetAllComplaintForVipOwnerOutput>> GetAllForVipOwner([FromUri]GetAllComplaintInput input, CancellationToken cancelToken)
         {
             try
             {
                 var token = HttpContext.Current.Request.Headers["Authorization"];
                 if (token == null)
                 {
-                    return new ApiResult<GetAllComplaintOutput>(APIResultCode.Unknown, new GetAllComplaintOutput { }, APIResultMessage.TokenNull);
+                    return new ApiResult<GetAllComplaintForVipOwnerOutput>(APIResultCode.Unknown, new GetAllComplaintForVipOwnerOutput { }, APIResultMessage.TokenNull);
                 }
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
-                    return new ApiResult<GetAllComplaintOutput>(APIResultCode.Unknown, new GetAllComplaintOutput { }, APIResultMessage.TokenError);
+                    return new ApiResult<GetAllComplaintForVipOwnerOutput>(APIResultCode.Unknown, new GetAllComplaintForVipOwnerOutput { }, APIResultMessage.TokenError);
                 }
 
                 if (input.PageIndex < 1)
@@ -567,7 +571,7 @@ namespace GuoGuoCommunity.API.Controllers
                     OwnerCertificationId = input.OwnerCertificationId
                 }, cancelToken);
 
-                return new ApiResult<GetAllComplaintOutput>(APIResultCode.Success, new GetAllComplaintOutput
+                return new ApiResult<GetAllComplaintForVipOwnerOutput>(APIResultCode.Success, new GetAllComplaintForVipOwnerOutput
                 {
                     List = data.Select(x => new GetComplaintOutput
                     {
@@ -583,7 +587,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
             catch (Exception e)
             {
-                return new ApiResult<GetAllComplaintOutput>(APIResultCode.Success_NoB, new GetAllComplaintOutput { }, e.Message);
+                return new ApiResult<GetAllComplaintForVipOwnerOutput>(APIResultCode.Success_NoB, new GetAllComplaintForVipOwnerOutput { }, e.Message);
             }
         }
 
@@ -689,7 +693,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 if (complaintEntity.StatusValue != ComplaintStatus.NotAccepted.Value)
                 {
-                    return new ApiResult(APIResultCode.Success);
+                    return new ApiResult(APIResultCode.Success_NoB, "投诉以进行处理,不能删除！可选择关闭投诉");
                 }
 
                 await _complaintRepository.DeleteAsync(new ComplaintDto

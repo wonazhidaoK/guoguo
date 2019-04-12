@@ -313,6 +313,7 @@
     <Compile Include="Models\Complaint\GetAllComplaintForPropertyOutput.cs" />
     <Compile Include="Models\Complaint\GetAllComplaintInput.cs" />
     <Compile Include="Models\Complaint\GetAllComplaintOutput.cs" />
+    <Compile Include="Models\Complaint\GetAllComplaintForVipOwnerOutput.cs" />
     <Compile Include="Models\Complaint\GetComplaintOutput.cs" />
     <Compile Include="Models\Complaint\InvalidPropertyInput.cs" />
     <Compile Include="Models\Complaint\InvalidVipOwnerInput.cs" />
@@ -420,7 +421,11 @@
     <Compile Include="Models\VipOwner\GetListVipOwnerInput.cs" />
     <Compile Include="Models\VipOwner\GetListVipOwnerOutput.cs" />
     <Compile Include="Models\VipOwner\UpdateVipOwnerInput.cs" />
+    <Compile Include="Models\VoteRecord\AddIndefiniteVoteRecordIntput.cs" />
     <Compile Include="Models\VoteRecord\AddVoteRecordOutput.cs" />
+    <Compile Include="Models\VoteRecord\GetAllFeedbackOutput.cs" />
+    <Compile Include="Models\VoteRecord\GetFeedbackInput.cs" />
+    <Compile Include="Models\VoteRecord\GetFeedbackOutput.cs" />
     <Compile Include="Models\Vote\AddVoteForPropertyInput.cs" />
     <Compile Include="Models\Vote\AddVoteForPropertyOutput.cs" />
     <Compile Include="Models\Vote\AddVoteForStreetOfficeInput.cs" />
@@ -440,6 +445,7 @@
     <Compile Include="Models\Vote\GetAllForVipOwnerInput.cs" />
     <Compile Include="Models\Vote\GetAllForVipOwnerOutput.cs" />
     <Compile Include="Models\Vote\GetForStreetOfficeOutput.cs" />
+    <Compile Include="Models\Vote\GetVoteInput.cs" />
     <Compile Include="Models\Vote\GetVoteOutput.cs" />
     <Compile Include="Models\WX\WXLoginInput.cs" />
     <Compile Include="Models\WX\WXLoginOutput.cs" />

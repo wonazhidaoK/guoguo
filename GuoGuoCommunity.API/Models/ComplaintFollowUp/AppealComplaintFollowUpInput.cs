@@ -15,10 +15,10 @@
         ///// </summary>
         //public string Description { get; set; }
 
-        /// <summary>
-        /// 业主认证Id
-        /// </summary>
-        public string OwnerCertificationId { get; set; }
+        ///// <summary>
+        ///// 业主认证Id
+        ///// </summary>
+        //public string OwnerCertificationId { get; set; }
 
         ///// <summary>
         ///// 附件Id

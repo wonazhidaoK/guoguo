@@ -195,10 +195,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("公告内容信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.AnnexId))
-                {
-                    throw new NotImplementedException("附件Id信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.AnnexId))
+                //{
+                //    throw new NotImplementedException("附件Id信息为空！");
+                //}
                 if (string.IsNullOrWhiteSpace(input.Title))
                 {
                     throw new NotImplementedException("公告标题信息为空！");
@@ -233,13 +233,16 @@ namespace GuoGuoCommunity.API.Controllers
                     StreetOfficeName = user.StreetOfficeName
                 }, cancelToken);
 
-                await _announcementAnnexRepository.AddAsync(new AnnouncementAnnexDto
+                if (!string.IsNullOrWhiteSpace(input.AnnexId))
                 {
-                    AnnexContent = input.AnnexId,
-                    AnnouncementId = entity.Id.ToString(),
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
+                    await _announcementAnnexRepository.AddAsync(new AnnouncementAnnexDto
+                    {
+                        AnnexContent = input.AnnexId,
+                        AnnouncementId = entity.Id.ToString(),
+                        OperationTime = DateTimeOffset.Now,
+                        OperationUserId = user.Id.ToString()
+                    }, cancelToken);
+                }
 
                 /*
                  * 微信消息推送
@@ -283,10 +286,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("公告内容信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.AnnexId))
-                {
-                    throw new NotImplementedException("附件Id信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.AnnexId))
+                //{
+                //    throw new NotImplementedException("附件Id信息为空！");
+                //}
                 if (string.IsNullOrWhiteSpace(input.Title))
                 {
                     throw new NotImplementedException("公告标题信息为空！");
@@ -323,15 +326,18 @@ namespace GuoGuoCommunity.API.Controllers
                     StreetOfficeId = user.StreetOfficeId,
                     StreetOfficeName = user.StreetOfficeName
                 }, cancelToken);
-
-                await _announcementAnnexRepository.AddAsync(new AnnouncementAnnexDto
+                if (!string.IsNullOrWhiteSpace(input.AnnexId))
                 {
-                    AnnexContent = input.AnnexId,
-                    AnnouncementId = entity.Id.ToString(),
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-                
+                    await _announcementAnnexRepository.AddAsync(new AnnouncementAnnexDto
+                    {
+                        AnnexContent = input.AnnexId,
+                        AnnouncementId = entity.Id.ToString(),
+                        OperationTime = DateTimeOffset.Now,
+                        OperationUserId = user.Id.ToString()
+                    }, cancelToken);
+                }
+
+
                 /*
                  * 微信消息推送
                  */

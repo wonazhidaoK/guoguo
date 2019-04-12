@@ -13,6 +13,7 @@ namespace GuoGuoCommunity.Domain.Models.Enum
             Processing = new ComplaintStatus { Name = "处理中", Value = "Processing" };
             Finished = new ComplaintStatus { Name = "已完结", Value = "Finished" };
             Completed = new ComplaintStatus { Name = "已完成", Value = "Completed" };
+            StreetOfficeNotAccepted= new ComplaintStatus { Name = "街道办未受理", Value = "StreetOfficeNotAccepted" };
         }
 
         public string Name { get; set; }

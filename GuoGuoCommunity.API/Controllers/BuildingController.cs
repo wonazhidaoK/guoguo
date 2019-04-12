@@ -256,7 +256,7 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(input.SmallDistrictId))
+                if (string.IsNullOrWhiteSpace(input?.SmallDistrictId))
                 {
                     throw new NotImplementedException("小区信息为空！");
                 }

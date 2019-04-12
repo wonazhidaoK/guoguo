@@ -66,5 +66,15 @@ namespace GuoGuoCommunity.API.Models
         /// 投票是否进行中
         /// </summary>
         public bool IsProcessing { get; set; }
+
+        /// <summary>
+        /// 投票类型值
+        /// </summary>
+        public string VoteTypeValue { get; set; }
+
+        /// <summary>
+        /// 投票类型名称
+        /// </summary>
+        public string VoteTypeName { get; set; }
     }
 }

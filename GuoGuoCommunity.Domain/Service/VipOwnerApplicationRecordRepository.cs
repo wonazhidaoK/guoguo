@@ -198,7 +198,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("申请记录Id信息不正确！");
                 }
-                var vipOwnerApplicationRecord = await db.VipOwnerApplicationRecords.Where(x => x.Id == uid && x.IsDeleted == false && x.IsAdopt == false).FirstOrDefaultAsync(token);
+                var vipOwnerApplicationRecord = await db.VipOwnerApplicationRecords.Where(x => x.Id == uid && x.IsDeleted == false && x.IsAdopt == true).FirstOrDefaultAsync(token);
                 if (vipOwnerApplicationRecord == null)
                 {
                     throw new NotImplementedException("该申请记录不存在！");

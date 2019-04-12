@@ -21,11 +21,11 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("投诉Id信息不正确！");
                 }
 
-                var complaintFollowUp = await db.Complaints.Where(x => x.Id == complaintId && x.IsDeleted == false).FirstOrDefaultAsync(token);
-                if (complaintFollowUp == null)
-                {
-                    throw new NotImplementedException("投诉不存在!");
-                }
+                //var complaintFollowUp = await db.Complaints.Where(x => x.Id == complaintId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                //if (complaintFollowUp == null)
+                //{
+                //    throw new NotImplementedException("投诉不存在!");
+                //}
 
                 var entity = db.ComplaintFollowUps.Add(new ComplaintFollowUp
                 {

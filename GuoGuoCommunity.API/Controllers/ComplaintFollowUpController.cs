@@ -172,11 +172,11 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("投诉Id信息为空！");
                 }
-
-                if (string.IsNullOrWhiteSpace(input.OwnerCertificationId))
-                {
-                    throw new NotImplementedException("业主认证Id信息为空！");
-                }
+                var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
+                //if (string.IsNullOrWhiteSpace(input.OwnerCertificationId))
+                //{
+                //    throw new NotImplementedException("业主认证Id信息为空！");
+                //}
 
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
@@ -187,14 +187,13 @@ namespace GuoGuoCommunity.API.Controllers
                 var entity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
                 {
                     Description = "由于问题一直没有得到解决，我已向街道办投诉！",
-                    OwnerCertificationId = input.OwnerCertificationId,
+                    OwnerCertificationId = complaintEntity.OwnerCertificationId,
                     ComplaintId = input.ComplaintId,
                     OperationDepartmentName = Department.YeZhu.Name,
                     OperationDepartmentValue = Department.YeZhu.Value,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);
-                var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
 
                 await _complaintStatusChangeRecordingRepository.AddAsync(new ComplaintStatusChangeRecordingDto
                 {
