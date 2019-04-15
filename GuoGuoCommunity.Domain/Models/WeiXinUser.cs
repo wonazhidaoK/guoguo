@@ -85,7 +85,7 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 用户的标识，对当前公众号唯一
         /// </summary>
-        public string Openid { get; set; }
+        public string OpenId { get; set; }
 
         /// <summary>
         /// 用户是否订阅该公众号标识，值为0时，代表此用户没有关注该公众号，拉取不到其余信息。

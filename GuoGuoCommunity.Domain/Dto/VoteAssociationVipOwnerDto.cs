@@ -17,6 +17,11 @@ namespace GuoGuoCommunity.Domain.Dto
         public string VipOwnerId { get; set; }
 
         /// <summary>
+        /// 投票数
+        /// </summary>
+        public int ElectionNumber { get; set; }
+
+        /// <summary>
         /// 操作人Id
         /// </summary>
         public string OperationUserId { get; set; }

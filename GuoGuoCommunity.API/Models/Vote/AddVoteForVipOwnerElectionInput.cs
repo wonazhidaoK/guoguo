@@ -37,5 +37,10 @@ namespace GuoGuoCommunity.API.Models
         /// 附件Id
         /// </summary>
         public string AnnexId { get; set; }
+
+        /// <summary>
+        /// 投票数
+        /// </summary>
+        public int ElectionNumber { get; set; }
     }
 }

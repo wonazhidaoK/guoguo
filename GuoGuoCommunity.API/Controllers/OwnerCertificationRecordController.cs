@@ -395,7 +395,7 @@ namespace GuoGuoCommunity.API.Controllers
             var weiXinUser = await weiXinUserRepository.GetAsync(userEntity.UnionId);
             SendEmployeeRegisterRemind(new SendModel
             {
-                OpenId = weiXinUser.Openid,
+                OpenId = weiXinUser.OpenId,
                 Status = dto.CertificationStatusName,
                 Message = "认证结束"
             });

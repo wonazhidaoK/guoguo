@@ -39,7 +39,12 @@ namespace GuoGuoCommunity.Domain.Dto
         /// <summary>
         /// 应参与人数
         /// </summary>
-        public string ShouldParticipateCount { get; set; }
+        public int ShouldParticipateCount { get; set; }
+
+        /// <summary>
+        /// 实际参与人数
+        /// </summary>
+        public int ActualParticipateCount { get; set; }
 
         /// <summary>
         /// 操作人Id

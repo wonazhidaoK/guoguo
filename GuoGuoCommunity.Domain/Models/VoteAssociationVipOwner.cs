@@ -27,6 +27,11 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public string VipOwnerId { get; set; }
 
+        /// <summary>
+        /// 投票数
+        /// </summary>
+        public int ElectionNumber { get; set; }
+
         public string CreateOperationUserId { get; set; }
 
         public DateTimeOffset? CreateOperationTime { get; set; }

@@ -21,7 +21,8 @@ namespace GuoGuoCommunity.Domain.Service
                     VipOwnerId = dto.VipOwnerId,
                     VoteId = dto.VoteId,
                     CreateOperationTime = dto.OperationTime,
-                    CreateOperationUserId = dto.OperationUserId
+                    CreateOperationUserId = dto.OperationUserId,
+                     ElectionNumber=dto.ElectionNumber
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -47,11 +48,8 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                if (Guid.TryParse(id, out var uid))
-                {
-                    return await db.VoteAssociationVipOwners.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
-                }
-                return new VoteAssociationVipOwner();
+                
+                    return await db.VoteAssociationVipOwners.Where(x => x.VoteId == id).FirstOrDefaultAsync(token);
             }
         }
 

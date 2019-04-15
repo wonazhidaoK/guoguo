@@ -836,14 +836,14 @@ namespace GuoGuoCommunity.API.Controllers
                     var miniProgram = new TempleteModel_MiniProgram()
                     {
                         appid = GuoGuoCommunity_WxOpenAppId,//ZhiShiHuLian_WxOpenAppId,
-                        pagepath = "pages/noticeDetail/noticeDetail?con=" + JsonConvert.SerializeObject(sendModel)                   //pagepath = "pages/editmyinfo/editmyinfo?id=" + employeeID
+                        pagepath = "pages/noticeDetail/noticeDetail?con=" + JsonConvert.SerializeObject(sendModel)//pagepath = "pages/editmyinfo/editmyinfo?id=" + employeeID
                     };
 
-                    TemplateApi.SendTemplateMessage(AppId, weiXinUser.Openid, templateId, null, templateData, miniProgram);
+                    TemplateApi.SendTemplateMessage(AppId, weiXinUser.OpenId, templateId, null, templateData, miniProgram);
                 }
                 catch (Exception e)
                 {
-                    throw new NotImplementedException(e.Message + weiXinUser.Openid);
+                    //throw new NotImplementedException(e.Message + weiXinUser.OpenId);
                 }
             }
 

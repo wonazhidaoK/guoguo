@@ -21,6 +21,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IVoteRecordDetailRepository _voteRecordDetailRepository;
         private readonly IVoteQuestionOptionRepository _voteQuestionOptionRepository;
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
+        private readonly IVoteAssociationVipOwnerRepository _voteAssociationVipOwnerRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -30,15 +31,18 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="voteRecordDetailRepository"></param>
         /// <param name="voteQuestionOptionRepository"></param>
         /// <param name="ownerCertificationRecordRepository"></param>
+        /// <param name="voteAssociationVipOwnerRepository"></param>
         public VoteRecordController(IVoteRecordRepository voteRecordRepository,
             IVoteRecordDetailRepository voteRecordDetailRepository,
             IVoteQuestionOptionRepository voteQuestionOptionRepository,
-            IOwnerCertificationRecordRepository ownerCertificationRecordRepository)
+            IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
+            IVoteAssociationVipOwnerRepository voteAssociationVipOwnerRepository)
         {
             _voteRecordRepository = voteRecordRepository;
             _voteRecordDetailRepository = voteRecordDetailRepository;
             _voteQuestionOptionRepository = voteQuestionOptionRepository;
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
+            _voteAssociationVipOwnerRepository = voteAssociationVipOwnerRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -110,7 +114,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 业主投票(一个问题多选项)
+        /// 业主投票(一个问题多选项,业委会选举用)
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>
@@ -144,7 +148,11 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<AddVoteRecordOutput>(APIResultCode.Unknown, new AddVoteRecordOutput { }, APIResultMessage.TokenError);
                 }
-
+                var voteAssociationVipOwner = await _voteAssociationVipOwnerRepository.GetForVoteIdAsync(input.VoteId, cancelToken);
+                if (voteAssociationVipOwner.ElectionNumber != input.List.Count)
+                {
+                    throw new NotImplementedException("请选择"+ voteAssociationVipOwner.ElectionNumber+"项");
+                }
                 //增加投票记录主体
                 var entity = await _voteRecordRepository.AddAsync(new VoteRecordDto
                 {

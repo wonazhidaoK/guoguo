@@ -50,5 +50,10 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 操作时间
         /// </summary>
         public DateTimeOffset? OperationTime { get; set; }
+
+        /// <summary>
+        /// 投票id
+        /// </summary>
+        public string VoteId { get; set; }
     }
 }

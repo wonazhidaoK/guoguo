@@ -41,7 +41,10 @@ namespace GuoGuoCommunity.Domain.Service
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
-                    LastOperationUserId = dto.OperationUserId
+                    LastOperationUserId = dto.OperationUserId,
+                    ActualParticipateCount = dto.ActualParticipateCount,
+                    ShouldParticipateCount = dto.ShouldParticipateCount,
+                    VoteQuestionId = dto.VoteQuestionId
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -98,6 +101,22 @@ namespace GuoGuoCommunity.Domain.Service
         public Task<VoteResultRecord> GetAsync(string id, CancellationToken token = default)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<VoteResultRecord> GetForVoteIdAsync(string voteId, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VoteResultRecords.Where(x => x.VoteId == voteId).FirstOrDefaultAsync(token);
+            }
+        }
+
+        public async Task<List<VoteResultRecord>> GetListForVoteIdAsync(string voteId, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VoteResultRecords.Where(x => x.VoteId == voteId ).ToListAsync(token);
+            }
         }
 
         public async Task<VoteResultRecord> GetForVoteQuestionIdAsync(VoteResultRecordDto dto, CancellationToken token = default)

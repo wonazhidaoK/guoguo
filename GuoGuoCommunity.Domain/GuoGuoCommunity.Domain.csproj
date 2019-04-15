@@ -183,6 +183,14 @@
     <Compile Include="Migrations\201904090814401_update-ownerCertificationRecord.Designer.cs">
       <DependentUpon>201904090814401_update-ownerCertificationRecord.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201904150147239_weixinUser-update.cs" />
+    <Compile Include="Migrations\201904150147239_weixinUser-update.Designer.cs">
+      <DependentUpon>201904150147239_weixinUser-update.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904150659051_update.cs" />
+    <Compile Include="Migrations\201904150659051_update.Designer.cs">
+      <DependentUpon>201904150659051_update.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\IDCardPhotoRecord.cs" />
     <Compile Include="Migrations\201903310759425_Initialization.cs" />
     <Compile Include="Migrations\201903310759425_Initialization.Designer.cs">
@@ -363,6 +371,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201904090814401_update-ownerCertificationRecord.resx">
       <DependentUpon>201904090814401_update-ownerCertificationRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904150147239_weixinUser-update.resx">
+      <DependentUpon>201904150147239_weixinUser-update.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904150659051_update.resx">
+      <DependentUpon>201904150659051_update.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

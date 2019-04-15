@@ -266,6 +266,10 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该投票不存在！");
                 }
+                if (vote.VoteTypeValue == VoteTypes.VipOwnerElection.Value)
+                {
+                    throw new NotImplementedException("业委会改选不能进行此操作");
+                }
                 vote.CalculationMethodValue = CalculationMethod.Opposition.Value;
                 vote.CalculationMethodName = CalculationMethod.Opposition.Name;
                 vote.LastOperationTime = dto.OperationTime;
@@ -314,6 +318,9 @@ namespace GuoGuoCommunity.Domain.Service
                 await db.Votes.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new Vote { SmallDistrictName = smallDistrict.Name });
             }
         }
+
+        #endregion
+
 
         public async Task<Vote> AddForStreetOfficeAsync(VoteDto dto, CancellationToken token = default)
         {
@@ -379,6 +386,34 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        #endregion
+        public async Task UpdateForClosedAsync(VoteDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("投票信息不正确！");
+                }
+                var vote = await db.Votes.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (vote == null)
+                {
+                    throw new NotImplementedException("该投票不存在！");
+                }
+               
+                vote.StatusValue = VoteStatus.Closed.Value;
+                vote.StatusName = VoteStatus.Closed.Name;
+                await db.SaveChangesAsync(token);
+            }
+        }
+
+        public async Task<List<Vote>> GetDeadListAsync(VoteDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.Votes.Where(x => x.IsDeleted == false && x.StatusValue == VoteStatus.Processing.Value && x.Deadline < dto.OperationTime).ToListAsync(token);
+
+                return list;
+            }
+        }
     }
 }

@@ -113,6 +113,11 @@ namespace GuoGuoCommunity.API.Models
         public string OptionMode { get; set; }
 
         /// <summary>
+        /// 选择数
+        /// </summary>
+        public int ElectionNumber { get; set; }
+
+        /// <summary>
         /// 选项集合
         /// </summary>
         public List<GetVoteQuestionOptionModel> List { get; set; }

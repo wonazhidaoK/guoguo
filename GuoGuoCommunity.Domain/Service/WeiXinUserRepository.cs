@@ -25,7 +25,7 @@ namespace GuoGuoCommunity.Domain.Service
                     weiXinUser.Headimgurl = dto.Headimgurl;
                     weiXinUser.Language = dto.Language;
                     weiXinUser.Nickname = dto.Nickname;
-                    weiXinUser.Openid = dto.Openid;
+                    weiXinUser.OpenId = dto.Openid;
                     weiXinUser.Province = dto.Province;
                     weiXinUser.Qr_scene = dto.Qr_scene;
                     weiXinUser.Qr_scene_str = dto.Qr_scene_str;
@@ -48,7 +48,7 @@ namespace GuoGuoCommunity.Domain.Service
                     Headimgurl = dto.Headimgurl,
                     Language = dto.Language,
                     Nickname = dto.Nickname,
-                    Openid = dto.Openid,
+                    OpenId = dto.Openid,
                     Province = dto.Province,
                     Qr_scene = dto.Qr_scene,
                     Qr_scene_str = dto.Qr_scene_str,
@@ -139,7 +139,7 @@ namespace GuoGuoCommunity.Domain.Service
                 weiXinUser.Headimgurl = dto.Headimgurl;
                 weiXinUser.Language = dto.Language;
                 weiXinUser.Nickname = dto.Nickname;
-                weiXinUser.Openid = dto.Openid;
+                weiXinUser.OpenId = dto.Openid;
                 weiXinUser.Province = dto.Province;
                 weiXinUser.Qr_scene = dto.Qr_scene;
                 weiXinUser.Qr_scene_str = dto.Qr_scene_str;
