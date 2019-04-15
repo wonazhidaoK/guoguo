@@ -503,7 +503,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 return new ApiResult<GetAllForStreetOfficeOutput>(APIResultCode.Success, new GetAllForStreetOfficeOutput
                 {
-                    List = data.Select(x => new GetForStreetOfficeOutput
+                    List = data.OrderByDescending(a => a.CreateOperationTime).Select(x => new GetForStreetOfficeOutput
                     {
                         Id = x.Id.ToString(),
                         Title = x.Title,
@@ -570,7 +570,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 return new ApiResult<GetAllForPropertyOutput>(APIResultCode.Success, new GetAllForPropertyOutput
                 {
-                    List = data.Select(x => new GetForStreetOfficeOutput
+                    List = data.OrderByDescending(a => a.CreateOperationTime).Select(x => new GetForStreetOfficeOutput
                     {
                         Id = x.Id.ToString(),
                         Title = x.Title,
@@ -708,7 +708,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 return new ApiResult<GetAllForOwnerOutput>(APIResultCode.Success, new GetAllForOwnerOutput
                 {
-                    List = data.Select(x => new GetForStreetOfficeOutput
+                    List = data.OrderByDescending(a=>a.CreateOperationTime).Select(x => new GetForStreetOfficeOutput
                     {
                         Id = x.Id.ToString(),
                         Title = x.Title,
@@ -817,7 +817,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     Title = vote.Title,
                     List = list,
-                    Deadline = vote.Deadline,
+                    Deadline = vote.Deadline.ToString("yyyy-MM-dd"),
                     SmallDistrictArray = vote.SmallDistrictArray,
                     Summary = vote.Summary,
                     Url = _voteAnnexRepository.GetUrl(vote.Id.ToString()),

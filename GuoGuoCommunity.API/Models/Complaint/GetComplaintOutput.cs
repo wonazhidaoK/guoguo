@@ -50,5 +50,8 @@ namespace GuoGuoCommunity.API.Models
         /// 操作人姓名
         /// </summary>
         public string OperationName { get; set; }
+
+
+
     }
 }

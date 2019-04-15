@@ -215,7 +215,8 @@ namespace GuoGuoCommunity.API.Controllers
                         CertificationConditionName = certificationCondition.Title,
                         CertificationConditionId = item.ApplicationRecordId,
                         ID = item.Id.ToString(),
-                        Url = _vipOwnerCertificationAnnexRepository.GetUrlAsync(item.Id.ToString(), cancelToken),
+                       // Url = _vipOwnerCertificationAnnexRepository.GetUrlAsync(item.Id.ToString(), cancelToken),
+                       Url = item.AnnexContent
                     });
                 }
                 output.AnnexModels = list;

@@ -53,5 +53,10 @@ namespace GuoGuoCommunity.API.Models
         /// </summary>
         public string DepartmentValue { get; set; }
 
+        /// <summary>
+        /// 摘要
+        /// </summary>
+        public string Description { get; set; }
+
     }
 }

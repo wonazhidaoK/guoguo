@@ -99,10 +99,10 @@ namespace GuoGuoCommunity.API.Controllers
                 //{
                 //    throw new NotImplementedException("业主认证Id信息为空！");
                 //}
-                if (string.IsNullOrWhiteSpace(input.AnnexId))
-                {
-                    throw new NotImplementedException("投诉附件信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.AnnexId))
+                //{
+                //    throw new NotImplementedException("投诉附件信息为空！");
+                //}
 
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
@@ -295,6 +295,7 @@ namespace GuoGuoCommunity.API.Controllers
                     StatusValue = complaintEntity.StatusValue,
                     DepartmentName = complaintEntity.DepartmentName,
                     DepartmentValue = complaintEntity.DepartmentValue,
+                    Description = complaintEntity.Description,
                     List = list
                 });
             }

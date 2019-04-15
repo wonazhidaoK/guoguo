@@ -259,7 +259,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 return new ApiResult<GetAllComplaintOutput>(APIResultCode.Success, new GetAllComplaintOutput
                 {
-                    List = data.Select(x => new GetComplaintOutput
+                    List = data.OrderByDescending(a => a.CreateOperationTime).Select(x => new GetComplaintOutput
                     {
                         Id = x.Id.ToString(),
                         CreateTime = x.CreateOperationTime.Value,
@@ -573,7 +573,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 return new ApiResult<GetAllComplaintForVipOwnerOutput>(APIResultCode.Success, new GetAllComplaintForVipOwnerOutput
                 {
-                    List = data.Select(x => new GetComplaintOutput
+                    List = data.OrderByDescending(a => a.CreateOperationTime).Select(x => new GetComplaintOutput
                     {
                         Id = x.Id.ToString(),
                         CreateTime = x.CreateOperationTime.Value,
@@ -582,7 +582,11 @@ namespace GuoGuoCommunity.API.Controllers
                         StatusValue = x.StatusValue,
                         Url = _complaintAnnexRepository.GetUrl(x.Id.ToString())
                     }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    TotalCount = data.Count(),
+                    CompletedCount = data.Count(x => x.StatusValue == ComplaintStatus.Completed.Value),
+                    FinishedCount = data.Count(x => x.StatusValue == ComplaintStatus.Finished.Value),
+                    NotAcceptedCount = data.Count(x => x.StatusValue == ComplaintStatus.NotAccepted.Value),
+                    ProcessingCount = data.Count(x => x.StatusValue == ComplaintStatus.Processing.Value)
                 });
             }
             catch (Exception e)
@@ -826,7 +830,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 return new ApiResult<GetAllComplaintForStreetOfficeOutput>(APIResultCode.Success, new GetAllComplaintForStreetOfficeOutput
                 {
-                    List = list.Skip(startRow).Take(input.PageSize).ToList(),
+                    List = list.OrderByDescending(a => a.CreateTime).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
             }
@@ -1063,7 +1067,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 return new ApiResult<GetAllComplaintForPropertyOutput>(APIResultCode.Success, new GetAllComplaintForPropertyOutput
                 {
-                    List = list.Skip(startRow).Take(input.PageSize).ToList(),
+                    List = list.OrderByDescending(a => a.CreateTime).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
             }

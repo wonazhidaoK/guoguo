@@ -204,10 +204,7 @@ namespace GuoGuoCommunity.API.Controllers
                     throw new NotImplementedException("公告标题信息为空！");
                 }
 
-                if (string.IsNullOrWhiteSpace(input.Summary))
-                {
-                    throw new NotImplementedException("公告摘要信息为空！");
-                }
+               
 
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
@@ -295,10 +292,10 @@ namespace GuoGuoCommunity.API.Controllers
                     throw new NotImplementedException("公告标题信息为空！");
                 }
 
-                if (string.IsNullOrWhiteSpace(input.Summary))
-                {
-                    throw new NotImplementedException("公告摘要信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.Summary))
+                //{
+                //    throw new NotImplementedException("公告摘要信息为空！");
+                //}
                 if (input.SmallDistricts.Count < 1)
                 {
                     throw new NotImplementedException("公告小区信息为空！");
@@ -471,7 +468,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Success, new GetAllAnnouncementOutput
                 {
-                    List = list.Skip(startRow).Take(input.PageSize).ToList(),
+                    List = list.OrderByDescending(a=>a.ReleaseTime).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
             }
@@ -542,7 +539,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Success, new GetAllAnnouncementOutput
                 {
-                    List = list.Skip(startRow).Take(input.PageSize).ToList(),
+                    List = list.OrderByDescending(a=>a.ReleaseTime).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
             }
@@ -611,7 +608,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Success, new GetAllAnnouncementOutput
                 {
-                    List = list.Skip(startRow).Take(input.PageSize).ToList(),
+                    List = list.OrderByDescending(a=>a.ReleaseTime).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
             }
@@ -711,7 +708,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 return new ApiResult<GetListStreetOfficeAnnouncementOutput>(APIResultCode.Success, new GetListStreetOfficeAnnouncementOutput
                 {
-                    List = list.Skip(startRow).Take(input.PageSize).ToList(),
+                    List = list.OrderByDescending(a => a.ReleaseTime).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
             }
@@ -791,7 +788,7 @@ namespace GuoGuoCommunity.API.Controllers
                         ReleaseTime = x.CreateOperationTime.Value,
                         Summary = x.Summary,
                         Url = _announcementAnnexRepository.GetUrl(x.Id.ToString())
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
+                    }).OrderByDescending(a => a.ReleaseTime).Skip(startRow).Take(input.PageSize).ToList(),
                     TotalCount = data.Count()
                 });
             }
