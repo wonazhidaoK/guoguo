@@ -10,6 +10,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [Obsolete]
     [RoutePrefix("api/token")]
     public class TokenController : ApiController
     {

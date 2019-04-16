@@ -35,15 +35,19 @@ namespace GuoGuoCommunity.API.Controllers
         /// 这个是用来发送消息的静态方法
         /// </summary>
         /// <param name="message"></param>
-        public  async Task SendAsync(string message)
+        public async Task SendAsync(string message)
         {
-          // await _testRepository.Add(a());
+            // await _testRepository.Add(a());
             EventLog.WriteEntry("EventSystem", string.Format("这是由Hangfire后台任务发送的消息:{0},时间为:{1}", message, DateTime.Now));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task DingShiRenWu()
         {
-            BackgroundJob.Schedule(() => Console.WriteLine("Delayed!"),TimeSpan.FromMinutes(2));
+            BackgroundJob.Schedule(() => Console.WriteLine("Delayed!"), TimeSpan.FromMinutes(2));
         }
 
         /// <summary>
@@ -175,7 +179,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 Console.WriteLine("\n");
             }
-           
+
         }
         public class JsonClass
         {

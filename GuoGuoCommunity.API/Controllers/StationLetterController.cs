@@ -160,24 +160,86 @@ namespace GuoGuoCommunity.API.Controllers
                     SmallDistrictArray = input.SmallDistrict
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+                List<GetStationLetterOutput> listOutput = new List<GetStationLetterOutput>();
+                foreach (var item in list)
+                {
+                    var userEntity = await _userRepository.GetForIdAsync(item.CreateOperationUserId);
+                    var stationLetterBrowseRecordList = await _stationLetterBrowseRecordRepository.GetListAsync(new StationLetterBrowseRecordDto
+                    {
+                        StationLetterId = item.Id.ToString(),
+                        OperationUserId = user.Id.ToString()
+                    }, cancelToken);
+                    listOutput.Add(new GetStationLetterOutput
+                    {
+                        Id = item.Id.ToString(),
+                        Title = item.Title,
+                        StreetOfficeId = item.StreetOfficeId,
+                        Summary = item.Summary,
+                        StreetOfficeName = item.StreetOfficeName,
+                        ReleaseTime = item.CreateOperationTime.Value,
+                        CreateUserName = userEntity?.Name
+                    });
+                }
+
                 return new ApiResult<GetAllStreetOfficeStationLetterOutput>(APIResultCode.Success, new GetAllStreetOfficeStationLetterOutput
                 {
-                    List = data.Select(x => new GetStationLetterOutput
-                    {
-                        Id = x.Id.ToString(),
-                        Title = x.Title,
-                        Content = x.Content,
-                        StreetOfficeId = x.StreetOfficeId,
-                        Summary = x.Summary,
-                        StreetOfficeName = x.StreetOfficeName,
-                        Url = _stationLetterAnnexRepository.GetUrl(x.Id.ToString())
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    List = listOutput,
+                    TotalCount = listCount
                 });
             }
             catch (Exception e)
             {
                 return new ApiResult<GetAllStreetOfficeStationLetterOutput>(APIResultCode.Success_NoB, new GetAllStreetOfficeStationLetterOutput { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 街道办获取站内信详情
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("stationLetter/get")]
+        public async Task<ApiResult<GetStationLetterOutput>> Get([FromUri]GetPropertyStationLetterInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+
+                if (token == null)
+                {
+                    return new ApiResult<GetStationLetterOutput>(APIResultCode.Unknown, new GetStationLetterOutput { }, APIResultMessage.TokenNull);
+                }
+
+                var user = _tokenManager.GetUser(token);
+
+                if (user == null)
+                {
+                    return new ApiResult<GetStationLetterOutput>(APIResultCode.Unknown, new GetStationLetterOutput { }, APIResultMessage.TokenError);
+                }
+
+                var entity = await _stationLetterRepository.GetAsync(input.Id, cancelToken);
+
+                var userEntity = await _userRepository.GetForIdAsync(entity.CreateOperationUserId);
+
+                return new ApiResult<GetStationLetterOutput>(APIResultCode.Success, new GetStationLetterOutput
+                {
+                    Id = entity.Id.ToString(),
+                    Title = entity.Title,
+                    Content = entity.Content,
+                    StreetOfficeId = entity.StreetOfficeId,
+                    Summary = entity.Summary,
+                    StreetOfficeName = entity.StreetOfficeName,
+                    Url = _stationLetterAnnexRepository.GetUrl(entity.Id.ToString()),
+                    CreateUserName = userEntity?.Name
+                });
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<GetStationLetterOutput>(APIResultCode.Success_NoB, new GetStationLetterOutput { }, e.Message);
             }
         }
 
@@ -221,11 +283,17 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     //ReleaseTimeEnd = input.ReleaseTimeEnd,
                     //ReleaseTimeStart = input.ReleaseTimeStart,
-                    StreetOfficeId = user.StreetOfficeId,
-                    // SmallDistrictArray = input.SmallDistrict
+                    SmallDistrictArray = user.SmallDistrictId,
+                    // SmallDistrictArray = input.SmallDistrict,
+                    OperationUserId = user.Id.ToString(),
+                    ReadStatus = input.ReadStatus
                 }, cancelToken);
-                List<GetPropertyStationLetterOutput> list = new List<GetPropertyStationLetterOutput>();
-                foreach (var item in data)
+
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
+                List<GetPropertyStationLetterOutput> listOutput = new List<GetPropertyStationLetterOutput>();
+                foreach (var item in list)
                 {
                     var userEntity = await _userRepository.GetForIdAsync(item.CreateOperationUserId);
                     var stationLetterBrowseRecordList = await _stationLetterBrowseRecordRepository.GetListAsync(new StationLetterBrowseRecordDto
@@ -233,7 +301,7 @@ namespace GuoGuoCommunity.API.Controllers
                         StationLetterId = item.Id.ToString(),
                         OperationUserId = user.Id.ToString()
                     }, cancelToken);
-                    list.Add(new GetPropertyStationLetterOutput
+                    listOutput.Add(new GetPropertyStationLetterOutput
                     {
                         Id = item.Id.ToString(),
                         Title = item.Title,
@@ -247,7 +315,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 return new ApiResult<GetAllPropertyStationLetterOutput>(APIResultCode.Success, new GetAllPropertyStationLetterOutput
                 {
-                    List = list.Skip(startRow).Take(input.PageSize).ToList(),
+                    List = listOutput,
                     TotalCount = data.Count()
                 });
             }
@@ -290,6 +358,7 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
                 });
+                var userEntity = await _userRepository.GetForIdAsync(entity.CreateOperationUserId);
                 return new ApiResult<GetStationLetterOutput>(APIResultCode.Success, new GetStationLetterOutput
                 {
                     Id = entity.Id.ToString(),
@@ -298,7 +367,8 @@ namespace GuoGuoCommunity.API.Controllers
                     StreetOfficeId = entity.StreetOfficeId,
                     Summary = entity.Summary,
                     StreetOfficeName = entity.StreetOfficeName,
-                    Url = _stationLetterAnnexRepository.GetUrl(entity.Id.ToString())
+                    Url = _stationLetterAnnexRepository.GetUrl(entity.Id.ToString()),
+                    CreateUserName = userEntity?.Name
                 });
             }
             catch (Exception e)

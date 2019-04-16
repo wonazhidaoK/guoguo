@@ -16,7 +16,6 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 社区
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CommunityController : ApiController
     {
         private readonly ICommunityRepository _communityRepository;
@@ -29,7 +28,7 @@ namespace GuoGuoCommunity.API.Controllers
         public CommunityController(ICommunityRepository communityRepository)
         {
             _communityRepository = communityRepository;
-            _tokenManager =new TokenManager();
+            _tokenManager = new TokenManager();
         }
 
         /// <summary>
@@ -248,9 +247,12 @@ namespace GuoGuoCommunity.API.Controllers
                     StreetOfficeId = input?.StreetOfficeId
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
                 return new ApiResult<GetAllCommunityOutput>(APIResultCode.Success, new GetAllCommunityOutput
                 {
-                    List = data.Select(x => new GetCommunityOutput
+                    List = list.Select(x => new GetCommunityOutput
                     {
                         Id = x.Id.ToString(),
                         State = x.State,
@@ -259,8 +261,8 @@ namespace GuoGuoCommunity.API.Controllers
                         Name = x.Name,
                         StreetOfficeId = x.StreetOfficeId,
                         StreetOfficeName = x.StreetOfficeName
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    }).ToList(),
+                    TotalCount = listCount
                 });
             }
             catch (Exception e)
@@ -288,7 +290,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 var data = await _communityRepository.GetListAsync(new CommunityDto
                 {
-                     StreetOfficeId = input?.StreetOfficeId
+                    StreetOfficeId = input?.StreetOfficeId
                 }, cancelToken);
 
                 return new ApiResult<List<GetListCommunityOutput>>(APIResultCode.Success, data.Select(x => new GetListCommunityOutput

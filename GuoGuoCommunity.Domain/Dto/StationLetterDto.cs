@@ -46,6 +46,10 @@ namespace GuoGuoCommunity.Domain.Dto
         /// </summary>
         public DateTimeOffset? OperationTime { get; set; }
 
+        /// <summary>
+        /// 读取状态
+        /// </summary>
+        public string ReadStatus { get; set; }
         ///// <summary>
         ///// 发布时间（开始时间）
         ///// </summary>

@@ -16,7 +16,6 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 小区
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class SmallDistrictController : ApiController
     {
         private readonly ISmallDistrictRepository _smallDistrictRepository;
@@ -265,9 +264,12 @@ namespace GuoGuoCommunity.API.Controllers
                     StreetOfficeId = input?.StreetOfficeId
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
                 return new ApiResult<GetAllSmallDistrictOutput>(APIResultCode.Success, new GetAllSmallDistrictOutput
                 {
-                    List = data.Select(x => new GetSmallDistrictOutput
+                    List = list.Select(x => new GetSmallDistrictOutput
                     {
                         Id = x.Id.ToString(),
                         State = x.State,
@@ -278,8 +280,8 @@ namespace GuoGuoCommunity.API.Controllers
                         CommunityName = x.CommunityName,
                         StreetOfficeId = x.StreetOfficeId,
                         StreetOfficeName = x.StreetOfficeName
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    }).ToList(),
+                    TotalCount = listCount
                 });
             }
             catch (Exception e)

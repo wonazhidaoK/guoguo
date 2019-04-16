@@ -9,14 +9,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 业委会架构(职能)
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class VipOwnerStructureController : ApiController
     {
         private readonly IVipOwnerStructureRepository _vipOwnerStructureRepository;
@@ -231,17 +229,20 @@ namespace GuoGuoCommunity.API.Controllers
                     Description = input.Description
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
                 return new ApiResult<GetAllVipOwnerStructureOutput>(APIResultCode.Success, new GetAllVipOwnerStructureOutput
                 {
-                    List = data.Select(x => new GetVipOwnerStructureOutput
+                    List = list.Select(x => new GetVipOwnerStructureOutput
                     {
                         Id = x.Id.ToString(),
                         Name = x.Name,
                         Description = x.Description,
                         IsReview = x.IsReview,
                         Weights = x.Weights
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    }).ToList(),
+                    TotalCount = listCount
                 });
             }
             catch (Exception e)

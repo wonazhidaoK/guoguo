@@ -22,6 +22,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<VipOwnerApplicationRecord> GetForVoteQuestionIdAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default);
 
+        Task<VipOwnerApplicationRecord> GetForVoteQuestionOptionIdAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default);
+
         Task<List<VipOwnerApplicationRecord>> GetListAsync(List<string> dto, CancellationToken token = default);
 
         Task<List<VipOwnerApplicationRecord>> GetListAsync(string userId, CancellationToken token = default);

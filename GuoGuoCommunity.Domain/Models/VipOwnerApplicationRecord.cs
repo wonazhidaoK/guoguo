@@ -77,6 +77,11 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public string VoteQuestionId { get; set; }
 
+        /// <summary>
+        /// 投票问题选项Id
+        /// </summary>
+        public string VoteQuestionOptionId { get; set; }
+
         public string LastOperationUserId { get; set; }
 
         public DateTimeOffset? LastOperationTime { get; set; }

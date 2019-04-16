@@ -23,6 +23,11 @@ namespace GuoGuoCommunity.API.Models
         //public DateTimeOffset? ReleaseTimeEnd { get; set; }
 
         /// <summary>
+        /// 已读未读状态: 空查询全部，HaveRead已读 UnRead 未读
+        /// </summary>
+        public string ReadStatus { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         [Required]

@@ -17,7 +17,6 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 公共接口
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CommonController : ApiController
     {
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
@@ -45,64 +44,11 @@ namespace GuoGuoCommunity.API.Controllers
             _tokenManager = new TokenManager();
         }
 
-        /// <summary>
-        /// 获取部门集合
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("department/getAll")]
-        public ApiResult<List<Department>> GetAll() => new ApiResult<List<Department>>(APIResultCode.Success, Department.GetAll().ToList());
-
-        /// <summary>
-        /// 业主投诉上级部门集合
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("department/getAllForOwner")]
-        public ApiResult<List<Department>> GetAllForOwner() => new ApiResult<List<Department>>(APIResultCode.Success, new List<Department>
-        {
-            Department.YeZhuWeiYuanHui,
-            Department .WuYe
-        });
-
-        /// <summary>
-        /// 业委会投诉上级部门集合
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("department/getAllForVipOwner")]
-        public ApiResult<List<Department>> GetAllForVipOwner() => new ApiResult<List<Department>>(APIResultCode.Success, new List<Department>
-        {
-            Department.JieDaoBan,
-            Department .WuYe
-        }.ToList());
-
-        /// <summary>
-        /// 获取服务器Id
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete]
-        [HttpGet]
-        [Route("common/getIp")]
-        public ApiResult<string> GetIp() => new ApiResult<string>(APIResultCode.Success, IpUtility.GetLocalIP());
-
-        /// <summary>
-        /// 获取文件类型
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("fileType/getAll")]
-        public ApiResult<List<FileType>> GetFileTypeAll() => new ApiResult<List<FileType>>(APIResultCode.Success, FileType.GetAll().ToList());
-
-        /// <summary>
-        /// 获取业主认证上传附件类型
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("ownerCertificationAnnexType/getAll")]
-        public ApiResult<List<OwnerCertificationAnnexType>> GetOwnerCertificationAnnexTypeAll() => new ApiResult<List<OwnerCertificationAnnexType>>(APIResultCode.Success, OwnerCertificationAnnexType.GetAll().ToList());
-
         // 当前用户有效业主认证的小区记录
+
+        // 当前用户有效认证业主认证记录
+
+        //TODO 当前用户有效高级认证记录
 
         /// <summary>
         /// 获取用户小区集合
@@ -130,6 +76,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     UserId = user.Id.ToString()
                 }, cancelToken)).Select(x => x.SmallDistrictId).Distinct();
+
                 List<GetListForUserIdOutput> list = new List<GetListForUserIdOutput>();
                 foreach (var item in data)
                 {
@@ -154,8 +101,6 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<List<GetListForUserIdOutput>>(APIResultCode.Success_NoB, new List<GetListForUserIdOutput> { }, e.Message);
             }
         }
-
-        // 当前用户有效认证业主认证记录
 
         /// <summary>
         /// 根据小区id获取用户认证记录
@@ -238,29 +183,70 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("complaintStatus/getAll")]
-        public ApiResult<List<ComplaintStatusModel>> ComplaintStatusGetAll() => new ApiResult<List<ComplaintStatusModel>>(APIResultCode.Success, new List<ComplaintStatusModel>
+        public ApiResult<List<dynamic>> ComplaintStatusGetAll() => new ApiResult<List<dynamic>>(APIResultCode.Success, new List<dynamic>
         {
-            new ComplaintStatusModel{ Name="未处理", Value=ComplaintStatus.NotAccepted.Value },
-            new ComplaintStatusModel{ Name="待反馈", Value=ComplaintStatus.Processing.Value },
-            new ComplaintStatusModel{ Name="已处理", Value=ComplaintStatus.Finished.Value },
-            new ComplaintStatusModel{ Name="已完结", Value=ComplaintStatus.Completed.Value }
+            new { Name="未处理", ComplaintStatus.NotAccepted.Value },
+            new { Name="待反馈", ComplaintStatus.Processing.Value },
+            new { Name="已处理", ComplaintStatus.Finished.Value },
+            new { Name="已完结", ComplaintStatus.Completed.Value }
         });
 
         /// <summary>
-        /// 
+        /// 获取部门集合
         /// </summary>
-        public class ComplaintStatusModel
-        {
-            /// <summary>
-            /// 
-            /// </summary>
-            public string Name { get; set; }
+        /// <returns></returns>
+        [HttpGet]
+        [Route("department/getAll")]
+        public ApiResult<List<Department>> GetAll() => new ApiResult<List<Department>>(APIResultCode.Success, Department.GetAll().ToList());
 
-            /// <summary>
-            /// 
-            /// </summary>
-            public string Value { get; set; }
-        }
-        //TODO 当前用户有效高级认证记录
+        /// <summary>
+        /// 业主投诉上级部门集合
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("department/getAllForOwner")]
+        public ApiResult<List<Department>> GetAllForOwner() => new ApiResult<List<Department>>(APIResultCode.Success, new List<Department>
+        {
+            Department.YeZhuWeiYuanHui,
+            Department .WuYe
+        });
+
+        /// <summary>
+        /// 业委会投诉上级部门集合
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("department/getAllForVipOwner")]
+        public ApiResult<List<Department>> GetAllForVipOwner() => new ApiResult<List<Department>>(APIResultCode.Success, new List<Department>
+        {
+            Department.JieDaoBan,
+            Department .WuYe
+        }.ToList());
+
+        /// <summary>
+        /// 获取服务器Id
+        /// </summary>
+        /// <returns></returns>
+        [Obsolete]
+        [HttpGet]
+        [Route("common/getIp")]
+        public ApiResult<string> GetIp() => new ApiResult<string>(APIResultCode.Success, IpUtility.GetLocalIP());
+
+        /// <summary>
+        /// 获取文件类型
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("fileType/getAll")]
+        public ApiResult<List<FileType>> GetFileTypeAll() => new ApiResult<List<FileType>>(APIResultCode.Success, FileType.GetAll().ToList());
+
+        /// <summary>
+        /// 获取业主认证上传附件类型
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ownerCertificationAnnexType/getAll")]
+        public ApiResult<List<OwnerCertificationAnnexType>> GetOwnerCertificationAnnexTypeAll() => new ApiResult<List<OwnerCertificationAnnexType>>(APIResultCode.Success, OwnerCertificationAnnexType.GetAll().ToList());
+
     }
 }

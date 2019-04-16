@@ -5,6 +5,7 @@ using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -110,13 +111,15 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<AddComplaintFollowUpOutput>(APIResultCode.Unknown, new AddComplaintFollowUpOutput { }, APIResultMessage.TokenError);
                 }
                 //查询跟进记录达到两条不允许在进行跟进
-                var complaintFollowUpList = await _complaintFollowUpRepository.GetListAsync(new ComplaintFollowUpDto
+                var complaintFollowUpList = (await _complaintFollowUpRepository.GetListAsync(new ComplaintFollowUpDto
                 {
                     ComplaintId = input.ComplaintId,
                     OwnerCertificationId = complaintEntity.OwnerCertificationId
-                }, cancelToken);
+                }, cancelToken));
 
-                if (complaintFollowUpList.Count > 1)
+                var date = DateTimeOffset.Now.Date;
+                //每天可以提交2条跟进
+                if (complaintFollowUpList.Count(x => x.CreateOperationTime < date.AddDays(+1) && x.CreateOperationTime > date) > 1)
                 {
                     throw new NotImplementedException("投诉跟进达到上限！");
                 }
@@ -285,6 +288,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 var complaintEntity = await _complaintRepository.GetAsync(input.Id, cancelToken);
                 var complaintTypeEntyity = await _complaintTypeRepository.GetAsync(complaintEntity.ComplaintTypeId, cancelToken);
+
                 return new ApiResult<GetComplaintFollowUpOutput>(APIResultCode.Success, new GetComplaintFollowUpOutput
                 {
                     ExpiredTime = complaintEntity.ExpiredTime.Value,
@@ -355,8 +359,9 @@ namespace GuoGuoCommunity.API.Controllers
                     ComplaintId = input.ComplaintId,
                     OwnerCertificationId = complaintEntity.OwnerCertificationId
                 }, cancelToken);
-
-                if (complaintFollowUpList.Count > 1)
+                var date = DateTimeOffset.Now.Date;
+                //每天可以提交2条跟进
+                if (complaintFollowUpList.Count(x => x.CreateOperationTime < date.AddDays(+1) && x.CreateOperationTime > date) > 1)
                 {
                     throw new NotImplementedException("投诉跟进达到上限！");
                 }

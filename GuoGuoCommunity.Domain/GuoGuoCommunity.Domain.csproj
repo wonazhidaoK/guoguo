@@ -191,6 +191,7 @@
     <Compile Include="Migrations\201904150659051_update.Designer.cs">
       <DependentUpon>201904150659051_update.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Enum\StationLetterReadStatus.cs" />
     <Compile Include="Models\IDCardPhotoRecord.cs" />
     <Compile Include="Migrations\201903310759425_Initialization.cs" />
     <Compile Include="Migrations\201903310759425_Initialization.Designer.cs">

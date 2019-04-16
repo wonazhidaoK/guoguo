@@ -10,14 +10,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 高级认证申请条件
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class VipOwnerCertificationConditionController : ApiController
     {
         private readonly IVipOwnerCertificationConditionRepository _vipOwnerCertificationConditionRepository;

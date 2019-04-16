@@ -9,14 +9,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 业主信息管理
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class OwnerController : ApiController
     {
         private readonly IOwnerRepository _ownerRepository;
@@ -109,7 +107,6 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
-
         /// <summary>
         /// 删除业主信息
         /// </summary>
@@ -127,6 +124,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
                 }
+
                 if (string.IsNullOrWhiteSpace(id))
                 {
                     throw new NotImplementedException("业主Id信息为空！");
@@ -137,6 +135,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
+
                 await _ownerRepository.DeleteAsync(new OwnerDto
                 {
                     Id = id,
@@ -267,9 +266,12 @@ namespace GuoGuoCommunity.API.Controllers
                     Gender = input.Gender
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
                 return new ApiResult<GetAllOwnerOutput>(APIResultCode.Success, new GetAllOwnerOutput
                 {
-                    List = data.Select(x => new GetOwnerOutput
+                    List = list.Select(x => new GetOwnerOutput
                     {
                         Id = x.Id.ToString(),
                         Name = x.Name,
@@ -279,8 +281,8 @@ namespace GuoGuoCommunity.API.Controllers
                         IDCard = x.IDCard,
                         Birthday = x.Birthday,
                         IndustryName = x.IndustryName
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    }).ToList(),
+                    TotalCount = listCount
                 });
             }
             catch (Exception e)

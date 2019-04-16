@@ -42,7 +42,7 @@ namespace GuoGuoCommunity.Domain
             };
         }
 
-        //取得使用者咨询
+        //取得使用者信息
         public User GetUser(string token)
         {
             var split = token.Split('.');

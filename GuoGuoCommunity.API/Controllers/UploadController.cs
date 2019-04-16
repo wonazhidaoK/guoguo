@@ -12,14 +12,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 上传
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class UploadController : ApiController
     {
         private readonly IUploadRepository _uploadRepository;
@@ -35,24 +33,6 @@ namespace GuoGuoCommunity.API.Controllers
         {
             _uploadRepository = uploadRepository;
             _tokenManager = new TokenManager();
-        }
-
-        /// <summary>
-        /// 上传图片
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete]
-        [Route("upload/image")]
-        public string UploadImage()
-        {
-            HttpFileCollection files = HttpContext.Current.Request.Files;
-            HttpPostedFile filess = HttpContext.Current.Request.Files["card"];//接收
-            string sFileName = AppDomain.CurrentDomain.BaseDirectory + filess.FileName;
-
-            filess.SaveAs(sFileName);
-            //var msg = bll.UploadImage(file.InputStream, userID);
-            //var result = new ReturnResult<string>(msg);
-            return "";
         }
 
         /// <summary>
@@ -420,6 +400,24 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return headers.ContentDisposition.FileName.Replace("\"", string.Empty);
             }
+        }
+
+        /// <summary>
+        /// 上传图片
+        /// </summary>
+        /// <returns></returns>
+        [Obsolete]
+        [Route("upload/image")]
+        public string UploadImage()
+        {
+            HttpFileCollection files = HttpContext.Current.Request.Files;
+            HttpPostedFile filess = HttpContext.Current.Request.Files["card"];//接收
+            string sFileName = AppDomain.CurrentDomain.BaseDirectory + filess.FileName;
+
+            filess.SaveAs(sFileName);
+            //var msg = bll.UploadImage(file.InputStream, userID);
+            //var result = new ReturnResult<string>(msg);
+            return "";
         }
     }
 }

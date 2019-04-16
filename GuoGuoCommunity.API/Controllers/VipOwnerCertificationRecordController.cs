@@ -87,32 +87,30 @@ namespace GuoGuoCommunity.API.Controllers
                 }
 
                 //TODO 添加业委会成员申请记录
-                var vipOwnerApplicationRecord = await _vipOwnerApplicationRecordRepository.AddAsync(
-                      new VipOwnerApplicationRecordDto
-                      {
-                          StructureId = input.StructureId,
-                          OperationUserId = user.Id.ToString(),
-                          SmallDistrictId = input.SmallDistrictId,
-                          Reason = input.Reason,
-                          OperationTime = DateTimeOffset.Now,
-                          UserId = user.Id.ToString(),
-                          OwnerCertificationId = input.OwnerCertificationId
-                      }, cancelToken);
+                var vipOwnerApplicationRecord = await _vipOwnerApplicationRecordRepository.AddAsync(new VipOwnerApplicationRecordDto
+                {
+                    StructureId = input.StructureId,
+                    OperationUserId = user.Id.ToString(),
+                    SmallDistrictId = input.SmallDistrictId,
+                    Reason = input.Reason,
+                    OperationTime = DateTimeOffset.Now,
+                    UserId = user.Id.ToString(),
+                    OwnerCertificationId = input.OwnerCertificationId
+                }, cancelToken);
 
 
                 //TODO 添加业委会成员申请附件
 
                 foreach (var item in input.Models)
                 {
-                    await _vipOwnerCertificationAnnexRepository.AddAsync(
-                        new VipOwnerCertificationAnnexDto
-                        {
-                            ApplicationRecordId = vipOwnerApplicationRecord.Id.ToString(),
-                            CertificationConditionId = item.ConditionId,
-                            AnnexContent = item.AnnexContent,
-                            OperationTime = DateTimeOffset.Now,
-                            OperationUserId = user.Id.ToString()
-                        });
+                    await _vipOwnerCertificationAnnexRepository.AddAsync(new VipOwnerCertificationAnnexDto
+                    {
+                        ApplicationRecordId = vipOwnerApplicationRecord.Id.ToString(),
+                        CertificationConditionId = item.ConditionId,
+                        AnnexContent = item.AnnexContent,
+                        OperationTime = DateTimeOffset.Now,
+                        OperationUserId = user.Id.ToString()
+                    });
                 }
                 return new ApiResult<AddVipOwnerCertificationRecordOutput>(APIResultCode.Success, new AddVipOwnerCertificationRecordOutput { Id = vipOwnerApplicationRecord.Id.ToString() }, APIResultMessage.Success);
             }
@@ -154,9 +152,12 @@ namespace GuoGuoCommunity.API.Controllers
                     SmallDistrictId = input.SmallDistrictId
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
                 return new ApiResult<GetAllVipOwnerCertificationOutput>(APIResultCode.Success, new GetAllVipOwnerCertificationOutput
                 {
-                    List = data.Select(x => new GetVipOwnerCertificationOutput
+                    List = list.Select(x => new GetVipOwnerCertificationOutput
                     {
                         Id = x.Id.ToString(),
                         Name = x.Name,
@@ -167,8 +168,8 @@ namespace GuoGuoCommunity.API.Controllers
                         StructureId = x.StructureId,
                         StructureName = x.StructureName,
                         UserId = x.UserId
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    }).ToList(),
+                    TotalCount = listCount
                 });
             }
             catch (Exception e)
@@ -215,8 +216,8 @@ namespace GuoGuoCommunity.API.Controllers
                         CertificationConditionName = certificationCondition.Title,
                         CertificationConditionId = item.ApplicationRecordId,
                         ID = item.Id.ToString(),
-                       // Url = _vipOwnerCertificationAnnexRepository.GetUrlAsync(item.Id.ToString(), cancelToken),
-                       Url = item.AnnexContent
+                        // Url = _vipOwnerCertificationAnnexRepository.GetUrlAsync(item.Id.ToString(), cancelToken),
+                        Url = item.AnnexContent
                     });
                 }
                 output.AnnexModels = list;

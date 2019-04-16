@@ -9,14 +9,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 业户信息管理
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class IndustryController : ApiController
     {
         private readonly IIndustryRepository _industryRepository;
@@ -248,9 +246,12 @@ namespace GuoGuoCommunity.API.Controllers
                     BuildingUnitId = input?.BuildingUnitId
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
                 return new ApiResult<GetAllIndustryOutput>(APIResultCode.Success, new GetAllIndustryOutput
                 {
-                    List = data.Select(x => new GetIndustryOutput
+                    List = list.Select(x => new GetIndustryOutput
                     {
                         Id = x.Id.ToString(),
                         Name = x.Name,
@@ -261,8 +262,8 @@ namespace GuoGuoCommunity.API.Controllers
                         BuildingUnitId = x.BuildingUnitId,
                         BuildingUnitName = x.BuildingUnitName,
                         NumberOfLayers = x.NumberOfLayers
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    }).ToList(),
+                    TotalCount = listCount
                 });
             }
             catch (Exception e)

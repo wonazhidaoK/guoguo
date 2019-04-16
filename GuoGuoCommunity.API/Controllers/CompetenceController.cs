@@ -10,14 +10,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     ///  权限
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CompetenceController : ApiController
     {
         private readonly ITestRepository _testRepository;
@@ -25,6 +23,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IRoleRepository _roleRepository;
         private readonly IRoleMenuRepository _roleMenuRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IStationLetterRepository _stationLetterRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -35,18 +34,21 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="roleRepository"></param>
         /// <param name="roleMenuRepository"></param>
         /// <param name="userRepository"></param>
+        /// <param name="stationLetterRepository"></param>
         public CompetenceController(
             ITestRepository testRepository,
             IMenuRepository menuRepository,
             IRoleRepository roleRepository,
             IRoleMenuRepository roleMenuRepository,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IStationLetterRepository stationLetterRepository)
         {
             _testRepository = testRepository;
             _menuRepository = menuRepository;
             _roleRepository = roleRepository;
             _roleMenuRepository = roleMenuRepository;
             _userRepository = userRepository;
+            _stationLetterRepository = stationLetterRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -62,22 +64,21 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-                var user = await _userRepository.GetAsync(
-                    new UserDto
-                    {
-                        Name = input.Name,
-                        Password = input.Pwd
-                    });
+                var user = await _userRepository.GetAsync(new UserDto
+                {
+                    Name = input.Name,
+                    Password = input.Pwd
+                });
+
                 //产生 Token
                 var token = _tokenManager.Create(user);
                 //存入数据库
 
-                await _userRepository.UpdateTokenAsync(
-                    new UserDto
-                    {
-                        Id = user.Id.ToString(),
-                        RefreshToken = token.Refresh_token
-                    });
+                await _userRepository.UpdateTokenAsync(new UserDto
+                {
+                    Id = user.Id.ToString(),
+                    RefreshToken = token.Refresh_token
+                });
 
                 if (user.Name == "admin")
                 {
@@ -95,7 +96,9 @@ namespace GuoGuoCommunity.API.Controllers
                         SmallDistrictId = user.SmallDistrictId,
                         SmallDistrictName = user.SmallDistrictName,
                         StreetOfficeId = user.StreetOfficeId,
-                        StreetOfficeName = user.StreetOfficeName
+                        StreetOfficeName = user.StreetOfficeName,
+                        DepartmentName = "authorityMax",
+                        DepartmentValue = "authorityMax"
                         //refresh_token=token.refresh_token
                     });
                 }
@@ -109,32 +112,46 @@ namespace GuoGuoCommunity.API.Controllers
                         var menu = await _menuRepository.GetByIdAsync(item.MenuId, cancelToken);
                         list.Add(menu.Key);
                     }
-
                 }
-                return new ApiResult<LoginOutput>(APIResultCode.Success,
-                    new LoginOutput
+                bool IsHaveUnRead = false;
+                if (user.DepartmentValue == Department.WuYe.Value)
+                {
+                    var letterList = await _stationLetterRepository.GetListAsync(new StationLetterDto
                     {
-                        Roles = list.ToArray(),
-                        Name = user.Name,
-                        avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
-                        token = token.Access_token,
-                        City = user.City,
-                        Region = user.Region,
-                        State = user.State,
-                        CommunityId = user.CommunityId,
-                        CommunityName = user.CommunityName,
-                        SmallDistrictId = user.SmallDistrictId,
-                        SmallDistrictName = user.SmallDistrictName,
-                        StreetOfficeId = user.StreetOfficeId,
-                        StreetOfficeName = user.StreetOfficeName
-                        // refresh_token = token.refresh_token
-                    });
+                        //ReleaseTimeEnd = input.ReleaseTimeEnd,
+                        //ReleaseTimeStart = input.ReleaseTimeStart,
+                        SmallDistrictArray = user.SmallDistrictId,
+                        // SmallDistrictArray = input.SmallDistrict,
+                        OperationUserId = user.Id.ToString(),
+                        ReadStatus = "UnRead"
+                    }, cancelToken);
+                    IsHaveUnRead = letterList.Any();
+                }
+                return new ApiResult<LoginOutput>(APIResultCode.Success, new LoginOutput
+                {
+                    Roles = list.ToArray(),
+                    Name = user.Name,
+                    avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
+                    token = token.Access_token,
+                    City = user.City,
+                    Region = user.Region,
+                    State = user.State,
+                    CommunityId = user.CommunityId,
+                    CommunityName = user.CommunityName,
+                    SmallDistrictId = user.SmallDistrictId,
+                    SmallDistrictName = user.SmallDistrictName,
+                    StreetOfficeId = user.StreetOfficeId,
+                    StreetOfficeName = user.StreetOfficeName,
+                    IsHaveUnRead = IsHaveUnRead,
+                    DepartmentValue = user.DepartmentValue,
+                    DepartmentName = user.DepartmentValue
+                    // refresh_token = token.refresh_token
+                });
             }
             catch (Exception e)
             {
                 return new ApiResult<LoginOutput>(APIResultCode.Success_NoB, new LoginOutput { }, e.Message);
             }
-
         }
 
         /// <summary>
@@ -167,7 +184,9 @@ namespace GuoGuoCommunity.API.Controllers
                     SmallDistrictId = user.SmallDistrictId,
                     SmallDistrictName = user.SmallDistrictName,
                     StreetOfficeId = user.StreetOfficeId,
-                    StreetOfficeName = user.StreetOfficeName
+                    StreetOfficeName = user.StreetOfficeName,
+                    DepartmentName = "authorityMax",
+                    DepartmentValue = "authorityMax"
                 });
             }
 
@@ -180,24 +199,40 @@ namespace GuoGuoCommunity.API.Controllers
                     var menu = await _menuRepository.GetByIdAsync(item.MenuId, cancelToken);
                     list.Add(menu.Key);
                 }
-
             }
-            return new ApiResult<LoginTokenOutput>(APIResultCode.Success,
-                new LoginTokenOutput
+
+            bool IsHaveUnRead = false;
+            if (user.DepartmentValue == Department.WuYe.Value)
+            {
+                var letterList = await _stationLetterRepository.GetListAsync(new StationLetterDto
                 {
-                    Roles = list.ToArray(),
-                    Name = user.Name,
-                    avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
-                    City = user.City,
-                    Region = user.Region,
-                    State = user.State,
-                    CommunityId = user.CommunityId,
-                    CommunityName = user.CommunityName,
-                    SmallDistrictId = user.SmallDistrictId,
-                    SmallDistrictName = user.SmallDistrictName,
-                    StreetOfficeId = user.StreetOfficeId,
-                    StreetOfficeName = user.StreetOfficeName
-                });
+                    //ReleaseTimeEnd = input.ReleaseTimeEnd,
+                    //ReleaseTimeStart = input.ReleaseTimeStart,
+                    SmallDistrictArray = user.SmallDistrictId,
+                    // SmallDistrictArray = input.SmallDistrict,
+                    OperationUserId = user.Id.ToString(),
+                    ReadStatus = "UnRead"
+                }, cancelToken);
+                IsHaveUnRead = letterList.Any();
+            }
+            return new ApiResult<LoginTokenOutput>(APIResultCode.Success, new LoginTokenOutput
+            {
+                Roles = list.ToArray(),
+                Name = user.Name,
+                avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
+                City = user.City,
+                Region = user.Region,
+                State = user.State,
+                CommunityId = user.CommunityId,
+                CommunityName = user.CommunityName,
+                SmallDistrictId = user.SmallDistrictId,
+                SmallDistrictName = user.SmallDistrictName,
+                StreetOfficeId = user.StreetOfficeId,
+                StreetOfficeName = user.StreetOfficeName,
+                IsHaveUnRead = IsHaveUnRead,
+                DepartmentValue = user.DepartmentValue,
+                DepartmentName = user.DepartmentValue
+            });
         }
 
         #region 账号管理
@@ -277,9 +312,12 @@ namespace GuoGuoCommunity.API.Controllers
                     StreetOfficeId = input.StreetOfficeId
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
                 return new ApiResult<GetAllStreetOfficeUserOutput>(APIResultCode.Success, new GetAllStreetOfficeUserOutput
                 {
-                    List = data.Select(x => new GetUserOutput
+                    List = list.Select(x => new GetUserOutput
                     {
                         Id = x.Id.ToString(),
                         Name = x.Name,
@@ -298,8 +336,8 @@ namespace GuoGuoCommunity.API.Controllers
                         StreetOfficeId = x.StreetOfficeId,
                         StreetOfficeName = x.StreetOfficeName,
                         Password = x.Password
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    }).ToList(),
+                    TotalCount = listCount
                 });
             }
             catch (Exception e)
@@ -420,6 +458,7 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
+
                 var data = await _userRepository.GetAllPropertyAsync(new UserDto
                 {
                     Name = input?.Name,
@@ -431,9 +470,12 @@ namespace GuoGuoCommunity.API.Controllers
                     CommunityId = input.CommunityId
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
                 return new ApiResult<GetAllPropertyUserOutput>(APIResultCode.Success, new GetAllPropertyUserOutput
                 {
-                    List = data.Select(x => new GetUserOutput
+                    List = list.Select(x => new GetUserOutput
                     {
                         Id = x.Id.ToString(),
                         Name = x.Name,
@@ -452,8 +494,8 @@ namespace GuoGuoCommunity.API.Controllers
                         StreetOfficeId = x.StreetOfficeId,
                         StreetOfficeName = x.StreetOfficeName,
                         Password = x.Password
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    }).ToList(),
+                    TotalCount = listCount
                 });
             }
             catch (Exception e)
@@ -533,6 +575,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
+
                 await _userRepository.DeleteAsync(new UserDto
                 {
                     Id = id,
@@ -610,13 +653,12 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("menu/getAll")]
         public async Task<ApiResult<List<GetAllMenuOutput>>> GetAllMenu(CancellationToken cancelToken)
         {
-            var data = (await _menuRepository.GetAllAsync(cancelToken)).Select(
-                x => new GetAllMenuOutput
-                {
-                    Id = x.Id.ToString(),
-                    Key = x.Key,
-                    Name = x.Name
-                }).ToList();
+            var data = (await _menuRepository.GetAllAsync(cancelToken)).Select(x => new GetAllMenuOutput
+            {
+                Id = x.Id.ToString(),
+                Key = x.Key,
+                Name = x.Name
+            }).ToList();
             return new ApiResult<List<GetAllMenuOutput>>
             {
                 code = APIResultCode.Success,
@@ -735,15 +777,18 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-                var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = input?.DepartmentValue, Name = input?.Name }, cancelToken)).Select(
-                 x => new GetAllRoleOutput
-                 {
-                     Id = x.Id.ToString(),
-                     Name = x.Name,
-                     DepartmentName = x.DepartmentName,
-                     DepartmentValue = x.DepartmentValue,
-                     Description = x.Description
-                 }).ToList();
+                var data = (await _roleRepository.GetAllAsync(new RoleDto
+                {
+                    DepartmentValue = input?.DepartmentValue,
+                    Name = input?.Name
+                }, cancelToken)).Select(x => new GetAllRoleOutput
+                {
+                    Id = x.Id.ToString(),
+                    Name = x.Name,
+                    DepartmentName = x.DepartmentName,
+                    DepartmentValue = x.DepartmentValue,
+                    Description = x.Description
+                }).ToList();
                 return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success, data);
             }
             catch (Exception e)
@@ -763,15 +808,14 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-                var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.JieDaoBan.Value }, cancelToken)).Select(
-                 x => new GetAllRoleOutput
-                 {
-                     Id = x.Id.ToString(),
-                     Name = x.Name,
-                     DepartmentName = x.DepartmentName,
-                     DepartmentValue = x.DepartmentValue,
-                     Description = x.Description
-                 }).ToList();
+                var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.JieDaoBan.Value }, cancelToken)).Select(x => new GetAllRoleOutput
+                {
+                    Id = x.Id.ToString(),
+                    Name = x.Name,
+                    DepartmentName = x.DepartmentName,
+                    DepartmentValue = x.DepartmentValue,
+                    Description = x.Description
+                }).ToList();
                 return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success, data);
             }
             catch (Exception e)
@@ -791,8 +835,7 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-                var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.WuYe.Value }, cancelToken)).Select(
-                x => new GetAllRoleOutput
+                var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.WuYe.Value }, cancelToken)).Select(x => new GetAllRoleOutput
                 {
                     Id = x.Id.ToString(),
                     Name = x.Name,

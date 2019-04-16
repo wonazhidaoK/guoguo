@@ -149,7 +149,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<AddVoteRecordOutput>(APIResultCode.Unknown, new AddVoteRecordOutput { }, APIResultMessage.TokenError);
                 }
                 var voteAssociationVipOwner = await _voteAssociationVipOwnerRepository.GetForVoteIdAsync(input.VoteId, cancelToken);
-                if (voteAssociationVipOwner.ElectionNumber != input.List.Count)
+                if (voteAssociationVipOwner.ElectionNumber != input.List[0].VoteQuestionOptionId.Count)
                 {
                     throw new NotImplementedException("请选择"+ voteAssociationVipOwner.ElectionNumber+"项");
                 }

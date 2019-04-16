@@ -9,14 +9,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 投诉类型管理
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class ComplaintTypeController : ApiController
     {
         private readonly IComplaintTypeRepository _complaintTypeRepository;
@@ -118,6 +116,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
+
                 await _complaintTypeRepository.DeleteAsync(new ComplaintTypeDto
                 {
                     Id = id,
@@ -234,7 +233,9 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     input.PageSize = 10;
                 }
+
                 int startRow = (input.PageIndex - 1) * input.PageSize;
+
                 var data = await _complaintTypeRepository.GetAllAsync(new ComplaintTypeDto
                 {
                     Description = input.Description,
@@ -242,9 +243,12 @@ namespace GuoGuoCommunity.API.Controllers
                     InitiatingDepartmentValue = input.InitiatingDepartmentValue
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
                 return new ApiResult<GetAllComplaintTypeOutput>(APIResultCode.Success, new GetAllComplaintTypeOutput
                 {
-                    List = data.Select(x => new GetComplaintTypeOutput
+                    List = list.Select(x => new GetComplaintTypeOutput
                     {
                         Id = x.Id.ToString(),
                         ComplaintPeriod = x.ComplaintPeriod,
@@ -254,8 +258,8 @@ namespace GuoGuoCommunity.API.Controllers
                         Level = x.Level,
                         Name = x.Name,
                         ProcessingPeriod = x.ProcessingPeriod
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    }).ToList(),
+                    TotalCount = listCount
                 });
             }
             catch (Exception e)

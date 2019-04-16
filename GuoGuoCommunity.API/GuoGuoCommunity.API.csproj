@@ -249,6 +249,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ALiYun\JsonModel.cs" />
     <Compile Include="Models\Announcement\AddPropertyAnnouncementInput.cs" />
     <Compile Include="Models\Announcement\AddPropertyAnnouncementOutput.cs" />
     <Compile Include="Models\Announcement\AddStreetOfficeAnnouncementInput.cs" />
@@ -447,6 +448,8 @@
     <Compile Include="Models\Vote\GetForStreetOfficeOutput.cs" />
     <Compile Include="Models\Vote\GetVoteInput.cs" />
     <Compile Include="Models\Vote\GetVoteOutput.cs" />
+    <Compile Include="Models\WeiXinPush\AnnouncementPushModel.cs" />
+    <Compile Include="Models\WeiXinPush\OwnerCertificationRecordPushModel.cs" />
     <Compile Include="Models\WX\WXLoginInput.cs" />
     <Compile Include="Models\WX\WXLoginOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

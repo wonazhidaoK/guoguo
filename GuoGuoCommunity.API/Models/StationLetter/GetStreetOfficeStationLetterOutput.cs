@@ -1,4 +1,6 @@
-﻿namespace GuoGuoCommunity.API.Models
+﻿using System;
+
+namespace GuoGuoCommunity.API.Models
 {
     /// <summary>
     /// 
@@ -43,5 +45,15 @@
         /// 附件url
         /// </summary>
         public string Url { get; set; }
+
+        /// <summary>
+        /// 创建人名称
+        /// </summary>
+        public string CreateUserName { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTimeOffset? ReleaseTime { get; set; }
     }
 }

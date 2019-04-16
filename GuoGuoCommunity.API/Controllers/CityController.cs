@@ -14,7 +14,6 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 城市
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CityController : ApiController
     {
         private readonly ICityRepository _cityService;
@@ -118,10 +117,8 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("city/linkage")]
         public async Task<List<ModelCountryState>> Linkage()
         {
-            
-                var aa = await _cityService.Linkage(new RegionDto());
-            return aa;
+            var city = await _cityService.Linkage(new RegionDto());
+            return city;
         }
-        //
     }
 }

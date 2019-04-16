@@ -9,14 +9,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 街道办
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class StreetOfficeController : ApiController
     {
         private readonly IStreetOfficeRepository _streetOfficeRepository;
@@ -239,17 +237,20 @@ namespace GuoGuoCommunity.API.Controllers
                     Region = input?.Region
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
                 return new ApiResult<GetAllStreetOfficeOutput>(APIResultCode.Success, new GetAllStreetOfficeOutput
                 {
-                    List = data.Select(x => new GetStreetOfficeOutput
+                    List = list.Select(x => new GetStreetOfficeOutput
                     {
                         Id = x.Id.ToString(),
                         State = x.State,
                         City = x.City,
                         Region = x.Region,
                         Name = x.Name
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    }).ToList(),
+                    TotalCount = listCount
                 });
             }
             catch (Exception e)

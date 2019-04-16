@@ -9,14 +9,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 业委会管理
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class VipOwnerController : ApiController
     {
         private readonly IVipOwnerRepository _vipOwnerRepository;
@@ -64,6 +62,7 @@ namespace GuoGuoCommunity.API.Controllers
                 })).Count;
 
                 var user = _tokenManager.GetUser(token);
+
                 if (user == null)
                 {
                     return new ApiResult<AddVipOwnerOutput>(APIResultCode.Unknown, new AddVipOwnerOutput { }, APIResultMessage.TokenError);
@@ -71,7 +70,6 @@ namespace GuoGuoCommunity.API.Controllers
 
                 var entity = await _vipOwnerRepository.AddAsync(new VipOwnerDto
                 {
-
                     Name = input.SmallDistrictName + "【第" + (count + 1) + "界】业主委员会",
                     RemarkName = input.RemarkName,
                     SmallDistrictId = input.SmallDistrictId,
@@ -111,10 +109,12 @@ namespace GuoGuoCommunity.API.Controllers
                 }
 
                 var user = _tokenManager.GetUser(token);
+
                 if (user == null)
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
+
                 await _vipOwnerRepository.DeleteAsync(new VipOwnerDto
                 {
                     Id = id,
@@ -234,9 +234,12 @@ namespace GuoGuoCommunity.API.Controllers
                     SmallDistrictId = input.SmallDistrictId
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
                 return new ApiResult<GetAllVipOwnerOutput>(APIResultCode.Success, new GetAllVipOwnerOutput
                 {
-                    List = data.Select(x => new GetVipOwnerOutput
+                    List = list.Select(x => new GetVipOwnerOutput
                     {
                         Id = x.Id.ToString(),
                         IsValid = x.IsValid,
@@ -244,9 +247,8 @@ namespace GuoGuoCommunity.API.Controllers
                         SmallDistrictId = x.SmallDistrictId,
                         SmallDistrictName = x.SmallDistrictName,
                         Name = x.Name,
-
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    }).ToList(),
+                    TotalCount = listCount
                 });
             }
             catch (Exception e)

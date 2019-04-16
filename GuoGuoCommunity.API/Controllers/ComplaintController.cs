@@ -10,14 +10,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 投诉管理
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class ComplaintController : ApiController
     {
         private readonly IComplaintRepository _complaintRepository;
@@ -202,6 +200,7 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationUserId = user.Id.ToString(),
                     OwnerCertificationId = complaintEntity.OwnerCertificationId
                 }, cancelToken);
+
                 var complaintFollowUpEntity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
                 {
                     ComplaintId = input.ComplaintId,
@@ -257,9 +256,12 @@ namespace GuoGuoCommunity.API.Controllers
                     OwnerCertificationId = input.OwnerCertificationId
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
                 return new ApiResult<GetAllComplaintOutput>(APIResultCode.Success, new GetAllComplaintOutput
                 {
-                    List = data.OrderByDescending(a => a.CreateOperationTime).Select(x => new GetComplaintOutput
+                    List = list.OrderByDescending(a => a.CreateOperationTime).Select(x => new GetComplaintOutput
                     {
                         Id = x.Id.ToString(),
                         CreateTime = x.CreateOperationTime.Value,
@@ -268,8 +270,8 @@ namespace GuoGuoCommunity.API.Controllers
                         StatusValue = x.StatusValue,
                         Url = _complaintAnnexRepository.GetUrl(x.Id.ToString()),
                         OwnerCertificationId = x.OwnerCertificationId
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count(),
+                    }).ToList(),
+                    TotalCount = listCount,
                     CompletedCount = data.Where(x => x.StatusValue == ComplaintStatus.Completed.Value).ToList().Count(),
                     FinishedCount = data.Where(x => x.StatusValue == ComplaintStatus.Finished.Value).ToList().Count(),
                     NotAcceptedCount = data.Where(x => x.StatusValue == ComplaintStatus.NotAccepted.Value).ToList().Count(),
@@ -457,6 +459,7 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationUserId = user.Id.ToString(),
                     OperationTime = DateTimeOffset.Now,
                 }, cancelToken);
+
                 return new ApiResult<AddComplaintOutput>(APIResultCode.Success, new AddComplaintOutput { Id = entity.Id.ToString(), CreateTime = entity.CreateOperationTime.Value, StatusValue = ComplaintStatus.NotAccepted.Value });
             }
             catch (Exception e)
@@ -505,6 +508,7 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);
+
                 var complaintFollowUpEntity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
                 {
                     ComplaintId = input.ComplaintId,
@@ -566,14 +570,18 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
+
                 var data = await _complaintRepository.GetAllForVipOwnerAsync(new ComplaintDto
                 {
                     OwnerCertificationId = input.OwnerCertificationId
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
                 return new ApiResult<GetAllComplaintForVipOwnerOutput>(APIResultCode.Success, new GetAllComplaintForVipOwnerOutput
                 {
-                    List = data.OrderByDescending(a => a.CreateOperationTime).Select(x => new GetComplaintOutput
+                    List = list.OrderByDescending(a => a.CreateOperationTime).Select(x => new GetComplaintOutput
                     {
                         Id = x.Id.ToString(),
                         CreateTime = x.CreateOperationTime.Value,
@@ -581,8 +589,8 @@ namespace GuoGuoCommunity.API.Controllers
                         StatusName = x.StatusName,
                         StatusValue = x.StatusValue,
                         Url = _complaintAnnexRepository.GetUrl(x.Id.ToString())
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count(),
+                    }).ToList(),
+                    TotalCount = listCount,
                     CompletedCount = data.Count(x => x.StatusValue == ComplaintStatus.Completed.Value),
                     FinishedCount = data.Count(x => x.StatusValue == ComplaintStatus.Finished.Value),
                     NotAcceptedCount = data.Count(x => x.StatusValue == ComplaintStatus.NotAccepted.Value),
@@ -790,7 +798,9 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     endTime = endTimeSet;
                 }
+
                 int startRow = (input.PageIndex - 1) * input.PageSize;
+
                 var data = await _complaintRepository.GetAllForStreetOfficeAsync(new ComplaintDto
                 {
                     StatusValue = input.StatusValue,
@@ -800,8 +810,12 @@ namespace GuoGuoCommunity.API.Controllers
                     StartTime = startTime,
                     Description = input.Description
                 }, cancelToken);
-                List<GetComplaintOutput> list = new List<GetComplaintOutput>();
-                foreach (var item in data)
+
+                var listCount = data.Count();
+                var list = data.OrderByDescending(a => a.CreateOperationTime).Skip(startRow).Take(input.PageSize);
+
+                List<GetComplaintOutput> listOutput = new List<GetComplaintOutput>();
+                foreach (var item in list)
                 {
                     string OperationName = "";
                     //bool IsCreateUser = false;
@@ -816,7 +830,8 @@ namespace GuoGuoCommunity.API.Controllers
                         OperationName = (await _ownerCertificationRecordRepository.GetAsync(item.OwnerCertificationId, cancelToken))?.OwnerName;
                         //IsCreateUser = item.OwnerCertificationId == input.OwnerCertificationId ? true : false;
                     }
-                    list.Add(new GetComplaintOutput
+
+                    listOutput.Add(new GetComplaintOutput
                     {
                         Id = item.Id.ToString(),
                         CreateTime = item.CreateOperationTime.Value,
@@ -830,8 +845,8 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 return new ApiResult<GetAllComplaintForStreetOfficeOutput>(APIResultCode.Success, new GetAllComplaintForStreetOfficeOutput
                 {
-                    List = list.OrderByDescending(a => a.CreateTime).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    List = listOutput,
+                    TotalCount = listCount
                 });
             }
             catch (Exception e)
@@ -1028,6 +1043,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     input.PageSize = 10;
                 }
+
                 int startRow = (input.PageIndex - 1) * input.PageSize;
                 var data = await _complaintRepository.GetAllForPropertyAsync(new ComplaintDto
                 {
@@ -1037,8 +1053,12 @@ namespace GuoGuoCommunity.API.Controllers
                     StartTime = startTime,
                     Description = input.Description
                 }, cancelToken);
-                List<GetComplaintOutput> list = new List<GetComplaintOutput>();
-                foreach (var item in data)
+
+                var listCount = data.Count();
+                var list = data.OrderByDescending(a => a.CreateOperationTime).Skip(startRow).Take(input.PageSize);
+
+                List<GetComplaintOutput> listOutput = new List<GetComplaintOutput>();
+                foreach (var item in list)
                 {
                     string OperationName = "";
                     //bool IsCreateUser = false;
@@ -1053,7 +1073,7 @@ namespace GuoGuoCommunity.API.Controllers
                         OperationName = (await _ownerCertificationRecordRepository.GetAsync(item.OwnerCertificationId, cancelToken))?.OwnerName;
                         //IsCreateUser = item.OwnerCertificationId == input.OwnerCertificationId ? true : false;
                     }
-                    list.Add(new GetComplaintOutput
+                    listOutput.Add(new GetComplaintOutput
                     {
                         Id = item.Id.ToString(),
                         CreateTime = item.CreateOperationTime.Value,
@@ -1065,10 +1085,11 @@ namespace GuoGuoCommunity.API.Controllers
                         OperationDepartmentName = item.OperationDepartmentName
                     });
                 }
+
                 return new ApiResult<GetAllComplaintForPropertyOutput>(APIResultCode.Success, new GetAllComplaintForPropertyOutput
                 {
-                    List = list.OrderByDescending(a => a.CreateTime).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    List = listOutput,
+                    TotalCount = listCount
                 });
             }
             catch (Exception e)

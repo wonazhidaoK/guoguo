@@ -304,7 +304,7 @@ namespace GuoGuoCommunity.API.Controllers
                         RefreshToken = token.Refresh_token
                     });
                 var weiXinUser = await _weiXinUserRepository.GetAsync(openIdResult.unionid, cancelToken);
-
+                var isVipOwner = await _vipOwnerCertificationRecordRepository.GetListAsync(new VipOwnerCertificationRecordDto { UserId = user.Id.ToString() });
                 return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput()
                 {
                     OpenId = user.OpenId,
@@ -313,7 +313,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Nickname = weiXinUser?.Nickname,
                     IsSubscription = weiXinUser == null ? false : true,
                     IsOwner = (await _ownerCertificationRecordRepository.GetListAsync(new OwnerCertificationRecordDto() { UserId = user.Id.ToString() })).Any(),
-                    IsVipOwner = (await _vipOwnerCertificationRecordRepository.GetListAsync(user.Id.ToString())).Any()
+                    IsVipOwner = (await _vipOwnerCertificationRecordRepository.GetListAsync(new VipOwnerCertificationRecordDto { UserId= user.Id.ToString() })).Any()
                 }, APIResultMessage.Success);
 
             }

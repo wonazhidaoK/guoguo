@@ -206,6 +206,7 @@ namespace GuoGuoCommunity.Domain.Service
 
                 vipOwnerApplicationRecord.VoteId = dto.VoteId;
                 vipOwnerApplicationRecord.VoteQuestionId = dto.VoteQuestionId;
+                vipOwnerApplicationRecord.VoteQuestionOptionId = dto.VoteQuestionOptionId;
                 vipOwnerApplicationRecord.LastOperationTime = dto.OperationTime;
                 vipOwnerApplicationRecord.LastOperationUserId = dto.OperationUserId;
                 vipOwnerApplicationRecord.IsInvalid = true;
@@ -218,6 +219,14 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 return await db.VipOwnerApplicationRecords.Where(x => x.VoteId == dto.VoteId && x.VoteQuestionId == dto.VoteQuestionId).FirstOrDefaultAsync(token);
+            }
+        }
+
+        public async Task<VipOwnerApplicationRecord> GetForVoteQuestionOptionIdAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VipOwnerApplicationRecords.Where(x => x.VoteId == dto.VoteId && x.VoteQuestionId == dto.VoteQuestionId&&x.VoteQuestionOptionId==dto.VoteQuestionOptionId).FirstOrDefaultAsync(token);
             }
         }
     }

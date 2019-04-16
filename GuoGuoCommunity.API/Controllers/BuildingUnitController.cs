@@ -16,7 +16,6 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 楼宇单元信息管理
     /// </summary>
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class BuildingUnitController : ApiController
     {
         private readonly IBuildingUnitRepository _buildingUnitRepository;
@@ -233,15 +232,18 @@ namespace GuoGuoCommunity.API.Controllers
                     UnitName = input.UnitName
                 }, cancelToken);
 
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+
                 return new ApiResult<GetAllBuildingUnitOutput>(APIResultCode.Success, new GetAllBuildingUnitOutput
                 {
-                    List = data.Select(x => new GetBuildingUnitOutput
+                    List = list.Select(x => new GetBuildingUnitOutput
                     {
                         Id = x.Id.ToString(),
                         UnitName = x.UnitName,
                         NumberOfLayers = x.NumberOfLayers
-                    }).Skip(startRow).Take(input.PageSize).ToList(),
-                    TotalCount = data.Count()
+                    }).ToList(),
+                    TotalCount = list.Count()
                 });
             }
             catch (Exception e)
