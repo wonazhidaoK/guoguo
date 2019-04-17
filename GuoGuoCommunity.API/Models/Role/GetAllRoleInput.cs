@@ -1,4 +1,6 @@
-﻿namespace GuoGuoCommunity.API.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GuoGuoCommunity.API.Models
 {
     /// <summary>
     /// 
@@ -13,5 +15,17 @@
         /// 部门值
         /// </summary>
         public string DepartmentValue { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Required]
+        public int PageIndex { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Required]
+        public int PageSize { get; set; }
     }
 }

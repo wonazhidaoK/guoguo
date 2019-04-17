@@ -186,6 +186,14 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("投票结束时间小于投票创建时间！");
                 }
+                var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto
+                {
+                    SmallDistrictId = input.SmallDistrict
+                });
+                if (!ownerCertificationRecordList.Any())
+                {
+                    throw new NotImplementedException("所选小区人数为0不能发起投票！");
+                }
                 //增加投票主体
                 var entity = await _voteRepository.AddForStreetOfficeAsync(new VoteDto
                 {
@@ -300,7 +308,14 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<AddVoteForPropertyOutput>(APIResultCode.Unknown, new AddVoteForPropertyOutput { }, APIResultMessage.TokenError);
                 }
-
+                var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto
+                {
+                    SmallDistrictId = user.SmallDistrictId
+                });
+                if (!ownerCertificationRecordList.Any())
+                {
+                    throw new NotImplementedException("当前小区人数为0不能发起投票！");
+                }
                 //增加投票主体
                 var entity = await _voteRepository.AddAsync(new VoteDto
                 {
@@ -427,6 +442,15 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("投票结束时间小于投票创建时间！");
                 }
+
+                //var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto
+                //{
+                //    SmallDistrictId = user.SmallDistrictId
+                //});
+                //if (!ownerCertificationRecordList.Any())
+                //{
+                //    throw new NotImplementedException("所选小区人数为0不能发起投票！");
+                //}
                 //增加投票主体
                 var entity = await _voteRepository.AddForVipOwnerAsync(new VoteDto
                 {
@@ -558,7 +582,14 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("当前通过申请人数为" + vipOwnerApplicationRecordList.Count + "！投票数大于竞选人数！");
                 }
-
+                var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto
+                {
+                    SmallDistrictId = input.SmallDistrictId
+                });
+                if (!ownerCertificationRecordList.Any())
+                {
+                    throw new NotImplementedException("所选小区人数为0不能发起投票！");
+                }
                 //增加投票主体
                 var entity = await _voteRepository.AddForStreetOfficeAsync(new VoteDto
                 {
@@ -947,6 +978,11 @@ namespace GuoGuoCommunity.API.Controllers
                 //获取小区名称
                 var smallDistrictEntity = await _smallDistrictRepository.GetAsync(vote.SmallDistrictArray, cancelToken);
                 var userEntity = await _userRepository.GetForIdAsync(vote.CreateOperationUserId, cancelToken);
+                var OperationName = userEntity?.Name;
+                if (vote.DepartmentValue== Department.YeZhuWeiYuanHui.Value)
+                {
+                     OperationName = (await _ownerCertificationRecordRepository.GetAsync(vote.OwnerCertificationId, cancelToken))?.OwnerName;
+                }
                 var voteQuestionList = await _voteQuestionRepository.GetListAsync(new VoteQuestionDto { VoteId = vote?.Id.ToString() }, cancelToken);
                 List<GetVoteQuestionModel> list = new List<GetVoteQuestionModel>();
                 foreach (var item in voteQuestionList)
@@ -1004,7 +1040,7 @@ namespace GuoGuoCommunity.API.Controllers
                     ShouldParticipateCount = ownerCertificationRecordList.Count.ToString(),
                     VoteTypeName = vote.VoteTypeName,
                     VoteTypeValue = vote.VoteTypeValue,
-                    CreateUserName = userEntity?.Name,
+                    CreateUserName = OperationName,
                     SmallDistrictArrayName = smallDistrictEntity.Name,
                     Feedback = voteRecord?.Feedback
                 });

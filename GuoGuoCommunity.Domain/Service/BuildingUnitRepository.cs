@@ -81,7 +81,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     list = list.Where(x => x.UnitName.Contains(dto.UnitName)).ToList();
                 }
-                if (!string.IsNullOrWhiteSpace(dto.NumberOfLayers))
+                if (dto.NumberOfLayers!=0)
                 {
                     list = list.Where(x => x.NumberOfLayers == dto.NumberOfLayers).ToList();
                 }

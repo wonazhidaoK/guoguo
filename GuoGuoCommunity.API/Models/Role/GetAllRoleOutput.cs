@@ -1,9 +1,27 @@
-﻿namespace GuoGuoCommunity.API.Models
+﻿using System.Collections.Generic;
+
+namespace GuoGuoCommunity.API.Models
 {
     /// <summary>
     /// 
     /// </summary>
     public class GetAllRoleOutput
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<GetRoleOutput> List { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int TotalCount { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class GetRoleOutput
     {
         /// <summary>
         ///  唯一标识

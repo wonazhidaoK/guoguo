@@ -121,7 +121,11 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("街道办信息不存在！");
                 }
-
+                var ownerCertificationRecordList =await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == ownerCertificationRecord.SmallDistrictId).ToListAsync(token);
+                if (!ownerCertificationRecordList.Any())
+                {
+                    throw new NotImplementedException("当前小区人数为0不能发起投票！");
+                }
                 var entity = db.Votes.Add(new Vote
                 {
                     CommunityId = ownerCertificationRecord.CommunityId,

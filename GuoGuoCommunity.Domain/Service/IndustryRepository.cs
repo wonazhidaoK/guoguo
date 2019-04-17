@@ -40,6 +40,10 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该业户信息已存在！");
                 }
+                if (buildingUnit.NumberOfLayers < dto.NumberOfLayers)
+                {
+                    throw new NotImplementedException("层数信息超出单元层数信息！");
+                }
                 var entity = db.Industries.Add(new Industry
                 {
                     Name = dto.Name,
@@ -92,6 +96,12 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 var list = await db.Industries.Where(x => x.IsDeleted == false).ToListAsync(token);
+
+                var buildingList = (await db.Buildings.Where(x => x.IsDeleted == false&&x.SmallDistrictId==dto.OperationUserSmallDistrictId).Select(x =>  x.Id.ToString()  ).ToListAsync(token));
+                
+                list = list.Where(x => buildingList.Contains( x.BuildingId)).ToList();
+                
+
                 if (!string.IsNullOrWhiteSpace(dto.BuildingId))
                 {
                     list = list.Where(x => x.BuildingId == dto.BuildingId).ToList();

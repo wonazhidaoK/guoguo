@@ -14,7 +14,7 @@ namespace GuoGuoCommunity.Domain.Dto
         /// <summary>
         /// 层数
         /// </summary>
-        public string NumberOfLayers { get; set; }
+        public int NumberOfLayers { get; set; }
 
         /// <summary>
         /// 面积
@@ -50,6 +50,11 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 操作人Id
         /// </summary>
         public string OperationUserId { get; set; }
+
+        /// <summary>
+        /// 操作人所属小区Id
+        /// </summary>
+        public string OperationUserSmallDistrictId { get; set; }
 
         /// <summary>
         /// 操作时间

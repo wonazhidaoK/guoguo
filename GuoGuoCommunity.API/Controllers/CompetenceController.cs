@@ -105,13 +105,18 @@ namespace GuoGuoCommunity.API.Controllers
 
                 var role_Menus = await _roleMenuRepository.GetByRoleIdAsync(user.RoleId, cancelToken);
                 List<string> list = new List<string>();
-                if (role_Menus != null)
+                if (role_Menus.Any())
                 {
                     foreach (var item in role_Menus)
                     {
                         var menu = await _menuRepository.GetByIdAsync(item.MenuId, cancelToken);
+
                         list.Add(menu.Key);
                     }
+                }
+                else
+                {
+                    return new ApiResult<LoginOutput>(APIResultCode.Success_NoB, new LoginOutput { }, "登陆账户角色未分配菜单浏览权限!");
                 }
                 bool IsHaveUnRead = false;
                 if (user.DepartmentValue == Department.WuYe.Value)
@@ -264,7 +269,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     Name = input.Name,
                     PhoneNumber = input.PhoneNumber,
-                    //Password = input.Password,
+                    Password = input.Password,
                     State = input.State,
                     City = input.City,
                     Region = input.Region,
@@ -773,27 +778,44 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("role/getAll")]
-        public async Task<ApiResult<List<GetAllRoleOutput>>> GetAllRole([FromUri]GetAllRoleInput input, CancellationToken cancelToken)
+        public async Task<ApiResult<GetAllRoleOutput>> GetAllRole([FromUri]GetAllRoleInput input, CancellationToken cancelToken)
         {
             try
             {
+                if (input.PageIndex < 1)
+                {
+                    input.PageIndex = 1;
+                }
+                if (input.PageSize < 1)
+                {
+                    input.PageSize = 10;
+                }
+                int startRow = (input.PageIndex - 1) * input.PageSize;
+
                 var data = (await _roleRepository.GetAllAsync(new RoleDto
                 {
                     DepartmentValue = input?.DepartmentValue,
                     Name = input?.Name
-                }, cancelToken)).Select(x => new GetAllRoleOutput
+                }, cancelToken));
+                var listCount = data.Count();
+                var list = data.Skip(startRow).Take(input.PageSize);
+                return new ApiResult<GetAllRoleOutput>(APIResultCode.Success, new GetAllRoleOutput
                 {
-                    Id = x.Id.ToString(),
-                    Name = x.Name,
-                    DepartmentName = x.DepartmentName,
-                    DepartmentValue = x.DepartmentValue,
-                    Description = x.Description
-                }).ToList();
-                return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success, data);
+                    List = list.Select(x => new GetRoleOutput
+                    {
+                        Id = x.Id.ToString(),
+                        Name = x.Name,
+                        DepartmentName = x.DepartmentName,
+                        DepartmentValue = x.DepartmentValue,
+                        Description = x.Description
+                    }).ToList(),
+                    TotalCount = listCount
+                });
+
             }
             catch (Exception e)
             {
-                return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success_NoB, new List<GetAllRoleOutput>(), e.Message);
+                return new ApiResult<GetAllRoleOutput>(APIResultCode.Success_NoB, new GetAllRoleOutput(), e.Message);
             }
 
         }
@@ -804,11 +826,11 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("role/getAllForStreetOffice")]
-        public async Task<ApiResult<List<GetAllRoleOutput>>> GetAllRoleForStreetOffice(CancellationToken cancelToken)
+        public async Task<ApiResult<List<GetRoleOutput>>> GetAllRoleForStreetOffice(CancellationToken cancelToken)
         {
             try
             {
-                var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.JieDaoBan.Value }, cancelToken)).Select(x => new GetAllRoleOutput
+                var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.JieDaoBan.Value }, cancelToken)).Select(x => new GetRoleOutput
                 {
                     Id = x.Id.ToString(),
                     Name = x.Name,
@@ -816,11 +838,11 @@ namespace GuoGuoCommunity.API.Controllers
                     DepartmentValue = x.DepartmentValue,
                     Description = x.Description
                 }).ToList();
-                return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success, data);
+                return new ApiResult<List<GetRoleOutput>>(APIResultCode.Success, data);
             }
             catch (Exception e)
             {
-                return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success_NoB, new List<GetAllRoleOutput>(), e.Message);
+                return new ApiResult<List<GetRoleOutput>>(APIResultCode.Success_NoB, new List<GetRoleOutput>(), e.Message);
             }
 
         }
@@ -831,11 +853,11 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("role/getAllForProperty")]
-        public async Task<ApiResult<List<GetAllRoleOutput>>> GetAllRoleForProperty(CancellationToken cancelToken)
+        public async Task<ApiResult<List<GetRoleOutput>>> GetAllRoleForProperty(CancellationToken cancelToken)
         {
             try
             {
-                var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.WuYe.Value }, cancelToken)).Select(x => new GetAllRoleOutput
+                var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.WuYe.Value }, cancelToken)).Select(x => new GetRoleOutput
                 {
                     Id = x.Id.ToString(),
                     Name = x.Name,
@@ -843,11 +865,11 @@ namespace GuoGuoCommunity.API.Controllers
                     DepartmentValue = x.DepartmentValue,
                     Description = x.Description
                 }).ToList();
-                return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success, data);
+                return new ApiResult<List<GetRoleOutput>>(APIResultCode.Success, data);
             }
             catch (Exception e)
             {
-                return new ApiResult<List<GetAllRoleOutput>>(APIResultCode.Success_NoB, new List<GetAllRoleOutput>(), e.Message);
+                return new ApiResult<List<GetRoleOutput>>(APIResultCode.Success_NoB, new List<GetRoleOutput>(), e.Message);
             }
 
         }

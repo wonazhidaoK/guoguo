@@ -54,7 +54,11 @@ namespace GuoGuoCommunity.Domain.Service
                 using (var db = new GuoGuoCommunityContext())
                 {
                     var entity = db.StationLetterAnnices.Where(x => x.StationLetterId == id).FirstOrDefault();
-                    var upload = db.Uploads.Where(x => x.Id == Guid.Parse(entity.AnnexContent)).FirstOrDefault();
+                    if (!Guid.TryParse(entity.AnnexContent, out var annexContent))
+                    {
+                        throw new NotImplementedException("高级认证附件id信息不正确！");
+                    }
+                    var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
                     return upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
                 }
             }

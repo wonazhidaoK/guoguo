@@ -210,6 +210,7 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
+               
                 if (input.PageIndex < 1)
                 {
                     input.PageIndex = 1;
@@ -219,7 +220,10 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-
+                if (!string.IsNullOrWhiteSpace(input.SmallDistrictId))
+                {
+                    throw new NotImplementedException("楼宇小区Id信息为空！");
+                }
                 var data = await _buildingService.GetAllAsync(new BuildingDto
                 {
                     Name = input?.Name,

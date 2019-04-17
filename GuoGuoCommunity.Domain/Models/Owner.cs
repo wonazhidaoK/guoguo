@@ -52,6 +52,16 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public string IndustryName { get; set; }
 
+        /// <summary>
+        /// 业主认证申请id
+        /// </summary>
+        public string OwnerCertificationRecordId { get; set; }
+
+        /// <summary>
+        /// 是否认证
+        /// </summary>
+        public bool IsLegalize { get; set; }
+
         public string LastOperationUserId { get; set; }
 
         public DateTimeOffset? LastOperationTime { get; set; }

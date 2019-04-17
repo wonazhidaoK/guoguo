@@ -191,6 +191,14 @@
     <Compile Include="Migrations\201904150659051_update.Designer.cs">
       <DependentUpon>201904150659051_update.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201904170517551_update-buildingUnit.cs" />
+    <Compile Include="Migrations\201904170517551_update-buildingUnit.Designer.cs">
+      <DependentUpon>201904170517551_update-buildingUnit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904170556599_update-buildingUnit2.cs" />
+    <Compile Include="Migrations\201904170556599_update-buildingUnit2.Designer.cs">
+      <DependentUpon>201904170556599_update-buildingUnit2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Enum\StationLetterReadStatus.cs" />
     <Compile Include="Models\IDCardPhotoRecord.cs" />
     <Compile Include="Migrations\201903310759425_Initialization.cs" />
@@ -378,6 +386,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201904150659051_update.resx">
       <DependentUpon>201904150659051_update.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904170517551_update-buildingUnit.resx">
+      <DependentUpon>201904170517551_update-buildingUnit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904170556599_update-buildingUnit2.resx">
+      <DependentUpon>201904170556599_update-buildingUnit2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

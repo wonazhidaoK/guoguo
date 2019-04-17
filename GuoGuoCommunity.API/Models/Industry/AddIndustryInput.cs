@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace GuoGuoCommunity.API.Models
+﻿namespace GuoGuoCommunity.API.Models
 {
     /// <summary>
     /// 
@@ -18,7 +13,7 @@ namespace GuoGuoCommunity.API.Models
         /// <summary>
         /// 层数
         /// </summary>
-        public string NumberOfLayers { get; set; }
+        public int NumberOfLayers { get; set; }
 
         /// <summary>
         /// 面积

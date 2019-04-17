@@ -162,7 +162,12 @@ namespace GuoGuoCommunity.API.Models
         /// <summary>
         /// 层数
         /// </summary>
-        public string NumberOfLayers { get; set; }
+        public int? NumberOfLayers { get; set; }
+
+        /// <summary>
+        /// 朝向
+        /// </summary>
+        public string Oriented { get; set; }
 
         #endregion
 

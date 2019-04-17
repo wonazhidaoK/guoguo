@@ -52,7 +52,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("楼宇单元信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.NumberOfLayers))
+                if (input.NumberOfLayers==0)
                 {
                     throw new NotImplementedException("楼宇层信息为空！");
                 }

@@ -16,7 +16,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var complaintType = await db.ComplaintTypes.Where(x => x.Name == dto.Name && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var complaintType = await db.ComplaintTypes.Where(x => x.Name == dto.Name && x.IsDeleted == false&&x.InitiatingDepartmentValue == dto.InitiatingDepartmentValue).FirstOrDefaultAsync(token);
                 if (complaintType != null)
                 {
                     throw new NotImplementedException("该投诉类型已存在！");

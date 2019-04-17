@@ -73,7 +73,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 if (input.List.Count < 1)
                 {
-                    throw new NotImplementedException("投票详情信息不准确！");
+                    throw new NotImplementedException("请勾选选项再进行投票！");
                 }
 
                 var user = _tokenManager.GetUser(token);

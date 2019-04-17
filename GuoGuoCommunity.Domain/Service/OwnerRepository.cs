@@ -137,7 +137,7 @@ namespace GuoGuoCommunity.Domain.Service
                 var owner = await db.Owners.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
                 if (owner == null)
                 {
-                    throw new NotImplementedException("该社区不存在！");
+                    throw new NotImplementedException("该业主不存在！");
                 }
 
                 if (await db.Owners.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.IndustryId == owner.IndustryId && x.Id != uid).FirstOrDefaultAsync(token) != null)
@@ -145,7 +145,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该业主名称已存在！");
                 }
                 var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.OwnerId == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token);
-                if (ownerCertificationRecord==null)
+                if (ownerCertificationRecord == null)
                 {
                     owner.Birthday = dto.Birthday;
                     owner.Gender = dto.Gender;
@@ -169,6 +169,33 @@ namespace GuoGuoCommunity.Domain.Service
         {
 
             return false;
+        }
+
+        public async Task<List<Owner>> GetListForLegalizeAsync(OwnerDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.Owners.Where(x => x.IsDeleted == false && x.IsLegalize == false && x.IndustryId == dto.IndustryId).ToListAsync(token);
+            }
+        }
+
+        public async Task UpdateForLegalizeAsync(OwnerDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("业主信息不正确！");
+                }
+                var owner = await db.Owners.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (owner == null)
+                {
+                    throw new NotImplementedException("该业主不存在！");
+                }
+                owner.OwnerCertificationRecordId = dto.OwnerCertificationRecordId;
+                owner.IsLegalize = true;
+                await db.SaveChangesAsync(token);
+            }
         }
     }
 }

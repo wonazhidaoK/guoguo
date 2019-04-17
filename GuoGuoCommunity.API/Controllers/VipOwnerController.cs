@@ -226,11 +226,14 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
+                if (string.IsNullOrWhiteSpace(input.SmallDistrictId))
+                {
+                    throw new NotImplementedException("业委会小区Id信息为空！");
+                }
                 var data = await _vipOwnerRepository.GetAllAsync(new VipOwnerDto
                 {
-
                     Name = input.Name,
-                    RemarkName = input.RemarkName,
+                    //RemarkName = input.RemarkName,
                     SmallDistrictId = input.SmallDistrictId
                 }, cancelToken);
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace GuoGuoCommunity.API.Models
+﻿namespace GuoGuoCommunity.API.Models
 {
     /// <summary>
     /// 
@@ -48,5 +43,10 @@ namespace GuoGuoCommunity.API.Models
         /// 业户名称
         /// </summary>
         public string IndustryName { get; set; }
+
+        /// <summary>
+        /// 是否认证
+        /// </summary>
+        public bool IsLegalize { get; set; }
     }
 }

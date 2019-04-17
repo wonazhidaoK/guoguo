@@ -18,6 +18,6 @@
         /// <summary>
         /// 层数
         /// </summary>
-        public string NumberOfLayers { get; set; }
+        public int NumberOfLayers { get; set; }
     }
 }

@@ -181,7 +181,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Name = input.Name,
                     Birthday = input.Birthday,
                     Gender = input.Gender,
-                    IDCard = input.Name,
+                    IDCard = input.IDCard,
                     PhoneNumber = input.PhoneNumber,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
@@ -223,7 +223,8 @@ namespace GuoGuoCommunity.API.Controllers
                     IDCard = data.IDCard,
                     IndustryId = data.IndustryId,
                     IndustryName = data.IndustryName,
-                    PhoneNumber = data.PhoneNumber
+                    PhoneNumber = data.PhoneNumber,
+                    IsLegalize = data.IsLegalize
                 });
             }
             catch (Exception e)
@@ -280,7 +281,8 @@ namespace GuoGuoCommunity.API.Controllers
                         IndustryId = x.IndustryId,
                         IDCard = x.IDCard,
                         Birthday = x.Birthday,
-                        IndustryName = x.IndustryName
+                        IndustryName = x.IndustryName,
+                        IsLegalize = x.IsLegalize
                     }).ToList(),
                     TotalCount = listCount
                 });

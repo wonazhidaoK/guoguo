@@ -85,12 +85,12 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 if (!string.IsNullOrWhiteSpace(dto.Name))
                 {
-                    list = list.Where(x => x.Name.Contains(dto.Name)).ToList();
+                    list = list.Where(x => x.Name.Contains(dto.Name)|| x.RemarkName.Contains(dto.Name)).ToList();
                 }
-                if (!string.IsNullOrWhiteSpace(dto.RemarkName))
-                {
-                    list = list.Where(x => x.RemarkName.Contains(dto.RemarkName)).ToList();
-                }
+                //if (!string.IsNullOrWhiteSpace(dto.RemarkName))
+                //{
+                //    list = list.Where(x => x.RemarkName.Contains(dto.RemarkName)).ToList();
+                //}
                 return list;
             }
         }

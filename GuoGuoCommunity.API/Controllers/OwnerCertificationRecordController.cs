@@ -245,7 +245,8 @@ namespace GuoGuoCommunity.API.Controllers
                         IDCard = owner?.IDCard,
                         PhoneNumber = owner?.PhoneNumber,
                         NumberOfLayers = industry?.NumberOfLayers,
-                        Acreage = industry?.Acreage
+                        Acreage = industry?.Acreage,
+                        Oriented = industry?.Oriented
                     });
                 }
                 return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Success, new GetListOwnerCertificationRecordOutput
@@ -276,6 +277,7 @@ namespace GuoGuoCommunity.API.Controllers
                 OperationUserId = "system",
                 Id = ownerCertificationRecordEntity.Id.ToString()
             };
+                IOwnerRepository ownerRepository = new OwnerRepository();
             try
             {
                 /*
@@ -286,8 +288,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var entity = await PostALiYun(annex);
                 JsonModel json = JsonConvert.DeserializeObject<JsonModel>(entity.Message);
 
-                IOwnerRepository ownerRepository = new OwnerRepository();
-                var owner = (await ownerRepository.GetListAsync(new OwnerDto { IndustryId = ownerCertificationRecordEntity.IndustryId })).Where(x => x.IDCard == json.Num).FirstOrDefault();
+                var owner = (await ownerRepository.GetListForLegalizeAsync(new OwnerDto { IndustryId = ownerCertificationRecordEntity.IndustryId })).Where(x => x.IDCard == json.Num).FirstOrDefault();
 
                 if (owner != null)
                 {
@@ -315,6 +316,13 @@ namespace GuoGuoCommunity.API.Controllers
             }
 
             var recordEntity = await ownerCertificationRecordRepository.UpdateAsync(dto);
+
+            await ownerRepository.UpdateForLegalizeAsync(new OwnerDto
+            {
+                OwnerCertificationRecordId = ownerCertificationRecordEntity.Id.ToString(),
+                Id = recordEntity.OwnerId.ToString()
+            });
+
             IUserRepository userRepository = new UserRepository();
             var userEntity = await userRepository.GetForIdAsync(recordEntity.UserId);
             IWeiXinUserRepository weiXinUserRepository = new WeiXinUserRepository();
@@ -523,7 +531,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [Obsolete]
         [HttpGet]
-        [Route("ownerCertificationRecord/getAllForSmallDistrictId")]
+        [Route("ownerCertificationRecord/getAllForSmallDistrictId2")]
         public async Task<ApiResult<GetListOwnerCertificationRecordOutput>> GetAllForSmallDistrictId([FromUri]string SmallDistrictId, CancellationToken cancelToken)
         {
             try

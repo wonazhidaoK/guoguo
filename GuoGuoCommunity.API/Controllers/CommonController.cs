@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
@@ -163,7 +162,8 @@ namespace GuoGuoCommunity.API.Controllers
                         IDCard = owner?.IDCard,
                         PhoneNumber = owner?.PhoneNumber,
                         NumberOfLayers = industry?.NumberOfLayers,
-                        Acreage = industry?.Acreage
+                        Acreage = industry?.Acreage,
+                        Oriented = industry?.Oriented
                     });
                 }
                 return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Success, new GetListOwnerCertificationRecordOutput
@@ -192,12 +192,28 @@ namespace GuoGuoCommunity.API.Controllers
         });
 
         /// <summary>
-        /// 获取部门集合
+        /// 后台创建账户获取部门集合
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Route("department/getAll")]
-        public ApiResult<List<Department>> GetAll() => new ApiResult<List<Department>>(APIResultCode.Success, Department.GetAll().ToList());
+        public ApiResult<List<Department>> GetAll() => new ApiResult<List<Department>>(APIResultCode.Success, new List<Department>
+        {
+            Department.JieDaoBan,
+            Department .WuYe
+        }.ToList());
+
+        /// <summary>
+        /// 创建投诉类型获取部门集合
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("department/getForComplaintAll")]
+        public ApiResult<List<Department>> GetForComplaintAll() => new ApiResult<List<Department>>(APIResultCode.Success, new List<Department>
+        {
+            Department.YeZhu,
+            Department.YeZhuWeiYuanHui
+        }.ToList());
 
         /// <summary>
         /// 业主投诉上级部门集合

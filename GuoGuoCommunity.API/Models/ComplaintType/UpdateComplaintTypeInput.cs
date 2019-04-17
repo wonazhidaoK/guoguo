@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace GuoGuoCommunity.API.Models
+﻿namespace GuoGuoCommunity.API.Models
 {
     /// <summary>
     /// 
@@ -30,14 +25,14 @@ namespace GuoGuoCommunity.API.Models
         /// </summary>
         public string Level { get; set; }
 
-        /// <summary>
-        /// 发起部门名称
-        /// </summary>
-        public string InitiatingDepartmentName { get; set; }
+        ///// <summary>
+        ///// 发起部门名称
+        ///// </summary>
+        //public string InitiatingDepartmentName { get; set; }
 
-        /// <summary>
-        /// 发起部门值
-        /// </summary>
-        public string InitiatingDepartmentValue { get; set; }
+        ///// <summary>
+        ///// 发起部门值
+        ///// </summary>
+        //public string InitiatingDepartmentValue { get; set; }
     }
 }

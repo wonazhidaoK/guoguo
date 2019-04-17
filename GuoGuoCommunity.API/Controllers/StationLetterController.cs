@@ -100,13 +100,16 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);
 
-                await _stationLetterAnnexRepository.AddAsync(new StationLetterAnnexDto
+                if (!string.IsNullOrWhiteSpace(input.AnnexId))
                 {
-                    AnnexContent = input.AnnexId,
-                    StationLetterId = entity.Id.ToString(),
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
+                    await _stationLetterAnnexRepository.AddAsync(new StationLetterAnnexDto
+                    {
+                        AnnexContent = input.AnnexId,
+                        StationLetterId = entity.Id.ToString(),
+                        OperationTime = DateTimeOffset.Now,
+                        OperationUserId = user.Id.ToString()
+                    }, cancelToken);
+                }
 
                 return new ApiResult<AddStationLetterOutput>(APIResultCode.Success, new AddStationLetterOutput { Id = entity.Id.ToString() });
             }

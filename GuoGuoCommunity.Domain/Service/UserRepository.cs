@@ -49,7 +49,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     Name = dto.Name,
                     PhoneNumber = dto.PhoneNumber,
-                    Password = "123456",
+                    Password = dto.Password,
                     RoleId = dto.RoleId,
                     RoleName = role.Name,
                     State = dto.State,
@@ -121,7 +121,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     Name = dto.Name,
                     PhoneNumber = dto.PhoneNumber,
-                    Password = "123456",
+                    Password = dto.Password,
                     RoleId = dto.RoleId,
                     RoleName = role.Name,
                     State = dto.State,

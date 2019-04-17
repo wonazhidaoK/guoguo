@@ -26,7 +26,7 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 层数
         /// </summary>
-        public string NumberOfLayers { get; set; }
+        public int NumberOfLayers { get; set; }
 
         /// <summary>
         /// 楼宇Id

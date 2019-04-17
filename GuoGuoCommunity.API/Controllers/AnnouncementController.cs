@@ -683,7 +683,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 if (DateTimeOffset.TryParse(input.EndTime, out DateTimeOffset endTimeSet))
                 {
-                    endTime = endTimeSet;
+                    endTime = endTimeSet.AddDays(1).AddMinutes(-1);
                 }
 
                 var data = await _announcementRepository.GetListForStreetOfficeAsync(new AnnouncementDto
@@ -769,7 +769,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 if (DateTimeOffset.TryParse(input.EndTime, out DateTimeOffset endTimeSet))
                 {
-                    endTime = endTimeSet;
+                    endTime = endTimeSet.AddDays(1).AddMinutes(-1);
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
                 var token = HttpContext.Current.Request.Headers["Authorization"];

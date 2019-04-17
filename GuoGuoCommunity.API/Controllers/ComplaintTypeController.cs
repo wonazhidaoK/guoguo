@@ -160,8 +160,8 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     Id = input.Id,
                     Description = input.Description,
-                    InitiatingDepartmentName = input.InitiatingDepartmentName,
-                    InitiatingDepartmentValue = input.InitiatingDepartmentValue,
+                    //InitiatingDepartmentName = input.InitiatingDepartmentName,
+                    //InitiatingDepartmentValue = input.InitiatingDepartmentValue,
                     Level = input.Level,
                     Name = input.Name,
                     OperationTime = DateTimeOffset.Now,

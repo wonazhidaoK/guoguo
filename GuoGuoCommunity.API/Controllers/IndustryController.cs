@@ -59,7 +59,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("业户朝向信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.NumberOfLayers))
+                if (input.NumberOfLayers == 0)
                 {
                     throw new NotImplementedException("业户层数信息为空！");
                 }
@@ -77,7 +77,9 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<AddIndustryOutput>(APIResultCode.Unknown, new AddIndustryOutput { }, APIResultMessage.TokenError);
                 }
-
+                /*
+                 * TODO查询楼宇单元层数，限制层数
+                 */
                 var entity = await _industryRepository.AddAsync(new IndustryDto
                 {
                     Name = input.Name,
@@ -230,6 +232,17 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<GetAllIndustryOutput>(APIResultCode.Unknown, new GetAllIndustryOutput { }, APIResultMessage.TokenNull);
+                }
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult<GetAllIndustryOutput>(APIResultCode.Unknown, new GetAllIndustryOutput { }, APIResultMessage.TokenError);
+                }
+
                 if (input.PageIndex < 1)
                 {
                     input.PageIndex = 1;
@@ -243,7 +256,8 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     Name = input?.Name,
                     BuildingId = input?.BuildingId,
-                    BuildingUnitId = input?.BuildingUnitId
+                    BuildingUnitId = input?.BuildingUnitId,
+                    OperationUserSmallDistrictId = user.SmallDistrictId
                 }, cancelToken);
 
                 var listCount = data.Count();
