@@ -175,60 +175,12 @@
     <Compile Include="Dto\VoteResultRecordDto.cs" />
     <Compile Include="Dto\WeiXinUserDto.cs" />
     <Compile Include="GuoGuoCommunityContext.cs" />
-    <Compile Include="Migrations\201904090321162_add-IDCardPhotoRecords.cs" />
-    <Compile Include="Migrations\201904090321162_add-IDCardPhotoRecords.Designer.cs">
-      <DependentUpon>201904090321162_add-IDCardPhotoRecords.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904090814401_update-ownerCertificationRecord.cs" />
-    <Compile Include="Migrations\201904090814401_update-ownerCertificationRecord.Designer.cs">
-      <DependentUpon>201904090814401_update-ownerCertificationRecord.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904150147239_weixinUser-update.cs" />
-    <Compile Include="Migrations\201904150147239_weixinUser-update.Designer.cs">
-      <DependentUpon>201904150147239_weixinUser-update.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904150659051_update.cs" />
-    <Compile Include="Migrations\201904150659051_update.Designer.cs">
-      <DependentUpon>201904150659051_update.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904170517551_update-buildingUnit.cs" />
-    <Compile Include="Migrations\201904170517551_update-buildingUnit.Designer.cs">
-      <DependentUpon>201904170517551_update-buildingUnit.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904170556599_update-buildingUnit2.cs" />
-    <Compile Include="Migrations\201904170556599_update-buildingUnit2.Designer.cs">
-      <DependentUpon>201904170556599_update-buildingUnit2.cs</DependentUpon>
+    <Compile Include="Migrations\201904180309370_Initialization.cs" />
+    <Compile Include="Migrations\201904180309370_Initialization.Designer.cs">
+      <DependentUpon>201904180309370_Initialization.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Enum\StationLetterReadStatus.cs" />
     <Compile Include="Models\IDCardPhotoRecord.cs" />
-    <Compile Include="Migrations\201903310759425_Initialization.cs" />
-    <Compile Include="Migrations\201903310759425_Initialization.Designer.cs">
-      <DependentUpon>201903310759425_Initialization.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904010634135_updata-Vote.cs" />
-    <Compile Include="Migrations\201904010634135_updata-Vote.Designer.cs">
-      <DependentUpon>201904010634135_updata-Vote.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904010730029_add-Complaint.cs" />
-    <Compile Include="Migrations\201904010730029_add-Complaint.Designer.cs">
-      <DependentUpon>201904010730029_add-Complaint.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904010817521_update-VoteResultRecord.cs" />
-    <Compile Include="Migrations\201904010817521_update-VoteResultRecord.Designer.cs">
-      <DependentUpon>201904010817521_update-VoteResultRecord.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904020249541_upadate-complaintType.cs" />
-    <Compile Include="Migrations\201904020249541_upadate-complaintType.Designer.cs">
-      <DependentUpon>201904020249541_upadate-complaintType.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904020613084_upadte-Vote.cs" />
-    <Compile Include="Migrations\201904020613084_upadte-Vote.Designer.cs">
-      <DependentUpon>201904020613084_upadte-Vote.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904020758058_update-Complaint.cs" />
-    <Compile Include="Migrations\201904020758058_update-Complaint.Designer.cs">
-      <DependentUpon>201904020758058_update-Complaint.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\AnnouncementAnnex.cs" />
@@ -354,44 +306,8 @@
     <Content Include="Models\city\Area_List.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201903310759425_Initialization.resx">
-      <DependentUpon>201903310759425_Initialization.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904010634135_updata-Vote.resx">
-      <DependentUpon>201904010634135_updata-Vote.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904010730029_add-Complaint.resx">
-      <DependentUpon>201904010730029_add-Complaint.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904010817521_update-VoteResultRecord.resx">
-      <DependentUpon>201904010817521_update-VoteResultRecord.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904020249541_upadate-complaintType.resx">
-      <DependentUpon>201904020249541_upadate-complaintType.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904020613084_upadte-Vote.resx">
-      <DependentUpon>201904020613084_upadte-Vote.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904020758058_update-Complaint.resx">
-      <DependentUpon>201904020758058_update-Complaint.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904090321162_add-IDCardPhotoRecords.resx">
-      <DependentUpon>201904090321162_add-IDCardPhotoRecords.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904090814401_update-ownerCertificationRecord.resx">
-      <DependentUpon>201904090814401_update-ownerCertificationRecord.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904150147239_weixinUser-update.resx">
-      <DependentUpon>201904150147239_weixinUser-update.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904150659051_update.resx">
-      <DependentUpon>201904150659051_update.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904170517551_update-buildingUnit.resx">
-      <DependentUpon>201904170517551_update-buildingUnit.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904170556599_update-buildingUnit2.resx">
-      <DependentUpon>201904170556599_update-buildingUnit2.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201904180309370_Initialization.resx">
+      <DependentUpon>201904180309370_Initialization.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

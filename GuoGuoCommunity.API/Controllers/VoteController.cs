@@ -44,6 +44,11 @@ namespace GuoGuoCommunity.API.Controllers
         /// 微信推送投票结果模板Id
         /// </summary>
         public static readonly string VoteResultTemplateId = ConfigurationManager.AppSettings["VoteResultTemplateId"];
+
+        /// <summary>
+        /// 微信推送高级认证通过模板Id
+        /// </summary>
+        public static readonly string VipOwnerCertificationRecordTemplateId = ConfigurationManager.AppSettings["VipOwnerCertificationRecordTemplateId"];
         private readonly IVoteRepository _voteRepository;
         private readonly IVoteQuestionRepository _voteQuestionRepository;
         private readonly IVoteQuestionOptionRepository _voteQuestionOptionRepository;
@@ -979,9 +984,9 @@ namespace GuoGuoCommunity.API.Controllers
                 var smallDistrictEntity = await _smallDistrictRepository.GetAsync(vote.SmallDistrictArray, cancelToken);
                 var userEntity = await _userRepository.GetForIdAsync(vote.CreateOperationUserId, cancelToken);
                 var OperationName = userEntity?.Name;
-                if (vote.DepartmentValue== Department.YeZhuWeiYuanHui.Value)
+                if (vote.DepartmentValue == Department.YeZhuWeiYuanHui.Value)
                 {
-                     OperationName = (await _ownerCertificationRecordRepository.GetAsync(vote.OwnerCertificationId, cancelToken))?.OwnerName;
+                    OperationName = (await _ownerCertificationRecordRepository.GetAsync(vote.OwnerCertificationId, cancelToken))?.OwnerName;
                 }
                 var voteQuestionList = await _voteQuestionRepository.GetListAsync(new VoteQuestionDto { VoteId = vote?.Id.ToString() }, cancelToken);
                 List<GetVoteQuestionModel> list = new List<GetVoteQuestionModel>();
@@ -1000,7 +1005,7 @@ namespace GuoGuoCommunity.API.Controllers
                         };
                         voteQuestionOptionModels.Add(model);
                     }
-                    var voteResult =( await _voteResultRecordRepository.GetListForVoteIdAsync(vote.Id.ToString())).FirstOrDefault();
+                    var voteResult = (await _voteResultRecordRepository.GetListForVoteIdAsync(vote.Id.ToString())).FirstOrDefault();
                     /*
                      * 投票类型是否为业委会改选
                      * 查询投票业委会关联关系
@@ -1151,8 +1156,10 @@ namespace GuoGuoCommunity.API.Controllers
                         first = new TemplateDataItem("请参与投票"),
                         //  account = new TemplateDataItem(wxNickName),
                         keyword1 = new TemplateDataItem(voteEntity.Title),
-                        keyword2 = new TemplateDataItem(voteEntity.CreateOperationTime.Value.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
-                        remark = new TemplateDataItem(">>点击参与投票<<", "#FF0000")
+                        keyword2 = new TemplateDataItem(item.SmallDistrictName),
+                        keyword3 = new TemplateDataItem(voteEntity.CreateOperationTime.Value.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
+                        keyword4 = new TemplateDataItem(voteEntity.Deadline.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
+                        remark = new TemplateDataItem(">>请点击参与投票，感谢你的参与<<", "#FF0000")
                     };
 
                     var miniProgram = new TempleteModel_MiniProgram()
@@ -1170,7 +1177,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 // throw new NotImplementedException(e.Message);
             }
-        } 
+        }
 
         /// <summary>
         /// (投票结果产生)根据投票Id发送推送
@@ -1204,9 +1211,9 @@ namespace GuoGuoCommunity.API.Controllers
                         first = new TemplateDataItem("您小区内的投票结果已产生"),
                         //  account = new TemplateDataItem(wxNickName),
                         keyword1 = new TemplateDataItem(voteEntity.Title),
-                        keyword2 = new TemplateDataItem(voteResultRecord.ActualParticipateCount.ToString()),
-                        keyword3 = new TemplateDataItem(voteResultRecord.ResultName),
-                        remark = new TemplateDataItem(">>点击产看投票结果<<", "#FF0000")
+                        keyword2 = new TemplateDataItem(item.SmallDistrictName),
+                        keyword3 = new TemplateDataItem(voteEntity.Deadline.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
+                        remark = new TemplateDataItem(">>点击查看投票结果<<", "#FF0000")
                     };
 
                     var miniProgram = new TempleteModel_MiniProgram()
@@ -1223,6 +1230,48 @@ namespace GuoGuoCommunity.API.Controllers
             catch (Exception)
             {
                 // throw new NotImplementedException(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 高级认证通过
+        /// </summary>
+        /// <returns></returns>
+        public static async Task SeedVipOwnerCertificationRecordAsync(string ownerCertificationId)
+        {
+            try
+            {
+                IOwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
+                IUserRepository userRepository = new UserRepository();
+                var ownerCertificationRecord = await ownerCertificationRecordRepository.GetAsync(ownerCertificationId);
+                IOwnerRepository ownerRepository = new OwnerRepository();
+
+                var owner = await ownerRepository.GetForOwnerCertificationRecordIdAsync(new OwnerDto { OwnerCertificationRecordId = ownerCertificationRecord.Id.ToString() });
+                var userEntity = await userRepository.GetForIdAsync(ownerCertificationRecord.UserId);
+                IWeiXinUserRepository weiXinUserRepository = new WeiXinUserRepository();
+                var weiXinUser = await weiXinUserRepository.GetAsync(userEntity.UnionId);
+
+                var templateData = new
+                {
+                    first = new TemplateDataItem("您的高级认证申请已通过"),
+                    keyword1 = new TemplateDataItem(owner.Name),
+                    keyword2 = new TemplateDataItem(owner.IDCard),
+                    keyword3 = new TemplateDataItem(owner.PhoneNumber),
+                    keyword4 = new TemplateDataItem(DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
+                    remark = new TemplateDataItem(">>点击查看详情<<", "#FF0000")
+                };
+
+                var miniProgram = new TempleteModel_MiniProgram()
+                {
+                    appid = GuoGuoCommunity_WxOpenAppId,
+                    pagepath = "pages/my/my"
+                };
+
+                TemplateApi.SendTemplateMessage(AppId, weiXinUser.OpenId, VipOwnerCertificationRecordTemplateId, null, templateData, miniProgram);
+            }
+            catch (Exception)
+            {
+
             }
         }
 
@@ -1398,7 +1447,8 @@ namespace GuoGuoCommunity.API.Controllers
                         VoteId = voteQuestionOptionList[i].VoteId
                     });
                     //TODO 高级认证通过推送
-                    //var user=await userRepository.GetForIdAsync(vipOwnerApplicationRecord.UserId);
+                    BackgroundJob.Enqueue(() => SeedVipOwnerCertificationRecordAsync(vipOwnerApplicationRecord.OwnerCertificationId));
+
                     content = content + vipOwnerApplicationRecord.Name + ":票数为" + voteQuestionOptionList[i].Votes + "任命为" + vipOwnerApplicationRecord.StructureName + "\r\n ";
                 }
                 await voteRepository.UpdateForClosedAsync(new VoteDto
@@ -1408,7 +1458,6 @@ namespace GuoGuoCommunity.API.Controllers
                 //推送投票结果推送
                 BackgroundJob.Enqueue(() => SeedResultAsync(voteEntity.Id));
                 #region 公告
-
 
                 //IAnnouncementRepository announcementRepository = new AnnouncementRepository();
                 //var announcementEntity = await announcementRepository.AddAsync(new AnnouncementDto

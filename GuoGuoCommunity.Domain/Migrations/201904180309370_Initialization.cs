@@ -14,6 +14,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         Id = c.Guid(nullable: false, identity: true),
                         AnnouncementId = c.String(),
                         AnnexContent = c.String(),
+                        AnnexId = c.String(),
                         CreateOperationUserId = c.String(),
                         CreateOperationTime = c.DateTimeOffset(precision: 7),
                     })
@@ -69,7 +70,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                     {
                         Id = c.Guid(nullable: false, identity: true),
                         UnitName = c.String(nullable: false),
-                        NumberOfLayers = c.String(),
+                        NumberOfLayers = c.Int(nullable: false),
                         BuildingId = c.String(nullable: false),
                         LastOperationUserId = c.String(),
                         LastOperationTime = c.DateTimeOffset(precision: 7),
@@ -101,6 +102,74 @@ namespace GuoGuoCommunity.Domain.Migrations
                 .PrimaryKey(t => t.Id);
             
             CreateTable(
+                "dbo.ComplaintAnnexes",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false, identity: true),
+                        ComplaintId = c.String(),
+                        ComplaintFollowUpId = c.String(),
+                        AnnexContent = c.String(),
+                        AnnexId = c.String(),
+                        CreateOperationUserId = c.String(),
+                        CreateOperationTime = c.DateTimeOffset(precision: 7),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.ComplaintFollowUps",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false, identity: true),
+                        ComplaintId = c.String(),
+                        Description = c.String(),
+                        OperationDepartmentName = c.String(),
+                        OperationDepartmentValue = c.String(),
+                        OwnerCertificationId = c.String(),
+                        Aappeal = c.String(),
+                        IsDeleted = c.Boolean(nullable: false),
+                        DeletedTime = c.DateTimeOffset(precision: 7),
+                        LastOperationUserId = c.String(),
+                        LastOperationTime = c.DateTimeOffset(precision: 7),
+                        CreateOperationUserId = c.String(),
+                        CreateOperationTime = c.DateTimeOffset(precision: 7),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.Complaints",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false, identity: true),
+                        Description = c.String(),
+                        ComplaintTypeId = c.String(),
+                        ComplaintTypeName = c.String(),
+                        DepartmentName = c.String(),
+                        DepartmentValue = c.String(),
+                        OwnerCertificationId = c.String(),
+                        ClosedTime = c.DateTimeOffset(precision: 7),
+                        ExpiredTime = c.DateTimeOffset(precision: 7),
+                        ProcessUpTime = c.DateTimeOffset(precision: 7),
+                        IsInvalid = c.String(),
+                        StatusName = c.String(),
+                        StatusValue = c.String(),
+                        StreetOfficeId = c.String(),
+                        StreetOfficeName = c.String(),
+                        CommunityId = c.String(),
+                        CommunityName = c.String(),
+                        SmallDistrictId = c.String(),
+                        SmallDistrictName = c.String(),
+                        OperationDepartmentName = c.String(),
+                        OperationDepartmentValue = c.String(),
+                        IsDeleted = c.Boolean(nullable: false),
+                        DeletedTime = c.DateTimeOffset(precision: 7),
+                        LastOperationUserId = c.String(),
+                        LastOperationTime = c.DateTimeOffset(precision: 7),
+                        CreateOperationUserId = c.String(),
+                        CreateOperationTime = c.DateTimeOffset(precision: 7),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
                 "dbo.ComplaintTypes",
                 c => new
                     {
@@ -110,12 +179,26 @@ namespace GuoGuoCommunity.Domain.Migrations
                         Level = c.String(nullable: false),
                         InitiatingDepartmentName = c.String(nullable: false),
                         InitiatingDepartmentValue = c.String(nullable: false),
-                        ProcessingPeriod = c.String(nullable: false),
-                        ComplaintPeriod = c.String(nullable: false),
+                        ProcessingPeriod = c.Int(nullable: false),
+                        ComplaintPeriod = c.Int(nullable: false),
                         LastOperationUserId = c.String(),
                         LastOperationTime = c.DateTimeOffset(precision: 7),
                         IsDeleted = c.Boolean(nullable: false),
                         DeletedTime = c.DateTimeOffset(precision: 7),
+                        CreateOperationUserId = c.String(),
+                        CreateOperationTime = c.DateTimeOffset(precision: 7),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.IDCardPhotoRecords",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false, identity: true),
+                        ApplicationRecordId = c.String(),
+                        OwnerCertificationAnnexId = c.String(),
+                        PhotoBase64 = c.String(),
+                        Message = c.String(),
                         CreateOperationUserId = c.String(),
                         CreateOperationTime = c.DateTimeOffset(precision: 7),
                     })
@@ -127,7 +210,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                     {
                         Id = c.Guid(nullable: false, identity: true),
                         Name = c.String(),
-                        NumberOfLayers = c.String(),
+                        NumberOfLayers = c.Int(nullable: false),
                         Acreage = c.String(),
                         Oriented = c.String(),
                         BuildingId = c.String(nullable: false),
@@ -167,6 +250,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         OwnerCertificationAnnexTypeValue = c.String(),
                         ApplicationRecordId = c.String(),
                         AnnexContent = c.String(),
+                        AnnexId = c.String(),
                         CreateOperationUserId = c.String(),
                         CreateOperationTime = c.DateTimeOffset(precision: 7),
                     })
@@ -192,7 +276,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         IndustryName = c.String(),
                         OwnerId = c.String(),
                         OwnerName = c.String(),
-                        CertificationTime = c.String(),
+                        CertificationTime = c.DateTimeOffset(precision: 7),
                         CertificationResult = c.String(),
                         CertificationStatusName = c.String(),
                         CertificationStatusValue = c.String(),
@@ -218,6 +302,8 @@ namespace GuoGuoCommunity.Domain.Migrations
                         IDCard = c.String(),
                         IndustryId = c.String(),
                         IndustryName = c.String(),
+                        OwnerCertificationRecordId = c.String(),
+                        IsLegalize = c.Boolean(nullable: false),
                         LastOperationUserId = c.String(),
                         LastOperationTime = c.DateTimeOffset(precision: 7),
                         IsDeleted = c.Boolean(nullable: false),
@@ -274,6 +360,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         Id = c.Guid(nullable: false, identity: true),
                         StationLetterId = c.String(),
                         AnnexContent = c.String(),
+                        AnnexId = c.String(),
                         CreateOperationUserId = c.String(),
                         CreateOperationTime = c.DateTimeOffset(precision: 7),
                     })
@@ -307,6 +394,20 @@ namespace GuoGuoCommunity.Domain.Migrations
                         LastOperationTime = c.DateTimeOffset(precision: 7),
                         IsDeleted = c.Boolean(nullable: false),
                         DeletedTime = c.DateTimeOffset(precision: 7),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.ComplaintStatusChangeRecordings",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false, identity: true),
+                        OldStatus = c.String(),
+                        NewStatus = c.String(),
+                        ComplaintFollowUpId = c.String(),
+                        ComplaintId = c.String(),
+                        CreateOperationUserId = c.String(),
+                        CreateOperationTime = c.DateTimeOffset(precision: 7),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -425,6 +526,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         OwnerCertificationId = c.String(),
                         VoteId = c.String(),
                         VoteQuestionId = c.String(),
+                        VoteQuestionOptionId = c.String(),
                         LastOperationUserId = c.String(),
                         LastOperationTime = c.DateTimeOffset(precision: 7),
                         IsDeleted = c.Boolean(nullable: false),
@@ -442,6 +544,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         CertificationConditionId = c.String(),
                         ApplicationRecordId = c.String(),
                         AnnexContent = c.String(),
+                        AnnexId = c.String(),
                         CreateOperationUserId = c.String(),
                         CreateOperationTime = c.DateTimeOffset(precision: 7),
                     })
@@ -477,6 +580,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         UserId = c.String(),
                         IsInvalid = c.Boolean(nullable: false),
                         OwnerCertificationId = c.String(),
+                        VoteId = c.String(),
                         LastOperationUserId = c.String(),
                         LastOperationTime = c.DateTimeOffset(precision: 7),
                         IsDeleted = c.Boolean(nullable: false),
@@ -531,6 +635,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         Id = c.Guid(nullable: false, identity: true),
                         VoteId = c.String(),
                         AnnexContent = c.String(),
+                        AnnexId = c.String(),
                         CreateOperationUserId = c.String(),
                         CreateOperationTime = c.DateTimeOffset(precision: 7),
                     })
@@ -543,6 +648,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         Id = c.Guid(nullable: false, identity: true),
                         VoteId = c.String(),
                         VipOwnerId = c.String(),
+                        ElectionNumber = c.Int(nullable: false),
                         CreateOperationUserId = c.String(),
                         CreateOperationTime = c.DateTimeOffset(precision: 7),
                     })
@@ -628,6 +734,8 @@ namespace GuoGuoCommunity.Domain.Migrations
                         ResultValue = c.String(),
                         ResultName = c.String(),
                         VoteQuestionId = c.String(),
+                        ShouldParticipateCount = c.Int(),
+                        ActualParticipateCount = c.Int(nullable: false),
                         LastOperationUserId = c.String(),
                         LastOperationTime = c.DateTimeOffset(precision: 7),
                         CreateOperationUserId = c.String(),
@@ -650,6 +758,10 @@ namespace GuoGuoCommunity.Domain.Migrations
                         DepartmentValue = c.String(),
                         CalculationMethodValue = c.String(),
                         CalculationMethodName = c.String(),
+                        StatusValue = c.String(),
+                        StatusName = c.String(),
+                        VoteTypeValue = c.String(),
+                        VoteTypeName = c.String(),
                         StreetOfficeId = c.String(),
                         StreetOfficeName = c.String(),
                         CommunityId = c.String(),
@@ -684,7 +796,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         Language = c.String(),
                         Sex = c.Int(nullable: false),
                         Nickname = c.String(),
-                        Openid = c.String(),
+                        OpenId = c.String(),
                         Subscribe = c.Int(nullable: false),
                         Qr_scene = c.Int(nullable: false),
                         Qr_scene_str = c.String(),
@@ -721,6 +833,7 @@ namespace GuoGuoCommunity.Domain.Migrations
             DropTable("dbo.Uploads");
             DropTable("dbo.Tests");
             DropTable("dbo.StreetOffices");
+            DropTable("dbo.ComplaintStatusChangeRecordings");
             DropTable("dbo.StationLetters");
             DropTable("dbo.StationLetterBrowseRecords");
             DropTable("dbo.StationLetterAnnexes");
@@ -731,7 +844,11 @@ namespace GuoGuoCommunity.Domain.Migrations
             DropTable("dbo.OwnerCertificationAnnexes");
             DropTable("dbo.Menus");
             DropTable("dbo.Industries");
+            DropTable("dbo.IDCardPhotoRecords");
             DropTable("dbo.ComplaintTypes");
+            DropTable("dbo.Complaints");
+            DropTable("dbo.ComplaintFollowUps");
+            DropTable("dbo.ComplaintAnnexes");
             DropTable("dbo.Communities");
             DropTable("dbo.BuildingUnits");
             DropTable("dbo.Buildings");

@@ -26,6 +26,11 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public string AnnexContent { get; set; }
 
+        /// <summary>
+        /// 附件Id(当附件为文件时保存附件Id)
+        /// </summary>
+        public string AnnexId { get; set; }
+
         public string CreateOperationUserId { get; set; }
 
         public DateTimeOffset? CreateOperationTime { get; set; }

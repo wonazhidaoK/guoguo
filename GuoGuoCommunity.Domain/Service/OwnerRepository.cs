@@ -197,5 +197,13 @@ namespace GuoGuoCommunity.Domain.Service
                 await db.SaveChangesAsync(token);
             }
         }
+
+        public async Task<Owner> GetForOwnerCertificationRecordIdAsync(OwnerDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.Owners.Where(x => x.IsDeleted == false && x.OwnerCertificationRecordId == dto.OwnerCertificationRecordId).FirstOrDefaultAsync(token);
+            }
+        }
     }
 }

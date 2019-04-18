@@ -3,6 +3,7 @@ using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,11 +19,19 @@ namespace GuoGuoCommunity.Domain.Service
                 var entity = db.ComplaintAnnices.Add(new ComplaintAnnex
                 {
                     ComplaintId = dto.ComplaintId,
-                    AnnexContent = dto.AnnexContent,
+                    //AnnexContent = dto.AnnexContent,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     ComplaintFollowUpId = dto.ComplaintFollowUpId
                 });
+                if (!Guid.TryParse(dto.AnnexContent, out var annexContent))
+                {
+                    throw new NotImplementedException("投诉附件id信息不正确！");
+                }
+                var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
+                entity.AnnexId = dto.AnnexContent;
+                entity.AnnexContent = upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
+
                 await db.SaveChangesAsync(token);
                 return entity;
             }
@@ -40,6 +49,14 @@ namespace GuoGuoCommunity.Domain.Service
                     CreateOperationUserId = dto.OperationUserId,
                     ComplaintFollowUpId = dto.ComplaintFollowUpId
                 });
+                if (!Guid.TryParse(dto.AnnexContent, out var annexContent))
+                {
+                    throw new NotImplementedException("投诉附件id信息不正确！");
+                }
+                var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
+                entity.AnnexId = dto.AnnexContent;
+                entity.AnnexContent = upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
+
                 await db.SaveChangesAsync(token);
                 return entity;
             }
@@ -55,9 +72,20 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<ComplaintAnnex> GetAsync(string id, CancellationToken token = default)
+        public async Task<ComplaintAnnex> GetAsync(string id, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.ComplaintAnnices.Where(x => x.ComplaintId == id).FirstOrDefaultAsync(token);
+            }
+        }
+
+        public async Task<ComplaintAnnex> GetForFollowUpIdAsync(string id, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.ComplaintAnnices.Where(x => x.ComplaintFollowUpId == id).FirstOrDefaultAsync(token);
+            }
         }
 
         public Task<List<ComplaintAnnex>> GetListAsync(ComplaintAnnexDto dto, CancellationToken token = default)

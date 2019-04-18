@@ -29,5 +29,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         /// <param name="token"></param>
         /// <returns></returns>
         Task<List<Owner>> GetListForLegalizeAsync(OwnerDto dto, CancellationToken token = default);
+
+        Task<Owner> GetForOwnerCertificationRecordIdAsync(OwnerDto dto, CancellationToken token = default);
     }
 }

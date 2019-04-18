@@ -47,6 +47,7 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 var entity = db.Users.Add(new User
                 {
+                   // Account = dto.Account,
                     Name = dto.Name,
                     PhoneNumber = dto.PhoneNumber,
                     Password = dto.Password,
@@ -119,6 +120,7 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 var entity = db.Users.Add(new User
                 {
+                    //Account = dto.Account,
                     Name = dto.Name,
                     PhoneNumber = dto.PhoneNumber,
                     Password = dto.Password,

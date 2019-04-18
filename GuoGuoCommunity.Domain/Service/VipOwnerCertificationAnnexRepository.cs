@@ -16,6 +16,12 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
+                if (!Guid.TryParse(dto.CertificationConditionId, out var certificationConditionId))
+                {
+                    throw new NotImplementedException("高级认证申请条件id信息不正确！");
+                }
+                var vipOwnerCertification = await db.VipOwnerCertificationConditions.Where(x => x.Id == certificationConditionId).FirstOrDefaultAsync(token);
+               
                 var entity = db.VipOwnerCertificationAnnices.Add(new VipOwnerCertificationAnnex
                 {
                     ApplicationRecordId = dto.ApplicationRecordId,
@@ -24,6 +30,18 @@ namespace GuoGuoCommunity.Domain.Service
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                 });
+
+                if (vipOwnerCertification.TypeValue == "Image")
+                {
+                    if (!Guid.TryParse(entity.AnnexContent, out var annexContent))
+                    {
+                        throw new NotImplementedException("高级认证附件id信息不正确！");
+                    }
+                    var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
+                    entity.AnnexId = dto.AnnexContent;
+                    entity.AnnexContent = upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
+                }
+
                 await db.SaveChangesAsync(token);
                 return entity;
             }

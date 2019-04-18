@@ -207,13 +207,17 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     ApplicationRecordId = data.Id.ToString()
                 }, cancelToken);
+                var certificationConditionList = await _vipOwnerCertificationConditionRepository.GetAllAsync(new VipOwnerCertificationConditionDto { }, cancelToken);
                 List<AnnexModel> list = new List<AnnexModel>();
                 foreach (var item in annexList)
                 {
-                    var certificationCondition = await _vipOwnerCertificationConditionRepository.GetAsync(item.CertificationConditionId, cancelToken);
+                    if (Guid.TryParse(item.CertificationConditionId, out var uid))
+                    {
+                        //return new ApiResult<GetVipOwnerCertificationOutput>(APIResultCode.Success_NoB, output,"高级认证申请条件Id不准确，获取失败");
+                    } 
                     list.Add(new AnnexModel
                     {
-                        CertificationConditionName = certificationCondition.Title,
+                        CertificationConditionName = certificationConditionList.Where(x=>x.Id== uid).FirstOrDefault().Title,
                         CertificationConditionId = item.ApplicationRecordId,
                         ID = item.Id.ToString(),
                         // Url = _vipOwnerCertificationAnnexRepository.GetUrlAsync(item.Id.ToString(), cancelToken),

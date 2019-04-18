@@ -257,20 +257,24 @@ namespace GuoGuoCommunity.API.Controllers
                 }, cancelToken);
 
                 var listCount = data.Count();
-                var list = data.Skip(startRow).Take(input.PageSize);
-
+                var listData = data.OrderByDescending(a => a.CreateOperationTime).Skip(startRow).Take(input.PageSize);
+                List<GetComplaintOutput> list = new List<GetComplaintOutput>();
+                foreach (var item in listData)
+                {
+                    list.Add(new GetComplaintOutput
+                    {
+                        Id = item.Id.ToString(),
+                        CreateTime = item.CreateOperationTime.Value,
+                        Description = item.Description,
+                        StatusName = item.StatusName,
+                        StatusValue = item.StatusValue,
+                        Url = (await _complaintAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent,
+                        OwnerCertificationId = item.OwnerCertificationId
+                    });
+                }
                 return new ApiResult<GetAllComplaintOutput>(APIResultCode.Success, new GetAllComplaintOutput
                 {
-                    List = list.OrderByDescending(a => a.CreateOperationTime).Select(x => new GetComplaintOutput
-                    {
-                        Id = x.Id.ToString(),
-                        CreateTime = x.CreateOperationTime.Value,
-                        Description = x.Description,
-                        StatusName = x.StatusName,
-                        StatusValue = x.StatusValue,
-                        Url = _complaintAnnexRepository.GetUrl(x.Id.ToString()),
-                        OwnerCertificationId = x.OwnerCertificationId
-                    }).ToList(),
+                    List = list,
                     TotalCount = listCount,
                     CompletedCount = data.Where(x => x.StatusValue == ComplaintStatus.Completed.Value).ToList().Count(),
                     FinishedCount = data.Where(x => x.StatusValue == ComplaintStatus.Finished.Value).ToList().Count(),
@@ -577,19 +581,23 @@ namespace GuoGuoCommunity.API.Controllers
                 }, cancelToken);
 
                 var listCount = data.Count();
-                var list = data.Skip(startRow).Take(input.PageSize);
-
+                var listData = data.OrderByDescending(a => a.CreateOperationTime).Skip(startRow).Take(input.PageSize);
+                List<GetComplaintOutput> list = new List<GetComplaintOutput>();
+                foreach (var item in listData)
+                {
+                    list.Add(new GetComplaintOutput
+                    {
+                        Id = item.Id.ToString(),
+                        CreateTime = item.CreateOperationTime.Value,
+                        Description = item.Description,
+                        StatusName = item.StatusName,
+                        StatusValue = item.StatusValue,
+                        Url = (await _complaintAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent
+                    });
+                }
                 return new ApiResult<GetAllComplaintForVipOwnerOutput>(APIResultCode.Success, new GetAllComplaintForVipOwnerOutput
                 {
-                    List = list.OrderByDescending(a => a.CreateOperationTime).Select(x => new GetComplaintOutput
-                    {
-                        Id = x.Id.ToString(),
-                        CreateTime = x.CreateOperationTime.Value,
-                        Description = x.Description,
-                        StatusName = x.StatusName,
-                        StatusValue = x.StatusValue,
-                        Url = _complaintAnnexRepository.GetUrl(x.Id.ToString())
-                    }).ToList(),
+                    List = list,
                     TotalCount = listCount,
                     CompletedCount = data.Count(x => x.StatusValue == ComplaintStatus.Completed.Value),
                     FinishedCount = data.Count(x => x.StatusValue == ComplaintStatus.Finished.Value),
@@ -838,7 +846,7 @@ namespace GuoGuoCommunity.API.Controllers
                         Description = item.Description,
                         StatusName = item.StatusName,
                         StatusValue = item.StatusValue,
-                        Url = _complaintAnnexRepository.GetUrl(item.Id.ToString()),
+                        Url =(await _complaintAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent,
                         OperationName = OperationName,
                         OperationDepartmentName = item.OperationDepartmentName
                     });
@@ -1080,7 +1088,7 @@ namespace GuoGuoCommunity.API.Controllers
                         Description = item.Description,
                         StatusName = item.StatusName,
                         StatusValue = item.StatusValue,
-                        Url = _complaintAnnexRepository.GetUrl(item.Id.ToString()),
+                        Url =(await _complaintAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent,
                         OperationName = OperationName,
                         OperationDepartmentName = item.OperationDepartmentName
                     });

@@ -7,13 +7,13 @@ namespace GuoGuoCommunity.Domain.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class updateownerCertificationRecord : IMigrationMetadata
+    public sealed partial class Initialization : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(updateownerCertificationRecord));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initialization));
         
         string IMigrationMetadata.Id
         {
-            get { return "201904090814401_update-ownerCertificationRecord"; }
+            get { return "201904180309370_Initialization"; }
         }
         
         string IMigrationMetadata.Source

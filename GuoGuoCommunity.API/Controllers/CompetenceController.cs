@@ -6,6 +6,7 @@ using GuoGuoCommunity.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -265,8 +266,15 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Unknown, new AddStreetOfficeUserOutput { }, APIResultMessage.TokenError);
                 }
+                //Regex re = new Regex(@"^[A-Za-z][A-Za-z0-9_]{5,19}$");
+
+                //if (!re.IsMatch(input.Account))//验证数据是否匹配
+                //{
+                //    return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Success_NoB, new AddStreetOfficeUserOutput { }, "账户名称输入格式不正确");
+                //}
                 var entity = await _userRepository.AddStreetOfficeAsync(new UserDto
                 {
+                   // Account=input.Account,
                     Name = input.Name,
                     PhoneNumber = input.PhoneNumber,
                     Password = input.Password,

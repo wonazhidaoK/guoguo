@@ -5,7 +5,6 @@ using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using GuoGuoCommunity.Domain.Models.Enum;
 using GuoGuoCommunity.Domain.Service;
-using Hangfire;
 using Newtonsoft.Json;
 using Senparc.Weixin.MP.AdvancedAPIs;
 using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
@@ -165,7 +164,8 @@ namespace GuoGuoCommunity.API.Controllers
                     });
                     if (itemEntity.OwnerCertificationAnnexTypeValue == OwnerCertificationAnnexType.IDCardFront.Value)
                     {
-                        BackgroundJob.Enqueue(() => Send(itemEntity));
+                        // BackgroundJob.Enqueue(() => Send(itemEntity));
+                        await Send(itemEntity);
                     }
                 }
 
@@ -190,7 +190,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// </summary>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         [Route("ownerCertificationRecord/getList")]
         public async Task<ApiResult<GetListOwnerCertificationRecordOutput>> GetList(CancellationToken cancelToken)
         {
@@ -264,75 +264,138 @@ namespace GuoGuoCommunity.API.Controllers
         /// 后台执行校验 上传图片认证信息
         /// </summary>
         /// <param name="annex"></param>
-        public static async Task Send(OwnerCertificationAnnex annex)
+        public static async Task<ApiResult> Send(OwnerCertificationAnnex annex)
         {
-            /*
-             * 查询认证记录
-             */
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
             var ownerCertificationRecordEntity = await ownerCertificationRecordRepository.GetAsync(annex.ApplicationRecordId);
-            OwnerCertificationRecordDto dto = new OwnerCertificationRecordDto
-            {
-                OperationTime = DateTimeOffset.Now,
-                OperationUserId = "system",
-                Id = ownerCertificationRecordEntity.Id.ToString()
-            };
-                IOwnerRepository ownerRepository = new OwnerRepository();
             try
             {
                 /*
-                 * 调用阿里云
-                 * 根据返回结果查询是否符合认证数据
+                 * 查询认证记录
                  */
-                //EventLog.WriteEntry("EventSystem", string.Format("这里要处理一个图像识别任务:{0},时间为:{1}", message, DateTime.Now));
-                var entity = await PostALiYun(annex);
-                JsonModel json = JsonConvert.DeserializeObject<JsonModel>(entity.Message);
-
-                var owner = (await ownerRepository.GetListForLegalizeAsync(new OwnerDto { IndustryId = ownerCertificationRecordEntity.IndustryId })).Where(x => x.IDCard == json.Num).FirstOrDefault();
-
-                if (owner != null)
+                OwnerCertificationRecordDto dto = new OwnerCertificationRecordDto
                 {
-                    dto.CertificationStatusValue = OwnerCertification.Success.Value;
-                    dto.CertificationStatusName = OwnerCertification.Success.Name;
-                    dto.OwnerId = owner.Id.ToString();
-                    dto.OwnerName = owner.Name.ToString();
-                    dto.CertificationResult = "认证通过";
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = "system",
+                    Id = ownerCertificationRecordEntity.Id.ToString()
+                };
+                IOwnerRepository ownerRepository = new OwnerRepository();
+
+                try
+                {
+                    /*
+                     * 调用阿里云
+                     * 根据返回结果查询是否符合认证数据
+                     */
+                    //EventLog.WriteEntry("EventSystem", string.Format("这里要处理一个图像识别任务:{0},时间为:{1}", message, DateTime.Now));
+                    var entity = await PostALiYun(annex);
+                    JsonModel json = new JsonModel();
+                    try
+                    {
+                        json = JsonConvert.DeserializeObject<JsonModel>(entity.Message);
+                        if (string.IsNullOrEmpty(json.Num))
+                        {
+                            //更新认证申请记录  有效状态
+                            await ownerCertificationRecordRepository.UpdateInvalidAsync(new OwnerCertificationRecordDto
+                            {
+                                Id = ownerCertificationRecordEntity.Id.ToString(),
+                                OperationTime = DateTimeOffset.Now,
+                                OperationUserId = "system",
+                            });
+
+                            throw new NotImplementedException("未识别到身份证信息请提交正规清晰的身份证照片!");
+                            //return new ApiResult { code = APIResultCode.Success_NoB, message = "未识别到身份证信息请提交正规清晰的身份证照片!" };
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        throw new NotImplementedException("未识别到身份证信息请提交正规清晰的身份证照片!");
+                    }
+
+
+                    var owner = (await ownerRepository.GetListForLegalizeAsync(new OwnerDto { IndustryId = ownerCertificationRecordEntity.IndustryId })).Where(x => x.IDCard == json.Num).FirstOrDefault();
+
+                    if (owner != null)
+                    {
+                        dto.CertificationStatusValue = OwnerCertification.Success.Value;
+                        dto.CertificationStatusName = OwnerCertification.Success.Name;
+                        dto.OwnerId = owner.Id.ToString();
+                        dto.OwnerName = owner.Name.ToString();
+                        dto.CertificationResult = "认证通过";
+                    }
+                    else
+                    {
+                        dto.CertificationStatusValue = OwnerCertification.Failure.Value;
+                        dto.CertificationStatusName = OwnerCertification.Failure.Name;
+                        dto.CertificationResult = "未查询到相关业主信息";
+                    }
+
                 }
-                else
+                catch (Exception e)
                 {
                     dto.CertificationStatusValue = OwnerCertification.Failure.Value;
                     dto.CertificationStatusName = OwnerCertification.Failure.Name;
-                    dto.CertificationResult = "未查询到相关业主信息";
-                    //dto.OwnerId = owner.Id.ToString();
-                    //dto.OwnerName = owner.Name.ToString();
+                    dto.CertificationResult = e.Message;
+                    //更新认证申请记录  有效状态
+                    await ownerCertificationRecordRepository.UpdateInvalidAsync(new OwnerCertificationRecordDto
+                    {
+                        Id = ownerCertificationRecordEntity.Id.ToString(),
+                        OperationTime = DateTimeOffset.Now,
+                        OperationUserId = "system",
+                    });
+                    throw new NotImplementedException(e.Message);
+                    //return new ApiResult { code = APIResultCode.Success_NoB, message = e.Message };
+                    // throw new NotImplementedException("身份证信息读取错误！");
                 }
 
+                var recordEntity = await ownerCertificationRecordRepository.UpdateAsync(dto);
+
+                if (string.IsNullOrWhiteSpace(dto.OwnerId))
+                {
+                    //更新认证申请记录  有效状态
+                    await ownerCertificationRecordRepository.UpdateInvalidAsync(new OwnerCertificationRecordDto
+                    {
+                        Id = ownerCertificationRecordEntity.Id.ToString(),
+                        OperationTime = DateTimeOffset.Now,
+                        OperationUserId = "system",
+                    });
+                    throw new NotImplementedException("未查询到相关业主信息");
+                    //return new ApiResult { code = APIResultCode.Success_NoB, message = "未查询到相关业主信息!" };
+                }
+                //回写用户认证记录到业主信息
+                await ownerRepository.UpdateForLegalizeAsync(new OwnerDto
+                {
+                    OwnerCertificationRecordId = ownerCertificationRecordEntity.Id.ToString(),
+                    Id = recordEntity.OwnerId.ToString()
+                });
+
+                //IUserRepository userRepository = new UserRepository();
+                //var userEntity = await userRepository.GetForIdAsync(recordEntity.UserId);
+                ////微信推送
+                //IWeiXinUserRepository weiXinUserRepository = new WeiXinUserRepository();
+                //var weiXinUser = await weiXinUserRepository.GetAsync(userEntity.UnionId);
+                //OwnerCertificationRecordPushRemind(new OwnerCertificationRecordPushModel
+                //{
+                //    OpenId = weiXinUser.OpenId,
+                //    Status = dto.CertificationStatusName,
+                //    Message = dto.CertificationResult
+                //});
+                return new ApiResult { code = APIResultCode.Success };
             }
             catch (Exception e)
             {
-                dto.CertificationStatusValue = OwnerCertification.Failure.Value;
-                dto.CertificationStatusName = OwnerCertification.Failure.Name;
-                dto.CertificationResult = e.Message;
+                //更新认证申请记录  有效状态
+                await ownerCertificationRecordRepository.UpdateInvalidAsync(new OwnerCertificationRecordDto
+                {
+                    Id = ownerCertificationRecordEntity.Id.ToString(),
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = "system",
+                });
+                throw new NotImplementedException(e.Message);
+                //return new ApiResult { code = APIResultCode.Success_NoB, message = e.Message };
+                //throw new NotImplementedException("检测到未知错误，请联系管理员！");
             }
 
-            var recordEntity = await ownerCertificationRecordRepository.UpdateAsync(dto);
-
-            await ownerRepository.UpdateForLegalizeAsync(new OwnerDto
-            {
-                OwnerCertificationRecordId = ownerCertificationRecordEntity.Id.ToString(),
-                Id = recordEntity.OwnerId.ToString()
-            });
-
-            IUserRepository userRepository = new UserRepository();
-            var userEntity = await userRepository.GetForIdAsync(recordEntity.UserId);
-            IWeiXinUserRepository weiXinUserRepository = new WeiXinUserRepository();
-            var weiXinUser = await weiXinUserRepository.GetAsync(userEntity.UnionId);
-            OwnerCertificationRecordPushRemind(new OwnerCertificationRecordPushModel
-            {
-                OpenId = weiXinUser.OpenId,
-                Status = dto.CertificationStatusName,
-                Message = "认证结束"
-            });
         }
 
         /// <summary>

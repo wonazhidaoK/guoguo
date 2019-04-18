@@ -95,7 +95,8 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("业户信息不存在！");
                 }
 
-                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.UserId == dto.UserId && x.IndustryId == dto.IndustryId && x.CertificationStatusValue != OwnerCertification.Failure.Value && x.IsDeleted == false && x.IsInvalid == false).FirstOrDefaultAsync(token);
+                //&& x.IndustryId == dto.IndustryId && x.CertificationStatusValue != OwnerCertification.Failure.Value
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.UserId == dto.UserId  && x.IsDeleted == false && x.IsInvalid == false).FirstOrDefaultAsync(token);
                 if (ownerCertificationRecord != null)
                 {
                     throw new NotImplementedException("该业主信息已存在！");
@@ -183,7 +184,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.UserId == dto.UserId && x.CertificationStatusValue== OwnerCertification.Success.Value).ToListAsync(token);
+                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.UserId == dto.UserId && x.IsInvalid == false).ToListAsync(token);
             }
         }
 

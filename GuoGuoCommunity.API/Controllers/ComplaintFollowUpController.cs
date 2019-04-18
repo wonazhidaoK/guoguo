@@ -121,7 +121,7 @@ namespace GuoGuoCommunity.API.Controllers
                 //每天可以提交2条跟进
                 if (complaintFollowUpList.Count(x => x.CreateOperationTime < date.AddDays(+1) && x.CreateOperationTime > date) > 1)
                 {
-                    throw new NotImplementedException("投诉跟进达到上限！");
+                    throw new NotImplementedException("今日投诉跟进达到上限！");
                 }
                 var entity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
                 {
@@ -281,7 +281,7 @@ namespace GuoGuoCommunity.API.Controllers
                         Description = item.Description,
                         OperationDepartmentName = item.OperationDepartmentName,
                         OperationName = OperationName,
-                        Url = _complaintAnnexRepository.GetUrlForFollowUpId(item.Id.ToString()),
+                        Url = (await _complaintAnnexRepository.GetForFollowUpIdAsync(item.Id.ToString()))?.AnnexContent,
                         CreateTime = item.CreateOperationTime.Value
                     };
                     list.Add(entity);
@@ -363,7 +363,7 @@ namespace GuoGuoCommunity.API.Controllers
                 //每天可以提交2条跟进
                 if (complaintFollowUpList.Count(x => x.CreateOperationTime < date.AddDays(+1) && x.CreateOperationTime > date) > 1)
                 {
-                    throw new NotImplementedException("投诉跟进达到上限！");
+                    throw new NotImplementedException("今日投诉跟进达到上限！");
                 }
                 var entity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
                 {

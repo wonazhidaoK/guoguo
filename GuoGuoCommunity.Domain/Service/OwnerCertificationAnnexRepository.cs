@@ -3,6 +3,7 @@ using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -24,6 +25,13 @@ namespace GuoGuoCommunity.Domain.Service
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                 });
+                if (!Guid.TryParse(dto.AnnexContent, out var annexContent))
+                {
+                    throw new NotImplementedException("业主认证附件id信息不正确！");
+                }
+                var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
+                entity.AnnexId = dto.AnnexContent;
+                entity.AnnexContent = upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
                 await db.SaveChangesAsync(token);
                 return entity;
             }
@@ -39,9 +47,12 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<OwnerCertificationAnnex> GetAsync(string id, CancellationToken token = default)
+        public async Task<OwnerCertificationAnnex> GetAsync(string id, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.OwnerCertificationAnnices.Where(x => x.ApplicationRecordId == id).FirstOrDefaultAsync(token);
+            }
         }
 
         public Task<List<OwnerCertificationAnnex>> GetListAsync(OwnerCertificationAnnexDto dto, CancellationToken token = default)
@@ -62,14 +73,14 @@ namespace GuoGuoCommunity.Domain.Service
                         throw new NotImplementedException("认证附件id信息不正确！");
                     }
                     var entity = db.OwnerCertificationAnnices.Where(x => x.Id == uid).FirstOrDefault();
-                    if (!Guid.TryParse(entity.AnnexContent, out var annexContent))
+                    if (!Guid.TryParse(entity.AnnexId, out var annexId))
                     {
                         throw new NotImplementedException("认证附件id信息不正确！");
                     }
-                    var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
+                    var upload = db.Uploads.Where(x => x.Id == annexId).FirstOrDefault();
                     DirectoryInfo rootDir = Directory.GetParent(Environment.CurrentDirectory);
                     string root = rootDir.Parent.Parent.FullName;
-                    return  upload.Domain + "\\"+upload.Directory +"\\" +upload.File;
+                    return upload.Domain + "\\" + upload.Directory + "\\" + upload.File;
                 }
             }
             catch (Exception)
@@ -98,7 +109,7 @@ namespace GuoGuoCommunity.Domain.Service
                 return "";
             }
         }
-        
+
         public Task UpdateAsync(OwnerCertificationAnnexDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();

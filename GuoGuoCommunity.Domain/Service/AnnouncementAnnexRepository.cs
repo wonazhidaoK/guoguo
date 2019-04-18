@@ -22,7 +22,16 @@ namespace GuoGuoCommunity.Domain.Service
                     AnnexContent = dto.AnnexContent,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
+                   
                 });
+                if (!Guid.TryParse(entity.AnnexContent, out var annexContent))
+                {
+                    throw new NotImplementedException("公告附件id信息不正确！");
+                }
+                var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
+                entity.AnnexId = dto.AnnexContent;
+                entity.AnnexContent = upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
+
                 await db.SaveChangesAsync(token);
                 return entity;
             }
@@ -42,9 +51,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-
                 return await db.AnnouncementAnnices.Where(x => x.AnnouncementId == id).FirstOrDefaultAsync(token);
-
             }
         }
 

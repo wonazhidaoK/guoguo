@@ -38,7 +38,8 @@ namespace GuoGuoCommunity.API
             var isWeixinDebug = true;//设置微信 Debug 状态
             var senparcWeixinSetting = SenparcWeixinSetting.BuildFromWebConfig(isWeixinDebug);
             register.UseSenparcWeixin(senparcWeixinSetting, senparcSetting);////微信全局注册，必须
-            AccessTokenContainer.Register(WXController.AppId, "d6c479f98ac1a8593157373a5c5973d1");
+
+            AccessTokenContainer.Register(WXController.AppId, "5e6bc09d33684d9c41dccb6c8eec230b");
 
         }
     }

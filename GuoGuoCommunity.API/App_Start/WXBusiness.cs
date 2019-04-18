@@ -107,6 +107,7 @@ namespace GuoGuoCommunity.API
         public async override Task<IResponseMessageBase> OnEvent_UnsubscribeRequestAsync(RequestMessageEvent_Unsubscribe requestMessage)
         {
             var userInfo = UserApi.Info(WXController.AppId, OpenId);
+
             await _weiXinUserRepository.UpdateForUnionIdAsync(new WeiXinUserDto { Unionid = userInfo.unionid });
             return null;
         }
