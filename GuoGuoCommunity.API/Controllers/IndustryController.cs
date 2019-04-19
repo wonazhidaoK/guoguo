@@ -261,7 +261,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }, cancelToken);
 
                 var listCount = data.Count();
-                var list = data.Skip(startRow).Take(input.PageSize);
+                var list = data.OrderByDescending(x=>x.CreateOperationTime).Skip(startRow).Take(input.PageSize);
 
                 return new ApiResult<GetAllIndustryOutput>(APIResultCode.Success, new GetAllIndustryOutput
                 {

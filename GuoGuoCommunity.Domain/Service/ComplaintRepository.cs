@@ -126,7 +126,7 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 var list = await db.Complaints.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.WuYe.Value && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
-                //TODO 条件筛选 1.状态值 2时间段
+                
                 list = list.Where(x => x.CreateOperationTime >= dto.StartTime && x.CreateOperationTime <= dto.EndTime).ToList();
                 if (!string.IsNullOrWhiteSpace(dto.StatusValue))
                 {

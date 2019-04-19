@@ -1,4 +1,5 @@
 using GuoGuoCommunity.Domain.Models;
+using GuoGuoCommunity.Domain.Models.Enum;
 using System;
 using System.Data.Entity.Migrations;
 namespace GuoGuoCommunity.Domain.Migrations
@@ -25,18 +26,18 @@ namespace GuoGuoCommunity.Domain.Migrations
                     new Test() { Id = 2, Name = "Charles Dickens" }
                     );
                 context.Menus.AddOrUpdate(x => x.Name,
-                    new Menu() { Name = "物业后台-业户信息", Key = "wy_house_info" },
+                    new Menu() { Name = "物业后台-业户信息", Key = "wy_house_info", DepartmentValue = Department.WuYe.Value, DepartmentName = Department.WuYe.Name },
                     //new Menu() { Name = "物业后台-认证中心", Key = "wy_rz" },
                     //new Menu() { Name = "物业后台-业主认证", Key = "wy_rz_yz" },
-                    new Menu() { Name = "物业后台-公告", Key = "wy_notice" },
-                    new Menu() { Name = "物业后台-投票", Key = "wy_vote" },
-                    new Menu() { Name = "物业后台-投诉", Key = "wy_complaint" },
-                    new Menu() { Name = "物业后台-站内信", Key = "wy_letter" },
-                    new Menu() { Name = "街道办后台-公告", Key = "jdb_notice" },
-                    new Menu() { Name = "街道办-高级认证", Key = "jdb_rz_gj" },
-                    new Menu() { Name = "街道办后台-投票", Key = "jdb_vote" },
-                    new Menu() { Name = "街道办后台-投诉", Key = "jdb_complaint" },
-                    new Menu() { Name = "街道办后台-站内信", Key = "jdb_letter" },
+                    new Menu() { Name = "物业后台-公告", Key = "wy_notice", DepartmentValue = Department.WuYe.Value, DepartmentName = Department.WuYe.Name },
+                    new Menu() { Name = "物业后台-投票", Key = "wy_vote", DepartmentValue = Department.WuYe.Value, DepartmentName = Department.WuYe.Name },
+                    new Menu() { Name = "物业后台-投诉", Key = "wy_complaint", DepartmentValue = Department.WuYe.Value, DepartmentName = Department.WuYe.Name },
+                    new Menu() { Name = "物业后台-站内信", Key = "wy_letter", DepartmentValue = Department.WuYe.Value, DepartmentName = Department.WuYe.Name },
+                    new Menu() { Name = "街道办后台-公告", Key = "jdb_notice", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
+                    new Menu() { Name = "街道办-高级认证", Key = "jdb_rz_gj", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
+                    new Menu() { Name = "街道办后台-投票", Key = "jdb_vote", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
+                    new Menu() { Name = "街道办后台-投诉", Key = "jdb_complaint", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
+                    new Menu() { Name = "街道办后台-站内信", Key = "jdb_letter", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
                     new Menu() { Name = "系统管理员", Key = "authorityMax" }
                     );
                 context.Users.AddOrUpdate(x => x.Name,
@@ -47,7 +48,8 @@ namespace GuoGuoCommunity.Domain.Migrations
                         PhoneNumber = "13888888888",
                         State = "黑龙江",
                         City = "哈尔滨",
-                        Region = "道里区"
+                        Region = "道里区",
+                        Account = "admin"
                     });
                 context.VipOwnerCertificationConditions.AddOrUpdate(x => x.Title,
                     new VipOwnerCertificationCondition()

@@ -50,6 +50,11 @@ namespace GuoGuoCommunity.API.Models
         public DateTimeOffset ReleaseTime { get; set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public string CreateUserName { get; set; }
+
+        /// <summary>
         /// 附件url
         /// </summary>
         public string Url { get; set; }

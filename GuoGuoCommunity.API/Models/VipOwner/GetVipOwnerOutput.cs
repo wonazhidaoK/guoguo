@@ -34,5 +34,21 @@
         /// 是否有效
         /// </summary>
         public bool IsValid { get; set; }
+
+        /// <summary>
+        /// 是否进行过选举
+        /// </summary>
+        public bool IsElection { get; set; }
+
+        /// <summary>
+        /// 是否可以删除
+        /// </summary>
+        public bool IsCanDeleted { get; set; }
+        //是否可以置为无效
+
+        /// <summary>
+        /// 是否可以置为无效
+        /// </summary>
+        public bool IsCanInvalid { get; set; }
     }
 }

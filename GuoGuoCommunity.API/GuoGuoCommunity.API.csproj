@@ -330,6 +330,7 @@
     <Compile Include="Models\Industry\UpdateIndustryInput.cs" />
     <Compile Include="Models\Menu\AddMenuInput.cs" />
     <Compile Include="Models\Menu\AddMenuOutput.cs" />
+    <Compile Include="Models\Menu\GetAllMenuInput.cs" />
     <Compile Include="Models\Menu\GetAllMenuOutput.cs" />
     <Compile Include="Models\OwnerCertificationRecord\AddOwnerCertificationRecordInput.cs" />
     <Compile Include="Models\OwnerCertificationRecord\AddOwnerCertificationRecordOutput.cs" />

@@ -804,7 +804,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 if (DateTimeOffset.TryParse(input.EndTime, out DateTimeOffset endTimeSet))
                 {
-                    endTime = endTimeSet;
+                    endTime = endTimeSet.AddDays(1).AddMinutes(-1);
                 }
 
                 int startRow = (input.PageIndex - 1) * input.PageSize;
@@ -1037,7 +1037,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 if (DateTimeOffset.TryParse(input.StartTime, out DateTimeOffset startTimeSet))
                 {
-                    startTime = startTimeSet;
+                    startTime = startTimeSet.AddDays(1).AddMinutes(-1);
                 }
                 if (DateTimeOffset.TryParse(input.EndTime, out DateTimeOffset endTimeSet))
                 {

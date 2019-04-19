@@ -6,7 +6,6 @@ using Senparc.Weixin;
 using Senparc.Weixin.MP;
 using Senparc.Weixin.MP.AdvancedAPIs;
 using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
-using Senparc.Weixin.MP.Containers;
 using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.WxOpen.AdvancedAPIs.Sns;
 using Senparc.Weixin.WxOpen.Helpers;
@@ -34,6 +33,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private readonly IVipOwnerCertificationRecordRepository _vipOwnerCertificationRecordRepository;
         private readonly IVipOwnerApplicationRecordRepository _vipOwnerApplicationRecordRepository;
+        private readonly IVipOwnerRepository _vipOwnerRepository;
         private TokenManager _tokenManager;
         /// <summary>
         /// 
@@ -43,17 +43,20 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="ownerCertificationRecordRepository"></param>
         /// <param name="vipOwnerCertificationRecordRepository"></param>
         /// <param name="vipOwnerApplicationRecordRepository"></param>
+        /// <param name="vipOwnerRepository"></param>
         public WXController(IUserRepository userRepository,
             IWeiXinUserRepository weiXinUserRepository,
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
             IVipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository,
-            IVipOwnerApplicationRecordRepository vipOwnerApplicationRecordRepository)
+            IVipOwnerApplicationRecordRepository vipOwnerApplicationRecordRepository,
+            IVipOwnerRepository vipOwnerRepository)
         {
             _userRepository = userRepository;
             _weiXinUserRepository = weiXinUserRepository;
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _vipOwnerCertificationRecordRepository = vipOwnerCertificationRecordRepository;
             _vipOwnerApplicationRecordRepository = vipOwnerApplicationRecordRepository;
+            _vipOwnerRepository = vipOwnerRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -304,7 +307,27 @@ namespace GuoGuoCommunity.API.Controllers
                         RefreshToken = token.Refresh_token
                     });
                 var weiXinUser = await _weiXinUserRepository.GetAsync(openIdResult.unionid, cancelToken);
-                var isVipOwner = await _vipOwnerCertificationRecordRepository.GetListAsync(new VipOwnerCertificationRecordDto { UserId = user.Id.ToString() });
+                /*
+                 * 一期只有一个认证
+                 */
+                var ownerCertificationList = await _ownerCertificationRecordRepository.GetListAsync(new OwnerCertificationRecordDto() { UserId = user.Id.ToString() });
+                var isVipOwner = false;
+                if (ownerCertificationList.Any())
+                {
+                    var vipOwner = await _vipOwnerRepository.GetForSmallDistrictIdAsync(new VipOwnerDto { SmallDistrictId = ownerCertificationList.FirstOrDefault().SmallDistrictId });
+                    if (vipOwner != null)
+                    {
+                        var vipOwnerCertificationRecord = await _vipOwnerCertificationRecordRepository.GetForVipOwnerIdAsync(new VipOwnerCertificationRecordDto
+                        {
+                            VipOwnerId = vipOwner.Id.ToString(),
+                            UserId = user.Id.ToString()
+                        });
+                        if (vipOwnerCertificationRecord != null)
+                        {
+                            isVipOwner = true;
+                        }
+                    }
+                }
                 return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput()
                 {
                     OpenId = user.OpenId,
@@ -312,8 +335,8 @@ namespace GuoGuoCommunity.API.Controllers
                     Headimgurl = weiXinUser?.Headimgurl,
                     Nickname = weiXinUser?.Nickname,
                     IsSubscription = weiXinUser == null ? false : true,
-                    IsOwner = (await _ownerCertificationRecordRepository.GetListAsync(new OwnerCertificationRecordDto() { UserId = user.Id.ToString() })).Any(),
-                    IsVipOwner = (await _vipOwnerCertificationRecordRepository.GetListAsync(new VipOwnerCertificationRecordDto { UserId= user.Id.ToString() })).Any()
+                    IsOwner = ownerCertificationList.Any(),
+                    IsVipOwner = isVipOwner
                 }, APIResultMessage.Success);
 
             }

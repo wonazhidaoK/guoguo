@@ -56,11 +56,11 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async Task<List<Menu>> GetAllAsync(CancellationToken token = default)
+        public async Task<List<Menu>> GetAllAsync(MenuDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.Menus.Where(x => x.IsDeleted == false).ToListAsync(token);
+                return await db.Menus.Where(x => x.IsDeleted == false&&x.DepartmentValue==dto.DepartmentValue).ToListAsync(token);
             }
         }
 

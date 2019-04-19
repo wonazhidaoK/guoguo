@@ -85,7 +85,7 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 if (!string.IsNullOrWhiteSpace(dto.Name))
                 {
-                    list = list.Where(x => x.Name.Contains(dto.Name)|| x.RemarkName.Contains(dto.Name)).ToList();
+                    list = list.Where(x => x.Name.Contains(dto.Name) || x.RemarkName.Contains(dto.Name)).ToList();
                 }
                 //if (!string.IsNullOrWhiteSpace(dto.RemarkName))
                 //{
@@ -123,7 +123,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.VipOwners.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId && x.IsValid == false).ToListAsync(token);
+                return await db.VipOwners.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId && x.IsValid == false && x.IsElection == false).ToListAsync(token);
             }
         }
 
@@ -187,12 +187,8 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
 
-                if (!Guid.TryParse(dto.SmallDistrictId, out var smallDistrictId))
-                {
-                    throw new NotImplementedException("小区Id信息不正确！");
-                }
-                var smallDistricts = await db.SmallDistricts.Where(x => x.Id == smallDistrictId).Select(x => x.Id).ToListAsync(token);
-                return await db.VipOwners.Where(x => smallDistricts.Contains(x.Id)).ToListAsync(token);
+                var streetOfficeList = await db.SmallDistricts.Where(x => x.StreetOfficeId == dto.StreetOfficeId).Select(x => x.Id).ToListAsync(token);
+                return await db.VipOwners.Where(x => streetOfficeList.Contains(x.Id)).ToListAsync(token);
             }
         }
 
@@ -215,6 +211,58 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该业委会已存在！");
                 }
                 vipOwner.IsElection = true;
+                vipOwner.LastOperationTime = dto.OperationTime;
+                vipOwner.LastOperationUserId = dto.OperationUserId;
+                await OnUpdateAsync(db, vipOwner, token);
+                await db.SaveChangesAsync(token);
+            }
+        }
+
+        public async Task<VipOwner> GetForSmallDistrictIdAsync(VipOwnerDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VipOwners.Where(x => x.SmallDistrictId == dto.SmallDistrictId && x.IsValid == true).FirstOrDefaultAsync(token);
+            }
+        }
+
+        public async Task UpdateValidAsync(VipOwnerDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("业委会Id信息不正确！");
+                }
+                var vipOwner = await db.VipOwners.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (vipOwner == null)
+                {
+                    throw new NotImplementedException("该业委会不存在！");
+                }
+               
+                vipOwner.IsElection = true;
+                vipOwner.LastOperationTime = dto.OperationTime;
+                vipOwner.LastOperationUserId = dto.OperationUserId;
+                await OnUpdateAsync(db, vipOwner, token);
+                await db.SaveChangesAsync(token);
+            }
+        }
+
+        public async Task UpdateInvalidAsync(VipOwnerDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("业委会Id信息不正确！");
+                }
+                var vipOwner = await db.VipOwners.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (vipOwner == null)
+                {
+                    throw new NotImplementedException("该业委会不存在！");
+                }
+                
+                vipOwner.IsValid = false;
                 vipOwner.LastOperationTime = dto.OperationTime;
                 vipOwner.LastOperationUserId = dto.OperationUserId;
                 await OnUpdateAsync(db, vipOwner, token);

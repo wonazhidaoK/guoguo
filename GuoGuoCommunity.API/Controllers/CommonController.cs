@@ -187,8 +187,8 @@ namespace GuoGuoCommunity.API.Controllers
         {
             new { Name="未处理", ComplaintStatus.NotAccepted.Value },
             new { Name="待反馈", ComplaintStatus.Processing.Value },
-            new { Name="已处理", ComplaintStatus.Finished.Value },
-            new { Name="已完结", ComplaintStatus.Completed.Value }
+            new { Name="已完结", ComplaintStatus.Finished.Value },
+            new { Name="已完成", ComplaintStatus.Completed.Value }
         });
 
         /// <summary>

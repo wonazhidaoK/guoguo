@@ -75,10 +75,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("站内信小区范围信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.Summary))
-                {
-                    throw new NotImplementedException("站内信摘要信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.Summary))
+                //{
+                //    throw new NotImplementedException("站内信摘要信息为空！");
+                //}
                 if (string.IsNullOrWhiteSpace(input.Title))
                 {
                     throw new NotImplementedException("站内信标题信息为空！");

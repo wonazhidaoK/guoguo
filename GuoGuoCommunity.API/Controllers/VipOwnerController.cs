@@ -56,6 +56,19 @@ namespace GuoGuoCommunity.API.Controllers
                     throw new NotImplementedException("业委会小区名称信息为空！");
                 }
 
+                //var data = await _vipOwnerRepository.GetListAsync(new VipOwnerDto
+                //{
+                //    SmallDistrictId = input.SmallDistrictId
+                //}, cancelToken);
+                //查询当前小区是否有为竞选业委会 如果有不允许创建
+                if ((await _vipOwnerRepository.GetListAsync(new VipOwnerDto
+                {
+                    SmallDistrictId = input.SmallDistrictId
+                }, cancelToken)).Any())
+                {
+                    throw new NotImplementedException("当前小区存在未竞选业委会！不能重复添加！");
+                }
+                //查询当前小区下所有非删除业委会
                 var count = (await _vipOwnerRepository.GetIsValidAsync(new VipOwnerDto
                 {
                     SmallDistrictId = input.SmallDistrictId
@@ -116,6 +129,51 @@ namespace GuoGuoCommunity.API.Controllers
                 }
 
                 await _vipOwnerRepository.DeleteAsync(new VipOwnerDto
+                {
+                    Id = id,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken);
+
+                return new ApiResult();
+            }
+            catch (Exception e)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 将业委会置为无效业委会信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("vipOwner/invalid")]
+        public async Task<ApiResult> Invalid([FromUri]string id, CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+
+                if (token == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+                }
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    throw new NotImplementedException("业委会Id信息为空！");
+                }
+
+                var user = _tokenManager.GetUser(token);
+
+                if (user == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+                }
+
+                await _vipOwnerRepository.UpdateInvalidAsync(new VipOwnerDto
                 {
                     Id = id,
                     OperationTime = DateTimeOffset.Now,
@@ -226,10 +284,10 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-                if (string.IsNullOrWhiteSpace(input.SmallDistrictId))
-                {
-                    throw new NotImplementedException("业委会小区Id信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.SmallDistrictId))
+                //{
+                //    throw new NotImplementedException("业委会小区Id信息为空！");
+                //}
                 var data = await _vipOwnerRepository.GetAllAsync(new VipOwnerDto
                 {
                     Name = input.Name,
@@ -250,6 +308,9 @@ namespace GuoGuoCommunity.API.Controllers
                         SmallDistrictId = x.SmallDistrictId,
                         SmallDistrictName = x.SmallDistrictName,
                         Name = x.Name,
+                        IsElection = x.IsElection,
+                        IsCanDeleted = !(x.IsElection && x.IsValid),
+                        IsCanInvalid = (x.IsElection && x.IsValid)
                     }).ToList(),
                     TotalCount = listCount
                 });
@@ -261,7 +322,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 根据小区获取业委会列表(小程序可用)
+        /// 根据小区获取业委会列表(高级认证用,获取当前小区未竞选的业委会)
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>

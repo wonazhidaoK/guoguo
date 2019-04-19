@@ -122,6 +122,14 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public async Task<VipOwnerCertificationRecord> GetForVipOwnerIdAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VipOwnerCertificationRecords.Where(x => x.IsDeleted == false && x.UserId == dto.UserId&&x.VipOwnerId==dto.VipOwnerId).FirstOrDefaultAsync(token);
+            }
+        }
+
         #endregion
     }
 }

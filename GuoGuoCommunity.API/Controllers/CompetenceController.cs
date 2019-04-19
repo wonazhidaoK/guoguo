@@ -26,7 +26,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IStationLetterRepository _stationLetterRepository;
         private TokenManager _tokenManager;
-
+        private readonly Regex re = new Regex(@"/^[a-zA-Z0-9_]{1,}$/");
         /// <summary>
         /// 权限
         /// </summary>
@@ -260,7 +260,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Unknown, new AddStreetOfficeUserOutput { }, APIResultMessage.TokenNull);
                 }
-
+                if (string.IsNullOrWhiteSpace(input.Account))
+                {
+                    return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Success_NoB, new AddStreetOfficeUserOutput { }, "账户名称为空！");
+                }
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
@@ -268,13 +271,13 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 //Regex re = new Regex(@"^[A-Za-z][A-Za-z0-9_]{5,19}$");
 
-                //if (!re.IsMatch(input.Account))//验证数据是否匹配
-                //{
-                //    return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Success_NoB, new AddStreetOfficeUserOutput { }, "账户名称输入格式不正确");
-                //}
+                if (!re.IsMatch(input.Account))//验证数据是否匹配
+                {
+                    return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Success_NoB, new AddStreetOfficeUserOutput { }, "账户名称输入格式不正确");
+                }
                 var entity = await _userRepository.AddStreetOfficeAsync(new UserDto
                 {
-                   // Account=input.Account,
+                    Account = input.Account,
                     Name = input.Name,
                     PhoneNumber = input.PhoneNumber,
                     Password = input.Password,
@@ -332,6 +335,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     List = list.Select(x => new GetUserOutput
                     {
+                        Account =x.Account,
                         Id = x.Id.ToString(),
                         Name = x.Name,
                         SmallDistrictId = x.SmallDistrictId,
@@ -420,7 +424,14 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<AddPropertyUserOutput>(APIResultCode.Unknown, new AddPropertyUserOutput { }, APIResultMessage.TokenNull);
                 }
-
+                if (string.IsNullOrWhiteSpace(input.Account))
+                {
+                    return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, "账户名称为空！");
+                }
+                if (!re.IsMatch(input.Account))//验证数据是否匹配
+                {
+                    return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, "账户名称输入格式不正确");
+                }
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
@@ -428,6 +439,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 var entity = await _userRepository.AddPropertyAsync(new UserDto
                 {
+                    Account =input.Account,
                     Name = input.Name,
                     PhoneNumber = input.PhoneNumber,
                     Password = input.Password,
@@ -490,6 +502,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     List = list.Select(x => new GetUserOutput
                     {
+                         Account=x.Account,
                         Id = x.Id.ToString(),
                         Name = x.Name,
                         SmallDistrictId = x.SmallDistrictId,
@@ -613,6 +626,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>
+        [Obsolete]
         [HttpPost]
         [Route("menu/add")]
         public async Task<ApiResult<AddMenuOutput>> AddMenu([FromBody]AddMenuInput input, CancellationToken cancelToken)
@@ -664,9 +678,12 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("menu/getAll")]
-        public async Task<ApiResult<List<GetAllMenuOutput>>> GetAllMenu(CancellationToken cancelToken)
+        public async Task<ApiResult<List<GetAllMenuOutput>>> GetAllMenu([FromUri]GetAllMenuInput input, CancellationToken cancelToken)
         {
-            var data = (await _menuRepository.GetAllAsync(cancelToken)).Select(x => new GetAllMenuOutput
+            var data = (await _menuRepository.GetAllAsync(new MenuDto
+            {
+                DepartmentValue = input.DepartmentValue
+            }, cancelToken)).Select(x => new GetAllMenuOutput
             {
                 Id = x.Id.ToString(),
                 Key = x.Key,
@@ -685,6 +702,7 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="id"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
+        [Obsolete]
         [HttpGet]
         [Route("menu/delete")]
         public async Task<ApiResult> DeleteMenu([FromUri]string id, CancellationToken cancelToken)

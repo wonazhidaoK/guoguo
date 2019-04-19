@@ -40,14 +40,18 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("部门信息不存在！");
                 }
-                var user = await db.Users.Where(x => (x.Name == dto.Name || x.PhoneNumber == dto.PhoneNumber) && x.IsDeleted == false).FirstOrDefaultAsync(token);
-                if (user != null)
+                //var user = await db.Users.Where(x => (x.Name == dto.Name || x.PhoneNumber == dto.PhoneNumber) && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if ((await db.Users.Where(x => x.Account == dto.Account  && x.IsDeleted == false).FirstOrDefaultAsync(token)) != null)
                 {
-                    throw new NotImplementedException("该用户已存在！");
+                    throw new NotImplementedException("该账号已存在！");
+                }
+                if ((await db.Users.Where(x =>x.PhoneNumber == dto.PhoneNumber && x.IsDeleted == false).FirstOrDefaultAsync(token)) != null)
+                {
+                    throw new NotImplementedException("该手机号已注册过平台内账户！");
                 }
                 var entity = db.Users.Add(new User
                 {
-                   // Account = dto.Account,
+                    Account = dto.Account,
                     Name = dto.Name,
                     PhoneNumber = dto.PhoneNumber,
                     Password = dto.Password,
@@ -113,14 +117,17 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("部门信息不存在！");
                 }
-                var user = await db.Users.Where(x => (x.Name == dto.Name || x.PhoneNumber == dto.PhoneNumber) && x.IsDeleted == false).FirstOrDefaultAsync(token);
-                if (user != null)
+                if ((await db.Users.Where(x => x.Account == dto.Account && x.IsDeleted == false).FirstOrDefaultAsync(token)) != null)
                 {
-                    throw new NotImplementedException("该用户已存在！");
+                    throw new NotImplementedException("该账号已存在！");
+                }
+                if ((await db.Users.Where(x => x.PhoneNumber == dto.PhoneNumber && x.IsDeleted == false).FirstOrDefaultAsync(token)) != null)
+                {
+                    throw new NotImplementedException("该手机号已注册过平台内账户！");
                 }
                 var entity = db.Users.Add(new User
                 {
-                    //Account = dto.Account,
+                    Account = dto.Account,
                     Name = dto.Name,
                     PhoneNumber = dto.PhoneNumber,
                     Password = dto.Password,
@@ -169,7 +176,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var user = await db.Users.Where(x => (x.Name == dto.Name || x.PhoneNumber == dto.Name) && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var user = await db.Users.Where(x => (x.Account == dto.Name || x.PhoneNumber == dto.Name) && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (user == null)
                 {
                     throw new NotImplementedException("该用户不存在！");

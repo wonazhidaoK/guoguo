@@ -25,5 +25,13 @@ namespace GuoGuoCommunity.Domain.Abstractions
         /// <param name="token"></param>
         /// <returns></returns>
         Task<List<VipOwnerCertificationRecord>> GetListAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default);
+
+        /// <summary>
+        /// 根据业委会id查询高级认证
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task<VipOwnerCertificationRecord> GetForVipOwnerIdAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default);
     }
 }

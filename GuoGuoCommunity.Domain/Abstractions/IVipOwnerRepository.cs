@@ -14,6 +14,10 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task UpdateIsElectionAsync(VipOwnerDto dto, CancellationToken token = default);
 
+        Task UpdateValidAsync(VipOwnerDto dto, CancellationToken token = default);
+
+        Task UpdateInvalidAsync(VipOwnerDto dto, CancellationToken token = default);
+
         Task<List<VipOwner>> GetAllAsync(VipOwnerDto dto, CancellationToken token = default);
 
         Task DeleteAsync(VipOwnerDto dto, CancellationToken token = default);
@@ -29,6 +33,14 @@ namespace GuoGuoCommunity.Domain.Abstractions
         /// <param name="token"></param>
         /// <returns></returns>
         Task<List<VipOwner>> GetListForStreetOfficeIdAsync(VipOwnerDto dto, CancellationToken token = default);
+
+        /// <summary>
+        /// 根据小区获取有效业委会
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task<VipOwner> GetForSmallDistrictIdAsync(VipOwnerDto dto, CancellationToken token = default);
 
         Task<List<VipOwner>> GetIsValidAsync(VipOwnerDto dto, CancellationToken token = default);
     }

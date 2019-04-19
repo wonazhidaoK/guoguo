@@ -5,7 +5,6 @@ using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
 using GuoGuoCommunity.Domain.Service;
 using Hangfire;
-using Newtonsoft.Json;
 using Senparc.Weixin.MP.AdvancedAPIs;
 using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
 using System;
@@ -712,7 +711,7 @@ namespace GuoGuoCommunity.API.Controllers
                             Name = smallDistrictEntity.Name
                         });
                     };
-
+                    var userEntity = await _userRepository.GetForIdAsync(item.CreateOperationUserId);
                     list.Add(new GetListStreetOfficeAnnouncementModelOutput
                     {
                         Id = item.Id.ToString(),
@@ -721,7 +720,8 @@ namespace GuoGuoCommunity.API.Controllers
                         ReleaseTime = item.CreateOperationTime.Value,
                         Summary = item.Summary,
                         Url = (await _announcementAnnexRepository.GetAsync(item.Id.ToString(), cancelToken))?.AnnexContent,
-                        SmallDistrict = smallDistrictList
+                        SmallDistrict = smallDistrictList,
+                        CreateUserName = userEntity.Name
                     });
                 }
                 return new ApiResult<GetListStreetOfficeAnnouncementOutput>(APIResultCode.Success, new GetListStreetOfficeAnnouncementOutput
@@ -803,6 +803,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 foreach (var item in dataList)
                 {
+                    var userEntity = await _userRepository.GetForIdAsync(item.CreateOperationUserId);
                     list.Add(
                        new GetVipOwnerAnnouncementOutput
                        {
@@ -811,7 +812,8 @@ namespace GuoGuoCommunity.API.Controllers
                            Content = item.Content,
                            ReleaseTime = item.CreateOperationTime.Value,
                            Summary = item.Summary,
-                           Url = (await _announcementAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent
+                           Url = (await _announcementAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent,
+                           CreateUserName = userEntity.Name
                        }
                         );
                 }
@@ -856,7 +858,7 @@ namespace GuoGuoCommunity.API.Controllers
                         keyword1 = new TemplateDataItem(model.Title),
                         keyword2 = new TemplateDataItem("发送成功"),
                         keyword3 = new TemplateDataItem(DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
-                        remark = new TemplateDataItem(model.Summary)
+                        remark = new TemplateDataItem(">>点击查看详情<<", "#FF0000")
                     };
 
                     var miniProgram = new TempleteModel_MiniProgram()

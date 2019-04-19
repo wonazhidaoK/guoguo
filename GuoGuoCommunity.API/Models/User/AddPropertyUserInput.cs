@@ -26,6 +26,11 @@
         /// </summary>
         public string RoleId { get; set; }
 
+        /// <summary>
+        /// 账户名称
+        /// </summary>
+        public string Account { get; set; }
+
         #region 省市区
 
         /// <summary>

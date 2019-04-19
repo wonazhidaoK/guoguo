@@ -5,10 +5,10 @@
     /// </summary>
     public class AddStreetOfficeUserInput
     {
-        ///// <summary>
-        ///// 账户名称
-        ///// </summary>
-        //public string Account { get; set; }
+        /// <summary>
+        /// 账户名称
+        /// </summary>
+        public string Account { get; set; }
 
         /// <summary>
         /// 用户姓名

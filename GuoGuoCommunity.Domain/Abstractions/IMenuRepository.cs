@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
 {
     public interface IMenuRepository
     {
-        Task<List<Menu>> GetAllAsync(CancellationToken token = default);
+        Task<List<Menu>> GetAllAsync(MenuDto dto, CancellationToken token = default);
 
         Task<Menu> AddAsync(MenuDto dto, CancellationToken token = default);
 

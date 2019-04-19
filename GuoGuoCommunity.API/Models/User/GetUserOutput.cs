@@ -64,6 +64,10 @@
         #endregion
 
         /// <summary>
+        /// 账号
+        /// </summary>
+        public string Account { get; set; }
+        /// <summary>
         /// 部门名称
         /// </summary>
         public string DepartmentName { get; set; }
