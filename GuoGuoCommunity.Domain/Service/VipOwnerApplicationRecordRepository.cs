@@ -59,7 +59,7 @@ namespace GuoGuoCommunity.Domain.Service
 
                 var ownerName = await db.OwnerCertificationRecords.Where(x => x.UserId == dto.UserId && x.SmallDistrictId == dto.SmallDistrictId && x.IsDeleted == false).Select(x => x.OwnerName).FirstOrDefaultAsync(token);
 
-                var vipOwnerApplicationRecord = await db.VipOwnerApplicationRecords.Where(x => x.UserId == dto.UserId && (x.IsDeleted == false || x.IsInvalid == false)).FirstOrDefaultAsync(token);
+                var vipOwnerApplicationRecord = await db.VipOwnerApplicationRecords.Where(x => x.UserId == dto.UserId && x.IsDeleted == false && x.IsInvalid == false).FirstOrDefaultAsync(token);
                 if (vipOwnerApplicationRecord != null)
                 {
                     throw new NotImplementedException("您已提交过申请！");

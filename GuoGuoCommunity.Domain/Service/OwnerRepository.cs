@@ -26,11 +26,11 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("业户信息不存在！");
                 }
 
-                //var owner = await db.Owners.Where(x => x.IDCard == dto.IDCard && x.IsDeleted == false && x.IndustryId == dto.IndustryId).FirstOrDefaultAsync(token);
-                //if (owner != null)
-                //{
-                //    throw new NotImplementedException("该业主信息已存在！");
-                //}
+                var owner = await db.Owners.Where(x => x.IDCard == dto.IDCard && x.IsDeleted == false && x.IndustryId == dto.IndustryId).FirstOrDefaultAsync(token);
+                if (owner != null)
+                {
+                    throw new NotImplementedException("该业主信息已存在！");
+                }
                 var entity = db.Owners.Add(new Owner
                 {
                     Name = dto.Name,
@@ -63,7 +63,10 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该业主信息不存在！");
                 }
-
+                if (owner.IsLegalize)
+                {
+                    throw new NotImplementedException("业主已认证不允许删除！");
+                }
                 if (OnDelete(db, dto, token))
                 {
                     throw new NotImplementedException("该业主信息下存在下级数据");

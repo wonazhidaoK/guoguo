@@ -846,7 +846,7 @@ namespace GuoGuoCommunity.API.Controllers
                         Description = item.Description,
                         StatusName = item.StatusName,
                         StatusValue = item.StatusValue,
-                        Url =(await _complaintAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent,
+                        Url = (await _complaintAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent,
                         OperationName = OperationName,
                         OperationDepartmentName = item.OperationDepartmentName
                     });
@@ -1037,11 +1037,11 @@ namespace GuoGuoCommunity.API.Controllers
 
                 if (DateTimeOffset.TryParse(input.StartTime, out DateTimeOffset startTimeSet))
                 {
-                    startTime = startTimeSet.AddDays(1).AddMinutes(-1);
+                    startTime = startTimeSet;
                 }
                 if (DateTimeOffset.TryParse(input.EndTime, out DateTimeOffset endTimeSet))
                 {
-                    endTime = endTimeSet;
+                    endTime = endTimeSet.AddDays(1).AddMinutes(-1);
                 }
                 if (input.PageIndex < 1)
                 {
@@ -1088,7 +1088,7 @@ namespace GuoGuoCommunity.API.Controllers
                         Description = item.Description,
                         StatusName = item.StatusName,
                         StatusValue = item.StatusValue,
-                        Url =(await _complaintAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent,
+                        Url = (await _complaintAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent,
                         OperationName = OperationName,
                         OperationDepartmentName = item.OperationDepartmentName
                     });

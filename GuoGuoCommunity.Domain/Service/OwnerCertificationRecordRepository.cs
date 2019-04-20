@@ -140,7 +140,7 @@ namespace GuoGuoCommunity.Domain.Service
                 var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == uid && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (ownerCertificationRecord == null)
                 {
-                    throw new NotImplementedException("该业主信息不存在！");
+                    throw new NotImplementedException("该业主认证Id信息不存在！");
                 }
 
                 if (OnDelete(db, dto, token))
@@ -334,7 +334,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
+                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId&&x.IsInvalid==false).ToListAsync(token);
             }
         }
 

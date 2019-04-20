@@ -83,7 +83,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 var entity = await _vipOwnerRepository.AddAsync(new VipOwnerDto
                 {
-                    Name = input.SmallDistrictName + "【第" + (count + 1) + "界】业主委员会",
+                    Name = input.SmallDistrictName + "【第" + (count + 1) + "届】业主委员会",
                     RemarkName = input.RemarkName,
                     SmallDistrictId = input.SmallDistrictId,
                     SmallDistrictName = input.SmallDistrictName,
@@ -309,8 +309,8 @@ namespace GuoGuoCommunity.API.Controllers
                         SmallDistrictName = x.SmallDistrictName,
                         Name = x.Name,
                         IsElection = x.IsElection,
-                        IsCanDeleted = !(x.IsElection && x.IsValid),
-                        IsCanInvalid = (x.IsElection && x.IsValid)
+                        IsCanDeleted = !x.IsElection,
+                        IsCanInvalid =  x.IsValid
                     }).ToList(),
                     TotalCount = listCount
                 });

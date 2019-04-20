@@ -121,7 +121,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("街道办信息不存在！");
                 }
-                var ownerCertificationRecordList =await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == ownerCertificationRecord.SmallDistrictId).ToListAsync(token);
+                var ownerCertificationRecordList = await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == ownerCertificationRecord.SmallDistrictId).ToListAsync(token);
                 if (!ownerCertificationRecordList.Any())
                 {
                     throw new NotImplementedException("当前小区人数为0不能发起投票！");
@@ -171,11 +171,16 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     list = list.Where(x => x.SmallDistrictArray.Split(',').Contains(dto.SmallDistrictArray)).ToList();
                 }
-
                 if (!string.IsNullOrWhiteSpace(dto.Title))
                 {
                     list = list.Where(x => x.Title.Contains(dto.Title)).ToList();
                 }
+
+                if (!string.IsNullOrWhiteSpace(dto.StatusValue))
+                {
+                    list = list.Where(x => x.StatusValue == dto.StatusValue).ToList();
+                }
+                list = list.Where(x => x.CreateOperationTime >= dto.StartTime && x.CreateOperationTime <= dto.EndTime).ToList();
                 return list;
             }
         }
@@ -190,6 +195,11 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     list = list.Where(x => x.Title.Contains(dto.Title)).ToList();
                 }
+                if (!string.IsNullOrWhiteSpace(dto.StatusValue))
+                {
+                    list = list.Where(x => x.StatusValue == dto.StatusValue).ToList();
+                }
+                list = list.Where(x => x.CreateOperationTime >= dto.StartTime && x.CreateOperationTime <= dto.EndTime).ToList();
                 return list;
             }
         }
@@ -403,7 +413,6 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该投票不存在！");
                 }
-               
                 vote.StatusValue = VoteStatus.Closed.Value;
                 vote.StatusName = VoteStatus.Closed.Name;
                 await db.SaveChangesAsync(token);

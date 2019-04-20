@@ -26,7 +26,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IStationLetterRepository _stationLetterRepository;
         private TokenManager _tokenManager;
-        private readonly Regex re = new Regex(@"/^[a-zA-Z0-9_]{1,}$/");
+        private readonly Regex re = new Regex(@"^[a-zA-Z0-9_]{1,}$");
         /// <summary>
         /// 权限
         /// </summary>

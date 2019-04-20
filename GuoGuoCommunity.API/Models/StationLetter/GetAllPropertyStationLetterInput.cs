@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace GuoGuoCommunity.API.Models
 {
@@ -12,15 +13,15 @@ namespace GuoGuoCommunity.API.Models
         ///// </summary>
         //public string SmallDistrict { get; set; }
 
-        ///// <summary>
-        ///// 发布时间（开始时间）
-        ///// </summary>
-        //public DateTimeOffset? ReleaseTimeStart { get; set; }
+        /// <summary>
+        /// 发布时间（开始时间）
+        /// </summary>
+        public string StartTime { get; set; }
 
-        ///// <summary>
-        ///// 发布时间（结束时间）
-        ///// </summary>
-        //public DateTimeOffset? ReleaseTimeEnd { get; set; }
+        /// <summary>
+        /// 发布时间（结束时间）
+        /// </summary>
+        public string EndTime { get; set; }
 
         /// <summary>
         /// 已读未读状态: 空查询全部，HaveRead已读 UnRead 未读

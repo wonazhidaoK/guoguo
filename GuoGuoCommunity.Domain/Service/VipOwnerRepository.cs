@@ -78,7 +78,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.VipOwners.Where(x => x.IsDeleted == false && x.IsValid == false).ToListAsync(token);
+                var list = await db.VipOwners.Where(x => x.IsDeleted == false ).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.SmallDistrictId))
                 {
                     list = list.Where(x => x.SmallDistrictId == dto.SmallDistrictId).ToList();
@@ -240,7 +240,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该业委会不存在！");
                 }
                
-                vipOwner.IsElection = true;
+                vipOwner.IsValid = true;
                 vipOwner.LastOperationTime = dto.OperationTime;
                 vipOwner.LastOperationUserId = dto.OperationUserId;
                 await OnUpdateAsync(db, vipOwner, token);

@@ -154,6 +154,10 @@ namespace GuoGuoCommunity.API.Controllers
 
                 foreach (var item in input.Models)
                 {
+                    if (string.IsNullOrWhiteSpace(item.AnnexContent))
+                    {
+                        continue;
+                    }
                     var itemEntity = await _ownerCertificationAnnexRepository.AddAsync(new OwnerCertificationAnnexDto
                     {
                         ApplicationRecordId = entity.Id.ToString(),
@@ -162,6 +166,7 @@ namespace GuoGuoCommunity.API.Controllers
                         OperationTime = DateTimeOffset.Now,
                         OperationUserId = user.Id.ToString()
                     });
+                    
                     if (itemEntity.OwnerCertificationAnnexTypeValue == OwnerCertificationAnnexType.IDCardFront.Value)
                     {
                         // BackgroundJob.Enqueue(() => Send(itemEntity));
@@ -296,20 +301,25 @@ namespace GuoGuoCommunity.API.Controllers
                         if (string.IsNullOrEmpty(json.Num))
                         {
                             //更新认证申请记录  有效状态
-                            await ownerCertificationRecordRepository.UpdateInvalidAsync(new OwnerCertificationRecordDto
-                            {
-                                Id = ownerCertificationRecordEntity.Id.ToString(),
-                                OperationTime = DateTimeOffset.Now,
-                                OperationUserId = "system",
-                            });
-
-                            throw new NotImplementedException("未识别到身份证信息请提交正规清晰的身份证照片!");
+                            //await ownerCertificationRecordRepository.UpdateInvalidAsync(new OwnerCertificationRecordDto
+                            //{
+                            //    Id = ownerCertificationRecordEntity.Id.ToString(),
+                            //    OperationTime = DateTimeOffset.Now,
+                            //    OperationUserId = "system",
+                            //});
+                            //await ownerCertificationRecordRepository.DeleteAsync(new OwnerCertificationRecordDto
+                            //{
+                            //    Id = ownerCertificationRecordEntity.Id.ToString(),
+                            //    OperationTime = DateTimeOffset.Now,
+                            //    OperationUserId = "system",
+                            //});
+                            throw new NotImplementedException("未识别到身份证信息，请提交正规清晰的身份证照片!");
                             //return new ApiResult { code = APIResultCode.Success_NoB, message = "未识别到身份证信息请提交正规清晰的身份证照片!" };
                         }
                     }
                     catch (Exception)
                     {
-                        throw new NotImplementedException("未识别到身份证信息请提交正规清晰的身份证照片!");
+                        throw new NotImplementedException("未识别到身份证信息，请提交正规清晰的身份证照片!");
                     }
 
 
@@ -337,12 +347,18 @@ namespace GuoGuoCommunity.API.Controllers
                     dto.CertificationStatusName = OwnerCertification.Failure.Name;
                     dto.CertificationResult = e.Message;
                     //更新认证申请记录  有效状态
-                    await ownerCertificationRecordRepository.UpdateInvalidAsync(new OwnerCertificationRecordDto
-                    {
-                        Id = ownerCertificationRecordEntity.Id.ToString(),
-                        OperationTime = DateTimeOffset.Now,
-                        OperationUserId = "system",
-                    });
+                    //await ownerCertificationRecordRepository.UpdateInvalidAsync(new OwnerCertificationRecordDto
+                    //{
+                    //    Id = ownerCertificationRecordEntity.Id.ToString(),
+                    //    OperationTime = DateTimeOffset.Now,
+                    //    OperationUserId = "system",
+                    //});
+                    //await ownerCertificationRecordRepository.DeleteAsync(new OwnerCertificationRecordDto
+                    //{
+                    //    Id = ownerCertificationRecordEntity.Id.ToString(),
+                    //    OperationTime = DateTimeOffset.Now,
+                    //    OperationUserId = "system",
+                    //});
                     throw new NotImplementedException(e.Message);
                     //return new ApiResult { code = APIResultCode.Success_NoB, message = e.Message };
                     // throw new NotImplementedException("身份证信息读取错误！");
@@ -352,13 +368,19 @@ namespace GuoGuoCommunity.API.Controllers
 
                 if (string.IsNullOrWhiteSpace(dto.OwnerId))
                 {
-                    //更新认证申请记录  有效状态
-                    await ownerCertificationRecordRepository.UpdateInvalidAsync(new OwnerCertificationRecordDto
-                    {
-                        Id = ownerCertificationRecordEntity.Id.ToString(),
-                        OperationTime = DateTimeOffset.Now,
-                        OperationUserId = "system",
-                    });
+                    ////更新认证申请记录  有效状态
+                    //await ownerCertificationRecordRepository.UpdateInvalidAsync(new OwnerCertificationRecordDto
+                    //{
+                    //    Id = ownerCertificationRecordEntity.Id.ToString(),
+                    //    OperationTime = DateTimeOffset.Now,
+                    //    OperationUserId = "system",
+                    //});
+                    //await ownerCertificationRecordRepository.DeleteAsync(new OwnerCertificationRecordDto
+                    //{
+                    //    Id = ownerCertificationRecordEntity.Id.ToString(),
+                    //    OperationTime = DateTimeOffset.Now,
+                    //    OperationUserId = "system",
+                    //});
                     throw new NotImplementedException("未查询到相关业主信息");
                     //return new ApiResult { code = APIResultCode.Success_NoB, message = "未查询到相关业主信息!" };
                 }
@@ -386,6 +408,12 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 //更新认证申请记录  有效状态
                 await ownerCertificationRecordRepository.UpdateInvalidAsync(new OwnerCertificationRecordDto
+                {
+                    Id = ownerCertificationRecordEntity.Id.ToString(),
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = "system",
+                });
+                await ownerCertificationRecordRepository.DeleteAsync(new OwnerCertificationRecordDto
                 {
                     Id = ownerCertificationRecordEntity.Id.ToString(),
                     OperationTime = DateTimeOffset.Now,

@@ -4,7 +4,7 @@ using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
 using GuoGuoCommunity.Domain.Service;
-using Hangfire;
+using Newtonsoft.Json;
 using Senparc.Weixin.MP.AdvancedAPIs;
 using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
 using System;
@@ -163,7 +163,7 @@ namespace GuoGuoCommunity.API.Controllers
                  * 微信消息推送
                  */
                 var url = (await _announcementAnnexRepository.GetAsync(entity.Id.ToString()))?.AnnexContent;
-                BackgroundJob.Enqueue(() => AnnouncementPushRemind(new AnnouncementPushModel
+                await AnnouncementPushRemind(new AnnouncementPushModel
                 {
                     Content = entity.Content,
                     Id = entity.Id.ToString(),
@@ -171,7 +171,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Summary = entity.Summary,
                     Title = entity.Title,
                     Url = url
-                }, entity.SmallDistrictArray));
+                }, entity.SmallDistrictArray);
                 return new ApiResult<AddVipOwnerAnnouncementOutput>(APIResultCode.Success, new AddVipOwnerAnnouncementOutput { Id = entity.Id.ToString() });
             }
             catch (Exception e)
@@ -251,7 +251,7 @@ namespace GuoGuoCommunity.API.Controllers
                  * 微信消息推送
                  */
                 var url = (await _announcementAnnexRepository.GetAsync(entity.Id.ToString()))?.AnnexContent;
-                BackgroundJob.Enqueue(() => AnnouncementPushRemind(new AnnouncementPushModel
+                await AnnouncementPushRemind(new AnnouncementPushModel
                 {
                     Content = entity.Content,
                     Id = entity.Id.ToString(),
@@ -259,7 +259,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Summary = entity.Summary,
                     Title = entity.Title,
                     Url = url
-                }, entity.SmallDistrictArray));
+                }, entity.SmallDistrictArray);
                 return new ApiResult<AddPropertyAnnouncementOutput>(APIResultCode.Success, new AddPropertyAnnouncementOutput { Id = entity.Id.ToString() });
             }
             catch (Exception e)
@@ -347,7 +347,7 @@ namespace GuoGuoCommunity.API.Controllers
                 foreach (var item in input.SmallDistricts)
                 {
                     var url = (await _announcementAnnexRepository.GetAsync(entity.Id.ToString()))?.AnnexContent;
-                    BackgroundJob.Enqueue(() => AnnouncementPushRemind(new AnnouncementPushModel
+                    await AnnouncementPushRemind(new AnnouncementPushModel
                     {
                         Content = entity.Content,
                         Id = entity.Id.ToString(),
@@ -355,7 +355,7 @@ namespace GuoGuoCommunity.API.Controllers
                         Summary = entity.Summary,
                         Title = entity.Title,
                         Url = url
-                    }, item));
+                    }, item);
                 }
                 return new ApiResult<AddStreetOfficeAnnouncementOutput>(APIResultCode.Success, new AddStreetOfficeAnnouncementOutput { Id = entity.Id.ToString() });
             }
@@ -841,6 +841,7 @@ namespace GuoGuoCommunity.API.Controllers
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
             IUserRepository userRepository = new UserRepository();
             IWeiXinUserRepository weiXinUserRepository = new WeiXinUserRepository();
+
             var userList = (await ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto
             {
                 SmallDistrictId = smallDistrict
@@ -848,10 +849,10 @@ namespace GuoGuoCommunity.API.Controllers
 
             foreach (var item in userList)
             {
-                var user = await userRepository.GetForIdAsync(item);
-                var weiXinUser = await weiXinUserRepository.GetAsync(user.UnionId);
                 try
                 {
+                    var user = await userRepository.GetForIdAsync(item);
+                    var weiXinUser = await weiXinUserRepository.GetAsync(user.UnionId);
                     var templateData = new
                     {
                         first = new TemplateDataItem("公告通知"),
@@ -863,15 +864,15 @@ namespace GuoGuoCommunity.API.Controllers
 
                     var miniProgram = new TempleteModel_MiniProgram()
                     {
-                        //appid = GuoGuoCommunity_WxOpenAppId,//ZhiShiHuLian_WxOpenAppId,
-                        // pagepath = "pages/noticeDetail/noticeDetail?con=" + JsonConvert.SerializeObject(model)
+                        appid = GuoGuoCommunity_WxOpenAppId,//ZhiShiHuLian_WxOpenAppId,
+                        pagepath = "pages/noticeDetail/noticeDetail?con=" + JsonConvert.SerializeObject(model)
                     };
 
                     TemplateApi.SendTemplateMessage(AppId, weiXinUser.OpenId, AnnouncementTemplateId, null, templateData, miniProgram);
                 }
                 catch (Exception e)
                 {
-                    throw new NotImplementedException(e.Message + weiXinUser.OpenId);
+                    // throw new NotImplementedException(e.Message + weiXinUser.OpenId);
                 }
             }
         }

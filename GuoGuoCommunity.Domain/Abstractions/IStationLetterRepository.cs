@@ -14,6 +14,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<List<StationLetter>> GetAllAsync(StationLetterDto dto, CancellationToken token = default);
 
+        Task<List<StationLetter>> GetAllForPropertyAsync(StationLetterDto dto, CancellationToken token = default);
+
         Task DeleteAsync(StationLetterDto dto, CancellationToken token = default);
 
         Task<StationLetter> GetAsync(string id, CancellationToken token = default);

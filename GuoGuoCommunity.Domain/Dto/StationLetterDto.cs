@@ -50,14 +50,14 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 读取状态
         /// </summary>
         public string ReadStatus { get; set; }
-        ///// <summary>
-        ///// 发布时间（开始时间）
-        ///// </summary>
-        //public DateTimeOffset? ReleaseTimeStart { get; set; }
+        /// <summary>
+        /// 发布时间（开始时间）
+        /// </summary>
+        public DateTimeOffset? ReleaseTimeStart { get; set; }
 
-        ///// <summary>
-        ///// 发布时间（结束时间）
-        ///// </summary>
-        //public DateTimeOffset? ReleaseTimeEnd { get; set; }
+        /// <summary>
+        /// 发布时间（结束时间）
+        /// </summary>
+        public DateTimeOffset? ReleaseTimeEnd { get; set; }
     }
 }

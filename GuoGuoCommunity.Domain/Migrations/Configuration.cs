@@ -73,7 +73,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         TypeName = "图片",
                         TypeValue = "Image",
                     });
-                context.ComplaintTypes.AddOrUpdate(x => x.Name,
+                context.ComplaintTypes.AddOrUpdate(x =>new { x.Name ,x.InitiatingDepartmentValue},
                     new ComplaintType()
                     {
                         Name = "房屋质量问题",

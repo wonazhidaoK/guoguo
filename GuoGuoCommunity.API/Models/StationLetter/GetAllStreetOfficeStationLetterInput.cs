@@ -11,17 +11,17 @@ namespace GuoGuoCommunity.API.Models
         /// <summary>
         /// 小区范围
         /// </summary>
-        public string SmallDistrict { get; set; }
+        public string SmallDistrictId { get; set; }
 
-        ///// <summary>
-        ///// 发布时间（开始时间）
-        ///// </summary>
-        //public DateTimeOffset? ReleaseTimeStart { get; set; }
+        /// <summary>
+        /// 发布时间（开始时间）
+        /// </summary>
+        public string StartTime { get; set; }
 
-        ///// <summary>
-        ///// 发布时间（结束时间）
-        ///// </summary>
-        //public DateTimeOffset? ReleaseTimeEnd { get; set; }
+        /// <summary>
+        /// 发布时间（结束时间）
+        /// </summary>
+        public string EndTime { get; set; }
 
         /// <summary>
         /// 

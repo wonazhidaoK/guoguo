@@ -75,5 +75,20 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 操作时间
         /// </summary>
         public DateTimeOffset? OperationTime { get; set; }
+
+        /// <summary>
+        /// 发布时间（开始时间）
+        /// </summary>
+        public DateTimeOffset? StartTime { get; set; }
+
+        /// <summary>
+        /// 发布时间（结束时间）
+        /// </summary>
+        public DateTimeOffset? EndTime { get; set; }
+
+        /// <summary>
+        /// 投票状态
+        /// </summary>
+        public string StatusValue { get; set; }
     }
 }

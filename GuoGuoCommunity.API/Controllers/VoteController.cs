@@ -599,10 +599,19 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("所选小区人数为0不能发起投票！");
                 }
+                if (!DateTimeOffset.TryParse(input.Deadline, out DateTimeOffset dateTime))
+                {
+                    throw new NotImplementedException("投票结束时间转换失败！");
+                }
+                var nowTime = DateTimeOffset.Now;
+                if (dateTime < nowTime)
+                {
+                    throw new NotImplementedException("投票结束时间小于投票创建时间！");
+                }
                 //增加投票主体
                 var entity = await _voteRepository.AddForStreetOfficeAsync(new VoteDto
                 {
-                    Deadline = input.Deadline,
+                    Deadline = dateTime,
                     Title = vipOwnerEntity.Name + "选举投票",
                     Summary = input.Summary,
                     SmallDistrictArray = input.SmallDistrictId,
@@ -737,7 +746,18 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<GetAllForStreetOfficeOutput>(APIResultCode.Unknown, new GetAllForStreetOfficeOutput { }, APIResultMessage.TokenNull);
                 }
+                var startTime = DateTimeOffset.Parse("1997-01-01");
 
+                var endTime = DateTimeOffset.Parse("2997-01-01");
+
+                if (DateTimeOffset.TryParse(input.StartTime, out DateTimeOffset startTimeSet))
+                {
+                    startTime = startTimeSet;
+                }
+                if (DateTimeOffset.TryParse(input.EndTime, out DateTimeOffset endTimeSet))
+                {
+                    endTime = endTimeSet.AddDays(1).AddMinutes(-1);
+                }
                 if (input.PageIndex < 1)
                 {
                     input.PageIndex = 1;
@@ -757,7 +777,10 @@ namespace GuoGuoCommunity.API.Controllers
                     SmallDistrictArray = input.SmallDistrictArray,
                     Title = input.Title,
                     StreetOfficeId = user.StreetOfficeId,
-                    DepartmentValue = Department.JieDaoBan.Value
+                    DepartmentValue = Department.JieDaoBan.Value,
+                    StartTime = startTime,
+                    EndTime = endTime,
+                    StatusValue = input.StatusValue
                 }, cancelToken);
 
                 var listCount = data.Count();
@@ -815,6 +838,19 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     input.PageSize = 10;
                 }
+
+                var startTime = DateTimeOffset.Parse("1997-01-01");
+
+                var endTime = DateTimeOffset.Parse("2997-01-01");
+
+                if (DateTimeOffset.TryParse(input.StartTime, out DateTimeOffset startTimeSet))
+                {
+                    startTime = startTimeSet;
+                }
+                if (DateTimeOffset.TryParse(input.EndTime, out DateTimeOffset endTimeSet))
+                {
+                    endTime = endTimeSet.AddDays(1).AddMinutes(-1);
+                }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
@@ -827,6 +863,9 @@ namespace GuoGuoCommunity.API.Controllers
                     StreetOfficeId = user.StreetOfficeId,
                     CommunityId = user.CommunityId,
                     SmallDistrictId = user.SmallDistrictId,
+                    StartTime = startTime,
+                    EndTime = endTime,
+                    StatusValue = input.StatusValue
                     //DepartmentValue = Department.JieDaoBan.Value
                 }, cancelToken);
 
@@ -1150,29 +1189,38 @@ namespace GuoGuoCommunity.API.Controllers
 
                 foreach (var item in ownerCertificationRecordList)
                 {
-                    var accessToken = AccessTokenContainer.GetAccessToken(WXController.AppId);
-
-                    var userEntity = await userRepository.GetForIdAsync(item.UserId);
-                    IWeiXinUserRepository weiXinUserRepository = new WeiXinUserRepository();
-                    var weiXinUser = await weiXinUserRepository.GetAsync(userEntity.UnionId);
-                    var templateData = new
+                    try
                     {
-                        first = new TemplateDataItem("请参与投票"),
-                        //  account = new TemplateDataItem(wxNickName),
-                        keyword1 = new TemplateDataItem(voteEntity.Title),
-                        keyword2 = new TemplateDataItem(item.SmallDistrictName),
-                        keyword3 = new TemplateDataItem(voteEntity.CreateOperationTime.Value.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
-                        keyword4 = new TemplateDataItem(DateTimeOffset.Now.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
-                        remark = new TemplateDataItem(">>请点击参与投票，感谢你的参与<<", "#FF0000")
-                    };
+                        var accessToken = AccessTokenContainer.GetAccessToken(WXController.AppId);
 
-                    var miniProgram = new TempleteModel_MiniProgram()
+                        var userEntity = await userRepository.GetForIdAsync(item.UserId);
+                        IWeiXinUserRepository weiXinUserRepository = new WeiXinUserRepository();
+                        var weiXinUser = await weiXinUserRepository.GetAsync(userEntity.UnionId);
+                        var templateData = new
+                        {
+                            first = new TemplateDataItem("请参与投票"),
+                            //  account = new TemplateDataItem(wxNickName),
+                            keyword1 = new TemplateDataItem(voteEntity.Title),
+                            keyword2 = new TemplateDataItem(item.SmallDistrictName),
+                            keyword3 = new TemplateDataItem(voteEntity.CreateOperationTime.Value.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
+                            keyword4 = new TemplateDataItem(voteEntity.Deadline.ToString("yyyy年MM月dd日")),
+                            remark = new TemplateDataItem(">>请点击参与投票，感谢你的参与<<", "#FF0000")
+                        };
+
+                        var miniProgram = new TempleteModel_MiniProgram()
+                        {
+                            appid = GuoGuoCommunity_WxOpenAppId, //ZhiShiHuLian_WxOpenAppId,
+                            pagepath = "pages/voteDetail/voteDetail?id=" + voteEntity.Id.ToString()//pagepath = "pages/editmyinfo/editmyinfo?id=" + employeeID
+                        };
+
+                        TemplateApi.SendTemplateMessage(AppId, weiXinUser.OpenId, VoteCreateTemplateId, null, templateData, miniProgram);
+                    }
+                    catch (Exception)
                     {
-                        //appid = GuoGuoCommunity_WxOpenAppId, //ZhiShiHuLian_WxOpenAppId,
-                        //pagepath = "pages/voteDetail/voteDetail?id=" + voteEntity.Id.ToString()//pagepath = "pages/editmyinfo/editmyinfo?id=" + employeeID
-                    };
 
-                    TemplateApi.SendTemplateMessage(AppId, weiXinUser.OpenId, VoteCreateTemplateId, null, templateData, miniProgram);
+                        //throw;
+                    }
+                    
                 }
 
 
@@ -1222,8 +1270,8 @@ namespace GuoGuoCommunity.API.Controllers
 
                     var miniProgram = new TempleteModel_MiniProgram()
                     {
-                        //appid = GuoGuoCommunity_WxOpenAppId, //ZhiShiHuLian_WxOpenAppId,
-                        //pagepath = "pages/voteDetail/voteDetail?id=" + voteEntity.Id.ToString()//pagepath = "pages/editmyinfo/editmyinfo?id=" + employeeID
+                        appid = GuoGuoCommunity_WxOpenAppId, //ZhiShiHuLian_WxOpenAppId,
+                        pagepath = "pages/voteDetail/voteDetail?id=" + voteEntity.Id.ToString()//pagepath = "pages/editmyinfo/editmyinfo?id=" + employeeID
                     };
 
                     TemplateApi.SendTemplateMessage(AppId, weiXinUser.OpenId, VoteResultTemplateId, null, templateData, miniProgram);
@@ -1267,8 +1315,8 @@ namespace GuoGuoCommunity.API.Controllers
 
                 var miniProgram = new TempleteModel_MiniProgram()
                 {
-                    //appid = GuoGuoCommunity_WxOpenAppId,
-                    //pagepath = "pages/my/my"
+                    appid = GuoGuoCommunity_WxOpenAppId,
+                    pagepath = "pages/my/my"
                 };
 
                 TemplateApi.SendTemplateMessage(AppId, weiXinUser.OpenId, VipOwnerCertificationRecordTemplateId, null, templateData, miniProgram);

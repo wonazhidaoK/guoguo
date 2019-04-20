@@ -139,6 +139,18 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     input.PageSize = 10;
                 }
+                var startTime = DateTimeOffset.Parse("1997-01-01");
+
+                var endTime = DateTimeOffset.Parse("2997-01-01");
+
+                if (DateTimeOffset.TryParse(input.StartTime, out DateTimeOffset startTimeSet))
+                {
+                    startTime = startTimeSet;
+                }
+                if (DateTimeOffset.TryParse(input.EndTime, out DateTimeOffset endTimeSet))
+                {
+                    endTime = endTimeSet.AddDays(1).AddMinutes(-1);
+                }
 
                 int startRow = (input.PageIndex - 1) * input.PageSize;
                 var token = HttpContext.Current.Request.Headers["Authorization"];
@@ -157,10 +169,10 @@ namespace GuoGuoCommunity.API.Controllers
 
                 var data = await _stationLetterRepository.GetAllAsync(new StationLetterDto
                 {
-                    //ReleaseTimeEnd = input.ReleaseTimeEnd,
-                    //ReleaseTimeStart = input.ReleaseTimeStart,
+                    ReleaseTimeEnd = startTime,
+                    ReleaseTimeStart = endTime,
                     StreetOfficeId = user.StreetOfficeId,
-                    SmallDistrictArray = input.SmallDistrict
+                    SmallDistrictArray = input.SmallDistrictId
                 }, cancelToken);
 
                 var listCount = data.Count();
@@ -267,6 +279,19 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
 
+                var startTime = DateTimeOffset.Parse("1997-01-01");
+
+                var endTime = DateTimeOffset.Parse("2997-01-01");
+
+                if (DateTimeOffset.TryParse(input.StartTime, out DateTimeOffset startTimeSet))
+                {
+                    startTime = startTimeSet;
+                }
+                if (DateTimeOffset.TryParse(input.EndTime, out DateTimeOffset endTimeSet))
+                {
+                    endTime = endTimeSet.AddDays(1).AddMinutes(-1);
+                }
+
                 int startRow = (input.PageIndex - 1) * input.PageSize;
                 var token = HttpContext.Current.Request.Headers["Authorization"];
 
@@ -282,10 +307,10 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<GetAllPropertyStationLetterOutput>(APIResultCode.Unknown, new GetAllPropertyStationLetterOutput { }, APIResultMessage.TokenError);
                 }
 
-                var data = await _stationLetterRepository.GetListAsync(new StationLetterDto
+                var data = await _stationLetterRepository.GetAllForPropertyAsync(new StationLetterDto
                 {
-                    //ReleaseTimeEnd = input.ReleaseTimeEnd,
-                    //ReleaseTimeStart = input.ReleaseTimeStart,
+                    ReleaseTimeEnd = startTime,
+                    ReleaseTimeStart = endTime,
                     SmallDistrictArray = user.SmallDistrictId,
                     // SmallDistrictArray = input.SmallDistrict,
                     OperationUserId = user.Id.ToString(),
