@@ -169,8 +169,8 @@ namespace GuoGuoCommunity.API.Controllers
 
                 var data = await _stationLetterRepository.GetAllAsync(new StationLetterDto
                 {
-                    ReleaseTimeEnd = startTime,
-                    ReleaseTimeStart = endTime,
+                    ReleaseTimeEnd = endTime,
+                    ReleaseTimeStart = startTime,
                     StreetOfficeId = user.StreetOfficeId,
                     SmallDistrictArray = input.SmallDistrictId
                 }, cancelToken);
@@ -309,8 +309,8 @@ namespace GuoGuoCommunity.API.Controllers
 
                 var data = await _stationLetterRepository.GetAllForPropertyAsync(new StationLetterDto
                 {
-                    ReleaseTimeEnd = startTime,
-                    ReleaseTimeStart = endTime,
+                    ReleaseTimeEnd = endTime,
+                    ReleaseTimeStart = startTime,
                     SmallDistrictArray = user.SmallDistrictId,
                     // SmallDistrictArray = input.SmallDistrict,
                     OperationUserId = user.Id.ToString(),
