@@ -16,6 +16,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task UpdateForFinishedAsync(ComplaintDto dto, CancellationToken token = default);
 
+        Task UpdateForStreetOfficeAsync(ComplaintDto dto, CancellationToken token = default);
+
         Task<List<Complaint>> GetAllAsync(ComplaintDto dto, CancellationToken token = default);
 
         Task<List<Complaint>> GetAllForVipOwnerAsync(ComplaintDto dto, CancellationToken token = default);

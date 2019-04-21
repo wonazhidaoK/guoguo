@@ -266,6 +266,28 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public async Task UpdateForStreetOfficeAsync(ComplaintDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("投诉信息不正确！");
+                }
+                var complaint = await db.Complaints.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (complaint == null)
+                {
+                    throw new NotImplementedException("投诉信息不存在！");
+                }
+
+                complaint.StatusValue = ComplaintStatus.Completed.Value;
+                complaint.StatusName = ComplaintStatus.Completed.Name;
+                complaint.LastOperationTime = dto.OperationTime;
+                complaint.LastOperationUserId = dto.OperationUserId;
+                await db.SaveChangesAsync(token);
+            }
+        }
+
         public async Task ViewForPropertyAsync(ComplaintDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())

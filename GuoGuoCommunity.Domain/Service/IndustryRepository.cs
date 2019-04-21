@@ -153,7 +153,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该业户不存在！");
                 }
 
-                if (await db.Industries.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.BuildingId == industrie.BuildingId && x.Id != uid).FirstOrDefaultAsync(token) != null)
+                if (await db.Industries.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.BuildingId == industrie.BuildingId && x.Id != uid && x.BuildingUnitId == dto.BuildingUnitId).FirstOrDefaultAsync(token) != null)
                 {
                     throw new NotImplementedException("该业户名称已存在！");
                 }

@@ -195,7 +195,8 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationDepartmentName = Department.YeZhu.Name,
                     OperationDepartmentValue = Department.YeZhu.Value,
                     OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
+                    OperationUserId = user.Id.ToString(),
+                    Aappeal = "true"
                 }, cancelToken);
 
                 await _complaintStatusChangeRecordingRepository.AddAsync(new ComplaintStatusChangeRecordingDto
@@ -288,7 +289,6 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 var complaintEntity = await _complaintRepository.GetAsync(input.Id, cancelToken);
                 var complaintTypeEntyity = await _complaintTypeRepository.GetAsync(complaintEntity.ComplaintTypeId, cancelToken);
-
                 return new ApiResult<GetComplaintFollowUpOutput>(APIResultCode.Success, new GetComplaintFollowUpOutput
                 {
                     ExpiredTime = complaintEntity.ExpiredTime.Value,
@@ -301,7 +301,8 @@ namespace GuoGuoCommunity.API.Controllers
                     DepartmentValue = complaintEntity.DepartmentValue,
                     Description = complaintEntity.Description,
                     ComplaintTypeName = complaintEntity.ComplaintTypeName,
-                    List = list
+                    List = list,
+                    RemainingPeriod = ((complaintEntity.ExpiredTime - DateTimeOffset.Now).Value.Days) + 1
                 });
             }
             catch (Exception e)
@@ -661,7 +662,7 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationTime = DateTimeOffset.Now,
                 }, cancelToken);
 
-                await _complaintRepository.UpdateForFinishedAsync(new ComplaintDto
+                await _complaintRepository.UpdateForStreetOfficeAsync(new ComplaintDto
                 {
                     Id = input.ComplaintId,
                     OperationUserId = user.Id.ToString(),

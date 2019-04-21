@@ -34,6 +34,11 @@ namespace GuoGuoCommunity.API.Models
         public int ComplaintPeriod { get; set; }
 
         /// <summary>
+        /// 剩余期限
+        /// </summary>
+        public int RemainingPeriod { get; set; }
+
+        /// <summary>
         /// 状态名称
         /// </summary>
         public string StatusName { get; set; }

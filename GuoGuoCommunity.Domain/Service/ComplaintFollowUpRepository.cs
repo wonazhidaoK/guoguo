@@ -56,9 +56,12 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<List<ComplaintFollowUp>> GetAllAsync(ComplaintFollowUpDto dto, CancellationToken token = default)
+        public async Task<List<ComplaintFollowUp>> GetAllAsync(ComplaintFollowUpDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId == dto.ComplaintId ).ToListAsync(token);
+            }
         }
 
         public async Task<ComplaintFollowUp> GetAsync(string id, CancellationToken token = default)
@@ -85,6 +88,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
+                var a = await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId == complaintId).ToListAsync(token);
                 return await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId == complaintId).ToListAsync(token);
             }
         }

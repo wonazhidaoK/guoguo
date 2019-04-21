@@ -30,7 +30,12 @@ namespace GuoGuoCommunity.API.Models
         /// <summary>
         /// 
         /// </summary>
-        public DateTimeOffset ReleaseTime { get; set; }
+        public string ReleaseTime { get; set; }
+
+        /// <summary>
+        /// 创建人
+        /// </summary>
+        public string CreateUserName { get; set; }
 
         /// <summary>
         /// 附件url

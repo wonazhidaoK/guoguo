@@ -163,14 +163,16 @@ namespace GuoGuoCommunity.API.Controllers
                  * 微信消息推送
                  */
                 var url = (await _announcementAnnexRepository.GetAsync(entity.Id.ToString()))?.AnnexContent;
+                var OperationName = (await _ownerCertificationRecordRepository.GetAsync(entity.OwnerCertificationId, cancelToken))?.OwnerName;
                 await AnnouncementPushRemind(new AnnouncementPushModel
                 {
                     Content = entity.Content,
                     Id = entity.Id.ToString(),
-                    ReleaseTime = entity.CreateOperationTime.Value,
+                    ReleaseTime = entity.CreateOperationTime.Value.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss"),
                     Summary = entity.Summary,
                     Title = entity.Title,
-                    Url = url
+                    Url = url,
+                    CreateUserName = OperationName
                 }, entity.SmallDistrictArray);
                 return new ApiResult<AddVipOwnerAnnouncementOutput>(APIResultCode.Success, new AddVipOwnerAnnouncementOutput { Id = entity.Id.ToString() });
             }
@@ -251,14 +253,16 @@ namespace GuoGuoCommunity.API.Controllers
                  * 微信消息推送
                  */
                 var url = (await _announcementAnnexRepository.GetAsync(entity.Id.ToString()))?.AnnexContent;
+                var userEntity = await _userRepository.GetForIdAsync(entity.CreateOperationUserId);
                 await AnnouncementPushRemind(new AnnouncementPushModel
                 {
                     Content = entity.Content,
                     Id = entity.Id.ToString(),
-                    ReleaseTime = entity.CreateOperationTime.Value,
+                    ReleaseTime = entity.CreateOperationTime.Value.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss"),
                     Summary = entity.Summary,
                     Title = entity.Title,
-                    Url = url
+                    Url = url,
+                    CreateUserName = userEntity?.Name
                 }, entity.SmallDistrictArray);
                 return new ApiResult<AddPropertyAnnouncementOutput>(APIResultCode.Success, new AddPropertyAnnouncementOutput { Id = entity.Id.ToString() });
             }
@@ -347,14 +351,16 @@ namespace GuoGuoCommunity.API.Controllers
                 foreach (var item in input.SmallDistricts)
                 {
                     var url = (await _announcementAnnexRepository.GetAsync(entity.Id.ToString()))?.AnnexContent;
+                    var userEntity = await _userRepository.GetForIdAsync(entity.CreateOperationUserId);
                     await AnnouncementPushRemind(new AnnouncementPushModel
                     {
                         Content = entity.Content,
                         Id = entity.Id.ToString(),
-                        ReleaseTime = entity.CreateOperationTime.Value,
+                        ReleaseTime = entity.CreateOperationTime.Value.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss"),
                         Summary = entity.Summary,
                         Title = entity.Title,
-                        Url = url
+                        Url = url,
+                        CreateUserName = userEntity?.Name
                     }, item);
                 }
                 return new ApiResult<AddStreetOfficeAnnouncementOutput>(APIResultCode.Success, new AddStreetOfficeAnnouncementOutput { Id = entity.Id.ToString() });

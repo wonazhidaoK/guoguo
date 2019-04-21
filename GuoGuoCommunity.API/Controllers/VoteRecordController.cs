@@ -208,10 +208,10 @@ namespace GuoGuoCommunity.API.Controllers
             }
 
             int startRow = (input.PageIndex - 1) * input.PageSize;
-            var data = (await _voteRecordRepository.GetListAsync(new VoteRecordDto
+            var data = ((await _voteRecordRepository.GetListAsync(new VoteRecordDto
             {
                 VoteId = input.Id
-            }, cancellationToken));
+            }, cancellationToken))).Where(x=>x.Feedback!="");
             List<GetFeedbackOutput> list = new List<GetFeedbackOutput>();
             foreach (var item in data)
             {

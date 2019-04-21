@@ -848,7 +848,17 @@ namespace GuoGuoCommunity.API.Controllers
                         OperationName = (await _ownerCertificationRecordRepository.GetAsync(item.OwnerCertificationId, cancelToken))?.OwnerName;
                         //IsCreateUser = item.OwnerCertificationId == input.OwnerCertificationId ? true : false;
                     }
-
+                    var complaintFollowUp = (await _complaintFollowUpRepository.GetListForComplaintIdAsync(item.Id.ToString(), cancelToken)).Where(x => x.Aappeal != null).FirstOrDefault();
+                    var complaintFollowUpLists = (await _complaintFollowUpRepository.GetAllAsync(new ComplaintFollowUpDto { ComplaintId = item.Id.ToString() }, cancelToken)).Where(x => x.OperationDepartmentValue == Department.JieDaoBan.Value).ToList();
+                    var Aappeal = "";
+                    if (complaintFollowUpLists.Count > 1)
+                    {
+                        Aappeal = "";
+                    }
+                    else
+                    {
+                        Aappeal = complaintFollowUp?.Aappeal;
+                    }
                     listOutput.Add(new GetComplaintOutput
                     {
                         Id = item.Id.ToString(),
@@ -859,7 +869,8 @@ namespace GuoGuoCommunity.API.Controllers
                         Url = (await _complaintAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent,
                         OperationName = OperationName,
                         OperationDepartmentName = item.OperationDepartmentName,
-                        ComplaintTypeName = item.ComplaintTypeName
+                        ComplaintTypeName = item.ComplaintTypeName,//complaintFollowUp
+                        Aappeal = Aappeal
                     });
                 }
                 return new ApiResult<GetAllComplaintForStreetOfficeOutput>(APIResultCode.Success, new GetAllComplaintForStreetOfficeOutput
@@ -904,18 +915,18 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
 
-                if (complaintEntity.StatusValue != ComplaintStatus.NotAccepted.Value)
+                //if (complaintEntity.StatusValue != ComplaintStatus.NotAccepted.Value)
+                //{
+                //    return new ApiResult(APIResultCode.Success);
+                //}
+                var complaintFollowUpList = (await _complaintFollowUpRepository.GetAllAsync(new ComplaintFollowUpDto { ComplaintId = input.ComplaintId }, cancelToken)).Where(x => x.Description == "街道办已查看正在处理！");
+                if (complaintFollowUpList.Any())
                 {
                     return new ApiResult(APIResultCode.Success);
                 }
 
-                await _complaintRepository.ViewForStreetOfficeAsync(new ComplaintDto
-                {
-                    Id = input.ComplaintId,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-
+                var complaintFollowUpLists = (await _complaintFollowUpRepository.GetAllAsync(new ComplaintFollowUpDto { ComplaintId = input.ComplaintId }, cancelToken)).Where(x => x.Description == "由于问题一直没有得到解决，我已向街道办投诉！").ToList();
+                //！
                 var complaintFollowUpEntity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
                 {
                     ComplaintId = input.ComplaintId,
@@ -926,16 +937,27 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);
 
-                await _complaintStatusChangeRecordingRepository.AddAsync(new ComplaintStatusChangeRecordingDto
+                if (!complaintFollowUpLists.Any())
                 {
-                    ComplaintFollowUpId = complaintFollowUpEntity.Id.ToString(),
-                    ComplaintId = input.ComplaintId,
-                    OldStatus = complaintEntity.StatusValue,
-                    NewStatus = ComplaintStatus.Processing.Value,
-                    OperationUserId = user.Id.ToString(),
-                    OperationTime = DateTimeOffset.Now,
-                }, cancelToken);
+                    await _complaintRepository.ViewForStreetOfficeAsync(new ComplaintDto
+                    {
+                        Id = input.ComplaintId,
+                        OperationTime = DateTimeOffset.Now,
+                        OperationUserId = user.Id.ToString()
+                    }, cancelToken);
 
+
+
+                    await _complaintStatusChangeRecordingRepository.AddAsync(new ComplaintStatusChangeRecordingDto
+                    {
+                        ComplaintFollowUpId = complaintFollowUpEntity.Id.ToString(),
+                        ComplaintId = input.ComplaintId,
+                        OldStatus = complaintEntity.StatusValue,
+                        NewStatus = ComplaintStatus.Processing.Value,
+                        OperationUserId = user.Id.ToString(),
+                        OperationTime = DateTimeOffset.Now,
+                    }, cancelToken);
+                }
                 return new ApiResult(APIResultCode.Success);
             }
             catch (Exception e)
