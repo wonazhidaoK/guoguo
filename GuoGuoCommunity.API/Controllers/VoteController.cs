@@ -802,7 +802,7 @@ namespace GuoGuoCommunity.API.Controllers
                         CreateTime = x.CreateOperationTime.Value,
                         IsCreateUser = x.CreateOperationUserId == user.Id.ToString(),
                         IsProcessing = DateTimeOffset.Now < x.CreateOperationTime.Value,
-                         VoteTypeValue=x.VoteTypeValue
+                        VoteTypeValue = x.VoteTypeValue
                     }).ToList(),
                     TotalCount = listCount
                 });
@@ -1039,6 +1039,7 @@ namespace GuoGuoCommunity.API.Controllers
                     GetVoteQuestionModel questionModel = new GetVoteQuestionModel();
                     List<GetVoteQuestionOptionModel> voteQuestionOptionModels = new List<GetVoteQuestionOptionModel>();
                     var voteQuestionOptionList = await _voteQuestionOptionRepository.GetListAsync(new VoteQuestionOptionDto { VoteId = vote?.Id.ToString(), VoteQuestionId = item.Id.ToString() }, cancelToken);
+                    var voteResult = (await _voteResultRecordRepository.GetListForVoteIdAsync(vote.Id.ToString())).FirstOrDefault();
                     foreach (var voteQuestionOptionItem in voteQuestionOptionList)
                     {
                         //if (voteResult.CalculationMethodValue == CalculationMethod.EndorsedNumber.Value)
@@ -1055,10 +1056,32 @@ namespace GuoGuoCommunity.API.Controllers
                             Describe = voteQuestionOptionItem.Describe,
                             Votes = voteQuestionOptionItem.Votes,
                         };
+                        if (voteResult != null)
+                        {
+                            if (vote.VoteTypeValue != VoteTypes.VipOwnerElection.Value)
+                            {
+                                model.Votes = model.Votes + (voteResult.ShouldParticipateCount.Value - voteResult.ActualParticipateCount);
+                                //if (voteQuestionOptionItem.Describe=="同意")
+                                //{
+                                //    if (voteResult.CalculationMethodValue == CalculationMethod.Opposition.Value)
+                                //    {
+                                //        model.Votes= model.Votes+(voteResult.ShouldParticipateCount.Value - voteResult.ActualParticipateCount);
+                                //    }
+                                //}
+                                //else if(voteQuestionOptionItem.Describe == "不同意")
+                                //{
+                                //    if (voteResult.CalculationMethodValue == CalculationMethod.EndorsedNumber.Value)
+                                //    {
+                                //        model.Votes = model.Votes + (voteResult.ShouldParticipateCount.Value - voteResult.ActualParticipateCount);
+                                //    }
+                                //}
+                            }
+                        }
+
                         voteQuestionOptionModels.Add(model);
                     }
-                    var voteResult = (await _voteResultRecordRepository.GetListForVoteIdAsync(vote.Id.ToString())).FirstOrDefault();
-                    
+
+
                     /*
                      * 投票类型是否为业委会改选
                      * 查询投票业委会关联关系
@@ -1370,7 +1393,7 @@ namespace GuoGuoCommunity.API.Controllers
                 //查询投票问题选项
                 IVoteQuestionOptionRepository voteQuestionOptionRepository = new VoteQuestionOptionRepository();
                 var voteQuestionOptionList = await voteQuestionOptionRepository.GetListAsync(new VoteQuestionOptionDto() { VoteId = voteEntity.Id.ToString(), VoteQuestionId = voteQuestion.Id.ToString() });
-                var voteQuestionOption1 = voteQuestionOptionList.Where(x=>x.Describe=="同意").FirstOrDefault();
+                var voteQuestionOption1 = voteQuestionOptionList.Where(x => x.Describe == "同意").FirstOrDefault();
                 var voteQuestionOption2 = voteQuestionOptionList.Where(x => x.Describe == "不同意").FirstOrDefault();
 
                 //查询当前小区业主人数
