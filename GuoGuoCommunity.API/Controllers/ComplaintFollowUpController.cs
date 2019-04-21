@@ -657,7 +657,7 @@ namespace GuoGuoCommunity.API.Controllers
                     ComplaintFollowUpId = entity.Id.ToString(),
                     ComplaintId = input.ComplaintId,
                     OldStatus = complaintEntity.StatusValue,
-                    NewStatus = ComplaintStatus.Finished.Value,
+                    NewStatus = ComplaintStatus.StreetOfficeFinished.Value,
                     OperationUserId = user.Id.ToString(),
                     OperationTime = DateTimeOffset.Now,
                 }, cancelToken);

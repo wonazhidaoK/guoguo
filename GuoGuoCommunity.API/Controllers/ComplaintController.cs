@@ -953,7 +953,7 @@ namespace GuoGuoCommunity.API.Controllers
                         ComplaintFollowUpId = complaintFollowUpEntity.Id.ToString(),
                         ComplaintId = input.ComplaintId,
                         OldStatus = complaintEntity.StatusValue,
-                        NewStatus = ComplaintStatus.Processing.Value,
+                        NewStatus = ComplaintStatus.StreetOfficeProcessing.Value,
                         OperationUserId = user.Id.ToString(),
                         OperationTime = DateTimeOffset.Now,
                     }, cancelToken);
