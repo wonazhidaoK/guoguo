@@ -28,7 +28,7 @@ namespace GuoGuoCommunity.Domain.Models
         public string ComplaintTypeId { get; set; }
 
         /// <summary>
-        /// 投诉类型Id
+        /// 投诉类型名称
         /// </summary>
         public string ComplaintTypeName { get; set; }
 

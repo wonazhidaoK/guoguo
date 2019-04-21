@@ -175,13 +175,9 @@
     <Compile Include="Dto\VoteResultRecordDto.cs" />
     <Compile Include="Dto\WeiXinUserDto.cs" />
     <Compile Include="GuoGuoCommunityContext.cs" />
-    <Compile Include="Migrations\201904180309370_Initialization.cs" />
-    <Compile Include="Migrations\201904180309370_Initialization.Designer.cs">
-      <DependentUpon>201904180309370_Initialization.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904190206279_update-Menu.cs" />
-    <Compile Include="Migrations\201904190206279_update-Menu.Designer.cs">
-      <DependentUpon>201904190206279_update-Menu.cs</DependentUpon>
+    <Compile Include="Migrations\201904210504484_Initialization.cs" />
+    <Compile Include="Migrations\201904210504484_Initialization.Designer.cs">
+      <DependentUpon>201904210504484_Initialization.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Enum\StationLetterReadStatus.cs" />
     <Compile Include="Models\IDCardPhotoRecord.cs" />
@@ -310,11 +306,8 @@
     <Content Include="Models\city\Area_List.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201904180309370_Initialization.resx">
-      <DependentUpon>201904180309370_Initialization.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904190206279_update-Menu.resx">
-      <DependentUpon>201904190206279_update-Menu.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201904210504484_Initialization.resx">
+      <DependentUpon>201904210504484_Initialization.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

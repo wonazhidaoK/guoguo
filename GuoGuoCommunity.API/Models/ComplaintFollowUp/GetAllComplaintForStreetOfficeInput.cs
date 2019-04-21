@@ -28,6 +28,16 @@ namespace GuoGuoCommunity.API.Models
         public string Description { get; set; }
 
         /// <summary>
+        /// 投诉部门值
+        /// </summary>
+        public string DepartmentValue { get; set; }
+
+        /// <summary>
+        /// 投诉类型Id
+        /// </summary>
+        public string ComplaintTypeId { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         [Required]

@@ -233,6 +233,8 @@ namespace GuoGuoCommunity.Domain.Migrations
                         Id = c.Guid(nullable: false, identity: true),
                         Name = c.String(),
                         Key = c.String(),
+                        DepartmentName = c.String(),
+                        DepartmentValue = c.String(),
                         CreateOperationUserId = c.String(),
                         CreateOperationTime = c.DateTimeOffset(precision: 7),
                         LastOperationUserId = c.String(),

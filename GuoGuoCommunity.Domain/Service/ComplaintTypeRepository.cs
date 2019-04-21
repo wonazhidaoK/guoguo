@@ -103,11 +103,12 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                if (string.IsNullOrWhiteSpace(dto.InitiatingDepartmentValue))
+                var list = await db.ComplaintTypes.Where(x => x.IsDeleted == false ).ToListAsync(token);
+                if (!string.IsNullOrWhiteSpace(dto.InitiatingDepartmentValue))
                 {
-                    throw new NotImplementedException("发起部门值不正确！");
+                    list = list.Where(x => x.InitiatingDepartmentValue == dto.InitiatingDepartmentValue).ToList();
                 }
-                return await db.ComplaintTypes.Where(x => x.IsDeleted == false && x.InitiatingDepartmentValue == dto.InitiatingDepartmentValue).ToListAsync(token); ;
+                return list;
             }
         }
 

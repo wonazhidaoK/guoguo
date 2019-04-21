@@ -35,7 +35,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("楼宇单元信息不存在！");
                 }
-                var industries = await db.Industries.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.BuildingId == dto.BuildingId).FirstOrDefaultAsync(token);
+                var industries = await db.Industries.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.BuildingId == dto.BuildingId&&x.BuildingUnitId==dto.BuildingUnitId).FirstOrDefaultAsync(token);
                 if (industries != null)
                 {
                     throw new NotImplementedException("该业户信息已存在！");

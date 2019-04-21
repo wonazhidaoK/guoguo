@@ -7,13 +7,13 @@ namespace GuoGuoCommunity.Domain.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class updateMenu : IMigrationMetadata
+    public sealed partial class Initialization : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(updateMenu));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initialization));
         
         string IMigrationMetadata.Id
         {
-            get { return "201904190206279_update-Menu"; }
+            get { return "201904210504484_Initialization"; }
         }
         
         string IMigrationMetadata.Source

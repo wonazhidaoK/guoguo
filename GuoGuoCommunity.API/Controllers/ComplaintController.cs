@@ -785,7 +785,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<GetAllComplaintForStreetOfficeOutput>(APIResultCode.Unknown, new GetAllComplaintForStreetOfficeOutput { }, APIResultMessage.TokenError);
                 }
-
+                //if (string.IsNullOrWhiteSpace(input?.DepartmentValue))
+                //{
+                //    throw new NotImplementedException("发起部门值信息为空！");
+                //}
                 if (input.PageIndex < 1)
                 {
                     input.PageIndex = 1;
@@ -816,9 +819,16 @@ namespace GuoGuoCommunity.API.Controllers
                     // SmallDistrictId = user.SmallDistrictId,
                     EndTime = endTime,
                     StartTime = startTime,
-                    Description = input.Description
+                    Description = input.Description,
                 }, cancelToken);
-
+                if (!string.IsNullOrWhiteSpace(input?.DepartmentValue))
+                {
+                    data = data.Where(x => x.OperationDepartmentValue == input.DepartmentValue).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(input?.ComplaintTypeId))
+                {
+                    data = data.Where(x => x.ComplaintTypeId == input.ComplaintTypeId).ToList();
+                }
                 var listCount = data.Count();
                 var list = data.OrderByDescending(a => a.CreateOperationTime).Skip(startRow).Take(input.PageSize);
 
@@ -848,7 +858,8 @@ namespace GuoGuoCommunity.API.Controllers
                         StatusValue = item.StatusValue,
                         Url = (await _complaintAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent,
                         OperationName = OperationName,
-                        OperationDepartmentName = item.OperationDepartmentName
+                        OperationDepartmentName = item.OperationDepartmentName,
+                        ComplaintTypeName = item.ComplaintTypeName
                     });
                 }
                 return new ApiResult<GetAllComplaintForStreetOfficeOutput>(APIResultCode.Success, new GetAllComplaintForStreetOfficeOutput
@@ -1031,6 +1042,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<GetAllComplaintForPropertyOutput>(APIResultCode.Unknown, new GetAllComplaintForPropertyOutput { }, APIResultMessage.TokenError);
                 }
+                //if (string.IsNullOrWhiteSpace(input?.DepartmentValue))
+                //{
+                //    throw new NotImplementedException("发起部门值信息为空！");
+                //}
                 var startTime = DateTimeOffset.Parse("1997-01-01");
 
                 var endTime = DateTimeOffset.Parse("2997-01-01");
@@ -1061,9 +1076,17 @@ namespace GuoGuoCommunity.API.Controllers
                     StartTime = startTime,
                     Description = input.Description
                 }, cancelToken);
-
+                if (!string.IsNullOrWhiteSpace(input?.DepartmentValue))
+                {
+                    data = data.Where(x => x.OperationDepartmentValue == input.DepartmentValue).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(input?.ComplaintTypeId))
+                {
+                    data = data.Where(x => x.ComplaintTypeId == input.ComplaintTypeId).ToList();
+                }
                 var listCount = data.Count();
                 var list = data.OrderByDescending(a => a.CreateOperationTime).Skip(startRow).Take(input.PageSize);
+
 
                 List<GetComplaintOutput> listOutput = new List<GetComplaintOutput>();
                 foreach (var item in list)
@@ -1090,7 +1113,8 @@ namespace GuoGuoCommunity.API.Controllers
                         StatusValue = item.StatusValue,
                         Url = (await _complaintAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent,
                         OperationName = OperationName,
-                        OperationDepartmentName = item.OperationDepartmentName
+                        OperationDepartmentName = item.OperationDepartmentName,
+                        ComplaintTypeName = item.ComplaintTypeName
                     });
                 }
 

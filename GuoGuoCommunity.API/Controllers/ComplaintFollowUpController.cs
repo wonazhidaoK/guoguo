@@ -300,6 +300,7 @@ namespace GuoGuoCommunity.API.Controllers
                     DepartmentName = complaintEntity.DepartmentName,
                     DepartmentValue = complaintEntity.DepartmentValue,
                     Description = complaintEntity.Description,
+                    ComplaintTypeName = complaintEntity.ComplaintTypeName,
                     List = list
                 });
             }

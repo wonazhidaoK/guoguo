@@ -280,14 +280,44 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(input.InitiatingDepartmentValue))
+                if (string.IsNullOrWhiteSpace(input?.InitiatingDepartmentValue))
                 {
                     throw new NotImplementedException("发起部门值信息为空！");
                 }
 
                 var data = await _complaintTypeRepository.GetListAsync(new ComplaintTypeDto
                 {
-                    InitiatingDepartmentValue = input.InitiatingDepartmentValue
+                    InitiatingDepartmentValue = input?.InitiatingDepartmentValue
+                }, cancelToken);
+
+                return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Success, data.Select(x => new GetListComplaintTypeOutput
+                {
+                    Id = x.Id.ToString(),
+                    Name = x.Name
+                }).ToList());
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Success_NoB, new List<GetListComplaintTypeOutput> { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [Obsolete]
+        [HttpGet]
+        [Route("complaintType/getAllList")]
+        public async Task<ApiResult<List<GetListComplaintTypeOutput>>> GetList(CancellationToken cancelToken)
+        {
+            try
+            {
+               
+                var data = await _complaintTypeRepository.GetListAsync(new ComplaintTypeDto
+                {
+                    
                 }, cancelToken);
 
                 return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Success, data.Select(x => new GetListComplaintTypeOutput

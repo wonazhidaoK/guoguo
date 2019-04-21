@@ -58,5 +58,9 @@ namespace GuoGuoCommunity.API.Models
         /// </summary>
         public string Description { get; set; }
 
+        /// <summary>
+        /// 投诉类型名称
+        /// </summary>
+        public string ComplaintTypeName { get; set; }
     }
 }
