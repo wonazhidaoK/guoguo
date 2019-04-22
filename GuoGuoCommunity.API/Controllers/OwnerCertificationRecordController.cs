@@ -388,7 +388,8 @@ namespace GuoGuoCommunity.API.Controllers
                 await ownerRepository.UpdateForLegalizeAsync(new OwnerDto
                 {
                     OwnerCertificationRecordId = ownerCertificationRecordEntity.Id.ToString(),
-                    Id = recordEntity.OwnerId.ToString()
+                    Id = recordEntity.OwnerId.ToString(),
+                     Name=dto.OwnerName,
                 });
 
                 //IUserRepository userRepository = new UserRepository();

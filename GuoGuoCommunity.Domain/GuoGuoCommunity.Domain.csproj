@@ -179,6 +179,10 @@
     <Compile Include="Migrations\201904210504484_Initialization.Designer.cs">
       <DependentUpon>201904210504484_Initialization.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201904220211388_update-VoteRecordDetail.cs" />
+    <Compile Include="Migrations\201904220211388_update-VoteRecordDetail.Designer.cs">
+      <DependentUpon>201904220211388_update-VoteRecordDetail.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Enum\StationLetterReadStatus.cs" />
     <Compile Include="Models\IDCardPhotoRecord.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -308,6 +312,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201904210504484_Initialization.resx">
       <DependentUpon>201904210504484_Initialization.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904220211388_update-VoteRecordDetail.resx">
+      <DependentUpon>201904220211388_update-VoteRecordDetail.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

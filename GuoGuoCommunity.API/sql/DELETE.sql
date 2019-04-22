@@ -1,7 +1,9 @@
 USE [GuoGuoCommunityTest]
 GO
+
 --公告附件表
 DELETE FROM AnnouncementAnnexes
+
 --公告表
 DELETE FROM Announcements
 
@@ -65,6 +67,7 @@ DELETE FROM Uploads
 
 --用户表
 DELETE FROM Users 
+WHERE NAME !='admin' OR NAME IS NULL
 
 --高级认证申请记录表
 DELETE FROM VipOwnerApplicationRecords
@@ -110,6 +113,12 @@ DELETE FROM Votes
 
 --微信用户表
 --DELETE FROM WeiXinUsers
+
+--角色菜单表
+--DELETE FROM Role_Menu
+
+--角色表
+--DELETE FROM User_Role
 GO
 
 

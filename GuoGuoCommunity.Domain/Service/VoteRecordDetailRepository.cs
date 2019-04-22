@@ -54,7 +54,8 @@ namespace GuoGuoCommunity.Domain.Service
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
-                    LastOperationUserId = dto.OperationUserId
+                    LastOperationUserId = dto.OperationUserId,
+                    OwnerCertificationId = dto.OwnerCertificationId
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -80,7 +81,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.VoteRecordDetails.Where(x => x.IsDeleted == false && x.VoteId == dto.VoteId&&x.CreateOperationUserId==dto.OperationUserId).ToListAsync(token);
+                return await db.VoteRecordDetails.Where(x => x.IsDeleted == false && x.VoteId == dto.VoteId && x.CreateOperationUserId == dto.OperationUserId).ToListAsync(token);
             }
         }
 

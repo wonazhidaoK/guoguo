@@ -101,7 +101,8 @@ namespace GuoGuoCommunity.API.Controllers
                         VoteQuestionOptionId = item.VoteQuestionOptionId,
                         VoteId = input.VoteId,
                         OperationTime = DateTimeOffset.Now,
-                        OperationUserId = user.Id.ToString()
+                        OperationUserId = user.Id.ToString(),
+                        OwnerCertificationId= input.OwnerCertificationId
                     }, cancelToken);
                     await _voteQuestionOptionRepository.AddCountAsync(item.VoteQuestionOptionId, cancelToken);
                 }

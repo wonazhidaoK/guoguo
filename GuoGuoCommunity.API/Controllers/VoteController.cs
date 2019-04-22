@@ -1060,15 +1060,15 @@ namespace GuoGuoCommunity.API.Controllers
                         {
                             if (vote.VoteTypeValue != VoteTypes.VipOwnerElection.Value)
                             {
-                                model.Votes = model.Votes + (voteResult.ShouldParticipateCount.Value - voteResult.ActualParticipateCount);
-                                //if (voteQuestionOptionItem.Describe=="同意")
-                                //{
-                                //    if (voteResult.CalculationMethodValue == CalculationMethod.Opposition.Value)
-                                //    {
-                                //        model.Votes= model.Votes+(voteResult.ShouldParticipateCount.Value - voteResult.ActualParticipateCount);
-                                //    }
-                                //}
-                                //else if(voteQuestionOptionItem.Describe == "不同意")
+                                //model.Votes = model.Votes + (voteResult.ShouldParticipateCount.Value - voteResult.ActualParticipateCount);
+                                if (voteQuestionOptionItem.Describe == "同意")
+                                {
+                                    if (voteResult.CalculationMethodValue == CalculationMethod.Opposition.Value)
+                                    {
+                                        model.Votes = model.Votes + (voteResult.ShouldParticipateCount.Value - voteResult.ActualParticipateCount);
+                                    }
+                                }
+                                //else if (voteQuestionOptionItem.Describe == "不同意")
                                 //{
                                 //    if (voteResult.CalculationMethodValue == CalculationMethod.EndorsedNumber.Value)
                                 //    {
@@ -1403,7 +1403,7 @@ namespace GuoGuoCommunity.API.Controllers
                 VoteResult result = VoteResult.Overrule;
                 if (voteEntity.CalculationMethodValue == CalculationMethod.EndorsedNumber.Value)
                 {
-                    if ((double)voteQuestionOption1.Votes > ((double)ownerCertificationRecordList.Count / (double)3) * 2)
+                    if ((double)voteQuestionOption1.Votes >= ((double)ownerCertificationRecordList.Count / (double)3) * 2)
                     {
                         result = VoteResult.Adopt;
                     }
@@ -1414,7 +1414,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 if (voteEntity.CalculationMethodValue == CalculationMethod.Opposition.Value)
                 {
-                    if ((double)voteQuestionOption2.Votes < ((double)ownerCertificationRecordList.Count / (double)3))
+                    if ((double)voteQuestionOption2.Votes <= ((double)ownerCertificationRecordList.Count / (double)3))
                     {
                         result = VoteResult.Adopt;
                     }

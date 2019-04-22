@@ -319,7 +319,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 if (complaintEntity.StatusValue != ComplaintStatus.NotAccepted.Value)
                 {
-                    return new ApiResult(APIResultCode.Success_NoB, "投诉以进行处理,不能删除！可选择关闭投诉");
+                    return new ApiResult(APIResultCode.Success_NoB, "投诉已被授理,不能删除！可选择关闭投诉");
                 }
 
                 await _complaintRepository.DeleteAsync(new ComplaintDto
@@ -713,7 +713,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 if (complaintEntity.StatusValue != ComplaintStatus.NotAccepted.Value)
                 {
-                    return new ApiResult(APIResultCode.Success_NoB, "投诉以进行处理,不能删除！可选择关闭投诉");
+                    return new ApiResult(APIResultCode.Success_NoB, "投诉已被授理,不能删除！可选择关闭投诉");
                 }
 
                 await _complaintRepository.DeleteAsync(new ComplaintDto

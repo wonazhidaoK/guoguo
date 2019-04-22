@@ -197,6 +197,7 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 owner.OwnerCertificationRecordId = dto.OwnerCertificationRecordId;
                 owner.IsLegalize = true;
+                owner.Name = dto.Name;
                 await db.SaveChangesAsync(token);
             }
         }

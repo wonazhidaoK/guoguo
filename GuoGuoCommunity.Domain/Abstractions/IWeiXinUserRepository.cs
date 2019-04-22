@@ -11,6 +11,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<WeiXinUser> AddAsync(WeiXinUserDto dto, CancellationToken token = default);
 
         Task UpdateAsync(WeiXinUserDto dto, CancellationToken token = default);
+
         Task UpdateForUnionIdAsync(WeiXinUserDto dto, CancellationToken token = default);
 
         Task<List<WeiXinUser>> GetAllAsync(WeiXinUserDto dto, CancellationToken token = default);
