@@ -335,7 +335,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     List = list.Select(x => new GetUserOutput
                     {
-                        Account =x.Account,
+                        Account = x.Account,
                         Id = x.Id.ToString(),
                         Name = x.Name,
                         SmallDistrictId = x.SmallDistrictId,
@@ -439,7 +439,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 var entity = await _userRepository.AddPropertyAsync(new UserDto
                 {
-                    Account =input.Account,
+                    Account = input.Account,
                     Name = input.Name,
                     PhoneNumber = input.PhoneNumber,
                     Password = input.Password,
@@ -502,7 +502,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     List = list.Select(x => new GetUserOutput
                     {
-                         Account=x.Account,
+                        Account = x.Account,
                         Id = x.Id.ToString(),
                         Name = x.Name,
                         SmallDistrictId = x.SmallDistrictId,
@@ -689,11 +689,7 @@ namespace GuoGuoCommunity.API.Controllers
                 Key = x.Key,
                 Name = x.Name
             }).ToList();
-            return new ApiResult<List<GetAllMenuOutput>>
-            {
-                code = APIResultCode.Success,
-                data = data
-            };
+            return new ApiResult<List<GetAllMenuOutput>>(APIResultCode.Success, data);
         }
 
         /// <summary>

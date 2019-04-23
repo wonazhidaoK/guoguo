@@ -752,6 +752,72 @@ namespace GuoGuoCommunity.API.Controllers
             }
         }
 
+        /// <summary>
+        /// 关闭投诉
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("complaint/closedForVipOwner")]
+        public async Task<ApiResult> ClosedForVipOwner([FromBody]ClosedComplaintFollowUpInput input, CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+                }
+                if (string.IsNullOrWhiteSpace(input.ComplaintId))
+                {
+                    throw new NotImplementedException("投诉Id信息为空！");
+                }
+
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+                }
+                var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
+
+                await _complaintRepository.ClosedAsync(new ComplaintDto
+                {
+                    Id = input.ComplaintId,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString(),
+                    OwnerCertificationId = complaintEntity.OwnerCertificationId
+                }, cancelToken);
+
+                var complaintFollowUpEntity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
+                {
+                    ComplaintId = input.ComplaintId,
+                    OperationDepartmentName = Department.YeZhuWeiYuanHui.Name,
+                    OperationDepartmentValue = Department.YeZhuWeiYuanHui.Value,
+                    Description = "业委会通过小程序关闭投诉！",
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString(),
+                    OwnerCertificationId = complaintEntity.OwnerCertificationId
+                }, cancelToken);
+
+                await _complaintStatusChangeRecordingRepository.AddAsync(new ComplaintStatusChangeRecordingDto
+                {
+                    ComplaintFollowUpId = complaintFollowUpEntity.Id.ToString(),
+                    ComplaintId = input.ComplaintId,
+                    OldStatus = complaintEntity.StatusValue,
+                    NewStatus = ComplaintStatus.Completed.Value,
+                    OperationUserId = user.Id.ToString(),
+                    OperationTime = DateTimeOffset.Now,
+                }, cancelToken);
+
+                return new ApiResult(APIResultCode.Success);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+            }
+        }
+
         #endregion
 
         #region 街道办端

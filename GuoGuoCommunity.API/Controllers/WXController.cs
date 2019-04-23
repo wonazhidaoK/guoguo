@@ -168,7 +168,7 @@ namespace GuoGuoCommunity.API.Controllers
                 messageHandler.OmitRepeatedMessage = true;
 
                 //执行微信处理过程
-             await messageHandler.ExecuteAsync(cancelToken);
+                await messageHandler.ExecuteAsync(cancelToken);
 
                 var resMessage = Request.CreateResponse(HttpStatusCode.OK);
 

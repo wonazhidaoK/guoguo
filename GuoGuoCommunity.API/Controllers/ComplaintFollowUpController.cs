@@ -289,6 +289,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 var complaintEntity = await _complaintRepository.GetAsync(input.Id, cancelToken);
                 var complaintTypeEntyity = await _complaintTypeRepository.GetAsync(complaintEntity.ComplaintTypeId, cancelToken);
+                var remainingPeriod = (complaintEntity.ExpiredTime - DateTimeOffset.Now).Value.Days + 1;
                 return new ApiResult<GetComplaintFollowUpOutput>(APIResultCode.Success, new GetComplaintFollowUpOutput
                 {
                     ExpiredTime = complaintEntity.ExpiredTime.Value,
@@ -302,7 +303,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Description = complaintEntity.Description,
                     ComplaintTypeName = complaintEntity.ComplaintTypeName,
                     List = list,
-                    RemainingPeriod = ((complaintEntity.ExpiredTime - DateTimeOffset.Now).Value.Days) + 1
+                    RemainingPeriod = remainingPeriod > 0? remainingPeriod:0
                 });
             }
             catch (Exception e)

@@ -215,8 +215,9 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\UnityResolver.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="App_Start\WXBusiness.cs" />
+    <Compile Include="App_Start\WXCustomMessageHandler.cs" />
     <Compile Include="App_Start\WXCustomMessageContext.cs" />
+    <Compile Include="Attribute\FieldNameAttribute.cs" />
     <Compile Include="Controllers\AnnouncementController.cs" />
     <Compile Include="Controllers\BuildingController.cs" />
     <Compile Include="Controllers\BuildingUnitController.cs" />

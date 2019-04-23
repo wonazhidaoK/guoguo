@@ -30,7 +30,7 @@ DELETE FROM Complaints
 DELETE FROM ComplaintStatusChangeRecordings
 
 --投诉类型表
-DELETE FROM ComplaintTypes
+--DELETE FROM ComplaintTypes
 
 --身份证识别记录
 DELETE FROM IDCardPhotoRecords
@@ -115,10 +115,10 @@ DELETE FROM Votes
 --DELETE FROM WeiXinUsers
 
 --角色菜单表
---DELETE FROM Role_Menu
+DELETE FROM Role_Menu
 
 --角色表
---DELETE FROM User_Role
+DELETE FROM User_Role
 GO
 
 

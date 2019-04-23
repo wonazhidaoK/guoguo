@@ -166,7 +166,7 @@ namespace GuoGuoCommunity.API.Controllers
                         OperationTime = DateTimeOffset.Now,
                         OperationUserId = user.Id.ToString()
                     });
-                    
+
                     if (itemEntity.OwnerCertificationAnnexTypeValue == OwnerCertificationAnnexType.IDCardFront.Value)
                     {
                         // BackgroundJob.Enqueue(() => Send(itemEntity));
@@ -389,7 +389,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     OwnerCertificationRecordId = ownerCertificationRecordEntity.Id.ToString(),
                     Id = recordEntity.OwnerId.ToString(),
-                     Name=dto.OwnerName,
+                    Name = dto.OwnerName,
                 });
 
                 //IUserRepository userRepository = new UserRepository();
@@ -403,7 +403,7 @@ namespace GuoGuoCommunity.API.Controllers
                 //    Status = dto.CertificationStatusName,
                 //    Message = dto.CertificationResult
                 //});
-                return new ApiResult { code = APIResultCode.Success };
+                return new ApiResult(APIResultCode.Success);
             }
             catch (Exception e)
             {

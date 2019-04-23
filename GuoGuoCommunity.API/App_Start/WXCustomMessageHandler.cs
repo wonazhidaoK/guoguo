@@ -11,7 +11,6 @@ using Senparc.Weixin.MP.Entities;
 using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.MP.MessageHandlers;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -23,6 +22,7 @@ namespace GuoGuoCommunity.API
     public class WXCustomMessageHandler : MessageHandler<WXCustomMessageContext>
     {
         private IWeiXinUserRepository _weiXinUserRepository;
+
         /// <summary>
         /// 构造子
         /// </summary>
@@ -33,41 +33,26 @@ namespace GuoGuoCommunity.API
         public WXCustomMessageHandler(Stream inputStream, PostModel postModel = null, int maxRecordCount = 0, DeveloperInfo developerInfo = null) : base(inputStream, postModel, maxRecordCount, developerInfo)
         {
             _weiXinUserRepository = new WeiXinUserRepository();
-
         }
 
+        #region 异步事件处理
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="message"></param>
-        public void SendAsync(string message)
-        {
-            //await _testRepository.Add(a());
-            EventLog.WriteEntry("EventSystem", string.Format("这是由Hangfire后台任务发送的消息:{0},时间为:{1}", message, DateTime.Now));
-        }
-
+       
         /// <summary>
         /// 异步关注事件
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <returns></returns>
-        public async override Task<IResponseMessageBase> OnEvent_SubscribeRequestAsync(RequestMessageEvent_Subscribe requestMessage)
-        //public override IResponseMessageBase OnEvent_SubscribeRequest(RequestMessageEvent_Subscribe requestMessage)
+        public async override Task<IResponseMessageBase> OnEvent_SubscribeRequestAsync(RequestMessageEvent_Subscribe requestMessage) 
         {
-            BackgroundJob.Enqueue(() => Console.WriteLine("Fire-and-forget"));
-            // BackgroundJob.Enqueue(() => SendAsync(WXController.AppId + OpenId));
+            BackgroundJob.Enqueue(() => Console.WriteLine("Fire-and-forget")); 
             IResponseMessageBase reponseMessage = null;
             var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
             try
             {
-                // var accessToken = AccessTokenContainer.GetAccessToken(WXController.AppId);
                 var userInfo = await UserApi.InfoAsync(WXController.AppId, OpenId);
-                // BackgroundJob.Enqueue(() => SendAsync(userInfo.city));
                 if (userInfo != null)
                 {
-                    //BackgroundJob.Enqueue(() => SendAsync(WXController.AppId + OpenId));
-                    //添加微信用户
                     var a = await _weiXinUserRepository.AddAsync(
                            new WeiXinUserDto
                            {
@@ -79,8 +64,6 @@ namespace GuoGuoCommunity.API
                                Nickname = userInfo.nickname,
                                Openid = userInfo.openid,
                                Province = userInfo.province,
-                               //  Qr_scene=userInfo?.qr_scene,
-                               // Qr_scene_str
                                Remark = userInfo.remark,
                                Sex = userInfo.sex,
                                Subscribe = userInfo.subscribe,
@@ -90,19 +73,16 @@ namespace GuoGuoCommunity.API
                                Unionid = userInfo.unionid,
                                OperationTime = DateTimeOffset.Now
                            });
-                   // BackgroundJob.Enqueue(() => SendAsync(a.City));
                 }
-                strongResponseMessage.Content = "呙呙社区成立于2017年，是一家致力于服务社区业主的网络平台，呙呙社区与众多名企强强联合，本着简、好、快、省的原则共同为社区居民提供更便捷的生活方式。" + "\r\n 呙呙社区前身是物业公司，有着十几年的行业内管理服务经验，所以前期呙呙社区主要借助物业共享合力，将物业大数据资源整合为一体的现代化公司。";
+                strongResponseMessage.Content = "呙呙社区成立于2017年，是一家致力于服务社区业主的网络平台，呙呙社区与众多名企强强联合，本着简、好、快、省的原则共同为社区居民提供更便捷的生活方式。";
                 reponseMessage = strongResponseMessage;
-               await CustomApi.SendTextAsync(WXController.AppId, OpenId, strongResponseMessage.Content);
-                //BackgroundJob.Enqueue(() =>new Task<string>(()=> userInfo.city));
-                //BackgroundJob.Enqueue(() => new Task<string>(() => userInfo.city));
-                return reponseMessage;
+                await CustomApi.SendTextAsync(WXController.AppId, OpenId, strongResponseMessage.Content);
+                return null;
             }
             catch (Exception e)
             {
                 BackgroundJob.Enqueue(() => Console.WriteLine(e.Message));
-                throw new NotImplementedException(e.Message);
+                return null;
             }
         }
 
@@ -114,8 +94,7 @@ namespace GuoGuoCommunity.API
         public async override Task<IResponseMessageBase> OnEvent_UnsubscribeRequestAsync(RequestMessageEvent_Unsubscribe requestMessage)
         {
             var userInfo = await UserApi.InfoAsync(WXController.AppId, OpenId);
-            await _weiXinUserRepository.UpdateForUnionIdAsync(new WeiXinUserDto { Unionid = userInfo.unionid });
-            // BackgroundJob.Enqueue(() => "a");
+            await _weiXinUserRepository.UpdateForUnionIdAsync(new WeiXinUserDto { Unionid = userInfo.unionid , Subscribe=userInfo.subscribe}); 
             return null;
         }
 
@@ -124,7 +103,7 @@ namespace GuoGuoCommunity.API
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <returns></returns>
-        public override Task<IResponseMessageBase> OnEvent_ClickRequestAsync(RequestMessageEvent_Click requestMessage)
+        public async override Task<IResponseMessageBase> OnEvent_ClickRequestAsync(RequestMessageEvent_Click requestMessage)
         {
             IResponseMessageBase reponseMessage = null;
             //菜单点击，需要跟创建菜单时的Key匹配
@@ -141,9 +120,13 @@ namespace GuoGuoCommunity.API
             }
 
             reponseMessage = strongResponseMessage;
-            return new Task<IResponseMessageBase>(()=> reponseMessage) ;
+            await CustomApi.SendTextAsync(WXController.AppId, OpenId, strongResponseMessage.Content);
+            return null;
         }
-        //{"action_name": "QR_LIMIT_STR_SCENE", "action_info": {"scene": {"scene_str": "AnZhi_Pub&dimdicien2dddvbnd23rfdcjkw8129&1"}}}
+
+        #endregion
+
+        #region 事件处理
 
         #region 模板消息
 
@@ -217,13 +200,13 @@ namespace GuoGuoCommunity.API
             try
             {
                 // var accessToken = AccessTokenContainer.GetAccessToken(WXController.AppId);
-                var userInfo =  UserApi.InfoAsync(WXController.AppId, OpenId).Result;
+                var userInfo = UserApi.InfoAsync(WXController.AppId, OpenId).Result;
                 // BackgroundJob.Enqueue(() => SendAsync(userInfo.city));
                 if (userInfo != null)
                 {
                     //BackgroundJob.Enqueue(() => SendAsync(WXController.AppId + OpenId));
                     //添加微信用户
-                    var a =  _weiXinUserRepository.AddAsync(
+                    var a = _weiXinUserRepository.AddAsync(
                            new WeiXinUserDto
                            {
                                City = userInfo.city,
@@ -310,19 +293,19 @@ namespace GuoGuoCommunity.API
         #endregion
 
         #region 取关公众号
+
         /// <summary>
         /// 退订事件
         /// </summary>
         /// <returns></returns>
         public override IResponseMessageBase OnEvent_UnsubscribeRequest(RequestMessageEvent_Unsubscribe requestMessage)
         {
-
-
             return null;
         }
+
         #endregion
 
-        #region 事件处理
+        #region 文字请求处理
 
         /// <summary>
         /// 文字请求的处理
@@ -333,6 +316,10 @@ namespace GuoGuoCommunity.API
         {
             return null;
         }
+
+        #endregion
+
+        #region 点击事件
 
         /// <summary>
         /// 点击事件
@@ -356,8 +343,10 @@ namespace GuoGuoCommunity.API
             }
 
             reponseMessage = strongResponseMessage;
-            return  reponseMessage;
+            return reponseMessage;
         }
+
+        #endregion
 
         /// <summary>
         /// 弹出地理位置选择器后的处理（location_select）
@@ -405,8 +394,6 @@ namespace GuoGuoCommunity.API
 
 
         }
-
-
 
         #endregion
 

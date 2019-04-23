@@ -1,4 +1,6 @@
-﻿namespace GuoGuoCommunity.API
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace GuoGuoCommunity.API
 {
     /// <summary>
     /// WebAPI接口返回类型
@@ -13,25 +15,28 @@
         /// <param name="message"></param>
         public ApiResult(string code = APIResultCode.Success, T data = default, string message = APIResultMessage.Success)
         {
-            this.code = code;
-            this.data = data;
-            this.message = message;
+            Code = code;
+            Data = data;
+            Message = message;
         }
 
         /// <summary>
         /// 返回的结果代码
         /// </summary>
-        public string code { get; set; }
+        [Column("ProductID")]
+        public string Code { get; set; }
 
         /// <summary>
         /// 返回的结果数据
         /// </summary>
-        public T data { get; set; }
+        [FieldName("data")]
+        public T Data { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string message { get; set; }
+        [FieldName("message")]
+        public string Message { get; set; }
 
 
     }
@@ -48,19 +53,21 @@
         /// <param name="message"></param>
         public ApiResult(string code = APIResultCode.Success, string message = APIResultMessage.Success)
         {
-            this.code = code;
-            this.message = message;
+            Code = code;
+            Message = message;
         }
 
         /// <summary>
         /// 返回的结果代码
         /// </summary>
-        public string code { get; set; }
+        [FieldName("code")]
+        public string Code { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string message { get; set; }
+        [FieldName("message")]
+        public string Message { get; set; }
 
     }
 
