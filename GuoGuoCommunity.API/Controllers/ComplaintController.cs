@@ -925,6 +925,10 @@ namespace GuoGuoCommunity.API.Controllers
                     {
                         Aappeal = complaintFollowUp?.Aappeal;
                     }
+                    if (item.StatusValue == ComplaintStatus.Completed.Value)
+                    {
+                        Aappeal = "";
+                    }
                     listOutput.Add(new GetComplaintOutput
                     {
                         Id = item.Id.ToString(),

@@ -14,7 +14,7 @@ using System.Web.Http;
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
-    /// 添加投票跟进记录
+    /// 添加投诉跟进记录
     /// </summary>
     public class ComplaintFollowUpController : ApiController
     {
@@ -192,8 +192,8 @@ namespace GuoGuoCommunity.API.Controllers
                     Description = "由于问题一直没有得到解决，我已向街道办投诉！",
                     OwnerCertificationId = complaintEntity.OwnerCertificationId,
                     ComplaintId = input.ComplaintId,
-                    OperationDepartmentName = Department.YeZhu.Name,
-                    OperationDepartmentValue = Department.YeZhu.Value,
+                    OperationDepartmentName = complaintEntity.OperationDepartmentName,
+                    OperationDepartmentValue = complaintEntity.OperationDepartmentValue,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString(),
                     Aappeal = "true"

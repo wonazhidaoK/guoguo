@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Newtonsoft.Json;
 
 namespace GuoGuoCommunity.API
 {
@@ -23,19 +23,19 @@ namespace GuoGuoCommunity.API
         /// <summary>
         /// 返回的结果代码
         /// </summary>
-        [Column("ProductID")]
+        [JsonProperty("code")]
         public string Code { get; set; }
 
         /// <summary>
         /// 返回的结果数据
         /// </summary>
-        [FieldName("data")]
+        [JsonProperty("data")]
         public T Data { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        [FieldName("message")]
+        [JsonProperty("message")]
         public string Message { get; set; }
 
 
@@ -60,13 +60,13 @@ namespace GuoGuoCommunity.API
         /// <summary>
         /// 返回的结果代码
         /// </summary>
-        [FieldName("code")]
+        [JsonProperty("code")]
         public string Code { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        [FieldName("message")]
+        [JsonProperty("message")]
         public string Message { get; set; }
 
     }
