@@ -5,11 +5,11 @@ namespace GuoGuoCommunity.API.Models
     /// <summary>
     /// 
     /// </summary>
-    public class GetAllForWeiXinVipOwnerCertificationOutput
+    public class GetAllForWeiXinVipOwnerApplicationRecordOutput
     {
         /// <summary>
         /// 
         /// </summary>
-        public List<GetVipOwnerCertificationOutput> List { get; set; }
+        public List<GetVipOwnerApplicationRecordOutput> List { get; set; }
     }
 }

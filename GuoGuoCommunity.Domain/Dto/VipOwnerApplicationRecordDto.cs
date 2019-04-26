@@ -65,5 +65,15 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 操作时间
         /// </summary>
         public DateTimeOffset? OperationTime { get; set; }
+
+        /// <summary>
+        /// 业委会Id
+        /// </summary>
+        public string VipOwnerId { get; set; }
+
+        /// <summary>
+        /// 业委会名称
+        /// </summary>
+        public string VipOwnerName { get; set; }
     }
 }

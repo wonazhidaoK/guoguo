@@ -210,6 +210,8 @@ namespace GuoGuoCommunity.Domain.Service
                 vipOwnerApplicationRecord.LastOperationTime = dto.OperationTime;
                 vipOwnerApplicationRecord.LastOperationUserId = dto.OperationUserId;
                 vipOwnerApplicationRecord.IsInvalid = true;
+                vipOwnerApplicationRecord.VipOwnerId = dto.VipOwnerId;
+                vipOwnerApplicationRecord.VipOwnerName = dto.VipOwnerName;
                 await db.SaveChangesAsync(token);
             }
         }
@@ -226,7 +228,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.VipOwnerApplicationRecords.Where(x => x.VoteId == dto.VoteId && x.VoteQuestionId == dto.VoteQuestionId&&x.VoteQuestionOptionId==dto.VoteQuestionOptionId).FirstOrDefaultAsync(token);
+                return await db.VipOwnerApplicationRecords.Where(x => x.VoteId == dto.VoteId && x.VoteQuestionId == dto.VoteQuestionId && x.VoteQuestionOptionId == dto.VoteQuestionOptionId).FirstOrDefaultAsync(token);
             }
         }
     }

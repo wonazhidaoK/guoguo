@@ -703,6 +703,8 @@ namespace GuoGuoCommunity.API.Controllers
                         Id = vipOwnerApplicationRecord.Id.ToString(),
                         OperationTime = DateTimeOffset.Now,
                         OperationUserId = user.Id.ToString(),
+                        VipOwnerId = vipOwnerEntity.Id.ToString(),
+                        VipOwnerName = vipOwnerEntity.Name
                     }, cancelToken);
                 }
 

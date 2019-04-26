@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace GuoGuoCommunity.API.Models
+﻿namespace GuoGuoCommunity.API.Models
 {
     /// <summary>
     /// 
     /// </summary>
-    public class GetVipOwnerCertificationOutput
+    public class GetAllVipOwnerApplicationRecordModel
     {
         /// <summary>
         /// 
@@ -51,36 +49,5 @@ namespace GuoGuoCommunity.API.Models
         /// 小区名称
         /// </summary>
         public string SmallDistrictName { get; set; }
-
-        /// <summary>
-        /// 附件集合
-        /// </summary>
-        public List<AnnexModel> AnnexModels { get; set; }
-    }
-
-    /// <summary>
-    /// 附件模型
-    /// </summary>
-    public class AnnexModel
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public string ID { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Url { get; set; }
-
-        /// <summary>
-        /// 申请条件Id
-        /// </summary>
-        public string CertificationConditionId { get; set; }
-
-        /// <summary>
-        /// 申请条件名称
-        /// </summary>
-        public string CertificationConditionName { get; set; }
     }
 }

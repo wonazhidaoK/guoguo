@@ -5,7 +5,7 @@ namespace GuoGuoCommunity.API.Models
     /// <summary>
     /// 
     /// </summary>
-    public class AddVipOwnerCertificationRecordInput
+    public class AddVipOwnerApplicationRecordInput
     {
         /// <summary>
         /// 职能Id

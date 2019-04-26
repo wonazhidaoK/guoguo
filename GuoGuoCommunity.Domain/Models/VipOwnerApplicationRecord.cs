@@ -82,6 +82,16 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public string VoteQuestionOptionId { get; set; }
 
+        /// <summary>
+        /// 业委会Id
+        /// </summary>
+        public string VipOwnerId { get; set; }
+
+        /// <summary>
+        /// 业委会名称
+        /// </summary>
+        public string VipOwnerName { get; set; }
+
         public string LastOperationUserId { get; set; }
 
         public DateTimeOffset? LastOperationTime { get; set; }

@@ -5,7 +5,7 @@ namespace GuoGuoCommunity.API.Models
     /// <summary>
     /// 
     /// </summary>
-    public class GetAllVipOwnerCertificationInput
+    public class GetAllVipOwnerApplicationRecordInput
     {
         /// <summary>
         /// 小区Id

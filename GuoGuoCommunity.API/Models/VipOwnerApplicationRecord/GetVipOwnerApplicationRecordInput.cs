@@ -3,7 +3,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public class AdoptVipOwnerCertificationInput
+    public class GetVipOwnerApplicationRecordInput
     {
         /// <summary>
         /// 
