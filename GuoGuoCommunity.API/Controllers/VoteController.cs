@@ -11,7 +11,6 @@ using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
 using Senparc.Weixin.MP.Containers;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,32 +22,9 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 投票相关
     /// </summary>
-    public class VoteController : ApiController
+    public class VoteController : BaseController
     {
-        /// <summary>
-        /// 小程序AppID
-        /// </summary>
-        public static readonly string GuoGuoCommunity_WxOpenAppId = ConfigurationManager.AppSettings["GuoGuoCommunity_WxOpenAppId"];
-
-        /// <summary>
-        /// 微信AppID
-        /// </summary>
-        public static readonly string AppId = ConfigurationManager.AppSettings["GuoGuoCommunity_AppId"];
-
-        /// <summary>
-        /// 微信推送创建投票模板Id
-        /// </summary>
-        public static readonly string VoteCreateTemplateId = ConfigurationManager.AppSettings["VoteCreateTemplateId"];
-
-        /// <summary>
-        /// 微信推送投票结果模板Id
-        /// </summary>
-        public static readonly string VoteResultTemplateId = ConfigurationManager.AppSettings["VoteResultTemplateId"];
-
-        /// <summary>
-        /// 微信推送高级认证通过模板Id
-        /// </summary>
-        public static readonly string VipOwnerCertificationRecordTemplateId = ConfigurationManager.AppSettings["VipOwnerCertificationRecordTemplateId"];
+       
         private readonly IVoteRepository _voteRepository;
         private readonly IVoteQuestionRepository _voteQuestionRepository;
         private readonly IVoteQuestionOptionRepository _voteQuestionOptionRepository;
@@ -582,7 +558,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
 
                 //查询小区下参与投票的申请
-                var vipOwnerApplicationRecordList = (await _vipOwnerApplicationRecordRepository.GetAllAsync(new VipOwnerApplicationRecordDto
+                var vipOwnerApplicationRecordList = (await _vipOwnerApplicationRecordRepository.GetAllInvalidAsync(new VipOwnerApplicationRecordDto
                 {
                     SmallDistrictId = input.SmallDistrictId
                 }, cancelToken)).Where(x => x.IsAdopt == true).ToList();

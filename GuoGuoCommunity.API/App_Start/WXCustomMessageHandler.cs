@@ -272,7 +272,7 @@ namespace GuoGuoCommunity.API
 
                     if (qr_para[0].Contains("AnZhi_EmployeeRegQR"))
                     {
-                        registerRemind(qr_para);
+                        RegisterRemind(qr_para);
                     }
 
                     #endregion
@@ -382,8 +382,7 @@ namespace GuoGuoCommunity.API
         /// 员工扫码加入公众号
         /// </summary>
         /// <param name="qr_para"></param>
-        /// <param name="shopCode"></param>
-        private void registerRemind(string[] qr_para)
+        private void RegisterRemind(string[] qr_para)
         {
             //获取用户信息
             var userInfo = UserApi.Info(WXController.AppId, OpenId);

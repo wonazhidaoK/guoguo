@@ -25,7 +25,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<VipOwner> GetAsync(string id, CancellationToken token = default);
 
         Task<List<VipOwner>> GetListAsync(VipOwnerDto dto, CancellationToken token = default);
-
+        Task<List<VipOwner>> GetListForPropertyAsync(VipOwnerDto dto, CancellationToken token = default);
         /// <summary>
         /// 根据街道办获取业委会
         /// </summary>

@@ -12,7 +12,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task UpdateAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default);
 
-        Task<List<VipOwnerCertificationRecord>> GetAllAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default);
+        Task<List<VipOwnerCertificationRecord>> GetAllForPropertyAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default);
 
         Task DeleteAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default);
 
@@ -33,5 +33,13 @@ namespace GuoGuoCommunity.Domain.Abstractions
         /// <param name="token"></param>
         /// <returns></returns>
         Task<VipOwnerCertificationRecord> GetForVipOwnerIdAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default);
+
+        /// <summary>
+        /// 根据业委会id集合查询高级认证
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task<List<VipOwnerCertificationRecord>> GetForVipOwnerIdsAsync(List<string> ids, CancellationToken token = default);
     }
 }

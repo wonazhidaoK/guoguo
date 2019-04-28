@@ -12,6 +12,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task UpdateAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default);
 
+        Task<List<VipOwnerApplicationRecord>> GetAllInvalidAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default);
+
         Task<List<VipOwnerApplicationRecord>> GetAllAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default);
 
         Task<List<VipOwnerApplicationRecord>> GetAllForSmallDistrictIdAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default);

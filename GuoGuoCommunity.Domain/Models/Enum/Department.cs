@@ -44,5 +44,7 @@ namespace GuoGuoCommunity.Domain.Models.Enum
         public static IEnumerable<Department> GetAllForVipOwner() => new List<Department>() { WuYe, JieDaoBan };
 
         public static IEnumerable<Department> GetAllForOwner() => new List<Department>() { YeZhuWeiYuanHui, WuYe };
+
+        public static IEnumerable<Department> GetAllForComplaintType() => new List<Department>() { YeZhuWeiYuanHui, YeZhu };
     }
 }

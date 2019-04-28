@@ -9,14 +9,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 楼宇信息管理
     /// </summary>
-    public class BuildingController : ApiController
+    public class BuildingController : BaseController
     {
         private readonly IBuildingRepository _buildingService;
         private TokenManager _tokenManager;
@@ -55,10 +54,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("楼宇小区Id信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.SmallDistrictName))
-                {
-                    throw new NotImplementedException("楼宇小区名称信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.SmallDistrictName))
+                //{
+                //    throw new NotImplementedException("楼宇小区名称信息为空！");
+                //}
 
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
@@ -70,7 +69,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     Name = input.Name,
                     SmallDistrictId = input.SmallDistrictId,
-                    SmallDistrictName = input.SmallDistrictName,
+                    // SmallDistrictName = input.SmallDistrictName,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);
@@ -148,7 +147,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
-
+                if (string.IsNullOrWhiteSpace(input.Name))
+                {
+                    throw new NotImplementedException("楼宇名称信息为空！");
+                }
                 await _buildingService.UpdateAsync(new BuildingDto
                 {
                     Id = input.Id,
@@ -210,7 +212,6 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-               
                 if (input.PageIndex < 1)
                 {
                     input.PageIndex = 1;
@@ -220,10 +221,7 @@ namespace GuoGuoCommunity.API.Controllers
                     input.PageSize = 10;
                 }
                 int startRow = (input.PageIndex - 1) * input.PageSize;
-                //if (string.IsNullOrWhiteSpace(input.SmallDistrictId))
-                //{
-                //    throw new NotImplementedException("楼宇小区Id信息为空！");
-                //}
+
                 var data = await _buildingService.GetAllAsync(new BuildingDto
                 {
                     Name = input?.Name,

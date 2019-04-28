@@ -20,10 +20,10 @@
         /// </summary>
         public string Level { get; set; }
 
-        /// <summary>
-        /// 发起部门名称
-        /// </summary>
-        public string InitiatingDepartmentName { get; set; }
+        ///// <summary>
+        ///// 发起部门名称
+        ///// </summary>
+        //public string InitiatingDepartmentName { get; set; }
 
         /// <summary>
         /// 发起部门值

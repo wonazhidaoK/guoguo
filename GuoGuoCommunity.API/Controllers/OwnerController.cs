@@ -15,7 +15,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 业主信息管理
     /// </summary>
-    public class OwnerController : ApiController
+    public class OwnerController : BaseController
     {
         private readonly IOwnerRepository _ownerRepository;
         private TokenManager _tokenManager;

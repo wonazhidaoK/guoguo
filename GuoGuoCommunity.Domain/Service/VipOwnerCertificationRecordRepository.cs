@@ -71,9 +71,24 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<List<VipOwnerCertificationRecord>> GetAllAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default)
+        public async Task<List<VipOwnerCertificationRecord>> GetAllForPropertyAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.VipOwnerCertificationRecords.Where(x => x.IsDeleted == false).ToListAsync(token);
+                if (string.IsNullOrWhiteSpace(dto.VipOwnerId))
+                {
+                    var vipOwner = await db.VipOwners.Where(x => x.SmallDistrictId == dto.OperationUserSmallDistrictId && x.IsDeleted == false).Select(x => x.Id.ToString()).ToListAsync(token);
+                    list = list.Where(x => vipOwner.Contains(x.VipOwnerId)).ToList();
+                }
+                else
+                {
+                    list = list.Where(x => x.VipOwnerId == dto.VipOwnerId).ToList();
+                }
+                list = list.Where(x => x.CreateOperationTime >= dto.StartTime && x.CreateOperationTime <= dto.EndTime).ToList();
+                return list;
+            }
+
         }
 
         public Task<VipOwnerCertificationRecord> GetAsync(string id, CancellationToken token = default)
@@ -122,14 +137,22 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        #endregion
+
         public async Task<VipOwnerCertificationRecord> GetForVipOwnerIdAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.VipOwnerCertificationRecords.Where(x => x.IsDeleted == false && x.UserId == dto.UserId&&x.VipOwnerId==dto.VipOwnerId).FirstOrDefaultAsync(token);
+                return await db.VipOwnerCertificationRecords.Where(x => x.IsDeleted == false && x.UserId == dto.UserId && x.VipOwnerId == dto.VipOwnerId).FirstOrDefaultAsync(token);
             }
         }
 
-        #endregion
+        public async Task<List<VipOwnerCertificationRecord>> GetForVipOwnerIdsAsync(List<string> ids, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VipOwnerCertificationRecords.Where(x => x.IsDeleted == false && ids.Contains(x.VipOwnerId.ToString())).ToListAsync(token);
+            }
+        }
     }
 }

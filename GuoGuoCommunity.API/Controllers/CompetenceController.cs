@@ -6,7 +6,6 @@ using GuoGuoCommunity.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -17,7 +16,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     ///  权限
     /// </summary>
-    public class CompetenceController : ApiController
+    public class CompetenceController : BaseController
     {
         private readonly ITestRepository _testRepository;
         private readonly IMenuRepository _menuRepository;
@@ -26,7 +25,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IStationLetterRepository _stationLetterRepository;
         private TokenManager _tokenManager;
-        private readonly Regex re = new Regex(@"^[a-zA-Z0-9_]{1,}$");
+        
         /// <summary>
         /// 权限
         /// </summary>

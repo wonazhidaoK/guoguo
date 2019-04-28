@@ -2,6 +2,7 @@
 using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
+using GuoGuoCommunity.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 业委会管理
     /// </summary>
-    public class VipOwnerController : ApiController
+    public class VipOwnerController : BaseController
     {
         private readonly IVipOwnerRepository _vipOwnerRepository;
         private TokenManager _tokenManager;
@@ -51,10 +52,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("业委会小区Id信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.SmallDistrictName))
-                {
-                    throw new NotImplementedException("业委会小区名称信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.SmallDistrictName))
+                //{
+                //    throw new NotImplementedException("业委会小区名称信息为空！");
+                //}
 
                 //var data = await _vipOwnerRepository.GetListAsync(new VipOwnerDto
                 //{
@@ -83,10 +84,10 @@ namespace GuoGuoCommunity.API.Controllers
 
                 var entity = await _vipOwnerRepository.AddAsync(new VipOwnerDto
                 {
-                    Name = input.SmallDistrictName + "【第" + (count + 1) + "届】业主委员会",
+                    Name = "【第" + (count + 1) + "届】业主委员会",
                     RemarkName = input.RemarkName,
                     SmallDistrictId = input.SmallDistrictId,
-                    SmallDistrictName = input.SmallDistrictName,
+                   // SmallDistrictName = input.SmallDistrictName,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);
@@ -310,7 +311,7 @@ namespace GuoGuoCommunity.API.Controllers
                         Name = x.Name,
                         IsElection = x.IsElection,
                         IsCanDeleted = !x.IsElection,
-                        IsCanInvalid =  x.IsValid
+                        IsCanInvalid = x.IsValid
                     }).ToList(),
                     TotalCount = listCount
                 });
@@ -341,6 +342,49 @@ namespace GuoGuoCommunity.API.Controllers
                 var data = await _vipOwnerRepository.GetListAsync(new VipOwnerDto
                 {
                     SmallDistrictId = input.SmallDistrictId
+                }, cancelToken);
+
+                return new ApiResult<List<GetListVipOwnerOutput>>(APIResultCode.Success, data.Select(x => new GetListVipOwnerOutput
+                {
+                    Id = x.Id.ToString(),
+                    Name = x.Name
+                }).ToList());
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<List<GetListVipOwnerOutput>>(APIResultCode.Success_NoB, new List<GetListVipOwnerOutput> { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 物业获取业委会列表
+        /// </summary>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("vipOwner/getListForProperty")]
+        public async Task<ApiResult<List<GetListVipOwnerOutput>>> GetListForProperty(CancellationToken cancelToken)
+        {
+            try
+            {
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<List<GetListVipOwnerOutput>>(APIResultCode.Unknown, new List<GetListVipOwnerOutput> { }, APIResultMessage.TokenNull);
+                }
+                var user = _tokenManager.GetUser(token);
+
+                if (user == null)
+                {
+                    return new ApiResult<List<GetListVipOwnerOutput>>(APIResultCode.Unknown, new List<GetListVipOwnerOutput> { }, APIResultMessage.TokenError);
+                }
+                if (user.DepartmentValue != Department.WuYe.Value)
+                {
+                    return new ApiResult<List<GetListVipOwnerOutput>>(APIResultCode.Success_NoB, new List<GetListVipOwnerOutput> { }, "操作人没有权限操作！");
+                }
+                var data = await _vipOwnerRepository.GetListForPropertyAsync(new VipOwnerDto
+                {
+                    SmallDistrictId = user.SmallDistrictId
                 }, cancelToken);
 
                 return new ApiResult<List<GetListVipOwnerOutput>>(APIResultCode.Success, data.Select(x => new GetListVipOwnerOutput

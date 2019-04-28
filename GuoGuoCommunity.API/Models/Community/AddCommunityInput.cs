@@ -30,9 +30,9 @@
         /// </summary>
         public string StreetOfficeId { get; set; }
 
-        /// <summary>
-        /// 街道办名称
-        /// </summary>
-        public string StreetOfficeName { get; set; }
+        ///// <summary>
+        ///// 街道办名称
+        ///// </summary>
+        //public string StreetOfficeName { get; set; }
     }
 }

@@ -33,8 +33,11 @@ namespace GuoGuoCommunity.Domain.Migrations
                     new Menu() { Name = "物业后台-投票", Key = "wy_vote", DepartmentValue = Department.WuYe.Value, DepartmentName = Department.WuYe.Name },
                     new Menu() { Name = "物业后台-投诉", Key = "wy_complaint", DepartmentValue = Department.WuYe.Value, DepartmentName = Department.WuYe.Name },
                     new Menu() { Name = "物业后台-站内信", Key = "wy_letter", DepartmentValue = Department.WuYe.Value, DepartmentName = Department.WuYe.Name },
+                    new Menu() { Name = "物业后台-业委会成员", Key = "wy_owner", DepartmentValue = Department.WuYe.Value, DepartmentName = Department.WuYe.Name },
                     new Menu() { Name = "街道办后台-公告", Key = "jdb_notice", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
                     new Menu() { Name = "街道办-高级认证", Key = "jdb_rz_gj", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
+                    new Menu() { Name = "街道办-申请条件管理", Key = "jdb_rz_role", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
+                    new Menu() { Name = "街道办-高级认证记录", Key = "jdb_rz_owner", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
                     new Menu() { Name = "街道办后台-投票", Key = "jdb_vote", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
                     new Menu() { Name = "街道办后台-投诉", Key = "jdb_complaint", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
                     new Menu() { Name = "街道办后台-站内信", Key = "jdb_letter", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
@@ -73,7 +76,7 @@ namespace GuoGuoCommunity.Domain.Migrations
                         TypeName = "图片",
                         TypeValue = "Image",
                     });
-                context.ComplaintTypes.AddOrUpdate(x =>new { x.Name ,x.InitiatingDepartmentValue},
+                context.ComplaintTypes.AddOrUpdate(x => new { x.Name, x.InitiatingDepartmentValue },
                     new ComplaintType()
                     {
                         Name = "房屋质量问题",

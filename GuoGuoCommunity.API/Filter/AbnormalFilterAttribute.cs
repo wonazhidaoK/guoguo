@@ -35,7 +35,8 @@ namespace Logs
             }
             else
             {
-                throw new HttpResponseException(actionExecutedContext.Request.CreateResponse(HttpStatusCode.InternalServerError));
+                throw new ApiResult(APIResultCode.Success_NoB, actionExecutedContext.Exception.Message);
+                throw new HttpResponseException(actionExecutedContext.Request.CreateResponse(HttpStatusCode.NotImplemented));
             }
             //base.OnException(actionExecutedContext);
         }

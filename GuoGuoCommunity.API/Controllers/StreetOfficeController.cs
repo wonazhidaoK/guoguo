@@ -15,7 +15,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 街道办
     /// </summary>
-    public class StreetOfficeController : ApiController
+    public class StreetOfficeController : BaseController
     {
         private readonly IStreetOfficeRepository _streetOfficeRepository;
         private TokenManager _tokenManager;

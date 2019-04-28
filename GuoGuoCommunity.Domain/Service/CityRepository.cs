@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
@@ -13,14 +12,15 @@ namespace GuoGuoCommunity.Domain.Service
 {
     public class CityRepository : ICityRepository
     {
-        readonly string filename =AppDomain.CurrentDomain.BaseDirectory+ConfigurationManager.AppSettings["cityXml"].ToString();
+        readonly string filename = AppDomain.CurrentDomain.BaseDirectory + ConfigurationManager.AppSettings["cityXml"].ToString();
         readonly string appFilename = AppDomain.CurrentDomain.BaseDirectory + ConfigurationManager.AppSettings["appCityXml"].ToString();
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public async Task<List<CityDto>> GetCity(CityDto dto)
+        public List<CityDto> GetCity(CityDto dto)
         {
             XElement purchaseOrder = XElement.Load($"{filename}");
             var stateXElement = (from item in purchaseOrder.Elements("CountryRegion")
@@ -37,7 +37,7 @@ namespace GuoGuoCommunity.Domain.Service
             return city;
         }
 
-        public async Task<List<CityDto>> GetRegion(RegionDto dto)
+        public List<CityDto> GetRegion(RegionDto dto)
         {
             XElement purchaseOrder = XElement.Load($"{filename}");
             var stateXElement = (from item in purchaseOrder.Elements("CountryRegion")
@@ -57,7 +57,7 @@ namespace GuoGuoCommunity.Domain.Service
         }
 
 
-        public async Task<List<CityDto>> GetState()
+        public List<CityDto> GetState()
         {
             XElement purchaseOrder = XElement.Load($"{filename}");
             var state = (from item in purchaseOrder.Elements("CountryRegion")
@@ -88,32 +88,33 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async Task<List<ModelCountryState>> Linkage(RegionDto dto)
+        public List<ModelCountryState> Linkage(RegionDto dto)
         {
-            
-            var aa =await GetState();
+
+            var aa = GetState();
             List<ModelCountryState> modelCountryState = new List<ModelCountryState>();
             foreach (var item in aa)
             {
-                var bb = await GetCity(item);
+                var bb = GetCity(item);
                 List<Citys> City = new List<Citys>();
                 foreach (var item2 in bb)
                 {
                     List<string> Region = new List<string>();
-                    var cc = await GetRegion(new RegionDto {
-                         CityDto=item,
-                          Name=item2.Name
+                    var cc = GetRegion(new RegionDto
+                    {
+                        CityDto = item,
+                        Name = item2.Name
                     });
                     foreach (var item3 in cc)
                     {
-                        Region.Add( item3.Name );
+                        Region.Add(item3.Name);
                     }
-                    City.Add(new Citys {  Name= item2.Name ,  Area= Region });
+                    City.Add(new Citys { Name = item2.Name, Area = Region });
                 }
-                modelCountryState.Add(new ModelCountryState {City= City , Name = item .Name});
+                modelCountryState.Add(new ModelCountryState { City = City, Name = item.Name });
             }
-            
-            return modelCountryState ;
+
+            return modelCountryState;
         }
 
 

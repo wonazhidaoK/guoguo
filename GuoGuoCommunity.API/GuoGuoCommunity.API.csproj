@@ -398,6 +398,9 @@
     <Compile Include="Models\User\LoginOutput.cs" />
     <Compile Include="Models\User\UpdatePropertyUserInput.cs" />
     <Compile Include="Models\User\UpdateStreetOfficeUserInput.cs" />
+    <Compile Include="Models\VipOwnerApplicationRecord\GetAllForHistoryVipOwnerApplicationRecordInput.cs" />
+    <Compile Include="Models\VipOwnerApplicationRecord\GetAllForHistoryVipOwnerApplicationRecordOutput.cs" />
+    <Compile Include="Models\VipOwnerApplicationRecord\GetForHistoryVipOwnerApplicationRecordOutput.cs" />
     <Compile Include="Models\VipOwnerCertificationCondition\AddVipOwnerCertificationConditionInput.cs" />
     <Compile Include="Models\VipOwnerCertificationCondition\AddVipOwnerCertificationConditionOutput.cs" />
     <Compile Include="Models\VipOwnerCertificationCondition\GetListVipOwnerCertificationConditionOutpu.cs" />
@@ -412,6 +415,7 @@
     <Compile Include="Models\VipOwnerApplicationRecord\GetVipOwnerApplicationRecordOutput.cs" />
     <Compile Include="Models\VipOwnerCertificationRecord\GetAllVipOwnerCertificationRecordInput.cs" />
     <Compile Include="Models\VipOwnerCertificationRecord\GetAllVipOwnerCertificationRecordOutpu.cs" />
+    <Compile Include="Models\VipOwnerCertificationRecord\GetVipOwnerCertificationRecordOutpu.cs" />
     <Compile Include="Models\VipOwnerStructure\AddVipOwnerStructureInput.cs" />
     <Compile Include="Models\VipOwnerStructure\AddVipOwnerStructureOutput.cs" />
     <Compile Include="Models\VipOwnerStructure\GetAllVipOwnerStructureInput.cs" />

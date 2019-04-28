@@ -9,14 +9,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 社区
     /// </summary>
-    public class CommunityController : ApiController
+    public class CommunityController : BaseController
     {
         private readonly ICommunityRepository _communityRepository;
         private TokenManager _tokenManager;
@@ -68,10 +67,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("街道办信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.StreetOfficeName))
-                {
-                    throw new NotImplementedException("街道办信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.StreetOfficeName))
+                //{
+                //    throw new NotImplementedException("街道办信息为空！");
+                //}
 
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
@@ -86,7 +85,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Region = input.Region,
                     State = input.State,
                     StreetOfficeId = input.StreetOfficeId,
-                    StreetOfficeName = input.StreetOfficeName,
+                    //StreetOfficeName = input.StreetOfficeName,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
                 }, cancelToken);
@@ -122,7 +121,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
                 }
-
+                if (string.IsNullOrWhiteSpace(input.Name))
+                {
+                    throw new NotImplementedException("社区名称信息为空！");
+                }
                 await _communityRepository.UpdateAsync(new CommunityDto
                 {
                     Id = input.Id,

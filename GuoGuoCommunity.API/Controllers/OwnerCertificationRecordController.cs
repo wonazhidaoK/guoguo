@@ -10,7 +10,6 @@ using Senparc.Weixin.MP.AdvancedAPIs;
 using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -28,7 +27,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 业主认证
     /// </summary>
-    public class OwnerCertificationRecordController : ApiController
+    public class OwnerCertificationRecordController : BaseController
     {
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private readonly IOwnerCertificationAnnexRepository _ownerCertificationAnnexRepository;
@@ -59,32 +58,7 @@ namespace GuoGuoCommunity.API.Controllers
             _iDCardPhotoRecordRepository = iDCardPhotoRecordRepository;
             _tokenManager = new TokenManager();
         }
-
-        /// <summary>
-        /// 阿里云接口地址
-        /// </summary>
-        public static readonly string ALiYunApiUrl = ConfigurationManager.AppSettings["ALiYunApiUrl"];
-
-        /// <summary>
-        /// 阿里云AppCode
-        /// </summary>
-        public static readonly string ALiYunApiAppCode = ConfigurationManager.AppSettings["ALiYunApiAppCode"];
-
-        /// <summary>
-        /// 微信AppID
-        /// </summary>
-        public static readonly string AppId = ConfigurationManager.AppSettings["GuoGuoCommunity_AppId"];
-
-        /// <summary>
-        /// 小程序AppID
-        /// </summary>
-        public static readonly string GuoGuoCommunity_WxOpenAppId = ConfigurationManager.AppSettings["GuoGuoCommunity_WxOpenAppId"];
-
-        /// <summary>
-        /// 微信推送认证结果模板Id
-        /// </summary>
-        public static readonly string OwnerCertificationRecordTemplateId = ConfigurationManager.AppSettings["OwnerCertificationRecordTemplateId"];
-
+        
         /// <summary>
         /// 添加业主认证记录信息
         /// </summary>

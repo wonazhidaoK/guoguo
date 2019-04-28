@@ -4,7 +4,6 @@ using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -18,12 +17,10 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 上传
     /// </summary>
-    public class UploadController : ApiController
+    public class UploadController : BaseController
     {
         private readonly IUploadRepository _uploadRepository;
         private TokenManager _tokenManager;
-        private static readonly string host = ConfigurationManager.AppSettings["Host"];
-        private static readonly string agreement = ConfigurationManager.AppSettings["Agreement"];
 
         /// <summary>
         /// 
@@ -365,8 +362,8 @@ namespace GuoGuoCommunity.API.Controllers
             var upload = await _uploadRepository.AddAsync(
                   new UploadDto
                   {
-                      Agreement = agreement + "://",
-                      Host = host + "/",
+                      Agreement = Agreement + "://",
+                      Host = Host + "/",
                       Domain = "/Upload",
                       Directory = "/" + directory,
                       File = "/" + file,

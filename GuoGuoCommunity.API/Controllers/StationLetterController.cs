@@ -15,7 +15,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 站内信相关
     /// </summary>
-    public class StationLetterController : ApiController
+    public class StationLetterController : BaseController
     {
         private readonly IStationLetterRepository _stationLetterRepository;
         private readonly IStationLetterAnnexRepository _stationLetterAnnexRepository;

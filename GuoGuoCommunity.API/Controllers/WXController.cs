@@ -2,7 +2,6 @@
 using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
-using Senparc.Weixin;
 using Senparc.Weixin.MP;
 using Senparc.Weixin.MP.AdvancedAPIs;
 using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
@@ -10,7 +9,6 @@ using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.WxOpen.AdvancedAPIs.Sns;
 using Senparc.Weixin.WxOpen.Helpers;
 using System;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -26,7 +24,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 微信相关
     /// </summary>
-    public class WXController : ApiController
+    public class WXController : BaseController
     {
         private readonly IUserRepository _userRepository;
         private readonly IWeiXinUserRepository _weiXinUserRepository;
@@ -35,6 +33,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IVipOwnerApplicationRecordRepository _vipOwnerApplicationRecordRepository;
         private readonly IVipOwnerRepository _vipOwnerRepository;
         private TokenManager _tokenManager;
+
         /// <summary>
         /// 
         /// </summary>
@@ -60,46 +59,12 @@ namespace GuoGuoCommunity.API.Controllers
             _tokenManager = new TokenManager();
         }
 
-        /// <summary>
-        /// 令牌
-        /// </summary>
-        public static readonly string Token = ConfigurationManager.AppSettings["GuoGuoCommunity_Token"];//与微信公众账号后台的Token设置保持一致，区分大小写。
-        /// <summary>
-        /// AESKey
-        /// </summary>
-        public static readonly string EncodingAESKey = ConfigurationManager.AppSettings["GuoGuoCommunity_EncodingAESKey"];//与微信公众账号后台的EncodingAESKey设置保持一致，区分大小写。
-        /// <summary>
-        /// 微信AppID
-        /// </summary>
-        public static readonly string AppId = ConfigurationManager.AppSettings["GuoGuoCommunity_AppId"];//与微信公众账号后台的AppId设置保持一致，区分大小写。
-        /// <summary>
-        /// 微信Secret
-        /// </summary>
-        public static readonly string Secret = Config.SenparcWeixinSetting.WeixinAppSecret;
-        /// <summary>
-        /// 小程序AppID
-        /// </summary>
-        public static readonly string GuoGuoCommunity_WxOpenAppId = ConfigurationManager.AppSettings["GuoGuoCommunity_WxOpenAppId"];
-        /// <summary>
-        /// 小程序Secret
-        /// </summary>
-        public static readonly string GuoGuoCommunity_WxOpenAppSecret = ConfigurationManager.AppSettings["GuoGuoCommunity_WxOpenAppSecret"];
-        ///// <summary>
-        ///// 知士互联微信小程序AppID
-        ///// </summary>
-        //public static readonly string ZhiShiHuLian_WxOpenAppId = ConfigurationManager.AppSettings["ZhiShiHuLian_WxOpenAppId"];
-        ///// <summary>
-        ///// 知士互联微信小程序Secret
-        ///// </summary>
-        //public static readonly string ZhiShiHuLian_WxOpenAppSecret = ConfigurationManager.AppSettings["ZhiShiHuLian_WxOpenAppSecret"];
-
         #region 微信服务器消息接收及处理
 
         /// <summary>
         /// 微信后台验证地址（使用Get），微信后台的“接口配置信息”的Url填写如：http://weixin.senparc.com/weixin
         /// </summary>
         [HttpGet]
-        //[AllowAnonymous]
         [Route("WeiXin")]
         public HttpResponseMessage Get(string signature, string timestamp, string nonce, string echostr)
         {
@@ -115,19 +80,12 @@ namespace GuoGuoCommunity.API.Controllers
                     "如果你在浏览器中看到这句话，说明此地址可以被作为微信公众账号后台的Url，请注意保持Token一致。");
         }
 
-        //public async Task SendAsync(string message)
-        //{
-        //    //await _testRepository.Add(a());
-        //    EventLog.WriteEntry("EventSystem", string.Format("这是由Hangfire后台任务发送的消息:{0},时间为:{1}", message, DateTime.Now));
-        //}
-
         /// <summary>
         /// 用户发送消息后，微信平台自动Post一个请求到这里，并等待响应XML。
         /// PS：此方法为简化方法，效果与OldPost一致。
         /// v0.8之后的版本可以结合Senparc.Weixin.MP.MvcExtension扩展包，使用WeixinResult，见MiniPost方法。
         /// </summary>
         [HttpPost]
-        //[AllowAnonymous]
         [Route("WeiXin")]
         public async Task<HttpResponseMessage> Post(CancellationToken cancelToken)
         {

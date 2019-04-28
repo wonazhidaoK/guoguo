@@ -16,7 +16,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 公共接口
     /// </summary>
-    public class CommonController : ApiController
+    public class CommonController : BaseController
     {
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private readonly ISmallDistrictRepository _smallDistrictRepository;

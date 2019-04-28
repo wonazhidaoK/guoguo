@@ -2,8 +2,9 @@
 
 namespace GuoGuoCommunity.Domain.Dto
 {
-   public class VipOwnerCertificationRecordDto
+    public class VipOwnerCertificationRecordDto
     {
+
         public string Id { get; set; }
 
         /// <summary>
@@ -55,5 +56,20 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 投票id
         /// </summary>
         public string VoteId { get; set; }
+
+        /// <summary>
+        /// 操作人小区Id
+        /// </summary>
+        public string OperationUserSmallDistrictId { get; set; }
+
+        /// <summary>
+        /// 创建时间（开始时间）
+        /// </summary>
+        public DateTimeOffset StartTime { get; set; }
+
+        /// <summary>
+        ///  创建时间（结束时间）
+        /// </summary>
+        public DateTimeOffset EndTime { get; set; }
     }
 }

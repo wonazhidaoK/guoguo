@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace GuoGuoCommunity.API.Models
 {
@@ -14,7 +10,17 @@ namespace GuoGuoCommunity.API.Models
         /// <summary>
         /// 业委会Id
         /// </summary>
-         public string VipOwnerId { get; set; }
+        public string VipOwnerId { get; set; }
+
+        /// <summary>
+        /// 创建时间（开始时间）
+        /// </summary>
+        public string StartTime { get; set; }
+
+        /// <summary>
+        ///  创建时间（结束时间）
+        /// </summary>
+        public string EndTime { get; set; }
 
         /// <summary>
         /// 

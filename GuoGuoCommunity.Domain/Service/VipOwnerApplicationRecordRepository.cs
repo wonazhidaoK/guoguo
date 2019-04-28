@@ -112,7 +112,7 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public async Task<List<VipOwnerApplicationRecord>> GetAllAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default)
+        public async Task<List<VipOwnerApplicationRecord>> GetAllInvalidAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
@@ -198,7 +198,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("申请记录Id信息不正确！");
                 }
-                var vipOwnerApplicationRecord = await db.VipOwnerApplicationRecords.Where(x => x.Id == uid && x.IsDeleted == false && x.IsAdopt == true).FirstOrDefaultAsync(token);
+                var vipOwnerApplicationRecord = await db.VipOwnerApplicationRecords.Where(x => x.Id == uid && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (vipOwnerApplicationRecord == null)
                 {
                     throw new NotImplementedException("该申请记录不存在！");
@@ -230,6 +230,31 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 return await db.VipOwnerApplicationRecords.Where(x => x.VoteId == dto.VoteId && x.VoteQuestionId == dto.VoteQuestionId && x.VoteQuestionOptionId == dto.VoteQuestionOptionId).FirstOrDefaultAsync(token);
             }
+        }
+
+        public async Task<List<VipOwnerApplicationRecord>> GetAllAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+
+                var list = await db.VipOwnerApplicationRecords.Where(x => x.IsDeleted == false).ToListAsync(token);
+                if (string.IsNullOrWhiteSpace(dto.SmallDistrictId))
+                {
+                    var smallDistricts = await db.SmallDistricts.Where(x => x.StreetOfficeId == dto.OperationUserStreetOfficeId && x.IsDeleted == false).Select(x => x.Id.ToString()).ToListAsync(token);
+                    list = list.Where(x => smallDistricts.Contains(x.SmallDistrictId)).ToList();
+                }
+                else
+                {
+                    list = list.Where(x => x.SmallDistrictId == dto.SmallDistrictId).ToList();
+                }
+                list = list.Where(x => x.CreateOperationTime >= dto.StartTime && x.CreateOperationTime <= dto.EndTime).ToList();
+                return list;
+            }
+        }
+
+        public Task<List<VipOwnerApplicationRecord>> GetAllForHistoryAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

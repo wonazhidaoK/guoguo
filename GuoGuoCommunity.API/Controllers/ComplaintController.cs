@@ -16,7 +16,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 投诉管理
     /// </summary>
-    public class ComplaintController : ApiController
+    public class ComplaintController : BaseController
     {
         private readonly IComplaintRepository _complaintRepository;
         private readonly IComplaintAnnexRepository _complaintAnnexRepository;

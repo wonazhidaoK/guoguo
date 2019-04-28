@@ -16,7 +16,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 添加投诉跟进记录
     /// </summary>
-    public class ComplaintFollowUpController : ApiController
+    public class ComplaintFollowUpController : BaseController
     {
         private readonly IComplaintRepository _complaintRepository;
         private readonly IComplaintFollowUpRepository _complaintFollowUpRepository;

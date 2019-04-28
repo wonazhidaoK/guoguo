@@ -15,7 +15,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 投票记录管理
     /// </summary>
-    public class VoteRecordController : ApiController
+    public class VoteRecordController : BaseController
     {
         private readonly IVoteRecordRepository _voteRecordRepository;
         private readonly IVoteRecordDetailRepository _voteRecordDetailRepository;

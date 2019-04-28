@@ -19,7 +19,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 用来公开给前端用户调用的API
     /// </summary>
-    public class MessageController : ApiController
+    public class MessageController : BaseController
     {
         private readonly ITestRepository _testRepository;
 

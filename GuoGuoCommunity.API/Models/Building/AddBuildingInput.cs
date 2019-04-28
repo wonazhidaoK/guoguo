@@ -15,9 +15,9 @@
         /// </summary>
         public string SmallDistrictId { get; set; }
 
-        /// <summary>
-        /// 小区名称
-        /// </summary>
-        public string SmallDistrictName { get; set; }
+        ///// <summary>
+        ///// 小区名称
+        ///// </summary>
+        //public string SmallDistrictName { get; set; }
     }
 }

@@ -5,16 +5,14 @@ using GuoGuoCommunity.Domain.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 城市
     /// </summary>
-    public class CityController : ApiController
+    public class CityController : BaseController
     {
         private readonly ICityRepository _cityService;
 
@@ -33,11 +31,11 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("city/getRegion")]
-        public async Task<ApiResult<List<CityOutput>>> GetRegion([FromUri]string stateName, [FromUri]string cityName)
+        public ApiResult<List<CityOutput>> GetRegion([FromUri]string stateName, [FromUri]string cityName)
         {
             try
             {
-                return new ApiResult<List<CityOutput>>(APIResultCode.Success, (await _cityService.GetRegion(new RegionDto
+                return new ApiResult<List<CityOutput>>(APIResultCode.Success, _cityService.GetRegion(new RegionDto
                 {
                     CityDto = new CityDto
                     {
@@ -46,7 +44,7 @@ namespace GuoGuoCommunity.API.Controllers
                     },
                     //Code = cityCode,
                     Name = cityName
-                })).Select(
+                }).Select(
                     x => new CityOutput
                     {
                         Code = x.Code,
@@ -66,15 +64,15 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("city/getCity")]
-        public async Task<ApiResult<List<CityOutput>>> GetCity([FromUri]string stateName)
+        public ApiResult<List<CityOutput>> GetCity([FromUri]string stateName)
         {
             try
             {
-                return new ApiResult<List<CityOutput>>(APIResultCode.Success, (await _cityService.GetCity(new CityDto
+                return new ApiResult<List<CityOutput>>(APIResultCode.Success, _cityService.GetCity(new CityDto
                 {
                     //Code = stateCode,
                     Name = stateName
-                })).Select(
+                }).Select(
                    x => new CityOutput
                    {
                        Code = x.Code,
@@ -93,11 +91,11 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("city/getState")]
-        public async Task<ApiResult<List<CityOutput>>> GetState()
+        public ApiResult<List<CityOutput>> GetState()
         {
             try
             {
-                return new ApiResult<List<CityOutput>>(APIResultCode.Success, (await _cityService.GetState()).Select(
+                return new ApiResult<List<CityOutput>>(APIResultCode.Success, _cityService.GetState().Select(
                   x => new CityOutput
                   {
                       Code = x.Code,
@@ -115,9 +113,9 @@ namespace GuoGuoCommunity.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("city/linkage")]
-        public async Task<List<ModelCountryState>> Linkage()
+        public List<ModelCountryState> Linkage()
         {
-            var city = await _cityService.Linkage(new RegionDto());
+            var city = _cityService.Linkage(new RegionDto());
             return city;
         }
     }

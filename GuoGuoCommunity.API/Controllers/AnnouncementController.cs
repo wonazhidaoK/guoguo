@@ -9,7 +9,6 @@ using Senparc.Weixin.MP.AdvancedAPIs;
 using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +20,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 公告信息管理
     /// </summary>
-    public class AnnouncementController : ApiController
+    public class AnnouncementController : BaseController
     {
         private readonly IAnnouncementRepository _announcementRepository;
         private readonly IAnnouncementAnnexRepository _announcementAnnexRepository;
@@ -55,21 +54,6 @@ namespace GuoGuoCommunity.API.Controllers
             _userRepository = userRepository;
             _tokenManager = new TokenManager();
         }
-
-        /// <summary>
-        /// 小程序AppID
-        /// </summary>
-        public static readonly string GuoGuoCommunity_WxOpenAppId = ConfigurationManager.AppSettings["GuoGuoCommunity_WxOpenAppId"];
-
-        /// <summary>
-        /// 微信AppID
-        /// </summary>
-        public static readonly string AppId = ConfigurationManager.AppSettings["GuoGuoCommunity_AppId"];
-
-        /// <summary>
-        /// 微信推送公告模板Id
-        /// </summary>
-        public static readonly string AnnouncementTemplateId = ConfigurationManager.AppSettings["AnnouncementTemplateId"];
 
         /*
          * TODO

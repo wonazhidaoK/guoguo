@@ -75,5 +75,20 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 业委会名称
         /// </summary>
         public string VipOwnerName { get; set; }
+
+        /// <summary>
+        /// 操作人街道办id
+        /// </summary>
+        public string OperationUserStreetOfficeId { get; set; }
+
+        /// <summary>
+        /// 申请时间（开始时间）
+        /// </summary>
+        public DateTimeOffset StartTime { get; set; }
+
+        /// <summary>
+        /// 申请时间（结束时间）
+        /// </summary>
+        public DateTimeOffset EndTime { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
+using GuoGuoCommunity.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 投诉类型管理
     /// </summary>
-    public class ComplaintTypeController : ApiController
+    public class ComplaintTypeController : BaseController
     {
         private readonly IComplaintTypeRepository _complaintTypeRepository;
         private TokenManager _tokenManager;
@@ -51,10 +52,10 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("投诉类型名称信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.InitiatingDepartmentName))
-                {
-                    throw new NotImplementedException("投诉类型发起部门名称信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.InitiatingDepartmentName))
+                //{
+                //    throw new NotImplementedException("投诉类型发起部门名称信息为空！");
+                //}
                 if (string.IsNullOrWhiteSpace(input.InitiatingDepartmentValue))
                 {
                     throw new NotImplementedException("投诉类型发起部门值信息为空！");
@@ -68,14 +69,18 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<AddComplaintTypeOutput>(APIResultCode.Unknown, new AddComplaintTypeOutput { }, APIResultMessage.TokenError);
                 }
-
+                var department = Department.GetAll().Where(x => x.Value == input.InitiatingDepartmentValue).FirstOrDefault();
+                if (department == null)
+                {
+                    throw new NotImplementedException("投诉类型发起部门信息不准确！");
+                }
                 var entity = await _complaintTypeRepository.AddAsync(new ComplaintTypeDto
                 {
 
                     Name = input.Name,
                     Description = input.Description,
                     Level = input.Level,
-                    InitiatingDepartmentName = input.InitiatingDepartmentName,
+                    InitiatingDepartmentName = department.Name,
                     InitiatingDepartmentValue = input.InitiatingDepartmentValue,
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString()
@@ -314,10 +319,10 @@ namespace GuoGuoCommunity.API.Controllers
         {
             try
             {
-               
+
                 var data = await _complaintTypeRepository.GetListAsync(new ComplaintTypeDto
                 {
-                    
+
                 }, cancelToken);
 
                 return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Success, data.Select(x => new GetListComplaintTypeOutput

@@ -21,7 +21,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("街道办信息不正确！");
                 }
-                var streetOffice = await db.StreetOffices.Where(x => x.Id == streetOfficeId && x.Name == dto.StreetOfficeName && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var streetOffice = await db.StreetOffices.Where(x => x.Id == streetOfficeId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (streetOffice == null)
                 {
                     throw new NotImplementedException("街道办信息不存在！");
@@ -43,7 +43,7 @@ namespace GuoGuoCommunity.Domain.Service
                     LastOperationTime = dto.OperationTime,
                     LastOperationUserId = dto.OperationUserId,
                     StreetOfficeId = dto.StreetOfficeId,
-                    StreetOfficeName = dto.StreetOfficeName
+                    StreetOfficeName = streetOffice.Name
                 });
                 await db.SaveChangesAsync(token);
                 return entity;

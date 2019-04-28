@@ -9,14 +9,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 小区
     /// </summary>
-    public class SmallDistrictController : ApiController
+    public class SmallDistrictController : BaseController
     {
         private readonly ISmallDistrictRepository _smallDistrictRepository;
         private TokenManager _tokenManager;
@@ -68,18 +67,18 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("街道办Id信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.StreetOfficeName))
-                {
-                    throw new NotImplementedException("街道办信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.StreetOfficeName))
+                //{
+                //    throw new NotImplementedException("街道办信息为空！");
+                //}
                 if (string.IsNullOrWhiteSpace(input.CommunityId))
                 {
                     throw new NotImplementedException("小区Id信息为空！");
                 }
-                if (string.IsNullOrWhiteSpace(input.CommunityName))
-                {
-                    throw new NotImplementedException("小区信息为空！");
-                }
+                //if (string.IsNullOrWhiteSpace(input.CommunityName))
+                //{
+                //    throw new NotImplementedException("小区信息为空！");
+                //}
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
@@ -94,9 +93,9 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString(),
                     CommunityId = input.CommunityId,
-                    CommunityName = input.CommunityName,
+                    //CommunityName = input.CommunityName,
                     StreetOfficeId = input.StreetOfficeId,
-                    StreetOfficeName = input.StreetOfficeName
+                    //StreetOfficeName = input.StreetOfficeName
                 }, cancelToken);
 
                 return new ApiResult<AddSmallDistrictOutput>(APIResultCode.Success, new AddSmallDistrictOutput { Id = entity.Id.ToString() });

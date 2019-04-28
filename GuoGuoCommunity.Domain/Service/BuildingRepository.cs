@@ -21,7 +21,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("小区信息不正确！");
                 }
-                var smallDistricts = await db.SmallDistricts.Where(x => x.Id == smallDistrictId && x.Name == dto.SmallDistrictName && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var smallDistricts = await db.SmallDistricts.Where(x => x.Id == smallDistrictId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (smallDistricts == null)
                 {
                     throw new NotImplementedException("小区信息不存在！");
@@ -36,7 +36,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     Name = dto.Name,
                     SmallDistrictId = dto.SmallDistrictId,
-                    SmallDistrictName = dto.SmallDistrictName,
+                    SmallDistrictName = smallDistricts.Name,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,

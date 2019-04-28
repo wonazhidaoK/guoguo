@@ -15,7 +15,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// <summary>
     /// 业户信息管理
     /// </summary>
-    public class IndustryController : ApiController
+    public class IndustryController : BaseController
     {
         private readonly IIndustryRepository _industryRepository;
         private TokenManager _tokenManager;

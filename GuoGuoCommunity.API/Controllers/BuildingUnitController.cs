@@ -9,14 +9,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace GuoGuoCommunity.API.Controllers
 {
     /// <summary>
     /// 楼宇单元信息管理
     /// </summary>
-    public class BuildingUnitController : ApiController
+    public class BuildingUnitController : BaseController
     {
         private readonly IBuildingUnitRepository _buildingUnitRepository;
         private TokenManager _tokenManager;
@@ -60,7 +59,6 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("楼宇Id信息为空！");
                 }
-
 
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
