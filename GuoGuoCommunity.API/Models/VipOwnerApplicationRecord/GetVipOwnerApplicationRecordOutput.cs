@@ -82,5 +82,10 @@ namespace GuoGuoCommunity.API.Models
         /// 申请条件名称
         /// </summary>
         public string CertificationConditionName { get; set; }
+
+        /// <summary>
+        /// 类型值
+        /// </summary>
+        public string TypeValue { get; set; }
     }
 }

@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 
 namespace GuoGuoCommunity.API.Controllers
@@ -25,7 +24,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IStationLetterRepository _stationLetterRepository;
         private TokenManager _tokenManager;
-        
+
         /// <summary>
         /// 权限
         /// </summary>
@@ -62,79 +61,27 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("user/Login")]
         public async Task<ApiResult<LoginOutput>> Login([FromBody] LoginInput input, CancellationToken cancelToken)
         {
-            try
+            var user = await _userRepository.GetAsync(new UserDto
             {
-                var user = await _userRepository.GetAsync(new UserDto
-                {
-                    Name = input.Name,
-                    Password = input.Pwd
-                });
+                Name = input.Name,
+                Password = input.Pwd
+            });
 
-                //产生 Token
-                var token = _tokenManager.Create(user);
-                //存入数据库
+            //产生 Token
+            var token = _tokenManager.Create(user);
+            //存入数据库
 
-                await _userRepository.UpdateTokenAsync(new UserDto
-                {
-                    Id = user.Id.ToString(),
-                    RefreshToken = token.Refresh_token
-                });
+            await _userRepository.UpdateTokenAsync(new UserDto
+            {
+                Id = user.Id.ToString(),
+                RefreshToken = token.Refresh_token
+            });
 
-                if (user.Name == "admin")
-                {
-                    return new ApiResult<LoginOutput>(APIResultCode.Success, new LoginOutput
-                    {
-                        Roles = new string[1] { "authorityMax" },
-                        Name = user.Name,
-                        avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
-                        token = token.Access_token,
-                        City = user.City,
-                        Region = user.Region,
-                        State = user.State,
-                        CommunityId = user.CommunityId,
-                        CommunityName = user.CommunityName,
-                        SmallDistrictId = user.SmallDistrictId,
-                        SmallDistrictName = user.SmallDistrictName,
-                        StreetOfficeId = user.StreetOfficeId,
-                        StreetOfficeName = user.StreetOfficeName,
-                        DepartmentName = "authorityMax",
-                        DepartmentValue = "authorityMax"
-                        //refresh_token=token.refresh_token
-                    });
-                }
-
-                var role_Menus = await _roleMenuRepository.GetByRoleIdAsync(user.RoleId, cancelToken);
-                List<string> list = new List<string>();
-                if (role_Menus.Any())
-                {
-                    foreach (var item in role_Menus)
-                    {
-                        var menu = await _menuRepository.GetByIdAsync(item.MenuId, cancelToken);
-
-                        list.Add(menu.Key);
-                    }
-                }
-                else
-                {
-                    return new ApiResult<LoginOutput>(APIResultCode.Success_NoB, new LoginOutput { }, "登陆账户角色未分配菜单浏览权限!");
-                }
-                bool IsHaveUnRead = false;
-                if (user.DepartmentValue == Department.WuYe.Value)
-                {
-                    var letterList = await _stationLetterRepository.GetListAsync(new StationLetterDto
-                    {
-                        //ReleaseTimeEnd = input.ReleaseTimeEnd,
-                        //ReleaseTimeStart = input.ReleaseTimeStart,
-                        SmallDistrictArray = user.SmallDistrictId,
-                        // SmallDistrictArray = input.SmallDistrict,
-                        OperationUserId = user.Id.ToString(),
-                        ReadStatus = "UnRead"
-                    }, cancelToken);
-                    IsHaveUnRead = letterList.Any();
-                }
+            if (user.Name == "admin")
+            {
                 return new ApiResult<LoginOutput>(APIResultCode.Success, new LoginOutput
                 {
-                    Roles = list.ToArray(),
+                    Roles = new string[1] { "authorityMax" },
                     Name = user.Name,
                     avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
                     token = token.Access_token,
@@ -147,16 +94,61 @@ namespace GuoGuoCommunity.API.Controllers
                     SmallDistrictName = user.SmallDistrictName,
                     StreetOfficeId = user.StreetOfficeId,
                     StreetOfficeName = user.StreetOfficeName,
-                    IsHaveUnRead = IsHaveUnRead,
-                    DepartmentValue = user.DepartmentValue,
-                    DepartmentName = user.DepartmentValue
-                    // refresh_token = token.refresh_token
+                    DepartmentName = "authorityMax",
+                    DepartmentValue = "authorityMax"
+                    //refresh_token=token.refresh_token
                 });
             }
-            catch (Exception e)
+
+            var role_Menus = await _roleMenuRepository.GetByRoleIdAsync(user.RoleId, cancelToken);
+            List<string> list = new List<string>();
+            if (role_Menus.Any())
             {
-                return new ApiResult<LoginOutput>(APIResultCode.Success_NoB, new LoginOutput { }, e.Message);
+                foreach (var item in role_Menus)
+                {
+                    var menu = await _menuRepository.GetByIdAsync(item.MenuId, cancelToken);
+
+                    list.Add(menu.Key);
+                }
             }
+            else
+            {
+                return new ApiResult<LoginOutput>(APIResultCode.Success_NoB, new LoginOutput { }, "登陆账户角色未分配菜单浏览权限!");
+            }
+            bool IsHaveUnRead = false;
+            if (user.DepartmentValue == Department.WuYe.Value)
+            {
+                var letterList = await _stationLetterRepository.GetListAsync(new StationLetterDto
+                {
+                    //ReleaseTimeEnd = input.ReleaseTimeEnd,
+                    //ReleaseTimeStart = input.ReleaseTimeStart,
+                    SmallDistrictArray = user.SmallDistrictId,
+                    // SmallDistrictArray = input.SmallDistrict,
+                    OperationUserId = user.Id.ToString(),
+                    ReadStatus = "UnRead"
+                }, cancelToken);
+                IsHaveUnRead = letterList.Any();
+            }
+            return new ApiResult<LoginOutput>(APIResultCode.Success, new LoginOutput
+            {
+                Roles = list.ToArray(),
+                Name = user.Name,
+                avatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
+                token = token.Access_token,
+                City = user.City,
+                Region = user.Region,
+                State = user.State,
+                CommunityId = user.CommunityId,
+                CommunityName = user.CommunityName,
+                SmallDistrictId = user.SmallDistrictId,
+                SmallDistrictName = user.SmallDistrictName,
+                StreetOfficeId = user.StreetOfficeId,
+                StreetOfficeName = user.StreetOfficeName,
+                IsHaveUnRead = IsHaveUnRead,
+                DepartmentValue = user.DepartmentValue,
+                DepartmentName = user.DepartmentValue
+            });
+
         }
 
         /// <summary>
@@ -168,8 +160,11 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("user/LoginToken")]
         public async Task<ApiResult<LoginTokenOutput>> LoginToken(CancellationToken cancelToken)
         {
-            var token = HttpContext.Current.Request.Headers["Authorization"];
-            var user = _tokenManager.GetUser(token);
+            if (Authorization == null)
+            {
+                return new ApiResult<LoginTokenOutput>(APIResultCode.Unknown, new LoginTokenOutput { }, APIResultMessage.TokenNull);
+            }
+            var user = _tokenManager.GetUser(Authorization);
             if (user == null)
             {
                 throw new NotImplementedException("token无效！");
@@ -252,49 +247,43 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("user/addStreetOfficeUser")]
         public async Task<ApiResult<AddStreetOfficeUserOutput>> AddStreetOfficeUser([FromBody]AddStreetOfficeUserInput input, CancellationToken cancelToken)
         {
-            try
-            {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Unknown, new AddStreetOfficeUserOutput { }, APIResultMessage.TokenNull);
-                }
-                if (string.IsNullOrWhiteSpace(input.Account))
-                {
-                    return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Success_NoB, new AddStreetOfficeUserOutput { }, "账户名称为空！");
-                }
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Unknown, new AddStreetOfficeUserOutput { }, APIResultMessage.TokenError);
-                }
-                //Regex re = new Regex(@"^[A-Za-z][A-Za-z0-9_]{5,19}$");
 
-                if (!re.IsMatch(input.Account))//验证数据是否匹配
-                {
-                    return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Success_NoB, new AddStreetOfficeUserOutput { }, "账户名称输入格式不正确");
-                }
-                var entity = await _userRepository.AddStreetOfficeAsync(new UserDto
-                {
-                    Account = input.Account,
-                    Name = input.Name,
-                    PhoneNumber = input.PhoneNumber,
-                    Password = input.Password,
-                    State = input.State,
-                    City = input.City,
-                    Region = input.Region,
-                    StreetOfficeId = input.StreetOfficeId,
-                    DepartmentValue = Department.JieDaoBan.Value,
-                    RoleId = input.RoleId,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-                return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Success, new AddStreetOfficeUserOutput { Id = entity.Id.ToString() }, APIResultMessage.Success);
-            }
-            catch (Exception e)
+            if (Authorization == null)
             {
-                return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Success_NoB, new AddStreetOfficeUserOutput { }, e.Message);
+                return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Unknown, new AddStreetOfficeUserOutput { }, APIResultMessage.TokenNull);
             }
+            if (string.IsNullOrWhiteSpace(input.Account))
+            {
+                return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Success_NoB, new AddStreetOfficeUserOutput { }, "账户名称为空！");
+            }
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Unknown, new AddStreetOfficeUserOutput { }, APIResultMessage.TokenError);
+            }
+            //Regex re = new Regex(@"^[A-Za-z][A-Za-z0-9_]{5,19}$");
+
+            if (!re.IsMatch(input.Account))//验证数据是否匹配
+            {
+                return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Success_NoB, new AddStreetOfficeUserOutput { }, "账户名称输入格式不正确");
+            }
+            var entity = await _userRepository.AddStreetOfficeAsync(new UserDto
+            {
+                Account = input.Account,
+                Name = input.Name,
+                PhoneNumber = input.PhoneNumber,
+                Password = input.Password,
+                State = input.State,
+                City = input.City,
+                Region = input.Region,
+                StreetOfficeId = input.StreetOfficeId,
+                DepartmentValue = Department.JieDaoBan.Value,
+                RoleId = input.RoleId,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+            return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Success, new AddStreetOfficeUserOutput { Id = entity.Id.ToString() }, APIResultMessage.Success);
+
         }
 
         /// <summary>
@@ -307,59 +296,61 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("user/GetAllStreetOfficeUser")]
         public async Task<ApiResult<GetAllStreetOfficeUserOutput>> GetAllStreetOfficeUser([FromUri]GetAllStreetOfficeUserInput input, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                if (input.PageIndex < 1)
-                {
-                    input.PageIndex = 1;
-                }
-                if (input.PageSize < 1)
-                {
-                    input.PageSize = 10;
-                }
-                int startRow = (input.PageIndex - 1) * input.PageSize;
-                var data = await _userRepository.GetAllStreetOfficeAsync(new UserDto
-                {
-                    Name = input?.Name,
-                    State = input.State,
-                    City = input.City,
-                    Region = input.Region,
-                    StreetOfficeId = input.StreetOfficeId
-                }, cancelToken);
-
-                var listCount = data.Count();
-                var list = data.Skip(startRow).Take(input.PageSize);
-
-                return new ApiResult<GetAllStreetOfficeUserOutput>(APIResultCode.Success, new GetAllStreetOfficeUserOutput
-                {
-                    List = list.Select(x => new GetUserOutput
-                    {
-                        Account = x.Account,
-                        Id = x.Id.ToString(),
-                        Name = x.Name,
-                        SmallDistrictId = x.SmallDistrictId,
-                        SmallDistrictName = x.SmallDistrictName,
-                        City = x.City,
-                        CommunityId = x.CommunityId,
-                        CommunityName = x.CommunityName,
-                        DepartmentName = x.DepartmentName,
-                        DepartmentValue = x.DepartmentValue,
-                        PhoneNumber = x.PhoneNumber,
-                        Region = x.Region,
-                        RoleId = x.RoleId,
-                        RoleName = x.RoleName,
-                        State = x.State,
-                        StreetOfficeId = x.StreetOfficeId,
-                        StreetOfficeName = x.StreetOfficeName,
-                        Password = x.Password
-                    }).ToList(),
-                    TotalCount = listCount
-                });
+                return new ApiResult<GetAllStreetOfficeUserOutput>(APIResultCode.Unknown, new GetAllStreetOfficeUserOutput { }, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
             {
-                return new ApiResult<GetAllStreetOfficeUserOutput>(APIResultCode.Success_NoB, new GetAllStreetOfficeUserOutput { }, e.Message);
+                throw new NotImplementedException("token无效！");
             }
+            if (input.PageIndex < 1)
+            {
+                input.PageIndex = 1;
+            }
+            if (input.PageSize < 1)
+            {
+                input.PageSize = 10;
+            }
+            int startRow = (input.PageIndex - 1) * input.PageSize;
+            var data = await _userRepository.GetAllStreetOfficeAsync(new UserDto
+            {
+                Name = input?.Name,
+                State = input.State,
+                City = input.City,
+                Region = input.Region,
+                StreetOfficeId = input.StreetOfficeId
+            }, cancelToken);
+
+            var listCount = data.Count();
+            var list = data.Skip(startRow).Take(input.PageSize);
+
+            return new ApiResult<GetAllStreetOfficeUserOutput>(APIResultCode.Success, new GetAllStreetOfficeUserOutput
+            {
+                List = list.Select(x => new GetUserOutput
+                {
+                    Account = x.Account,
+                    Id = x.Id.ToString(),
+                    Name = x.Name,
+                    SmallDistrictId = x.SmallDistrictId,
+                    SmallDistrictName = x.SmallDistrictName,
+                    City = x.City,
+                    CommunityId = x.CommunityId,
+                    CommunityName = x.CommunityName,
+                    DepartmentName = x.DepartmentName,
+                    DepartmentValue = x.DepartmentValue,
+                    PhoneNumber = x.PhoneNumber,
+                    Region = x.Region,
+                    RoleId = x.RoleId,
+                    RoleName = x.RoleName,
+                    State = x.State,
+                    StreetOfficeId = x.StreetOfficeId,
+                    StreetOfficeName = x.StreetOfficeName,
+                    Password = x.Password
+                }).ToList(),
+                TotalCount = listCount
+            });
         }
 
         /// <summary>
@@ -372,37 +363,30 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("user/updateStreetOfficeUser")]
         public async Task<ApiResult> UpdateStreetOfficeUser([FromBody]UpdateStreetOfficeUserInput input, CancellationToken cancellationToken)
         {
-            try
+
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
-                }
-
-                await _userRepository.UpdateAsync(new UserDto
-                {
-                    Id = input.Id,
-                    Name = input.Name,
-                    Password = input.Password,
-                    PhoneNumber = input.PhoneNumber,
-                    RoleId = input.RoleId,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                });
-
-                return new ApiResult();
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
             {
-                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
             }
+
+            await _userRepository.UpdateAsync(new UserDto
+            {
+                Id = input.Id,
+                Name = input.Name,
+                Password = input.Password,
+                PhoneNumber = input.PhoneNumber,
+                RoleId = input.RoleId,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            });
+
+            return new ApiResult();
 
         }
 
@@ -416,49 +400,43 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("user/addPropertyUser")]
         public async Task<ApiResult<AddPropertyUserOutput>> AddPropertyUser([FromBody]AddPropertyUserInput input, CancellationToken cancelToken)
         {
-            try
+
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult<AddPropertyUserOutput>(APIResultCode.Unknown, new AddPropertyUserOutput { }, APIResultMessage.TokenNull);
-                }
-                if (string.IsNullOrWhiteSpace(input.Account))
-                {
-                    return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, "账户名称为空！");
-                }
-                if (!re.IsMatch(input.Account))//验证数据是否匹配
-                {
-                    return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, "账户名称输入格式不正确");
-                }
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult<AddPropertyUserOutput>(APIResultCode.Unknown, new AddPropertyUserOutput { }, APIResultMessage.TokenError);
-                }
-                var entity = await _userRepository.AddPropertyAsync(new UserDto
-                {
-                    Account = input.Account,
-                    Name = input.Name,
-                    PhoneNumber = input.PhoneNumber,
-                    Password = input.Password,
-                    State = input.State,
-                    City = input.City,
-                    Region = input.Region,
-                    StreetOfficeId = input.StreetOfficeId,
-                    SmallDistrictId = input.SmallDistrictId,
-                    CommunityId = input.CommunityId,
-                    DepartmentValue = Department.WuYe.Value,
-                    RoleId = input.RoleId,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success, new AddPropertyUserOutput { Id = entity.Id.ToString() }, APIResultMessage.Success);
+                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Unknown, new AddPropertyUserOutput { }, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            if (string.IsNullOrWhiteSpace(input.Account))
             {
-                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, e.Message);
+                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, "账户名称为空！");
             }
+            if (!re.IsMatch(input.Account))//验证数据是否匹配
+            {
+                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, "账户名称输入格式不正确");
+            }
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Unknown, new AddPropertyUserOutput { }, APIResultMessage.TokenError);
+            }
+            var entity = await _userRepository.AddPropertyAsync(new UserDto
+            {
+                Account = input.Account,
+                Name = input.Name,
+                PhoneNumber = input.PhoneNumber,
+                Password = input.Password,
+                State = input.State,
+                City = input.City,
+                Region = input.Region,
+                StreetOfficeId = input.StreetOfficeId,
+                SmallDistrictId = input.SmallDistrictId,
+                CommunityId = input.CommunityId,
+                DepartmentValue = Department.WuYe.Value,
+                RoleId = input.RoleId,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+            return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success, new AddPropertyUserOutput { Id = entity.Id.ToString() }, APIResultMessage.Success);
+
         }
 
         /// <summary>
@@ -471,62 +449,66 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("user/GetAllPropertyUser")]
         public async Task<ApiResult<GetAllPropertyUserOutput>> GetAllPropertyUser([FromUri]GetAllPropertyUserInput input, CancellationToken cancelToken)
         {
-            try
+
+            if (Authorization == null)
             {
-                if (input.PageIndex < 1)
-                {
-                    input.PageIndex = 1;
-                }
-                if (input.PageSize < 1)
-                {
-                    input.PageSize = 10;
-                }
-                int startRow = (input.PageIndex - 1) * input.PageSize;
-
-                var data = await _userRepository.GetAllPropertyAsync(new UserDto
-                {
-                    Name = input?.Name,
-                    State = input.State,
-                    City = input.City,
-                    Region = input.Region,
-                    StreetOfficeId = input.StreetOfficeId,
-                    SmallDistrictId = input.SmallDistrictId,
-                    CommunityId = input.CommunityId
-                }, cancelToken);
-
-                var listCount = data.Count();
-                var list = data.Skip(startRow).Take(input.PageSize);
-
-                return new ApiResult<GetAllPropertyUserOutput>(APIResultCode.Success, new GetAllPropertyUserOutput
-                {
-                    List = list.Select(x => new GetUserOutput
-                    {
-                        Account = x.Account,
-                        Id = x.Id.ToString(),
-                        Name = x.Name,
-                        SmallDistrictId = x.SmallDistrictId,
-                        SmallDistrictName = x.SmallDistrictName,
-                        City = x.City,
-                        CommunityId = x.CommunityId,
-                        CommunityName = x.CommunityName,
-                        DepartmentName = x.DepartmentName,
-                        DepartmentValue = x.DepartmentValue,
-                        PhoneNumber = x.PhoneNumber,
-                        Region = x.Region,
-                        RoleId = x.RoleId,
-                        RoleName = x.RoleName,
-                        State = x.State,
-                        StreetOfficeId = x.StreetOfficeId,
-                        StreetOfficeName = x.StreetOfficeName,
-                        Password = x.Password
-                    }).ToList(),
-                    TotalCount = listCount
-                });
+                return new ApiResult<GetAllPropertyUserOutput>(APIResultCode.Unknown, new GetAllPropertyUserOutput { }, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
             {
-                return new ApiResult<GetAllPropertyUserOutput>(APIResultCode.Success_NoB, new GetAllPropertyUserOutput { }, e.Message);
+                return new ApiResult<GetAllPropertyUserOutput>(APIResultCode.Unknown, new GetAllPropertyUserOutput { }, APIResultMessage.TokenError);
             }
+            if (input.PageIndex < 1)
+            {
+                input.PageIndex = 1;
+            }
+            if (input.PageSize < 1)
+            {
+                input.PageSize = 10;
+            }
+            int startRow = (input.PageIndex - 1) * input.PageSize;
+
+            var data = await _userRepository.GetAllPropertyAsync(new UserDto
+            {
+                Name = input?.Name,
+                State = input.State,
+                City = input.City,
+                Region = input.Region,
+                StreetOfficeId = input.StreetOfficeId,
+                SmallDistrictId = input.SmallDistrictId,
+                CommunityId = input.CommunityId
+            }, cancelToken);
+
+            var listCount = data.Count();
+            var list = data.Skip(startRow).Take(input.PageSize);
+
+            return new ApiResult<GetAllPropertyUserOutput>(APIResultCode.Success, new GetAllPropertyUserOutput
+            {
+                List = list.Select(x => new GetUserOutput
+                {
+                    Account = x.Account,
+                    Id = x.Id.ToString(),
+                    Name = x.Name,
+                    SmallDistrictId = x.SmallDistrictId,
+                    SmallDistrictName = x.SmallDistrictName,
+                    City = x.City,
+                    CommunityId = x.CommunityId,
+                    CommunityName = x.CommunityName,
+                    DepartmentName = x.DepartmentName,
+                    DepartmentValue = x.DepartmentValue,
+                    PhoneNumber = x.PhoneNumber,
+                    Region = x.Region,
+                    RoleId = x.RoleId,
+                    RoleName = x.RoleName,
+                    State = x.State,
+                    StreetOfficeId = x.StreetOfficeId,
+                    StreetOfficeName = x.StreetOfficeName,
+                    Password = x.Password
+                }).ToList(),
+                TotalCount = listCount
+            });
+
         }
 
         /// <summary>
@@ -539,37 +521,30 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("user/updatePropertyUser")]
         public async Task<ApiResult> UpdatePropertyUser([FromBody]UpdatePropertyUserInput input, CancellationToken cancellationToken)
         {
-            try
+
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
-                }
-
-                await _userRepository.UpdateAsync(new UserDto
-                {
-                    Id = input.Id,
-                    Name = input.Name,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString(),
-                    Password = input.Password,
-                    RoleId = input.RoleId,
-                    PhoneNumber = input.PhoneNumber
-                });
-
-                return new ApiResult();
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
             {
-                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
             }
+
+            await _userRepository.UpdateAsync(new UserDto
+            {
+                Id = input.Id,
+                Name = input.Name,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString(),
+                Password = input.Password,
+                RoleId = input.RoleId,
+                PhoneNumber = input.PhoneNumber
+            });
+
+            return new ApiResult();
 
         }
 
@@ -583,37 +558,31 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("user/delete")]
         public async Task<ApiResult> Delete([FromUri]string id, CancellationToken cancelToken)
         {
-            try
+
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
-                }
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    throw new NotImplementedException("用户Id信息为空！");
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
-                }
-
-                await _userRepository.DeleteAsync(new UserDto
-                {
-                    Id = id,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-
-                return new ApiResult();
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            if (string.IsNullOrWhiteSpace(id))
             {
-                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+                throw new NotImplementedException("用户Id信息为空！");
             }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+            }
+
+            await _userRepository.DeleteAsync(new UserDto
+            {
+                Id = id,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+
+            return new ApiResult();
+
         }
 
         #endregion
@@ -630,45 +599,36 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("menu/add")]
         public async Task<ApiResult<AddMenuOutput>> AddMenu([FromBody]AddMenuInput input, CancellationToken cancelToken)
         {
-            try
+
+            if (string.IsNullOrWhiteSpace(input.Key))
             {
-                if (string.IsNullOrWhiteSpace(input.Key))
-                {
-                    throw new NotImplementedException("菜单值信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.Name))
-                {
-                    throw new NotImplementedException("菜单名称信息为空！");
-                }
-
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult<AddMenuOutput>(APIResultCode.Unknown, new AddMenuOutput { }, APIResultMessage.TokenNull);
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult<AddMenuOutput>(APIResultCode.Unknown, new AddMenuOutput { }, APIResultMessage.TokenError);
-                }
-
-                return new ApiResult<AddMenuOutput>(APIResultCode.Success, new AddMenuOutput
-                {
-                    Id = (await _menuRepository.AddAsync(new MenuDto
-                    {
-                        Key = input.Key,
-                        Name = input.Name,
-                        OperationTime = DateTimeOffset.Now,
-                        OperationUserId = user.Id.ToString()
-                    }, cancelToken)).Id.ToString()
-                }, APIResultMessage.Success);
+                throw new NotImplementedException("菜单值信息为空！");
             }
-            catch (Exception e)
+            if (string.IsNullOrWhiteSpace(input.Name))
             {
-                return new ApiResult<AddMenuOutput>(APIResultCode.Success_NoB, new AddMenuOutput { }, e.Message);
+                throw new NotImplementedException("菜单名称信息为空！");
+            }
+            if (Authorization == null)
+            {
+                return new ApiResult<AddMenuOutput>(APIResultCode.Unknown, new AddMenuOutput { }, APIResultMessage.TokenNull);
             }
 
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<AddMenuOutput>(APIResultCode.Unknown, new AddMenuOutput { }, APIResultMessage.TokenError);
+            }
+
+            return new ApiResult<AddMenuOutput>(APIResultCode.Success, new AddMenuOutput
+            {
+                Id = (await _menuRepository.AddAsync(new MenuDto
+                {
+                    Key = input.Key,
+                    Name = input.Name,
+                    OperationTime = DateTimeOffset.Now,
+                    OperationUserId = user.Id.ToString()
+                }, cancelToken)).Id.ToString()
+            }, APIResultMessage.Success);
         }
 
         /// <summary>
@@ -679,6 +639,16 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("menu/getAll")]
         public async Task<ApiResult<List<GetAllMenuOutput>>> GetAllMenu([FromUri]GetAllMenuInput input, CancellationToken cancelToken)
         {
+            if (Authorization == null)
+            {
+                return new ApiResult<List<GetAllMenuOutput>>(APIResultCode.Unknown, new List<GetAllMenuOutput> { }, APIResultMessage.TokenNull);
+            }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<List<GetAllMenuOutput>>(APIResultCode.Unknown, new List<GetAllMenuOutput> { }, APIResultMessage.TokenError);
+            }
             var data = (await _menuRepository.GetAllAsync(new MenuDto
             {
                 DepartmentValue = input.DepartmentValue
@@ -702,36 +672,29 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("menu/delete")]
         public async Task<ApiResult> DeleteMenu([FromUri]string id, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
-                }
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    throw new NotImplementedException("菜单Id信息为空！");
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
-                }
-                await _menuRepository.DeleteAsync(new MenuDto
-                {
-                    Id = id,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-
-                return new ApiResult();
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            if (string.IsNullOrWhiteSpace(id))
             {
-                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+                throw new NotImplementedException("菜单Id信息为空！");
             }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+            }
+            await _menuRepository.DeleteAsync(new MenuDto
+            {
+                Id = id,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+
+            return new ApiResult();
+
         }
 
         #endregion
@@ -747,50 +710,39 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("role/add")]
         public async Task<ApiResult<AddRoleOutput>> AddRole([FromBody]AddRoleInput input, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                if (string.IsNullOrWhiteSpace(input.Name))
-                {
-                    throw new NotImplementedException("角色名称信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.DepartmentValue))
-                {
-                    throw new NotImplementedException("角色部门值信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(Department.GetAll().Where(x => x.Value == input.DepartmentValue).Select(x => x.Name).FirstOrDefault()))
-                {
-                    throw new NotImplementedException("角色部门信息不准确！");
-                }
-
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult<AddRoleOutput>(APIResultCode.Unknown, new AddRoleOutput { }, APIResultMessage.TokenNull);
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult<AddRoleOutput>(APIResultCode.Unknown, new AddRoleOutput { }, APIResultMessage.TokenError);
-                }
-
-                var entity = await _roleRepository.AddAsync(new RoleDto
-                {
-                    Name = input.Name,
-                    DepartmentValue = input.DepartmentValue,
-                    DepartmentName = Department.GetAll().Where(x => x.Value == input.DepartmentValue).Select(x => x.Name).FirstOrDefault(),
-                    Description = input.Description,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-
-                return new ApiResult<AddRoleOutput>(APIResultCode.Success, new AddRoleOutput { Id = entity.Id.ToString() }, APIResultMessage.Success);
-
+                return new ApiResult<AddRoleOutput>(APIResultCode.Unknown, new AddRoleOutput { }, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
             {
-                return new ApiResult<AddRoleOutput>(APIResultCode.Success_NoB, new AddRoleOutput { }, e.Message);
+                return new ApiResult<AddRoleOutput>(APIResultCode.Unknown, new AddRoleOutput { }, APIResultMessage.TokenError);
             }
+            if (string.IsNullOrWhiteSpace(input.Name))
+            {
+                throw new NotImplementedException("角色名称信息为空！");
+            }
+            if (string.IsNullOrWhiteSpace(input.DepartmentValue))
+            {
+                throw new NotImplementedException("角色部门值信息为空！");
+            }
+            if (string.IsNullOrWhiteSpace(Department.GetAll().Where(x => x.Value == input.DepartmentValue).Select(x => x.Name).FirstOrDefault()))
+            {
+                throw new NotImplementedException("角色部门信息不准确！");
+            }
+            var entity = await _roleRepository.AddAsync(new RoleDto
+            {
+                Name = input.Name,
+                DepartmentValue = input.DepartmentValue,
+                DepartmentName = Department.GetAll().Where(x => x.Value == input.DepartmentValue).Select(x => x.Name).FirstOrDefault(),
+                Description = input.Description,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+
+            return new ApiResult<AddRoleOutput>(APIResultCode.Success, new AddRoleOutput { Id = entity.Id.ToString() }, APIResultMessage.Success);
+
         }
 
         /// <summary>
@@ -801,43 +753,46 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("role/getAll")]
         public async Task<ApiResult<GetAllRoleOutput>> GetAllRole([FromUri]GetAllRoleInput input, CancellationToken cancelToken)
         {
-            try
-            {
-                if (input.PageIndex < 1)
-                {
-                    input.PageIndex = 1;
-                }
-                if (input.PageSize < 1)
-                {
-                    input.PageSize = 10;
-                }
-                int startRow = (input.PageIndex - 1) * input.PageSize;
 
-                var data = (await _roleRepository.GetAllAsync(new RoleDto
-                {
-                    DepartmentValue = input?.DepartmentValue,
-                    Name = input?.Name
-                }, cancelToken));
-                var listCount = data.Count();
-                var list = data.Skip(startRow).Take(input.PageSize);
-                return new ApiResult<GetAllRoleOutput>(APIResultCode.Success, new GetAllRoleOutput
-                {
-                    List = list.Select(x => new GetRoleOutput
-                    {
-                        Id = x.Id.ToString(),
-                        Name = x.Name,
-                        DepartmentName = x.DepartmentName,
-                        DepartmentValue = x.DepartmentValue,
-                        Description = x.Description
-                    }).ToList(),
-                    TotalCount = listCount
-                });
-
-            }
-            catch (Exception e)
+            if (Authorization == null)
             {
-                return new ApiResult<GetAllRoleOutput>(APIResultCode.Success_NoB, new GetAllRoleOutput(), e.Message);
+                return new ApiResult<GetAllRoleOutput>(APIResultCode.Unknown, new GetAllRoleOutput { }, APIResultMessage.TokenNull);
             }
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<GetAllRoleOutput>(APIResultCode.Unknown, new GetAllRoleOutput { }, APIResultMessage.TokenError);
+            }
+            if (input.PageIndex < 1)
+            {
+                input.PageIndex = 1;
+            }
+            if (input.PageSize < 1)
+            {
+                input.PageSize = 10;
+            }
+            int startRow = (input.PageIndex - 1) * input.PageSize;
+
+            var data = (await _roleRepository.GetAllAsync(new RoleDto
+            {
+                DepartmentValue = input?.DepartmentValue,
+                Name = input?.Name
+            }, cancelToken));
+            var listCount = data.Count();
+            var list = data.Skip(startRow).Take(input.PageSize);
+            return new ApiResult<GetAllRoleOutput>(APIResultCode.Success, new GetAllRoleOutput
+            {
+                List = list.Select(x => new GetRoleOutput
+                {
+                    Id = x.Id.ToString(),
+                    Name = x.Name,
+                    DepartmentName = x.DepartmentName,
+                    DepartmentValue = x.DepartmentValue,
+                    Description = x.Description
+                }).ToList(),
+                TotalCount = listCount
+            });
+
 
         }
 
@@ -849,22 +804,25 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("role/getAllForStreetOffice")]
         public async Task<ApiResult<List<GetRoleOutput>>> GetAllRoleForStreetOffice(CancellationToken cancelToken)
         {
-            try
+
+            if (Authorization == null)
             {
-                var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.JieDaoBan.Value }, cancelToken)).Select(x => new GetRoleOutput
-                {
-                    Id = x.Id.ToString(),
-                    Name = x.Name,
-                    DepartmentName = x.DepartmentName,
-                    DepartmentValue = x.DepartmentValue,
-                    Description = x.Description
-                }).ToList();
-                return new ApiResult<List<GetRoleOutput>>(APIResultCode.Success, data);
+                return new ApiResult<List<GetRoleOutput>>(APIResultCode.Unknown, new List<GetRoleOutput> { }, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
             {
-                return new ApiResult<List<GetRoleOutput>>(APIResultCode.Success_NoB, new List<GetRoleOutput>(), e.Message);
+                return new ApiResult<List<GetRoleOutput>>(APIResultCode.Unknown, new List<GetRoleOutput> { }, APIResultMessage.TokenError);
             }
+            var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.JieDaoBan.Value }, cancelToken)).Select(x => new GetRoleOutput
+            {
+                Id = x.Id.ToString(),
+                Name = x.Name,
+                DepartmentName = x.DepartmentName,
+                DepartmentValue = x.DepartmentValue,
+                Description = x.Description
+            }).ToList();
+            return new ApiResult<List<GetRoleOutput>>(APIResultCode.Success, data);
 
         }
 
@@ -876,22 +834,25 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("role/getAllForProperty")]
         public async Task<ApiResult<List<GetRoleOutput>>> GetAllRoleForProperty(CancellationToken cancelToken)
         {
-            try
+
+            if (Authorization == null)
             {
-                var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.WuYe.Value }, cancelToken)).Select(x => new GetRoleOutput
-                {
-                    Id = x.Id.ToString(),
-                    Name = x.Name,
-                    DepartmentName = x.DepartmentName,
-                    DepartmentValue = x.DepartmentValue,
-                    Description = x.Description
-                }).ToList();
-                return new ApiResult<List<GetRoleOutput>>(APIResultCode.Success, data);
+                return new ApiResult<List<GetRoleOutput>>(APIResultCode.Unknown, new List<GetRoleOutput> { }, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
             {
-                return new ApiResult<List<GetRoleOutput>>(APIResultCode.Success_NoB, new List<GetRoleOutput>(), e.Message);
+                return new ApiResult<List<GetRoleOutput>>(APIResultCode.Unknown, new List<GetRoleOutput> { }, APIResultMessage.TokenError);
             }
+            var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.WuYe.Value }, cancelToken)).Select(x => new GetRoleOutput
+            {
+                Id = x.Id.ToString(),
+                Name = x.Name,
+                DepartmentName = x.DepartmentName,
+                DepartmentValue = x.DepartmentValue,
+                Description = x.Description
+            }).ToList();
+            return new ApiResult<List<GetRoleOutput>>(APIResultCode.Success, data);
 
         }
 
@@ -905,36 +866,31 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("role/delete")]
         public async Task<ApiResult> DeleteRole([FromUri]string id, CancellationToken cancelToken)
         {
-            try
-            {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
-                }
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    throw new NotImplementedException("菜单Id信息为空！");
-                }
 
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
-                }
-                await _roleRepository.DeleteAsync(new RoleDto
-                {
-                    Id = id,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
 
-                return new ApiResult();
-            }
-            catch (Exception e)
+            if (Authorization == null)
             {
-                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new NotImplementedException("菜单Id信息为空！");
+            }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+            }
+            await _roleRepository.DeleteAsync(new RoleDto
+            {
+                Id = id,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+
+            return new ApiResult();
+
         }
 
         #endregion
@@ -951,42 +907,37 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("roleMenu/add")]
         public async Task<ApiResult<AddRoleMenuOutput>> AddRoleMenu([FromBody]AddRoleMenuInput input, CancellationToken cancelToken)
         {
-            try
+
+            if (string.IsNullOrWhiteSpace(input.MenuId))
             {
-                if (string.IsNullOrWhiteSpace(input.MenuId))
-                {
-                    throw new NotImplementedException("菜单Id信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.RoleId))
-                {
-                    throw new NotImplementedException("角色Id信息为空！");
-                }
-
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult<AddRoleMenuOutput>(APIResultCode.Unknown, new AddRoleMenuOutput { }, APIResultMessage.TokenNull);
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult<AddRoleMenuOutput>(APIResultCode.Unknown, new AddRoleMenuOutput { }, APIResultMessage.TokenError);
-                }
-
-                var entity = await _roleMenuRepository.AddAsync(new RoleMenuDto
-                {
-                    MenuId = input.MenuId,
-                    RoleId = input.RoleId,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-                return new ApiResult<AddRoleMenuOutput>(APIResultCode.Success, new AddRoleMenuOutput { Id = entity.Id.ToString() }, APIResultMessage.Success);
+                throw new NotImplementedException("菜单Id信息为空！");
             }
-            catch (Exception e)
+            if (string.IsNullOrWhiteSpace(input.RoleId))
             {
-                return new ApiResult<AddRoleMenuOutput>(APIResultCode.Success_NoB, new AddRoleMenuOutput { }, e.Message);
+                throw new NotImplementedException("角色Id信息为空！");
             }
+
+
+            if (Authorization == null)
+            {
+                return new ApiResult<AddRoleMenuOutput>(APIResultCode.Unknown, new AddRoleMenuOutput { }, APIResultMessage.TokenNull);
+            }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<AddRoleMenuOutput>(APIResultCode.Unknown, new AddRoleMenuOutput { }, APIResultMessage.TokenError);
+            }
+
+            var entity = await _roleMenuRepository.AddAsync(new RoleMenuDto
+            {
+                MenuId = input.MenuId,
+                RoleId = input.RoleId,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+            return new ApiResult<AddRoleMenuOutput>(APIResultCode.Success, new AddRoleMenuOutput { Id = entity.Id.ToString() }, APIResultMessage.Success);
+
         }
 
         /// <summary>
@@ -999,43 +950,37 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("roleMenu/delete")]
         public async Task<ApiResult> DeleteRoleMenu([FromBody]DeleteRoleMenuInput input, CancellationToken cancelToken)
         {
-            try
+
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
-                }
-
-                if (string.IsNullOrWhiteSpace(input.MenuId))
-                {
-                    throw new NotImplementedException("菜单Id信息为空！");
-                }
-
-                if (string.IsNullOrWhiteSpace(input.RoleId))
-                {
-                    throw new NotImplementedException("角色Id信息为空！");
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
-                }
-                await _roleMenuRepository.DeleteAsync(new RoleMenuDto
-                {
-                    RoleId = input.RoleId,
-                    MenuId = input.MenuId,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-
-                return new ApiResult();
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+
+            if (string.IsNullOrWhiteSpace(input.MenuId))
             {
-                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+                throw new NotImplementedException("菜单Id信息为空！");
             }
+
+            if (string.IsNullOrWhiteSpace(input.RoleId))
+            {
+                throw new NotImplementedException("角色Id信息为空！");
+            }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+            }
+            await _roleMenuRepository.DeleteAsync(new RoleMenuDto
+            {
+                RoleId = input.RoleId,
+                MenuId = input.MenuId,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+
+            return new ApiResult();
+
         }
 
         /// <summary>
@@ -1048,6 +993,15 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("roleMenu/getRoleMenus")]
         public async Task<ApiResult<List<GetRoleMenusOutput>>> GetRoleMenus([FromUri]GetRoleMenusInput input, CancellationToken cancelToken)
         {
+            if (Authorization == null)
+            {
+                return new ApiResult<List<GetRoleMenusOutput>>(APIResultCode.Unknown, new List<GetRoleMenusOutput> { }, APIResultMessage.TokenNull);
+            }
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<List<GetRoleMenusOutput>>(APIResultCode.Unknown, new List<GetRoleMenusOutput> { }, APIResultMessage.TokenError);
+            }
             var data = await _roleMenuRepository.GetByRoleIdAsync(input.RoleId, cancelToken);
             List<GetRoleMenusOutput> list = new List<GetRoleMenusOutput>();
             if (data != null)

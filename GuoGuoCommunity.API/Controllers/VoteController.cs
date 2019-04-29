@@ -1055,6 +1055,7 @@ namespace GuoGuoCommunity.API.Controllers
                             Id = voteQuestionOptionItem.Id.ToString(),
                             Describe = voteQuestionOptionItem.Describe,
                             Votes = voteQuestionOptionItem.Votes,
+                             Headimgurl= "https://www.guoguoshequ.com/icon-mrtx.png"
                         };
 
 
@@ -1081,22 +1082,28 @@ namespace GuoGuoCommunity.API.Controllers
                         }
                         else
                         {
-                            var vipOwnerApplicationRecord = await _vipOwnerApplicationRecordRepository.GetForVoteQuestionOptionIdAsync(new VipOwnerApplicationRecordDto
+                            try
                             {
-                                VoteId = voteQuestionOptionItem.VoteId,
-                                VoteQuestionId = voteQuestionOptionItem.VoteQuestionId,
-                                VoteQuestionOptionId = voteQuestionOptionItem.Id.ToString()
-                            });
-                            //查询业主认证信息
-                            var ownerCertificationRecord = await _ownerCertificationRecordRepository.GetAsync(vipOwnerApplicationRecord.OwnerCertificationId.ToString(), cancelToken);
-                            //查询用户信息
-                            var ownerCertificationRecordUser = await _userRepository.GetForIdAsync(ownerCertificationRecord.UserId);
-                            //查询微信用户
-                            var weiXinUser = await _weiXinUserRepository.GetAsync(ownerCertificationRecordUser.UnionId);
-                            model.Headimgurl = weiXinUser.Headimgurl;
+                                var vipOwnerApplicationRecord = await _vipOwnerApplicationRecordRepository.GetForVoteQuestionOptionIdAsync(new VipOwnerApplicationRecordDto
+                                {
+                                    VoteId = voteQuestionOptionItem.VoteId,
+                                    VoteQuestionId = voteQuestionOptionItem.VoteQuestionId,
+                                    VoteQuestionOptionId = voteQuestionOptionItem.Id.ToString()
+                                });
+                                //查询业主认证信息
+                                var ownerCertificationRecord = await _ownerCertificationRecordRepository.GetAsync(vipOwnerApplicationRecord.OwnerCertificationId.ToString(), cancelToken);
+                                //查询用户信息
+                                var ownerCertificationRecordUser = await _userRepository.GetForIdAsync(ownerCertificationRecord.UserId);
+                                //查询微信用户
+                                var weiXinUser = await _weiXinUserRepository.GetAsync(ownerCertificationRecordUser.UnionId);
+                                model.Headimgurl = weiXinUser.Headimgurl;
+                            }
+                            catch (Exception)
+                            {
+
+                            }
+
                         }
-
-
                         voteQuestionOptionModels.Add(model);
                     }
 
@@ -1244,16 +1251,16 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("投票问题选项Id信息为空！");
                 }
-                //var token = HttpContext.Current.Request.Headers["Authorization"];
-                //if (token == null)
-                //{
-                //    return new ApiResult<GetUserInfoOutput>(APIResultCode.Unknown, new GetUserInfoOutput(), APIResultMessage.TokenNull);
-                //}
-                //var user = _tokenManager.GetUser(token);
-                //if (user == null)
-                //{
-                //    return new ApiResult<GetUserInfoOutput>(APIResultCode.Unknown, new GetUserInfoOutput(), APIResultMessage.TokenError);
-                //}
+                var token = HttpContext.Current.Request.Headers["Authorization"];
+                if (token == null)
+                {
+                    return new ApiResult<GetUserInfoOutput>(APIResultCode.Unknown, new GetUserInfoOutput(), APIResultMessage.TokenNull);
+                }
+                var user = _tokenManager.GetUser(token);
+                if (user == null)
+                {
+                    return new ApiResult<GetUserInfoOutput>(APIResultCode.Unknown, new GetUserInfoOutput(), APIResultMessage.TokenError);
+                }
                 var voteQuestionOption = await _voteQuestionOptionRepository.GetAsync(voteQuestionOptionId, cancelToken);
                 if (voteQuestionOption == null)
                 {
@@ -1267,9 +1274,9 @@ namespace GuoGuoCommunity.API.Controllers
 
                 var vipOwnerApplicationRecord = await _vipOwnerApplicationRecordRepository.GetForVoteQuestionOptionIdAsync(new VipOwnerApplicationRecordDto
                 {
-                    VoteId = voteQuestionOption.VoteId,
-                    VoteQuestionId = voteQuestionOption.VoteQuestionId,
-                    VoteQuestionOptionId = voteQuestionOption.Id.ToString()
+                    VoteId = voteQuestionOption?.VoteId,
+                    VoteQuestionId = voteQuestionOption?.VoteQuestionId,
+                    VoteQuestionOptionId = voteQuestionOption?.Id.ToString()
                 });
                 var annexList = await _vipOwnerCertificationAnnexRepository.GetListAsync(new VipOwnerCertificationAnnexDto
                 {
@@ -1285,43 +1292,45 @@ namespace GuoGuoCommunity.API.Controllers
                     {
                         //return new ApiResult<GetVipOwnerCertificationOutput>(APIResultCode.Success_NoB, output,"高级认证申请条件Id不准确，获取失败");
                     }
+                    var certificationCondition = certificationConditionList.Where(x => x.Id == uid).FirstOrDefault();
                     list.Add(new AnnexModel
                     {
-                        CertificationConditionName = certificationConditionList.Where(x => x.Id == uid).FirstOrDefault().Title,
+                        CertificationConditionName = certificationCondition.Title,
                         CertificationConditionId = item.ApplicationRecordId,
                         ID = item.Id.ToString(),
+                        TypeValue = certificationCondition.TypeValue,
                         // Url = _vipOwnerCertificationAnnexRepository.GetUrlAsync(item.Id.ToString(), cancelToken),
                         Url = item.AnnexContent
                     });
                 }
 
                 //查询业主认证记录
-                var ownerCertificationRecord = await _ownerCertificationRecordRepository.GetAsync(vipOwnerApplicationRecord.OwnerCertificationId.ToString(), cancelToken);
+                var ownerCertificationRecord = await _ownerCertificationRecordRepository.GetAsync(vipOwnerApplicationRecord?.OwnerCertificationId.ToString(), cancelToken);
 
                 //查询街道办信息
-                var streetOffice = await _streetOfficeRepository.GetAsync(ownerCertificationRecord.StreetOfficeId, cancelToken);
+                var streetOffice = await _streetOfficeRepository.GetAsync(ownerCertificationRecord?.StreetOfficeId, cancelToken);
                 //查询业主信息
-                var owner = await _ownerRepository.GetAsync(ownerCertificationRecord.OwnerId, cancelToken);
+                var owner = await _ownerRepository.GetAsync(ownerCertificationRecord?.OwnerId, cancelToken);
                 //查询用户信息
-                var userEntity = await _userRepository.GetForIdAsync(ownerCertificationRecord.UserId);
+                var userEntity = await _userRepository.GetForIdAsync(ownerCertificationRecord?.UserId);
                 //查询微信用户
-                var weiXinUser = await _weiXinUserRepository.GetAsync(userEntity.UnionId);
+                var weiXinUser = await _weiXinUserRepository.GetAsync(userEntity?.UnionId);
 
                 var age = 18;
-                if (DateTimeOffset.TryParse(owner.Birthday, out DateTimeOffset birthdaytimeOffset))
+                if (DateTimeOffset.TryParse(owner?.Birthday, out DateTimeOffset birthdaytimeOffset))
                 {
                     age = DateTimeOffset.Now.Year - birthdaytimeOffset.Year;
                 }
                 return new ApiResult<GetUserInfoOutput>(APIResultCode.Success, new GetUserInfoOutput
                 {
-                    Address = streetOffice.State + "省" + streetOffice.City + "市" + streetOffice.Region + ownerCertificationRecord.SmallDistrictName + " " + ownerCertificationRecord.BuildingName + ownerCertificationRecord.BuildingUnitName + ownerCertificationRecord.IndustryName,
-                    Birthday = owner.Birthday,
-                    Gender = owner.Gender,
-                    Headimgurl = weiXinUser.Headimgurl,
+                    Address = streetOffice?.State + "省" + streetOffice?.City + "市" + streetOffice?.Region + ownerCertificationRecord?.SmallDistrictName + " " + ownerCertificationRecord?.BuildingName + ownerCertificationRecord?.BuildingUnitName + ownerCertificationRecord?.IndustryName,
+                    Birthday = owner?.Birthday,
+                    Gender = owner?.Gender,
+                    Headimgurl =weiXinUser!=null? weiXinUser?.Headimgurl: "https://www.guoguoshequ.com/icon-mrtx.png",
                     List = list,
-                    Name = owner.Name,
-                    Reason = vipOwnerApplicationRecord.Reason,
-                    StructureName = vipOwnerApplicationRecord.StructureName,
+                    Name = owner?.Name,
+                    Reason = vipOwnerApplicationRecord?.Reason,
+                    StructureName = vipOwnerApplicationRecord?.StructureName,
                     Age = age
                 });
 

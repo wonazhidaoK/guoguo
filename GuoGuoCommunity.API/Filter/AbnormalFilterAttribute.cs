@@ -1,4 +1,5 @@
 ﻿using GuoGuoCommunity.API;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
@@ -35,14 +36,19 @@ namespace Logs
             }
             else
             {
-                var oResponse = new HttpResponseMessage(HttpStatusCode.NotImplemented);
-                oResponse.Content = new StringContent("方法不被支持");
-                oResponse.ReasonPhrase = "This Func is Not Supported";
+                var oResponse = new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(JsonConvert.SerializeObject(
+                        new ApiResult
+                        {
+                            Code = APIResultCode.Success_NoB,
+                            Message = actionExecutedContext.Exception.Message
+                        })),
+                    ReasonPhrase = "This Func is Not Supported"
+                };
                 actionExecutedContext.Response = oResponse;
-               // throw new ApiResult(APIResultCode.Success_NoB, actionExecutedContext.Exception.Message);
-               // throw new HttpActionExecutedContext() ;
             }
-            //base.OnException(actionExecutedContext);
+            base.OnException(actionExecutedContext);
         }
     }
 }

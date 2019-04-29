@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 
 namespace GuoGuoCommunity.API.Controllers
@@ -40,47 +39,39 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("buildingUnit/add")]
         public async Task<ApiResult<AddBuildingUnitOutput>> Add([FromBody]AddBuildingUnitInput input, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult<AddBuildingUnitOutput>(APIResultCode.Unknown, new AddBuildingUnitOutput { }, APIResultMessage.TokenNull);
-                }
-                if (string.IsNullOrWhiteSpace(input.UnitName))
-                {
-                    throw new NotImplementedException("楼宇单元信息为空！");
-                }
-                if (input.NumberOfLayers==0)
-                {
-                    throw new NotImplementedException("楼宇层信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.BuildingId))
-                {
-                    throw new NotImplementedException("楼宇Id信息为空！");
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult<AddBuildingUnitOutput>(APIResultCode.Unknown, new AddBuildingUnitOutput { }, APIResultMessage.TokenError);
-                }
-
-                var entity = await _buildingUnitRepository.AddAsync(new BuildingUnitDto
-                {
-                    BuildingId = input.BuildingId,
-                    NumberOfLayers = input.NumberOfLayers,
-                    UnitName = input.UnitName,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-
-                return new ApiResult<AddBuildingUnitOutput>(APIResultCode.Success, new AddBuildingUnitOutput { Id = entity.Id.ToString() });
+                return new ApiResult<AddBuildingUnitOutput>(APIResultCode.Unknown, new AddBuildingUnitOutput { }, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            if (string.IsNullOrWhiteSpace(input.UnitName))
             {
-                return new ApiResult<AddBuildingUnitOutput>(APIResultCode.Success_NoB, new AddBuildingUnitOutput { }, e.Message);
+                throw new NotImplementedException("楼宇单元信息为空！");
             }
+            if (input.NumberOfLayers == 0)
+            {
+                throw new NotImplementedException("楼宇层信息为空！");
+            }
+            if (string.IsNullOrWhiteSpace(input.BuildingId))
+            {
+                throw new NotImplementedException("楼宇Id信息为空！");
+            }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<AddBuildingUnitOutput>(APIResultCode.Unknown, new AddBuildingUnitOutput { }, APIResultMessage.TokenError);
+            }
+
+            var entity = await _buildingUnitRepository.AddAsync(new BuildingUnitDto
+            {
+                BuildingId = input.BuildingId,
+                NumberOfLayers = input.NumberOfLayers,
+                UnitName = input.UnitName,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+
+            return new ApiResult<AddBuildingUnitOutput>(APIResultCode.Success, new AddBuildingUnitOutput { Id = entity.Id.ToString() });
         }
 
         /// <summary>
@@ -93,36 +84,28 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("buildingUnit/delete")]
         public async Task<ApiResult> Delete([FromUri]string id, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
-                }
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    throw new NotImplementedException("楼宇单元Id信息为空！");
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
-                }
-                await _buildingUnitRepository.DeleteAsync(new BuildingUnitDto
-                {
-                    Id = id,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-
-                return new ApiResult();
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            if (string.IsNullOrWhiteSpace(id))
             {
-                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+                throw new NotImplementedException("楼宇单元Id信息为空！");
             }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+            }
+            await _buildingUnitRepository.DeleteAsync(new BuildingUnitDto
+            {
+                Id = id,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+
+            return new ApiResult();
         }
 
         /// <summary>
@@ -135,36 +118,27 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("buildingUnit/update")]
         public async Task<ApiResult> Update([FromBody]UpdateBuildingUnitInput input, CancellationToken cancellationToken)
         {
-            try
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
-                }
-
-                await _buildingUnitRepository.UpdateAsync(new BuildingUnitDto
-                {
-                    Id = input.Id,
-                    NumberOfLayers = input.NumberOfLayers,
-                    UnitName = input.UnitName,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                });
-
-                return new ApiResult();
-            }
-            catch (Exception e)
-            {
-                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+            }
+
+            await _buildingUnitRepository.UpdateAsync(new BuildingUnitDto
+            {
+                Id = input.Id,
+                NumberOfLayers = input.NumberOfLayers,
+                UnitName = input.UnitName,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            });
+
+            return new ApiResult();
         }
 
         /// <summary>
@@ -177,25 +151,27 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("buildingUnit/get")]
         public async Task<ApiResult<GetBuildingUnitOutput>> Get([FromUri]string id, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    throw new NotImplementedException("楼宇Id信息为空！");
-                }
-                var data = await _buildingUnitRepository.GetAsync(id, cancelToken);
+                return new ApiResult<GetBuildingUnitOutput>(APIResultCode.Unknown, new GetBuildingUnitOutput { }, APIResultMessage.TokenNull);
+            }
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<GetBuildingUnitOutput>(APIResultCode.Unknown, new GetBuildingUnitOutput { }, APIResultMessage.TokenError);
+            }
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new NotImplementedException("楼宇Id信息为空！");
+            }
+            var data = await _buildingUnitRepository.GetAsync(id, cancelToken);
 
-                return new ApiResult<GetBuildingUnitOutput>(APIResultCode.Success, new GetBuildingUnitOutput
-                {
-                    Id = data.Id.ToString(),
-                    NumberOfLayers = data.NumberOfLayers,
-                    UnitName = data.UnitName
-                });
-            }
-            catch (Exception e)
+            return new ApiResult<GetBuildingUnitOutput>(APIResultCode.Success, new GetBuildingUnitOutput
             {
-                return new ApiResult<GetBuildingUnitOutput>(APIResultCode.Success_NoB, new GetBuildingUnitOutput { }, e.Message);
-            }
+                Id = data.Id.ToString(),
+                NumberOfLayers = data.NumberOfLayers,
+                UnitName = data.UnitName
+            });
         }
 
         /// <summary>
@@ -208,46 +184,49 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("buildingUnit/getAll")]
         public async Task<ApiResult<GetAllBuildingUnitOutput>> GetAll([FromUri]GetAllBuildingUnitInput input, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                if (input.PageIndex < 1)
-                {
-                    input.PageIndex = 1;
-                }
-                if (input.PageSize < 1)
-                {
-                    input.PageSize = 10;
-                }
-                int startRow = (input.PageIndex - 1) * input.PageSize;
-                if (string.IsNullOrWhiteSpace(input.BuildingId))
-                {
-                    throw new NotImplementedException("楼宇Id信息为空！");
-                }
-                var data = await _buildingUnitRepository.GetAllAsync(new BuildingUnitDto
-                {
-                    BuildingId = input.BuildingId,
-                    NumberOfLayers = input.NumberOfLayers,
-                    UnitName = input.UnitName
-                }, cancelToken);
-
-                var listCount = data.Count();
-                var list = data.Skip(startRow).Take(input.PageSize);
-
-                return new ApiResult<GetAllBuildingUnitOutput>(APIResultCode.Success, new GetAllBuildingUnitOutput
-                {
-                    List = list.Select(x => new GetBuildingUnitOutput
-                    {
-                        Id = x.Id.ToString(),
-                        UnitName = x.UnitName,
-                        NumberOfLayers = x.NumberOfLayers
-                    }).ToList(),
-                    TotalCount = list.Count()
-                });
+                return new ApiResult<GetAllBuildingUnitOutput>(APIResultCode.Unknown, new GetAllBuildingUnitOutput { }, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
             {
-                return new ApiResult<GetAllBuildingUnitOutput>(APIResultCode.Success_NoB, new GetAllBuildingUnitOutput { }, e.Message);
+                return new ApiResult<GetAllBuildingUnitOutput>(APIResultCode.Unknown, new GetAllBuildingUnitOutput { }, APIResultMessage.TokenError);
             }
+            if (input.PageIndex < 1)
+            {
+                input.PageIndex = 1;
+            }
+            if (input.PageSize < 1)
+            {
+                input.PageSize = 10;
+            }
+            int startRow = (input.PageIndex - 1) * input.PageSize;
+            if (string.IsNullOrWhiteSpace(input.BuildingId))
+            {
+                throw new NotImplementedException("楼宇Id信息为空！");
+            }
+            var data = await _buildingUnitRepository.GetAllAsync(new BuildingUnitDto
+            {
+                BuildingId = input.BuildingId,
+                NumberOfLayers = input.NumberOfLayers,
+                UnitName = input.UnitName
+            }, cancelToken);
+
+            var listCount = data.Count();
+            var list = data.Skip(startRow).Take(input.PageSize);
+
+            return new ApiResult<GetAllBuildingUnitOutput>(APIResultCode.Success, new GetAllBuildingUnitOutput
+            {
+                List = list.Select(x => new GetBuildingUnitOutput
+                {
+                    Id = x.Id.ToString(),
+                    UnitName = x.UnitName,
+                    NumberOfLayers = x.NumberOfLayers
+                }).ToList(),
+                TotalCount = list.Count()
+            });
+
         }
 
         /// <summary>
@@ -260,28 +239,32 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("buildingUnit/getList")]
         public async Task<ApiResult<List<GetListBuildingUnitOutput>>> GetList([FromUri]GetListBuildingUnitInput input, CancellationToken cancelToken)
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(input.BuildingId))
-                {
-                    throw new NotImplementedException("楼宇Id信息为空！");
-                }
 
-                var data = await _buildingUnitRepository.GetListAsync(new BuildingUnitDto
-                {
-                    BuildingId = input.BuildingId
-                }, cancelToken);
-
-                return new ApiResult<List<GetListBuildingUnitOutput>>(APIResultCode.Success, data.Select(x => new GetListBuildingUnitOutput
-                {
-                    Id = x.Id.ToString(),
-                    UnitName = x.UnitName
-                }).ToList());
-            }
-            catch (Exception e)
+            if (Authorization == null)
             {
-                return new ApiResult<List<GetListBuildingUnitOutput>>(APIResultCode.Success_NoB, new List<GetListBuildingUnitOutput> { }, e.Message);
+                return new ApiResult<List<GetListBuildingUnitOutput>>(APIResultCode.Unknown, new List<GetListBuildingUnitOutput> { }, APIResultMessage.TokenNull);
             }
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<List<GetListBuildingUnitOutput>>(APIResultCode.Unknown, new List<GetListBuildingUnitOutput> { }, APIResultMessage.TokenError);
+            }
+            if (string.IsNullOrWhiteSpace(input.BuildingId))
+            {
+                throw new NotImplementedException("楼宇Id信息为空！");
+            }
+
+            var data = await _buildingUnitRepository.GetListAsync(new BuildingUnitDto
+            {
+                BuildingId = input.BuildingId
+            }, cancelToken);
+
+            return new ApiResult<List<GetListBuildingUnitOutput>>(APIResultCode.Success, data.Select(x => new GetListBuildingUnitOutput
+            {
+                Id = x.Id.ToString(),
+                UnitName = x.UnitName
+            }).ToList());
+
         }
     }
 }
