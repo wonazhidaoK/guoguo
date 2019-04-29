@@ -63,9 +63,16 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public Task<VoteQuestionOption> GetAsync(string id, CancellationToken token = default)
+        public async Task<VoteQuestionOption> GetAsync(string id, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (Guid.TryParse(id, out var uid))
+                {
+                    return await db.VoteQuestionOptions.Where(x => x.IsDeleted == false && x.Id == uid ).FirstOrDefaultAsync(token);
+                }
+                throw new NotImplementedException("该投票问题选项Id信息不正确！");
+            }
         }
 
         public async Task<List<VoteQuestionOption>> GetListAsync(VoteQuestionOptionDto dto, CancellationToken token = default)

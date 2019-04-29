@@ -24,7 +24,7 @@ namespace GuoGuoCommunity.API.Controllers
     /// </summary>
     public class VoteController : BaseController
     {
-       
+
         private readonly IVoteRepository _voteRepository;
         private readonly IVoteQuestionRepository _voteQuestionRepository;
         private readonly IVoteQuestionOptionRepository _voteQuestionOptionRepository;
@@ -40,6 +40,11 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly ISmallDistrictRepository _smallDistrictRepository;
         private readonly IUserRepository _userRepository;
         private readonly IAnnouncementRepository _announcementRepository;
+        private readonly IVipOwnerCertificationAnnexRepository _vipOwnerCertificationAnnexRepository;
+        private readonly IVipOwnerCertificationConditionRepository _vipOwnerCertificationConditionRepository;
+        private readonly IOwnerRepository _ownerRepository;
+        private readonly IStreetOfficeRepository _streetOfficeRepository;
+        private readonly IWeiXinUserRepository _weiXinUserRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -60,6 +65,11 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="smallDistrictRepository"></param>
         /// <param name="voteRecordRepository"></param>
         /// <param name="announcementRepository"></param>
+        /// <param name="vipOwnerCertificationAnnexRepository"></param>
+        /// <param name="vipOwnerCertificationConditionRepository"></param>
+        /// <param name="streetOfficeRepository"></param>
+        /// <param name="ownerRepository"></param>
+        /// <param name="weiXinUserRepository"></param>
         public VoteController(IVoteRepository voteRepository,
             IVoteQuestionRepository voteQuestionRepository,
             IVoteQuestionOptionRepository voteQuestionOptionRepository,
@@ -74,7 +84,12 @@ namespace GuoGuoCommunity.API.Controllers
             IUserRepository userRepository,
             ISmallDistrictRepository smallDistrictRepository,
             IVoteRecordRepository voteRecordRepository,
-            IAnnouncementRepository announcementRepository)
+            IAnnouncementRepository announcementRepository,
+            IVipOwnerCertificationAnnexRepository vipOwnerCertificationAnnexRepository,
+            IVipOwnerCertificationConditionRepository vipOwnerCertificationConditionRepository,
+            IStreetOfficeRepository streetOfficeRepository,
+            IOwnerRepository ownerRepository,
+            IWeiXinUserRepository weiXinUserRepository)
         {
             _voteRepository = voteRepository;
             _voteQuestionRepository = voteQuestionRepository;
@@ -91,6 +106,11 @@ namespace GuoGuoCommunity.API.Controllers
             _smallDistrictRepository = smallDistrictRepository;
             _voteRecordRepository = voteRecordRepository;
             _announcementRepository = announcementRepository;
+            _vipOwnerCertificationAnnexRepository = vipOwnerCertificationAnnexRepository;
+            _vipOwnerCertificationConditionRepository = vipOwnerCertificationConditionRepository;
+            _ownerRepository = ownerRepository;
+            _streetOfficeRepository = streetOfficeRepository;
+            _weiXinUserRepository = weiXinUserRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -707,6 +727,8 @@ namespace GuoGuoCommunity.API.Controllers
 
         #endregion
 
+        #region 投票展示
+
         /// <summary>
         /// 街道办查询投票列表
         /// </summary>
@@ -1034,9 +1056,11 @@ namespace GuoGuoCommunity.API.Controllers
                             Describe = voteQuestionOptionItem.Describe,
                             Votes = voteQuestionOptionItem.Votes,
                         };
-                        if (voteResult != null)
+
+
+                        if (vote.VoteTypeValue != VoteTypes.VipOwnerElection.Value)
                         {
-                            if (vote.VoteTypeValue != VoteTypes.VipOwnerElection.Value)
+                            if (voteResult != null)
                             {
                                 //model.Votes = model.Votes + (voteResult.ShouldParticipateCount.Value - voteResult.ActualParticipateCount);
                                 if (voteQuestionOptionItem.Describe == "同意")
@@ -1055,6 +1079,23 @@ namespace GuoGuoCommunity.API.Controllers
                                 //}
                             }
                         }
+                        else
+                        {
+                            var vipOwnerApplicationRecord = await _vipOwnerApplicationRecordRepository.GetForVoteQuestionOptionIdAsync(new VipOwnerApplicationRecordDto
+                            {
+                                VoteId = voteQuestionOptionItem.VoteId,
+                                VoteQuestionId = voteQuestionOptionItem.VoteQuestionId,
+                                VoteQuestionOptionId = voteQuestionOptionItem.Id.ToString()
+                            });
+                            //查询业主认证信息
+                            var ownerCertificationRecord = await _ownerCertificationRecordRepository.GetAsync(vipOwnerApplicationRecord.OwnerCertificationId.ToString(), cancelToken);
+                            //查询用户信息
+                            var ownerCertificationRecordUser = await _userRepository.GetForIdAsync(ownerCertificationRecord.UserId);
+                            //查询微信用户
+                            var weiXinUser = await _weiXinUserRepository.GetAsync(ownerCertificationRecordUser.UnionId);
+                            model.Headimgurl = weiXinUser.Headimgurl;
+                        }
+
 
                         voteQuestionOptionModels.Add(model);
                     }
@@ -1180,6 +1221,117 @@ namespace GuoGuoCommunity.API.Controllers
                 }
             }
         }
+
+        /*
+         * 1.根据投票问题选项id查找投票问题Id，投票id
+         * 2.根据投票ID判定是否是业委会改选类型的投票
+         * 3.根据投票问题Id查找高级认证申请记录
+         * 4.根据高级认证记录查找申请附件，查找业主认证信息，用户信息
+         */
+        /// <summary>
+        /// 根据投票问题选项id获取用户信息(业委会该选投票展示用户信息用)
+        /// </summary>
+        /// <param name="voteQuestionOptionId"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("vote/getUserInfo")]
+        public async Task<ApiResult<GetUserInfoOutput>> GetUserInfo([FromUri]string voteQuestionOptionId, CancellationToken cancelToken)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(voteQuestionOptionId))
+                {
+                    throw new NotImplementedException("投票问题选项Id信息为空！");
+                }
+                //var token = HttpContext.Current.Request.Headers["Authorization"];
+                //if (token == null)
+                //{
+                //    return new ApiResult<GetUserInfoOutput>(APIResultCode.Unknown, new GetUserInfoOutput(), APIResultMessage.TokenNull);
+                //}
+                //var user = _tokenManager.GetUser(token);
+                //if (user == null)
+                //{
+                //    return new ApiResult<GetUserInfoOutput>(APIResultCode.Unknown, new GetUserInfoOutput(), APIResultMessage.TokenError);
+                //}
+                var voteQuestionOption = await _voteQuestionOptionRepository.GetAsync(voteQuestionOptionId, cancelToken);
+                if (voteQuestionOption == null)
+                {
+                    throw new NotImplementedException("投票问题选项信息为空！");
+                }
+                var vote = await _voteRepository.GetAsync(voteQuestionOption.VoteId, cancelToken);
+                if (vote.VoteTypeValue != VoteTypes.VipOwnerElection.Value)
+                {
+                    throw new NotImplementedException("投票类型不为业委会重组！");
+                }
+
+                var vipOwnerApplicationRecord = await _vipOwnerApplicationRecordRepository.GetForVoteQuestionOptionIdAsync(new VipOwnerApplicationRecordDto
+                {
+                    VoteId = voteQuestionOption.VoteId,
+                    VoteQuestionId = voteQuestionOption.VoteQuestionId,
+                    VoteQuestionOptionId = voteQuestionOption.Id.ToString()
+                });
+                var annexList = await _vipOwnerCertificationAnnexRepository.GetListAsync(new VipOwnerCertificationAnnexDto
+                {
+                    ApplicationRecordId = vipOwnerApplicationRecord.Id.ToString()
+                }, cancelToken);
+
+                //查询高级认证附件
+                var certificationConditionList = await _vipOwnerCertificationConditionRepository.GetAllAsync(new VipOwnerCertificationConditionDto { }, cancelToken);
+                List<AnnexModel> list = new List<AnnexModel>();
+                foreach (var item in annexList)
+                {
+                    if (Guid.TryParse(item.CertificationConditionId, out var uid))
+                    {
+                        //return new ApiResult<GetVipOwnerCertificationOutput>(APIResultCode.Success_NoB, output,"高级认证申请条件Id不准确，获取失败");
+                    }
+                    list.Add(new AnnexModel
+                    {
+                        CertificationConditionName = certificationConditionList.Where(x => x.Id == uid).FirstOrDefault().Title,
+                        CertificationConditionId = item.ApplicationRecordId,
+                        ID = item.Id.ToString(),
+                        // Url = _vipOwnerCertificationAnnexRepository.GetUrlAsync(item.Id.ToString(), cancelToken),
+                        Url = item.AnnexContent
+                    });
+                }
+
+                //查询业主认证记录
+                var ownerCertificationRecord = await _ownerCertificationRecordRepository.GetAsync(vipOwnerApplicationRecord.OwnerCertificationId.ToString(), cancelToken);
+
+                //查询街道办信息
+                var streetOffice = await _streetOfficeRepository.GetAsync(ownerCertificationRecord.StreetOfficeId, cancelToken);
+                //查询业主信息
+                var owner = await _ownerRepository.GetAsync(ownerCertificationRecord.OwnerId, cancelToken);
+                //查询用户信息
+                var userEntity = await _userRepository.GetForIdAsync(ownerCertificationRecord.UserId);
+                //查询微信用户
+                var weiXinUser = await _weiXinUserRepository.GetAsync(userEntity.UnionId);
+
+                var age = 18;
+                if (DateTimeOffset.TryParse(owner.Birthday, out DateTimeOffset birthdaytimeOffset))
+                {
+                    age = DateTimeOffset.Now.Year - birthdaytimeOffset.Year;
+                }
+                return new ApiResult<GetUserInfoOutput>(APIResultCode.Success, new GetUserInfoOutput
+                {
+                    Address = streetOffice.State + "省" + streetOffice.City + "市" + streetOffice.Region + ownerCertificationRecord.SmallDistrictName + " " + ownerCertificationRecord.BuildingName + ownerCertificationRecord.BuildingUnitName + ownerCertificationRecord.IndustryName,
+                    Birthday = owner.Birthday,
+                    Gender = owner.Gender,
+                    Headimgurl = weiXinUser.Headimgurl,
+                    List = list,
+                    Name = owner.Name,
+                    Reason = vipOwnerApplicationRecord.Reason,
+                    StructureName = vipOwnerApplicationRecord.StructureName,
+                    Age = age
+                });
+
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<GetUserInfoOutput>(APIResultCode.Success_NoB, new GetUserInfoOutput(), e.Message);
+            }
+        }
+        #endregion
 
         #region 推送
 

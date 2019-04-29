@@ -455,6 +455,7 @@
     <Compile Include="Models\Vote\GetAllForVipOwnerInput.cs" />
     <Compile Include="Models\Vote\GetAllForVipOwnerOutput.cs" />
     <Compile Include="Models\Vote\GetForStreetOfficeOutput.cs" />
+    <Compile Include="Models\Vote\GetUserInfoOutput.cs" />
     <Compile Include="Models\Vote\GetVoteInput.cs" />
     <Compile Include="Models\Vote\GetVoteOutput.cs" />
     <Compile Include="Models\WeiXinPush\AnnouncementPushModel.cs" />

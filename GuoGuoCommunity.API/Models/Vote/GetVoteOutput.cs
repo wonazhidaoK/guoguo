@@ -151,5 +151,10 @@ namespace GuoGuoCommunity.API.Models
         /// 票数
         /// </summary>
         public int Votes { get; set; }
+
+        /// <summary>
+        /// 用户头像
+        /// </summary>
+        public string Headimgurl { get; set; }
     }
 }
