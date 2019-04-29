@@ -35,8 +35,12 @@ namespace Logs
             }
             else
             {
-                throw new ApiResult(APIResultCode.Success_NoB, actionExecutedContext.Exception.Message);
-                throw new HttpResponseException(actionExecutedContext.Request.CreateResponse(HttpStatusCode.NotImplemented));
+                var oResponse = new HttpResponseMessage(HttpStatusCode.NotImplemented);
+                oResponse.Content = new StringContent("方法不被支持");
+                oResponse.ReasonPhrase = "This Func is Not Supported";
+                actionExecutedContext.Response = oResponse;
+               // throw new ApiResult(APIResultCode.Success_NoB, actionExecutedContext.Exception.Message);
+               // throw new HttpActionExecutedContext() ;
             }
             //base.OnException(actionExecutedContext);
         }

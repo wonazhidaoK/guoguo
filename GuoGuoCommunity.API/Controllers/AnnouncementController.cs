@@ -196,8 +196,6 @@ namespace GuoGuoCommunity.API.Controllers
                     throw new NotImplementedException("公告标题信息为空！");
                 }
 
-
-
                 var user = _tokenManager.GetUser(token);
                 if (user == null)
                 {
