@@ -75,6 +75,11 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public bool IsElection { get; set; }
 
+        /// <summary>
+        /// 电话
+        /// </summary>
+        public string PhoneNumber { get; set; }
+
         public bool IsDeleted { get; set; }
 
         public DateTimeOffset? DeletedTime { get; set; }

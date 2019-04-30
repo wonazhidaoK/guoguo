@@ -33,6 +33,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IOwnerRepository _ownerRepository;
         private readonly IIndustryRepository _industryRepository;
         private readonly IIDCardPhotoRecordRepository _iDCardPhotoRecordRepository;
+        private readonly ISmallDistrictRepository _smallDistrictRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -43,18 +44,21 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="ownerRepository"></param>
         /// <param name="industryRepository"></param>
         /// <param name="iDCardPhotoRecordRepository"></param>
+        /// <param name="smallDistrictRepository"></param>
         public OwnerCertificationRecordController(
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
             IOwnerCertificationAnnexRepository ownerCertificationAnnexRepository,
             IOwnerRepository ownerRepository,
             IIndustryRepository industryRepository,
-            IIDCardPhotoRecordRepository iDCardPhotoRecordRepository)
+            IIDCardPhotoRecordRepository iDCardPhotoRecordRepository,
+            ISmallDistrictRepository smallDistrictRepository)
         {
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _ownerCertificationAnnexRepository = ownerCertificationAnnexRepository;
             _ownerRepository = ownerRepository;
             _industryRepository = industryRepository;
             _iDCardPhotoRecordRepository = iDCardPhotoRecordRepository;
+            _smallDistrictRepository = smallDistrictRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -176,6 +180,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 var owner = await _ownerRepository.GetAsync(item.OwnerId, cancelToken);
                 var industry = await _industryRepository.GetAsync(item.IndustryId, cancelToken);
+                var smallDistrict = await _smallDistrictRepository.GetAsync(item.SmallDistrictId, cancelToken);
                 list.Add(new GetOwnerCertificationRecordOutput
                 {
                     BuildingId = item.BuildingId,
@@ -204,7 +209,8 @@ namespace GuoGuoCommunity.API.Controllers
                     PhoneNumber = owner?.PhoneNumber,
                     NumberOfLayers = industry?.NumberOfLayers,
                     Acreage = industry?.Acreage,
-                    Oriented = industry?.Oriented
+                    Oriented = industry?.Oriented,
+                    SmallDistrictPhoneNumber = smallDistrict?.PhoneNumber
                 });
             }
             return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Success, new GetListOwnerCertificationRecordOutput

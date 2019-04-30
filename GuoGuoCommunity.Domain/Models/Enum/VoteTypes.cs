@@ -9,7 +9,7 @@ namespace GuoGuoCommunity.Domain.Models.Enum
     {
         static VoteTypes()
         {
-            RecallProperty = new VoteTypes { Name = "罢免物业", Value = "RecallProperty" };
+            RecallProperty = new VoteTypes { Name = "发起倡议", Value = "RecallProperty" };
             Ordinary = new VoteTypes { Name = "普通投票", Value = "Ordinary" };
             VipOwnerElection = new VoteTypes { Name = "业委会重组", Value = "VipOwnerElection" };
         }

@@ -18,6 +18,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<AnnouncementAnnex> GetAsync(string id, CancellationToken token = default);
 
+        Task<List<AnnouncementAnnex>> GetForAnnouncementIdsAsync(List<string> ids, CancellationToken token = default);
+
         string GetUrl(string id);
 
         Task<List<AnnouncementAnnex>> GetListAsync(AnnouncementAnnexDto dto, CancellationToken token = default);

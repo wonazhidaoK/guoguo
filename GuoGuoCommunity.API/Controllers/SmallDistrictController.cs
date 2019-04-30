@@ -82,6 +82,7 @@ namespace GuoGuoCommunity.API.Controllers
                 OperationUserId = user.Id.ToString(),
                 CommunityId = input.CommunityId,
                 StreetOfficeId = input.StreetOfficeId,
+                PhoneNumber = input.PhoneNumber
             }, cancelToken);
 
             return new ApiResult<AddSmallDistrictOutput>(APIResultCode.Success, new AddSmallDistrictOutput { Id = entity.Id.ToString() });
@@ -122,7 +123,8 @@ namespace GuoGuoCommunity.API.Controllers
                 Id = input.Id,
                 Name = input.Name,
                 OperationTime = DateTimeOffset.Now,
-                OperationUserId = user.Id.ToString()
+                OperationUserId = user.Id.ToString(),
+                PhoneNumber = input.PhoneNumber
             }, cancelToken);
 
             return new ApiResult();
@@ -202,7 +204,8 @@ namespace GuoGuoCommunity.API.Controllers
                 CommunityId = data.CommunityId,
                 CommunityName = data.CommunityName,
                 StreetOfficeId = data.StreetOfficeId,
-                StreetOfficeName = data.StreetOfficeName
+                StreetOfficeName = data.StreetOfficeName,
+                PhoneNumber = data.PhoneNumber
             });
 
         }
@@ -261,7 +264,8 @@ namespace GuoGuoCommunity.API.Controllers
                     CommunityId = x.CommunityId,
                     CommunityName = x.CommunityName,
                     StreetOfficeId = x.StreetOfficeId,
-                    StreetOfficeName = x.StreetOfficeName
+                    StreetOfficeName = x.StreetOfficeName,
+                    PhoneNumber = x.PhoneNumber
                 }).ToList(),
                 TotalCount = listCount
             });

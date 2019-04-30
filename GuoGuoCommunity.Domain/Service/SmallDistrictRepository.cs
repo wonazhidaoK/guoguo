@@ -55,7 +55,8 @@ namespace GuoGuoCommunity.Domain.Service
                     StreetOfficeId = dto.StreetOfficeId,
                     StreetOfficeName = streetOffice.Name,
                     CommunityId = dto.CommunityId,
-                    CommunityName = communities.Name
+                    CommunityName = communities.Name,
+                     PhoneNumber=dto.PhoneNumber
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -161,6 +162,7 @@ namespace GuoGuoCommunity.Domain.Service
                 smallDistrict.Name = dto.Name;
                 smallDistrict.LastOperationTime = dto.OperationTime;
                 smallDistrict.LastOperationUserId = dto.OperationUserId;
+                smallDistrict.PhoneNumber = dto.PhoneNumber;
                 await OnUpdate(db, smallDistrict, token);
                 await db.SaveChangesAsync(token);
             }

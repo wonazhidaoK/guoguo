@@ -30,7 +30,7 @@ DELETE FROM Complaints
 DELETE FROM ComplaintStatusChangeRecordings
 
 --投诉类型表
---DELETE FROM ComplaintTypes
+DELETE FROM ComplaintTypes
 
 --身份证识别记录
 DELETE FROM IDCardPhotoRecords

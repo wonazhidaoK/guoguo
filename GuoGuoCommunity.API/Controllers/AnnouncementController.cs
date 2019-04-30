@@ -312,8 +312,6 @@ namespace GuoGuoCommunity.API.Controllers
             return new ApiResult();
         }
 
-        #region 小程序 当前认证身份的公告
-
         /// <summary>
         /// 小程序用业委会公告列表(查询查看范围为当前登陆人小区业委会公告列表)
         /// </summary>
@@ -354,11 +352,15 @@ namespace GuoGuoCommunity.API.Controllers
                 DepartmentValue = Department.YeZhuWeiYuanHui.Value,
                 OwnerCertificationId = input.OwnerCertificationId
             }, cancelToken);
+            var listCount = data.Count();
+            var dataList = data.OrderByDescending(a => a.CreateOperationTime).Skip(startRow).Take(input.PageSize).ToList();
+            var userList = await _ownerCertificationRecordRepository.GetListForIdArrayAsync(dataList.Select(x => x.OwnerCertificationId).ToList());
+            var urlList = await _announcementAnnexRepository.GetForAnnouncementIdsAsync(dataList.Select(x => x.Id.ToString()).ToList(), cancelToken);
             List<GetVipOwnerAnnouncementOutput> list = new List<GetVipOwnerAnnouncementOutput>();
-            foreach (var item in data)
+            foreach (var item in dataList)
             {
-                var url = (await _announcementAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent;
-                var OperationName = (await _ownerCertificationRecordRepository.GetAsync(item.OwnerCertificationId, cancelToken))?.OwnerName;
+                //var url = (await _announcementAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent;
+                //var OperationName = (await _ownerCertificationRecordRepository.GetListForIdArrayAsync(item.OwnerCertificationId, cancelToken))?.OwnerName;
                 list.Add(new GetVipOwnerAnnouncementOutput
                 {
                     Id = item.Id.ToString(),
@@ -366,14 +368,14 @@ namespace GuoGuoCommunity.API.Controllers
                     Content = item.Content,
                     ReleaseTime = item.CreateOperationTime.Value,
                     Summary = item.Summary,
-                    Url = url,
-                    CreateUserName = OperationName
+                    Url = urlList.Where(x => x.AnnouncementId == item.Id.ToString()).FirstOrDefault()?.AnnexContent,
+                    CreateUserName = userList.Where(x => x.Id.ToString() == item.OwnerCertificationId).FirstOrDefault()?.OwnerName
                 });
             }
 
             return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Success, new GetAllAnnouncementOutput
             {
-                List = list.OrderByDescending(a => a.ReleaseTime).Skip(startRow).Take(input.PageSize).ToList(),
+                List = list,
                 TotalCount = data.Count()
             });
         }
@@ -419,6 +421,8 @@ namespace GuoGuoCommunity.API.Controllers
             }, cancelToken);
             var listCount = data.Count();
             var dataList = data.OrderByDescending(a => a.CreateOperationTime).Skip(startRow).Take(input.PageSize).ToList();
+            var userList = await _userRepository.GetForIdsAsync(dataList.Select(x => x.CreateOperationUserId).ToList());
+            var urlList = await _announcementAnnexRepository.GetForAnnouncementIdsAsync(dataList.Select(x => x.Id.ToString()).ToList(), cancelToken);
             List<GetVipOwnerAnnouncementOutput> list = new List<GetVipOwnerAnnouncementOutput>();
             foreach (var item in dataList)
             {
@@ -431,8 +435,8 @@ namespace GuoGuoCommunity.API.Controllers
                     Content = item.Content,
                     ReleaseTime = item.CreateOperationTime.Value,
                     Summary = item.Summary,
-                    Url = url,
-                    CreateUserName = userEntity.Name
+                    Url = urlList.Where(x => x.AnnouncementId == item.Id.ToString()).FirstOrDefault()?.AnnexContent,
+                    CreateUserName = userList.Where(x => x.Id.ToString() == item.CreateOperationUserId)?.FirstOrDefault().Name
                 });
             }
             return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Success, new GetAllAnnouncementOutput
@@ -452,7 +456,10 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("announcement/getAllStreetOfficeAnnouncement")]
         public async Task<ApiResult<GetAllAnnouncementOutput>> GetAllStreetOfficeAnnouncement([FromUri]GetAllAnnouncementInput input, CancellationToken cancelToken)
         {
-
+            if (Authorization == null)
+            {
+                return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Unknown, new GetAllAnnouncementOutput { }, APIResultMessage.TokenNull);
+            }
             if (input.PageIndex < 1)
             {
                 input.PageIndex = 1;
@@ -461,16 +468,8 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 input.PageSize = 10;
             }
-
             int startRow = (input.PageIndex - 1) * input.PageSize;
-
-            if (Authorization == null)
-            {
-                return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Unknown, new GetAllAnnouncementOutput { }, APIResultMessage.TokenNull);
-            }
-
             var user = _tokenManager.GetUser(Authorization);
-
             if (user == null)
             {
                 return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Unknown, new GetAllAnnouncementOutput { }, APIResultMessage.TokenError);
@@ -484,11 +483,12 @@ namespace GuoGuoCommunity.API.Controllers
             }, cancelToken);
             var listCount = data.Count();
             var dataList = data.OrderByDescending(a => a.CreateOperationTime).Skip(startRow).Take(input.PageSize).ToList();
+
+            var userList = await _userRepository.GetForIdsAsync(dataList.Select(x => x.CreateOperationUserId).ToList());
+            var urlList = await _announcementAnnexRepository.GetForAnnouncementIdsAsync(dataList.Select(x => x.Id.ToString()).ToList(), cancelToken);
             List<GetVipOwnerAnnouncementOutput> list = new List<GetVipOwnerAnnouncementOutput>();
             foreach (var item in dataList)
             {
-                var url = (await _announcementAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent;
-                var userEntity = await _userRepository.GetForIdAsync(item.CreateOperationUserId);
                 list.Add(new GetVipOwnerAnnouncementOutput
                 {
                     Id = item.Id.ToString(),
@@ -496,8 +496,8 @@ namespace GuoGuoCommunity.API.Controllers
                     Content = item.Content,
                     ReleaseTime = item.CreateOperationTime.Value,
                     Summary = item.Summary,
-                    Url = url,
-                    CreateUserName = userEntity.Name
+                    Url = urlList.Where(x => x.AnnouncementId == item.Id.ToString()).FirstOrDefault()?.AnnexContent,
+                    CreateUserName = userList.Where(x => x.Id.ToString() == item.CreateOperationUserId)?.FirstOrDefault().Name
                 });
             }
             return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Success, new GetAllAnnouncementOutput
@@ -506,10 +506,6 @@ namespace GuoGuoCommunity.API.Controllers
                 TotalCount = listCount
             });
         }
-
-        #endregion
-
-        #region 街道办后台
 
         /// <summary>
         /// 街道办公告列表
@@ -521,6 +517,10 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("announcement/getListStreetOfficeAnnouncement")]
         public async Task<ApiResult<GetListStreetOfficeAnnouncementOutput>> GetListStreetOfficeAnnouncement([FromUri]GetListStreetOfficeAnnouncementInput input, CancellationToken cancelToken)
         {
+            if (Authorization == null)
+            {
+                return new ApiResult<GetListStreetOfficeAnnouncementOutput>(APIResultCode.Unknown, new GetListStreetOfficeAnnouncementOutput { }, APIResultMessage.TokenNull);
+            }
             if (input.PageIndex < 1)
             {
                 input.PageIndex = 1;
@@ -529,15 +529,9 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 input.PageSize = 10;
             }
-
             int startRow = (input.PageIndex - 1) * input.PageSize;
-            if (Authorization == null)
-            {
-                return new ApiResult<GetListStreetOfficeAnnouncementOutput>(APIResultCode.Unknown, new GetListStreetOfficeAnnouncementOutput { }, APIResultMessage.TokenNull);
-            }
 
             var user = _tokenManager.GetUser(Authorization);
-
             if (user == null)
             {
                 return new ApiResult<GetListStreetOfficeAnnouncementOutput>(APIResultCode.Unknown, new GetListStreetOfficeAnnouncementOutput { }, APIResultMessage.TokenError);
@@ -567,7 +561,8 @@ namespace GuoGuoCommunity.API.Controllers
 
             var listCount = data.Count();
             var dataList = data.OrderByDescending(a => a.CreateOperationTime).Skip(startRow).Take(input.PageSize).ToList();
-
+            var userList = await _userRepository.GetForIdsAsync(dataList.Select(x => x.CreateOperationUserId).ToList());
+            var urlList = await _announcementAnnexRepository.GetForAnnouncementIdsAsync(dataList.Select(x => x.Id.ToString()).ToList(), cancelToken);
             List<GetListStreetOfficeAnnouncementModelOutput> list = new List<GetListStreetOfficeAnnouncementModelOutput>();
             foreach (var item in dataList)
             {
@@ -582,7 +577,7 @@ namespace GuoGuoCommunity.API.Controllers
                         Name = smallDistrictEntity.Name
                     });
                 };
-                var userEntity = await _userRepository.GetForIdAsync(item.CreateOperationUserId);
+                var userEntity = userList.Where(x => x.Id.ToString() == item.CreateOperationUserId).FirstOrDefault();
                 list.Add(new GetListStreetOfficeAnnouncementModelOutput
                 {
                     Id = item.Id.ToString(),
@@ -590,9 +585,9 @@ namespace GuoGuoCommunity.API.Controllers
                     Content = item.Content,
                     ReleaseTime = item.CreateOperationTime.Value,
                     Summary = item.Summary,
-                    Url = (await _announcementAnnexRepository.GetAsync(item.Id.ToString(), cancelToken))?.AnnexContent,
+                    Url = urlList.Where(x => x.AnnouncementId == item.Id.ToString()).FirstOrDefault()?.AnnexContent,
                     SmallDistrict = smallDistrictList,
-                    CreateUserName = userEntity.Name
+                    CreateUserName = userEntity?.Name
                 });
             }
             return new ApiResult<GetListStreetOfficeAnnouncementOutput>(APIResultCode.Success, new GetListStreetOfficeAnnouncementOutput
@@ -601,10 +596,6 @@ namespace GuoGuoCommunity.API.Controllers
                 TotalCount = listCount
             });
         }
-
-        #endregion
-
-        #region 物业后台
 
         ///<summary>
         /// 物业公告列表
@@ -662,23 +653,22 @@ namespace GuoGuoCommunity.API.Controllers
             var listCount = data.Count();
             var dataList = data.OrderByDescending(a => a.CreateOperationTime).Skip(startRow).Take(input.PageSize).ToList();
             List<GetVipOwnerAnnouncementOutput> list = new List<GetVipOwnerAnnouncementOutput>();
-
-
+            var userList = await _userRepository.GetForIdsAsync(dataList.Select(x => x.CreateOperationUserId).ToList());
+            var urlList = await _announcementAnnexRepository.GetForAnnouncementIdsAsync(dataList.Select(x => x.Id.ToString()).ToList(), cancelToken);
             foreach (var item in dataList)
             {
-                var userEntity = await _userRepository.GetForIdAsync(item.CreateOperationUserId);
+                var userEntity = userList.Where(x => x.Id.ToString() == item.CreateOperationUserId).FirstOrDefault();
                 list.Add(
-                   new GetVipOwnerAnnouncementOutput
-                   {
-                       Id = item.Id.ToString(),
-                       Title = item.Title,
-                       Content = item.Content,
-                       ReleaseTime = item.CreateOperationTime.Value,
-                       Summary = item.Summary,
-                       Url = (await _announcementAnnexRepository.GetAsync(item.Id.ToString()))?.AnnexContent,
-                       CreateUserName = userEntity.Name
-                   }
-                    );
+                    new GetVipOwnerAnnouncementOutput
+                    {
+                        Id = item.Id.ToString(),
+                        Title = item.Title,
+                        Content = item.Content,
+                        ReleaseTime = item.CreateOperationTime.Value,
+                        Summary = item.Summary,
+                        Url = urlList.Where(x => x.AnnouncementId == item.Id.ToString()).FirstOrDefault()?.AnnexContent,
+                        CreateUserName = userEntity?.Name
+                    });
             }
             return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Success, new GetAllAnnouncementOutput
             {
@@ -687,8 +677,6 @@ namespace GuoGuoCommunity.API.Controllers
             });
 
         }
-
-        #endregion
 
         /// <summary>
         /// 发送推送消息
@@ -720,21 +708,18 @@ namespace GuoGuoCommunity.API.Controllers
                         keyword3 = new TemplateDataItem(DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
                         remark = new TemplateDataItem(">>点击查看详情<<", "#FF0000")
                     };
-
                     var miniProgram = new TempleteModel_MiniProgram()
                     {
                         appid = GuoGuoCommunity_WxOpenAppId,//ZhiShiHuLian_WxOpenAppId,
                         pagepath = "pages/noticeDetail/noticeDetail?con=" + JsonConvert.SerializeObject(model)
                     };
-
                     TemplateApi.SendTemplateMessage(AppId, weiXinUser.OpenId, AnnouncementTemplateId, null, templateData, miniProgram);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    // throw new NotImplementedException(e.Message + weiXinUser.OpenId);
+
                 }
             }
         }
-
     }
 }

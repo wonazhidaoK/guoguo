@@ -61,6 +61,11 @@ namespace GuoGuoCommunity.API.Models
         public string SmallDistrictName { get; set; }
 
         /// <summary>
+        /// 小区电话
+        /// </summary>
+        public string SmallDistrictPhoneNumber { get; set; }
+
+        /// <summary>
         /// 楼宇Id
         /// </summary> 
         public string BuildingId { get; set; }

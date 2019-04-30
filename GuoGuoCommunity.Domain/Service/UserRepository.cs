@@ -41,11 +41,11 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("部门信息不存在！");
                 }
                 //var user = await db.Users.Where(x => (x.Name == dto.Name || x.PhoneNumber == dto.PhoneNumber) && x.IsDeleted == false).FirstOrDefaultAsync(token);
-                if ((await db.Users.Where(x => x.Account == dto.Account  && x.IsDeleted == false).FirstOrDefaultAsync(token)) != null)
+                if ((await db.Users.Where(x => x.Account == dto.Account && x.IsDeleted == false).FirstOrDefaultAsync(token)) != null)
                 {
                     throw new NotImplementedException("该账号已存在！");
                 }
-                if ((await db.Users.Where(x =>x.PhoneNumber == dto.PhoneNumber && x.IsDeleted == false).FirstOrDefaultAsync(token)) != null)
+                if ((await db.Users.Where(x => x.PhoneNumber == dto.PhoneNumber && x.IsDeleted == false).FirstOrDefaultAsync(token)) != null)
                 {
                     throw new NotImplementedException("该手机号已注册过平台内账户！");
                 }
@@ -379,6 +379,14 @@ namespace GuoGuoCommunity.Domain.Service
             catch (Exception)
             {
                 return new User();
+            }
+        }
+
+        public async Task<List<User>> GetForIdsAsync(List<string> ids, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.Users.Where(x => ids.Contains(x.Id.ToString())).ToListAsync(token);
             }
         }
     }

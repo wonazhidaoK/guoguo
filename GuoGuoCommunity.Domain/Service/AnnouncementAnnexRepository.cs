@@ -55,6 +55,14 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public async Task<List<AnnouncementAnnex>> GetForAnnouncementIdsAsync(List<string> ids, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.AnnouncementAnnices.Where(x =>ids.Contains(x.AnnouncementId)).ToListAsync(token);
+            }
+        }
+
         public Task<List<AnnouncementAnnex>> GetListAsync(AnnouncementAnnexDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();

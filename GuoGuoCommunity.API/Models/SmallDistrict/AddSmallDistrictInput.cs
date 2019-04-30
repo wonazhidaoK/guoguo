@@ -37,6 +37,10 @@ namespace GuoGuoCommunity.API.Models
         [Required]
         public string StreetOfficeId { get; set; }
 
+        /// <summary>
+        /// 电话
+        /// </summary>
+        public string PhoneNumber { get; set; }
         ///// <summary>
         ///// 街道办名称
         ///// </summary>

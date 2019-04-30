@@ -48,5 +48,10 @@
         /// 社区名称
         /// </summary>
         public string CommunityName { get; set; }
+
+        /// <summary>
+        /// 小区电话
+        /// </summary>
+        public string PhoneNumber { get; set; }
     }
 }
