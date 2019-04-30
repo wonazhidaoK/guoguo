@@ -230,13 +230,11 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\CompetenceController.cs" />
     <Compile Include="Controllers\IndustryController.cs" />
-    <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Controllers\OwnerCertificationRecordController.cs" />
     <Compile Include="Controllers\OwnerController.cs" />
     <Compile Include="Controllers\SmallDistrictController.cs" />
     <Compile Include="Controllers\StationLetterController.cs" />
     <Compile Include="Controllers\StreetOfficeController.cs" />
-    <Compile Include="Controllers\TokenController.cs" />
     <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Controllers\VipOwnerCertificationConditionController.cs" />
     <Compile Include="Controllers\VipOwnerApplicationRecordController.cs" />

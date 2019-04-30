@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 
 namespace GuoGuoCommunity.API.Controllers
@@ -40,64 +39,55 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("industry/add")]
         public async Task<ApiResult<AddIndustryOutput>> Add([FromBody]AddIndustryInput input, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult<AddIndustryOutput>(APIResultCode.Unknown, new AddIndustryOutput { }, APIResultMessage.TokenNull);
-                }
-                if (string.IsNullOrWhiteSpace(input.Name))
-                {
-                    throw new NotImplementedException("业户门号信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.Acreage))
-                {
-                    throw new NotImplementedException("业户面积信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.Oriented))
-                {
-                    throw new NotImplementedException("业户朝向信息为空！");
-                }
-                if (input.NumberOfLayers == 0)
-                {
-                    throw new NotImplementedException("业户层数信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.BuildingId))
-                {
-                    throw new NotImplementedException("业户楼宇Id信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.BuildingUnitId))
-                {
-                    throw new NotImplementedException("业户楼宇单元id信息为空！");
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult<AddIndustryOutput>(APIResultCode.Unknown, new AddIndustryOutput { }, APIResultMessage.TokenError);
-                }
-                /*
-                 * TODO查询楼宇单元层数，限制层数
-                 */
-                var entity = await _industryRepository.AddAsync(new IndustryDto
-                {
-                    Name = input.Name,
-                    Oriented = input.Oriented,
-                    NumberOfLayers = input.NumberOfLayers,
-                    BuildingUnitId = input.BuildingUnitId,
-                    BuildingId = input.BuildingId,
-                    Acreage = input.Acreage,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-
-                return new ApiResult<AddIndustryOutput>(APIResultCode.Success, new AddIndustryOutput { Id = entity.Id.ToString() });
+                return new ApiResult<AddIndustryOutput>(APIResultCode.Unknown, new AddIndustryOutput { }, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            if (string.IsNullOrWhiteSpace(input.Name))
             {
-                return new ApiResult<AddIndustryOutput>(APIResultCode.Success_NoB, new AddIndustryOutput { }, e.Message);
+                throw new NotImplementedException("业户门号信息为空！");
             }
+            if (string.IsNullOrWhiteSpace(input.Acreage))
+            {
+                throw new NotImplementedException("业户面积信息为空！");
+            }
+            if (string.IsNullOrWhiteSpace(input.Oriented))
+            {
+                throw new NotImplementedException("业户朝向信息为空！");
+            }
+            if (input.NumberOfLayers == 0)
+            {
+                throw new NotImplementedException("业户层数信息为空！");
+            }
+            if (string.IsNullOrWhiteSpace(input.BuildingId))
+            {
+                throw new NotImplementedException("业户楼宇Id信息为空！");
+            }
+            if (string.IsNullOrWhiteSpace(input.BuildingUnitId))
+            {
+                throw new NotImplementedException("业户楼宇单元id信息为空！");
+            }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<AddIndustryOutput>(APIResultCode.Unknown, new AddIndustryOutput { }, APIResultMessage.TokenError);
+            }
+
+            var entity = await _industryRepository.AddAsync(new IndustryDto
+            {
+                Name = input.Name,
+                Oriented = input.Oriented,
+                NumberOfLayers = input.NumberOfLayers,
+                BuildingUnitId = input.BuildingUnitId,
+                BuildingId = input.BuildingId,
+                Acreage = input.Acreage,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+
+            return new ApiResult<AddIndustryOutput>(APIResultCode.Success, new AddIndustryOutput { Id = entity.Id.ToString() });
+
         }
 
         /// <summary>
@@ -110,36 +100,30 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("industry/delete")]
         public async Task<ApiResult> Delete([FromUri]string id, CancellationToken cancelToken)
         {
-            try
-            {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
-                }
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    throw new NotImplementedException("业户Id信息为空！");
-                }
 
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
-                }
-                await _industryRepository.DeleteAsync(new IndustryDto
-                {
-                    Id = id,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-
-                return new ApiResult();
-            }
-            catch (Exception e)
+            if (Authorization == null)
             {
-                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new NotImplementedException("业户Id信息为空！");
+            }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+            }
+            await _industryRepository.DeleteAsync(new IndustryDto
+            {
+                Id = id,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+
+            return new ApiResult();
+
         }
 
         /// <summary>
@@ -152,34 +136,28 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("industry/update")]
         public async Task<ApiResult> Update([FromBody]UpdateIndustryInput input, CancellationToken cancellationToken)
         {
-            try
+
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
-                }
-
-                await _industryRepository.UpdateAsync(new IndustryDto
-                {
-                    Id = input.Id,
-                    Name = input.Name,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                });
-
-                return new ApiResult();
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
             {
-                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
             }
+
+            await _industryRepository.UpdateAsync(new IndustryDto
+            {
+                Id = input.Id,
+                Name = input.Name,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            });
+
+            return new ApiResult();
+
 
         }
 
@@ -193,31 +171,36 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("industry/get")]
         public async Task<ApiResult<GetIndustryOutput>> Get([FromUri]string id, CancellationToken cancelToken)
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    throw new NotImplementedException("楼宇Id信息为空！");
-                }
-                var data = await _industryRepository.GetAsync(id, cancelToken);
 
-                return new ApiResult<GetIndustryOutput>(APIResultCode.Success, new GetIndustryOutput
-                {
-                    Id = data.Id.ToString(),
-                    Name = data.Name,
-                    Oriented = data.Oriented,
-                    NumberOfLayers = data.NumberOfLayers,
-                    BuildingId = data.BuildingId,
-                    Acreage = data.Acreage,
-                    BuildingUnitId = data.BuildingUnitId,
-                    BuildingName = data.BuildingName,
-                    BuildingUnitName = data.BuildingUnitName
-                });
-            }
-            catch (Exception e)
+            if (Authorization == null)
             {
-                return new ApiResult<GetIndustryOutput>(APIResultCode.Success_NoB, new GetIndustryOutput { }, e.Message);
+                return new ApiResult<GetIndustryOutput>(APIResultCode.Unknown, new GetIndustryOutput { }, APIResultMessage.TokenNull);
             }
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new NotImplementedException("业户Id信息为空！");
+            }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<GetIndustryOutput>(APIResultCode.Unknown, new GetIndustryOutput { }, APIResultMessage.TokenError);
+            }
+            var data = await _industryRepository.GetAsync(id, cancelToken);
+
+            return new ApiResult<GetIndustryOutput>(APIResultCode.Success, new GetIndustryOutput
+            {
+                Id = data.Id.ToString(),
+                Name = data.Name,
+                Oriented = data.Oriented,
+                NumberOfLayers = data.NumberOfLayers,
+                BuildingId = data.BuildingId,
+                Acreage = data.Acreage,
+                BuildingUnitId = data.BuildingUnitId,
+                BuildingName = data.BuildingName,
+                BuildingUnitName = data.BuildingUnitName
+            });
+
         }
 
         /// <summary>
@@ -230,60 +213,52 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("industry/getAll")]
         public async Task<ApiResult<GetAllIndustryOutput>> GetAll([FromUri]GetAllIndustryInput input, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult<GetAllIndustryOutput>(APIResultCode.Unknown, new GetAllIndustryOutput { }, APIResultMessage.TokenNull);
-                }
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult<GetAllIndustryOutput>(APIResultCode.Unknown, new GetAllIndustryOutput { }, APIResultMessage.TokenError);
-                }
-
-                if (input.PageIndex < 1)
-                {
-                    input.PageIndex = 1;
-                }
-                if (input.PageSize < 1)
-                {
-                    input.PageSize = 10;
-                }
-                int startRow = (input.PageIndex - 1) * input.PageSize;
-                var data = await _industryRepository.GetAllAsync(new IndustryDto
-                {
-                    Name = input?.Name,
-                    BuildingId = input?.BuildingId,
-                    BuildingUnitId = input?.BuildingUnitId,
-                    OperationUserSmallDistrictId = user.SmallDistrictId
-                }, cancelToken);
-
-                var listCount = data.Count();
-                var list = data.OrderByDescending(x=>x.CreateOperationTime).Skip(startRow).Take(input.PageSize);
-
-                return new ApiResult<GetAllIndustryOutput>(APIResultCode.Success, new GetAllIndustryOutput
-                {
-                    List = list.Select(x => new GetIndustryOutput
-                    {
-                        Id = x.Id.ToString(),
-                        Name = x.Name,
-                        Acreage = x.Acreage,
-                        BuildingId = x.BuildingId,
-                        Oriented = x.Oriented,
-                        BuildingName = x.BuildingName,
-                        BuildingUnitId = x.BuildingUnitId,
-                        BuildingUnitName = x.BuildingUnitName,
-                        NumberOfLayers = x.NumberOfLayers
-                    }).ToList(),
-                    TotalCount = listCount
-                });
+                return new ApiResult<GetAllIndustryOutput>(APIResultCode.Unknown, new GetAllIndustryOutput { }, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
             {
-                return new ApiResult<GetAllIndustryOutput>(APIResultCode.Success_NoB, new GetAllIndustryOutput { }, e.Message);
+                return new ApiResult<GetAllIndustryOutput>(APIResultCode.Unknown, new GetAllIndustryOutput { }, APIResultMessage.TokenError);
             }
+
+            if (input.PageIndex < 1)
+            {
+                input.PageIndex = 1;
+            }
+            if (input.PageSize < 1)
+            {
+                input.PageSize = 10;
+            }
+            int startRow = (input.PageIndex - 1) * input.PageSize;
+            var data = await _industryRepository.GetAllAsync(new IndustryDto
+            {
+                Name = input?.Name,
+                BuildingId = input?.BuildingId,
+                BuildingUnitId = input?.BuildingUnitId,
+                OperationUserSmallDistrictId = user.SmallDistrictId
+            }, cancelToken);
+
+            var listCount = data.Count();
+            var list = data.OrderByDescending(x => x.CreateOperationTime).Skip(startRow).Take(input.PageSize);
+
+            return new ApiResult<GetAllIndustryOutput>(APIResultCode.Success, new GetAllIndustryOutput
+            {
+                List = list.Select(x => new GetIndustryOutput
+                {
+                    Id = x.Id.ToString(),
+                    Name = x.Name,
+                    Acreage = x.Acreage,
+                    BuildingId = x.BuildingId,
+                    Oriented = x.Oriented,
+                    BuildingName = x.BuildingName,
+                    BuildingUnitId = x.BuildingUnitId,
+                    BuildingUnitName = x.BuildingUnitName,
+                    NumberOfLayers = x.NumberOfLayers
+                }).ToList(),
+                TotalCount = listCount
+            });
         }
 
         /// <summary>
@@ -296,29 +271,31 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("industry/getList")]
         public async Task<ApiResult<List<GetListIndustryOutput>>> GetList([FromUri]GetListIndustryInput input, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                if (string.IsNullOrWhiteSpace(input.BuildingUnitId))
-                {
-                    throw new NotImplementedException("楼宇单元Id信息为空！");
-                }
-
-                var data = await _industryRepository.GetListAsync(new IndustryDto
-                {
-                    BuildingUnitId = input.BuildingUnitId,
-                    NumberOfLayers = input.NumberOfLayers
-                }, cancelToken);
-
-                return new ApiResult<List<GetListIndustryOutput>>(APIResultCode.Success, data.Select(x => new GetListIndustryOutput
-                {
-                    Id = x.Id.ToString(),
-                    Name = x.Name
-                }).ToList());
+                return new ApiResult<List<GetListIndustryOutput>>(APIResultCode.Unknown, new List<GetListIndustryOutput> { }, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            if (string.IsNullOrWhiteSpace(input.BuildingUnitId))
             {
-                return new ApiResult<List<GetListIndustryOutput>>(APIResultCode.Success_NoB, new List<GetListIndustryOutput> { }, e.Message);
+                throw new NotImplementedException("楼宇单元Id信息为空！");
             }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<List<GetListIndustryOutput>>(APIResultCode.Unknown, new List<GetListIndustryOutput> { }, APIResultMessage.TokenError);
+            }
+            var data = await _industryRepository.GetListAsync(new IndustryDto
+            {
+                BuildingUnitId = input.BuildingUnitId,
+                NumberOfLayers = input.NumberOfLayers
+            }, cancelToken);
+
+            return new ApiResult<List<GetListIndustryOutput>>(APIResultCode.Success, data.Select(x => new GetListIndustryOutput
+            {
+                Id = x.Id.ToString(),
+                Name = x.Name
+            }).ToList());
         }
     }
 }

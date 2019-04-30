@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 
 namespace GuoGuoCommunity.API.Controllers
@@ -41,57 +40,45 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("complaintType/add")]
         public async Task<ApiResult<AddComplaintTypeOutput>> Add([FromBody]AddComplaintTypeInput input, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult<AddComplaintTypeOutput>(APIResultCode.Unknown, new AddComplaintTypeOutput { }, APIResultMessage.TokenNull);
-                }
-                if (string.IsNullOrWhiteSpace(input.Name))
-                {
-                    throw new NotImplementedException("投诉类型名称信息为空！");
-                }
-                //if (string.IsNullOrWhiteSpace(input.InitiatingDepartmentName))
-                //{
-                //    throw new NotImplementedException("投诉类型发起部门名称信息为空！");
-                //}
-                if (string.IsNullOrWhiteSpace(input.InitiatingDepartmentValue))
-                {
-                    throw new NotImplementedException("投诉类型发起部门值信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.Level))
-                {
-                    throw new NotImplementedException("投诉类型级别信息为空！");
-                }
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult<AddComplaintTypeOutput>(APIResultCode.Unknown, new AddComplaintTypeOutput { }, APIResultMessage.TokenError);
-                }
-                var department = Department.GetAll().Where(x => x.Value == input.InitiatingDepartmentValue).FirstOrDefault();
-                if (department == null)
-                {
-                    throw new NotImplementedException("投诉类型发起部门信息不准确！");
-                }
-                var entity = await _complaintTypeRepository.AddAsync(new ComplaintTypeDto
-                {
-
-                    Name = input.Name,
-                    Description = input.Description,
-                    Level = input.Level,
-                    InitiatingDepartmentName = department.Name,
-                    InitiatingDepartmentValue = input.InitiatingDepartmentValue,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-
-                return new ApiResult<AddComplaintTypeOutput>(APIResultCode.Success, new AddComplaintTypeOutput { Id = entity.Id.ToString() });
+                return new ApiResult<AddComplaintTypeOutput>(APIResultCode.Unknown, new AddComplaintTypeOutput { }, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            if (string.IsNullOrWhiteSpace(input.Name))
             {
-                return new ApiResult<AddComplaintTypeOutput>(APIResultCode.Success_NoB, new AddComplaintTypeOutput { }, e.Message);
+                throw new NotImplementedException("投诉类型名称信息为空！");
             }
+            if (string.IsNullOrWhiteSpace(input.InitiatingDepartmentValue))
+            {
+                throw new NotImplementedException("投诉类型发起部门值信息为空！");
+            }
+            if (string.IsNullOrWhiteSpace(input.Level))
+            {
+                throw new NotImplementedException("投诉类型级别信息为空！");
+            }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<AddComplaintTypeOutput>(APIResultCode.Unknown, new AddComplaintTypeOutput { }, APIResultMessage.TokenError);
+            }
+            var department = Department.GetAll().Where(x => x.Value == input.InitiatingDepartmentValue).FirstOrDefault();
+            if (department == null)
+            {
+                throw new NotImplementedException("投诉类型发起部门信息不准确！");
+            }
+            var entity = await _complaintTypeRepository.AddAsync(new ComplaintTypeDto
+            {
+
+                Name = input.Name,
+                Description = input.Description,
+                Level = input.Level,
+                InitiatingDepartmentName = department.Name,
+                InitiatingDepartmentValue = input.InitiatingDepartmentValue,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+            return new ApiResult<AddComplaintTypeOutput>(APIResultCode.Success, new AddComplaintTypeOutput { Id = entity.Id.ToString() });
         }
 
         /// <summary>
@@ -104,37 +91,29 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("complaintType/delete")]
         public async Task<ApiResult> Delete([FromUri]string id, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
-                }
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    throw new NotImplementedException("楼宇单元Id信息为空！");
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
-                }
-
-                await _complaintTypeRepository.DeleteAsync(new ComplaintTypeDto
-                {
-                    Id = id,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
-
-                return new ApiResult();
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            if (string.IsNullOrWhiteSpace(id))
             {
-                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+                throw new NotImplementedException("楼宇单元Id信息为空！");
             }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+            }
+
+            await _complaintTypeRepository.DeleteAsync(new ComplaintTypeDto
+            {
+                Id = id,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+
+            return new ApiResult();
         }
 
         /// <summary>
@@ -147,39 +126,28 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("complaintType/update")]
         public async Task<ApiResult> Update([FromBody]UpdateComplaintTypeInput input, CancellationToken cancellationToken)
         {
-            try
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
-                }
-
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
-                }
-
-                await _complaintTypeRepository.UpdateAsync(new ComplaintTypeDto
-                {
-                    Id = input.Id,
-                    Description = input.Description,
-                    //InitiatingDepartmentName = input.InitiatingDepartmentName,
-                    //InitiatingDepartmentValue = input.InitiatingDepartmentValue,
-                    Level = input.Level,
-                    Name = input.Name,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                });
-
-                return new ApiResult();
-            }
-            catch (Exception e)
-            {
-                return new ApiResult(APIResultCode.Success_NoB, e.Message);
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+            }
+
+            await _complaintTypeRepository.UpdateAsync(new ComplaintTypeDto
+            {
+                Id = input.Id,
+                Description = input.Description,
+                Level = input.Level,
+                Name = input.Name,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            });
+
+            return new ApiResult();
         }
 
         /// <summary>
@@ -192,30 +160,34 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("complaintType/get")]
         public async Task<ApiResult<GetComplaintTypeOutput>> Get([FromUri]string id, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    throw new NotImplementedException("楼宇Id信息为空！");
-                }
-                var data = await _complaintTypeRepository.GetAsync(id, cancelToken);
+                return new ApiResult<GetComplaintTypeOutput>(APIResultCode.Unknown, new GetComplaintTypeOutput { }, APIResultMessage.TokenNull);
+            }
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new NotImplementedException("楼宇Id信息为空！");
+            }
 
-                return new ApiResult<GetComplaintTypeOutput>(APIResultCode.Success, new GetComplaintTypeOutput
-                {
-                    Id = data.Id.ToString(),
-                    ComplaintPeriod = data.ComplaintPeriod,
-                    Description = data.Description,
-                    InitiatingDepartmentName = data.InitiatingDepartmentName,
-                    InitiatingDepartmentValue = data.InitiatingDepartmentValue,
-                    Level = data.Level,
-                    Name = data.Name,
-                    ProcessingPeriod = data.ProcessingPeriod
-                });
-            }
-            catch (Exception e)
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
             {
-                return new ApiResult<GetComplaintTypeOutput>(APIResultCode.Success_NoB, new GetComplaintTypeOutput { }, e.Message);
+                return new ApiResult<GetComplaintTypeOutput>(APIResultCode.Unknown, new GetComplaintTypeOutput { }, APIResultMessage.TokenError);
             }
+            var data = await _complaintTypeRepository.GetAsync(id, cancelToken);
+
+            return new ApiResult<GetComplaintTypeOutput>(APIResultCode.Success, new GetComplaintTypeOutput
+            {
+                Id = data.Id.ToString(),
+                ComplaintPeriod = data.ComplaintPeriod,
+                Description = data.Description,
+                InitiatingDepartmentName = data.InitiatingDepartmentName,
+                InitiatingDepartmentValue = data.InitiatingDepartmentValue,
+                Level = data.Level,
+                Name = data.Name,
+                ProcessingPeriod = data.ProcessingPeriod
+            });
+
         }
 
         /// <summary>
@@ -228,49 +200,53 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("complaintType/getAll")]
         public async Task<ApiResult<GetAllComplaintTypeOutput>> GetAll([FromUri]GetAllComplaintTypeInput input, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                if (input.PageIndex < 1)
-                {
-                    input.PageIndex = 1;
-                }
-                if (input.PageSize < 1)
-                {
-                    input.PageSize = 10;
-                }
-
-                int startRow = (input.PageIndex - 1) * input.PageSize;
-
-                var data = await _complaintTypeRepository.GetAllAsync(new ComplaintTypeDto
-                {
-                    Description = input.Description,
-                    Name = input.Name,
-                    InitiatingDepartmentValue = input.InitiatingDepartmentValue
-                }, cancelToken);
-
-                var listCount = data.Count();
-                var list = data.Skip(startRow).Take(input.PageSize);
-
-                return new ApiResult<GetAllComplaintTypeOutput>(APIResultCode.Success, new GetAllComplaintTypeOutput
-                {
-                    List = list.Select(x => new GetComplaintTypeOutput
-                    {
-                        Id = x.Id.ToString(),
-                        ComplaintPeriod = x.ComplaintPeriod,
-                        Description = x.Description,
-                        InitiatingDepartmentValue = x.InitiatingDepartmentValue,
-                        InitiatingDepartmentName = x.InitiatingDepartmentName,
-                        Level = x.Level,
-                        Name = x.Name,
-                        ProcessingPeriod = x.ProcessingPeriod
-                    }).ToList(),
-                    TotalCount = listCount
-                });
+                return new ApiResult<GetAllComplaintTypeOutput>(APIResultCode.Unknown, new GetAllComplaintTypeOutput { }, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
             {
-                return new ApiResult<GetAllComplaintTypeOutput>(APIResultCode.Success_NoB, new GetAllComplaintTypeOutput { }, e.Message);
+                return new ApiResult<GetAllComplaintTypeOutput>(APIResultCode.Unknown, new GetAllComplaintTypeOutput { }, APIResultMessage.TokenError);
             }
+            if (input.PageIndex < 1)
+            {
+                input.PageIndex = 1;
+            }
+            if (input.PageSize < 1)
+            {
+                input.PageSize = 10;
+            }
+
+            int startRow = (input.PageIndex - 1) * input.PageSize;
+
+            var data = await _complaintTypeRepository.GetAllAsync(new ComplaintTypeDto
+            {
+                Description = input.Description,
+                Name = input.Name,
+                InitiatingDepartmentValue = input.InitiatingDepartmentValue
+            }, cancelToken);
+
+            var listCount = data.Count();
+            var list = data.Skip(startRow).Take(input.PageSize);
+
+            return new ApiResult<GetAllComplaintTypeOutput>(APIResultCode.Success, new GetAllComplaintTypeOutput
+            {
+                List = list.Select(x => new GetComplaintTypeOutput
+                {
+                    Id = x.Id.ToString(),
+                    ComplaintPeriod = x.ComplaintPeriod,
+                    Description = x.Description,
+                    InitiatingDepartmentValue = x.InitiatingDepartmentValue,
+                    InitiatingDepartmentName = x.InitiatingDepartmentName,
+                    Level = x.Level,
+                    Name = x.Name,
+                    ProcessingPeriod = x.ProcessingPeriod
+                }).ToList(),
+                TotalCount = listCount
+            });
+
         }
 
         /// <summary>
@@ -283,28 +259,29 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("complaintType/getList")]
         public async Task<ApiResult<List<GetListComplaintTypeOutput>>> GetList([FromUri]GetListComplaintTypeInput input, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                if (string.IsNullOrWhiteSpace(input?.InitiatingDepartmentValue))
-                {
-                    throw new NotImplementedException("发起部门值信息为空！");
-                }
-
-                var data = await _complaintTypeRepository.GetListAsync(new ComplaintTypeDto
-                {
-                    InitiatingDepartmentValue = input?.InitiatingDepartmentValue
-                }, cancelToken);
-
-                return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Success, data.Select(x => new GetListComplaintTypeOutput
-                {
-                    Id = x.Id.ToString(),
-                    Name = x.Name
-                }).ToList());
+                return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Unknown, new List<GetListComplaintTypeOutput> { }, APIResultMessage.TokenNull);
             }
-            catch (Exception e)
+            if (string.IsNullOrWhiteSpace(input?.InitiatingDepartmentValue))
             {
-                return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Success_NoB, new List<GetListComplaintTypeOutput> { }, e.Message);
+                throw new NotImplementedException("发起部门值信息为空！");
             }
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Unknown, new List<GetListComplaintTypeOutput> { }, APIResultMessage.TokenError);
+            }
+            var data = await _complaintTypeRepository.GetListAsync(new ComplaintTypeDto
+            {
+                InitiatingDepartmentValue = input?.InitiatingDepartmentValue
+            }, cancelToken);
+
+            return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Success, data.Select(x => new GetListComplaintTypeOutput
+            {
+                Id = x.Id.ToString(),
+                Name = x.Name
+            }).ToList());
         }
 
         /// <summary>
@@ -317,24 +294,25 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("complaintType/getAllList")]
         public async Task<ApiResult<List<GetListComplaintTypeOutput>>> GetList(CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
+            {
+                return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Unknown, new List<GetListComplaintTypeOutput> { }, APIResultMessage.TokenNull);
+            }
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Unknown, new List<GetListComplaintTypeOutput> { }, APIResultMessage.TokenError);
+            }
+            var data = await _complaintTypeRepository.GetListAsync(new ComplaintTypeDto
             {
 
-                var data = await _complaintTypeRepository.GetListAsync(new ComplaintTypeDto
-                {
+            }, cancelToken);
 
-                }, cancelToken);
-
-                return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Success, data.Select(x => new GetListComplaintTypeOutput
-                {
-                    Id = x.Id.ToString(),
-                    Name = x.Name
-                }).ToList());
-            }
-            catch (Exception e)
+            return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Success, data.Select(x => new GetListComplaintTypeOutput
             {
-                return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Success_NoB, new List<GetListComplaintTypeOutput> { }, e.Message);
-            }
+                Id = x.Id.ToString(),
+                Name = x.Name
+            }).ToList());
         }
     }
 }

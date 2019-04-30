@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 
 namespace GuoGuoCommunity.API.Controllers
@@ -56,62 +55,54 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("voteRecord/add")]
         public async Task<ApiResult<AddVoteRecordOutput>> Add([FromBody]AddVoteRecordIntput input, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult<AddVoteRecordOutput>(APIResultCode.Unknown, new AddVoteRecordOutput { }, APIResultMessage.TokenNull);
-                }
-                if (string.IsNullOrWhiteSpace(input.OwnerCertificationId))
-                {
-                    throw new NotImplementedException("投票业主认证Id信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.VoteId))
-                {
-                    throw new NotImplementedException("投票Id信息为空！");
-                }
-                if (input.List.Count < 1)
-                {
-                    throw new NotImplementedException("请勾选选项再进行投票！");
-                }
+                return new ApiResult<AddVoteRecordOutput>(APIResultCode.Unknown, new AddVoteRecordOutput { }, APIResultMessage.TokenNull);
+            }
+            if (string.IsNullOrWhiteSpace(input.OwnerCertificationId))
+            {
+                throw new NotImplementedException("投票业主认证Id信息为空！");
+            }
+            if (string.IsNullOrWhiteSpace(input.VoteId))
+            {
+                throw new NotImplementedException("投票Id信息为空！");
+            }
+            if (input.List.Count < 1)
+            {
+                throw new NotImplementedException("请勾选选项再进行投票！");
+            }
 
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult<AddVoteRecordOutput>(APIResultCode.Unknown, new AddVoteRecordOutput { }, APIResultMessage.TokenError);
-                }
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<AddVoteRecordOutput>(APIResultCode.Unknown, new AddVoteRecordOutput { }, APIResultMessage.TokenError);
+            }
 
-                //增加投票记录主体
-                var entity = await _voteRecordRepository.AddAsync(new VoteRecordDto
+            //增加投票记录主体
+            var entity = await _voteRecordRepository.AddAsync(new VoteRecordDto
+            {
+                VoteId = input.VoteId,
+                OwnerCertificationId = input.OwnerCertificationId,
+                Feedback = input.Feedback,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+
+            //增加投票记录详情
+            foreach (var item in input.List)
+            {
+                var entityQuestion = await _voteRecordDetailRepository.AddAsync(new VoteRecordDetailDto
                 {
+                    VoteQuestionId = item.VoteQuestionId,
+                    VoteQuestionOptionId = item.VoteQuestionOptionId,
                     VoteId = input.VoteId,
-                    OwnerCertificationId = input.OwnerCertificationId,
-                    Feedback = input.Feedback,
                     OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
+                    OperationUserId = user.Id.ToString(),
+                    OwnerCertificationId = input.OwnerCertificationId
                 }, cancelToken);
-
-                //增加投票记录详情
-                foreach (var item in input.List)
-                {
-                    var entityQuestion = await _voteRecordDetailRepository.AddAsync(new VoteRecordDetailDto
-                    {
-                        VoteQuestionId = item.VoteQuestionId,
-                        VoteQuestionOptionId = item.VoteQuestionOptionId,
-                        VoteId = input.VoteId,
-                        OperationTime = DateTimeOffset.Now,
-                        OperationUserId = user.Id.ToString(),
-                        OwnerCertificationId= input.OwnerCertificationId
-                    }, cancelToken);
-                    await _voteQuestionOptionRepository.AddCountAsync(item.VoteQuestionOptionId, cancelToken);
-                }
-                return new ApiResult<AddVoteRecordOutput>(APIResultCode.Success, new AddVoteRecordOutput { Id = entity.Id.ToString() });
+                await _voteQuestionOptionRepository.AddCountAsync(item.VoteQuestionOptionId, cancelToken);
             }
-            catch (Exception e)
-            {
-                return new ApiResult<AddVoteRecordOutput>(APIResultCode.Success_NoB, new AddVoteRecordOutput { }, e.Message);
-            }
+            return new ApiResult<AddVoteRecordOutput>(APIResultCode.Success, new AddVoteRecordOutput { Id = entity.Id.ToString() });
         }
 
         /// <summary>
@@ -124,69 +115,61 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("voteRecord/addIndefinite")]
         public async Task<ApiResult<AddVoteRecordOutput>> AddIndefinite([FromBody]AddIndefiniteVoteRecordIntput input, CancellationToken cancelToken)
         {
-            try
+            if (Authorization == null)
             {
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
-                {
-                    return new ApiResult<AddVoteRecordOutput>(APIResultCode.Unknown, new AddVoteRecordOutput { }, APIResultMessage.TokenNull);
-                }
-                if (string.IsNullOrWhiteSpace(input.OwnerCertificationId))
-                {
-                    throw new NotImplementedException("投票业主认证Id信息为空！");
-                }
-                if (string.IsNullOrWhiteSpace(input.VoteId))
-                {
-                    throw new NotImplementedException("投票Id信息为空！");
-                }
-                if (input.List.Count < 1)
-                {
-                    throw new NotImplementedException("请勾选选项再进行投票！");
-                }
+                return new ApiResult<AddVoteRecordOutput>(APIResultCode.Unknown, new AddVoteRecordOutput { }, APIResultMessage.TokenNull);
+            }
+            if (string.IsNullOrWhiteSpace(input.OwnerCertificationId))
+            {
+                throw new NotImplementedException("投票业主认证Id信息为空！");
+            }
+            if (string.IsNullOrWhiteSpace(input.VoteId))
+            {
+                throw new NotImplementedException("投票Id信息为空！");
+            }
+            if (input.List.Count < 1)
+            {
+                throw new NotImplementedException("请勾选选项再进行投票！");
+            }
 
-                var user = _tokenManager.GetUser(token);
-                if (user == null)
-                {
-                    return new ApiResult<AddVoteRecordOutput>(APIResultCode.Unknown, new AddVoteRecordOutput { }, APIResultMessage.TokenError);
-                }
-                var voteAssociationVipOwner = await _voteAssociationVipOwnerRepository.GetForVoteIdAsync(input.VoteId, cancelToken);
-                if (voteAssociationVipOwner.ElectionNumber != input.List[0].VoteQuestionOptionId.Count)
-                {
-                    throw new NotImplementedException("请选择"+ voteAssociationVipOwner.ElectionNumber+"项");
-                }
-                //增加投票记录主体
-                var entity = await _voteRecordRepository.AddAsync(new VoteRecordDto
-                {
-                    VoteId = input.VoteId,
-                    OwnerCertificationId = input.OwnerCertificationId,
-                    Feedback = input.Feedback,
-                    OperationTime = DateTimeOffset.Now,
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<AddVoteRecordOutput>(APIResultCode.Unknown, new AddVoteRecordOutput { }, APIResultMessage.TokenError);
+            }
+            var voteAssociationVipOwner = await _voteAssociationVipOwnerRepository.GetForVoteIdAsync(input.VoteId, cancelToken);
+            if (voteAssociationVipOwner.ElectionNumber != input.List[0].VoteQuestionOptionId.Count)
+            {
+                throw new NotImplementedException("请选择" + voteAssociationVipOwner.ElectionNumber + "项");
+            }
+            //增加投票记录主体
+            var entity = await _voteRecordRepository.AddAsync(new VoteRecordDto
+            {
+                VoteId = input.VoteId,
+                OwnerCertificationId = input.OwnerCertificationId,
+                Feedback = input.Feedback,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
 
-                //增加投票记录详情
-                foreach (var item in input.List)
+            //增加投票记录详情
+            foreach (var item in input.List)
+            {
+                foreach (var itemOptionId in item.VoteQuestionOptionId)
                 {
-                    foreach (var itemOptionId in item.VoteQuestionOptionId)
+                    var entityQuestion = await _voteRecordDetailRepository.AddAsync(new VoteRecordDetailDto
                     {
-                        var entityQuestion = await _voteRecordDetailRepository.AddAsync(new VoteRecordDetailDto
-                        {
-                            VoteQuestionId = item.VoteQuestionId,
-                            VoteQuestionOptionId = itemOptionId,
-                            VoteId = input.VoteId,
-                            OperationTime = DateTimeOffset.Now,
-                            OperationUserId = user.Id.ToString()
-                        }, cancelToken);
-                        await _voteQuestionOptionRepository.AddCountAsync(itemOptionId, cancelToken);
-                    }
-
+                        VoteQuestionId = item.VoteQuestionId,
+                        VoteQuestionOptionId = itemOptionId,
+                        VoteId = input.VoteId,
+                        OperationTime = DateTimeOffset.Now,
+                        OperationUserId = user.Id.ToString()
+                    }, cancelToken);
+                    await _voteQuestionOptionRepository.AddCountAsync(itemOptionId, cancelToken);
                 }
-                return new ApiResult<AddVoteRecordOutput>(APIResultCode.Success, new AddVoteRecordOutput { Id = entity.Id.ToString() });
+
             }
-            catch (Exception e)
-            {
-                return new ApiResult<AddVoteRecordOutput>(APIResultCode.Success_NoB, new AddVoteRecordOutput { }, e.Message);
-            }
+            return new ApiResult<AddVoteRecordOutput>(APIResultCode.Success, new AddVoteRecordOutput { Id = entity.Id.ToString() });
         }
 
         /// <summary>
@@ -199,6 +182,10 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("voteRecord/getFeedback")]
         public async Task<ApiResult<GetAllFeedbackOutput>> GetFeedback([FromUri]GetFeedbackInput input, CancellationToken cancellationToken)
         {
+            if (Authorization == null)
+            {
+                return new ApiResult<GetAllFeedbackOutput>(APIResultCode.Unknown, new GetAllFeedbackOutput { }, APIResultMessage.TokenNull);
+            }
             if (input.PageIndex < 1)
             {
                 input.PageIndex = 1;
@@ -207,12 +194,16 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 input.PageSize = 10;
             }
-
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<GetAllFeedbackOutput>(APIResultCode.Unknown, new GetAllFeedbackOutput { }, APIResultMessage.TokenError);
+            }
             int startRow = (input.PageIndex - 1) * input.PageSize;
             var data = ((await _voteRecordRepository.GetListAsync(new VoteRecordDto
             {
                 VoteId = input.Id
-            }, cancellationToken))).Where(x=>x.Feedback!="");
+            }, cancellationToken))).Where(x => x.Feedback != "");
             List<GetFeedbackOutput> list = new List<GetFeedbackOutput>();
             foreach (var item in data)
             {

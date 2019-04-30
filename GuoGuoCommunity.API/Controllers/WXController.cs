@@ -89,7 +89,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("WeiXin")]
         public async Task<HttpResponseMessage> Post(CancellationToken cancelToken)
         {
-            // BackgroundJob.Enqueue(() => SendAsync("888"));
             var requestQueryPairs = Request.GetQueryNameValuePairs().ToDictionary(k => k.Key, v => v.Value);
             if (requestQueryPairs.Count == 0
                 || !requestQueryPairs.ContainsKey("timestamp")

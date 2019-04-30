@@ -43,60 +43,35 @@ namespace GuoGuoCommunity.API.Controllers
             try
             {
                 #region Token
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
+
+                if (Authorization == null)
                 {
                     return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenNull);
                 }
-                var user = _tokenManager.GetUser(token);
+                var user = _tokenManager.GetUser(Authorization);
                 if (user == null)
                 {
                     return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenError);
                 }
+
                 #endregion
 
-                //if (string.IsNullOrWhiteSpace(type))
-                //{
-                //    throw new NotImplementedException("上传附件类型为空！");
-                //}
-
                 string typeName = "OwnerCertification";
-                //switch (type)
-                //{
-                //    case "Owner":
-                //        typeName = "OwnerCertification";
-                //        break;
-                //    case "VipOwner":
-                //        typeName = "VipOwnerCertification";
-                //        break;
-                //    case "Announcement":
-                //        typeName = "Announcement";
-                //        break;
-                //    default:
-                //        break;
-                //}
-
-                // Check whether the POST operation is MultiPart?
                 if (!Request.Content.IsMimeMultipartContent())
                 {
                     throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
                 }
 
-                // Prepare CustomMultipartFormDataStreamProvider in which our multipart form
-                // data will be loaded.
                 string fileSaveLocation = HttpContext.Current.Server.MapPath("~/Upload/" + typeName);
                 CustomMultipartFormDataStreamProvider provider = new CustomMultipartFormDataStreamProvider(fileSaveLocation);
                 List<UploadOutput> files = new List<UploadOutput>();
 
-                // Read all contents of multipart message into CustomMultipartFormDataStreamProvider.
                 await Request.Content.ReadAsMultipartAsync(provider, cancelToken);
 
                 foreach (MultipartFileData file in provider.FileData)
                 {
                     files.Add(await AddUpload(typeName, file.Headers.ContentDisposition.FileName.Trim('"'), user.Id.ToString(), cancelToken));
                 }
-
-                // Send OK Response along with saved file names to the client.
                 return new ApiResult<UploadOutput>(APIResultCode.Success, files[0], APIResultMessage.Success);
             }
             catch (Exception e)
@@ -116,16 +91,17 @@ namespace GuoGuoCommunity.API.Controllers
             try
             {
                 #region Token
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
+
+                if (Authorization == null)
                 {
                     return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenNull);
                 }
-                var user = _tokenManager.GetUser(token);
+                var user = _tokenManager.GetUser(Authorization);
                 if (user == null)
                 {
                     return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenError);
                 }
+
                 #endregion
 
                 string typeName = "VipOwnerCertification";
@@ -165,16 +141,17 @@ namespace GuoGuoCommunity.API.Controllers
             try
             {
                 #region Token
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
+
+                if (Authorization == null)
                 {
                     return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenNull);
                 }
-                var user = _tokenManager.GetUser(token);
+                var user = _tokenManager.GetUser(Authorization);
                 if (user == null)
                 {
                     return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenError);
                 }
+
                 #endregion
 
                 string typeName = "Announcement";
@@ -214,16 +191,17 @@ namespace GuoGuoCommunity.API.Controllers
             try
             {
                 #region Token
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
+
+                if (Authorization == null)
                 {
                     return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenNull);
                 }
-                var user = _tokenManager.GetUser(token);
+                var user = _tokenManager.GetUser(Authorization);
                 if (user == null)
                 {
                     return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenError);
                 }
+
                 #endregion
 
                 string typeName = "Complaint";
@@ -263,16 +241,17 @@ namespace GuoGuoCommunity.API.Controllers
             try
             {
                 #region Token
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
+
+                if (Authorization == null)
                 {
                     return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenNull);
                 }
-                var user = _tokenManager.GetUser(token);
+                var user = _tokenManager.GetUser(Authorization);
                 if (user == null)
                 {
                     return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenError);
                 }
+
                 #endregion
 
                 string typeName = "Vote";
@@ -312,16 +291,17 @@ namespace GuoGuoCommunity.API.Controllers
             try
             {
                 #region Token
-                var token = HttpContext.Current.Request.Headers["Authorization"];
-                if (token == null)
+
+                if (Authorization == null)
                 {
                     return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenNull);
                 }
-                var user = _tokenManager.GetUser(token);
+                var user = _tokenManager.GetUser(Authorization);
                 if (user == null)
                 {
                     return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenError);
                 }
+
                 #endregion
 
                 string typeName = "StationLetter";
@@ -410,10 +390,7 @@ namespace GuoGuoCommunity.API.Controllers
             HttpFileCollection files = HttpContext.Current.Request.Files;
             HttpPostedFile filess = HttpContext.Current.Request.Files["card"];//接收
             string sFileName = AppDomain.CurrentDomain.BaseDirectory + filess.FileName;
-
             filess.SaveAs(sFileName);
-            //var msg = bll.UploadImage(file.InputStream, userID);
-            //var result = new ReturnResult<string>(msg);
             return "";
         }
     }
