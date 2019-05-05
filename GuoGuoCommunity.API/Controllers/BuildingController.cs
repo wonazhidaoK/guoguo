@@ -79,7 +79,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("building/delete")]
         public async Task<ApiResult> Delete([FromUri]string id, CancellationToken cancelToken)
         {
-
             if (Authorization == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
@@ -102,7 +101,6 @@ namespace GuoGuoCommunity.API.Controllers
             }, cancelToken);
 
             return new ApiResult();
-
         }
 
         /// <summary>
@@ -138,7 +136,6 @@ namespace GuoGuoCommunity.API.Controllers
             });
 
             return new ApiResult();
-
         }
 
         /// <summary>
@@ -185,7 +182,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("building/getAll")]
         public async Task<ApiResult<GetAllBuildingOutput>> GetAll([FromUri]GetAllBuildingInput input, CancellationToken cancelToken)
         {
-
             if (Authorization == null)
             {
                 return new ApiResult<GetAllBuildingOutput>(APIResultCode.Unknown, new GetAllBuildingOutput { }, APIResultMessage.TokenNull);

@@ -143,7 +143,6 @@ namespace GuoGuoCommunity.Domain.Service
 
         private async Task OnUpdateAsync(GuoGuoCommunityContext db, BuildingUnit dto, CancellationToken token = default)
         {
-
             BuildingUnitIncrementer incrementer = new BuildingUnitIncrementer();
             //业主认证记录订阅
             OwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();

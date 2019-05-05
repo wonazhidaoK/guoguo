@@ -18,9 +18,13 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task DeleteAsync(ComplaintAnnexDto dto, CancellationToken token = default);
 
-        Task<ComplaintAnnex> GetAsync(string id, CancellationToken token = default);
+        Task<ComplaintAnnex> GetByComplaintIdAsync(string id, CancellationToken token = default);
 
-        Task<ComplaintAnnex> GetForFollowUpIdAsync(string id, CancellationToken token = default);
+        Task<List<ComplaintAnnex>> GetByComplaintIdsAsync(List<string> ids, CancellationToken token = default);
+
+        Task<ComplaintAnnex> GetByFollowUpIdAsync(string id, CancellationToken token = default);
+
+        Task<List<ComplaintAnnex>> GetByFollowUpIdsAsync(List<string> ids, CancellationToken token = default);
 
         Task<List<ComplaintAnnex>> GetListAsync(ComplaintAnnexDto dto, CancellationToken token = default);
 

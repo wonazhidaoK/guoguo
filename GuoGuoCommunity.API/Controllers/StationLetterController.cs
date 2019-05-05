@@ -154,14 +154,11 @@ namespace GuoGuoCommunity.API.Controllers
             var listCount = data.Count();
             var list = data.Skip(startRow).Take(input.PageSize);
             List<GetStationLetterOutput> listOutput = new List<GetStationLetterOutput>();
+            var userList = await _userRepository.GetByIdsAsync(list.Select(x => x.CreateOperationUserId).ToList());
             foreach (var item in list)
             {
-                var userEntity = await _userRepository.GetForIdAsync(item.CreateOperationUserId);
-                var stationLetterBrowseRecordList = await _stationLetterBrowseRecordRepository.GetListAsync(new StationLetterBrowseRecordDto
-                {
-                    StationLetterId = item.Id.ToString(),
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
+                var userEntity = userList.Where(x => x.Id.ToString() == item.CreateOperationUserId).FirstOrDefault();
+
                 listOutput.Add(new GetStationLetterOutput
                 {
                     Id = item.Id.ToString(),
@@ -277,16 +274,14 @@ namespace GuoGuoCommunity.API.Controllers
 
             var listCount = data.Count();
             var list = data.Skip(startRow).Take(input.PageSize);
-
+            var userList = await _userRepository.GetByIdsAsync(list.Select(x => x.CreateOperationUserId).ToList());
+            var stationLetterBrowseRecordList = await _stationLetterBrowseRecordRepository.GetForStationLetterIdsAsync(list.Select(x => x.Id.ToString()).ToList());
             List<GetPropertyStationLetterOutput> listOutput = new List<GetPropertyStationLetterOutput>();
             foreach (var item in list)
             {
-                var userEntity = await _userRepository.GetForIdAsync(item.CreateOperationUserId);
-                var stationLetterBrowseRecordList = await _stationLetterBrowseRecordRepository.GetListAsync(new StationLetterBrowseRecordDto
-                {
-                    StationLetterId = item.Id.ToString(),
-                    OperationUserId = user.Id.ToString()
-                }, cancelToken);
+
+                var userEntity = userList.Where(x => x.Id.ToString() == item.CreateOperationUserId).FirstOrDefault();
+                var userBrowseRecordList = stationLetterBrowseRecordList.Where(x => x.StationLetterId == item.Id.ToString() && x.CreateOperationUserId == user.Id.ToString());
                 listOutput.Add(new GetPropertyStationLetterOutput
                 {
                     Id = item.Id.ToString(),
@@ -296,7 +291,7 @@ namespace GuoGuoCommunity.API.Controllers
                     StreetOfficeName = item.StreetOfficeName,
                     ReleaseTime = item.CreateOperationTime.Value,
                     CreateUserName = userEntity?.Name,
-                    IsRead = stationLetterBrowseRecordList.Any()
+                    IsRead = userBrowseRecordList.Any()
                 });
             }
             return new ApiResult<GetAllPropertyStationLetterOutput>(APIResultCode.Success, new GetAllPropertyStationLetterOutput

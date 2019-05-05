@@ -98,13 +98,13 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
             }
+
             await _buildingUnitRepository.DeleteAsync(new BuildingUnitDto
             {
                 Id = id,
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = user.Id.ToString()
             }, cancelToken);
-
             return new ApiResult();
         }
 
@@ -137,7 +137,6 @@ namespace GuoGuoCommunity.API.Controllers
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = user.Id.ToString()
             });
-
             return new ApiResult();
         }
 
@@ -239,7 +238,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("buildingUnit/getList")]
         public async Task<ApiResult<List<GetListBuildingUnitOutput>>> GetList([FromUri]GetListBuildingUnitInput input, CancellationToken cancelToken)
         {
-
             if (Authorization == null)
             {
                 return new ApiResult<List<GetListBuildingUnitOutput>>(APIResultCode.Unknown, new List<GetListBuildingUnitOutput> { }, APIResultMessage.TokenNull);
@@ -264,7 +262,6 @@ namespace GuoGuoCommunity.API.Controllers
                 Id = x.Id.ToString(),
                 UnitName = x.UnitName
             }).ToList());
-
         }
     }
 }

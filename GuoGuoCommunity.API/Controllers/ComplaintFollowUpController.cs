@@ -135,7 +135,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("complaintFollowUp/appeal")]
         public async Task<ApiResult<AddComplaintFollowUpOutput>> Appeal([FromBody]AppealComplaintFollowUpInput input, CancellationToken cancelToken)
         {
-
             if (Authorization == null)
             {
                 return new ApiResult<AddComplaintFollowUpOutput>(APIResultCode.Unknown, new AddComplaintFollowUpOutput { }, APIResultMessage.TokenNull);
@@ -210,6 +209,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
 
             var data = await _complaintFollowUpRepository.GetListForComplaintIdAsync(input.Id, cancelToken);
+            var complaintAnnexList = await _complaintAnnexRepository.GetByFollowUpIdsAsync(data.Select(x => x.Id.ToString()).ToList());
             List<GetComplaintFollowUpListOutput> list = new List<GetComplaintFollowUpListOutput>();
             foreach (var item in data)
             {
@@ -237,11 +237,12 @@ namespace GuoGuoCommunity.API.Controllers
                     Description = item.Description,
                     OperationDepartmentName = item.OperationDepartmentName,
                     OperationName = OperationName,
-                    Url = (await _complaintAnnexRepository.GetForFollowUpIdAsync(item.Id.ToString()))?.AnnexContent,
+                    Url = (complaintAnnexList?.Where(x => x.ComplaintFollowUpId == item.Id.ToString())).FirstOrDefault()?.AnnexContent,
                     CreateTime = item.CreateOperationTime.Value
                 };
                 list.Add(entity);
             }
+
             var complaintEntity = await _complaintRepository.GetAsync(input.Id, cancelToken);
             var complaintTypeEntyity = await _complaintTypeRepository.GetAsync(complaintEntity.ComplaintTypeId, cancelToken);
             var remainingPeriod = (complaintEntity.ExpiredTime - DateTimeOffset.Now).Value.Days + 1;
@@ -414,7 +415,6 @@ namespace GuoGuoCommunity.API.Controllers
 
         #region 物业端
 
-
         /// <summary>
         /// 处理业主投诉信息
         /// </summary>
@@ -484,7 +484,6 @@ namespace GuoGuoCommunity.API.Controllers
                 OperationTime = DateTimeOffset.Now,
             });
             return new ApiResult<AddComplaintFollowUpOutput>(APIResultCode.Success, new AddComplaintFollowUpOutput { Id = entity.Id.ToString() });
-
         }
 
         #endregion

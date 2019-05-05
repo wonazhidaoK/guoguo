@@ -209,5 +209,14 @@ namespace GuoGuoCommunity.Domain.Service
                 return await db.Owners.Where(x => x.IsDeleted == false && x.OwnerCertificationRecordId == dto.OwnerCertificationRecordId).FirstOrDefaultAsync(token);
             }
         }
+
+        public async Task<List<Owner>> GetForIdsAsync(List<string> ids, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.Owners.Where(x => x.IsDeleted == false).ToListAsync(token);
+                return (from x in list where ids.Contains(x.Id.ToString()) select x).ToList();
+            }
+        }
     }
 }

@@ -132,8 +132,6 @@ namespace GuoGuoCommunity.Domain.Service
                 complaintType.Name = dto.Name;
                 complaintType.Level = dto.Level;
                 complaintType.Description = dto.Description;
-                //complaintTypes.ProcessingPeriod = dto.ProcessingPeriod;
-                //complaintTypes.ComplaintPeriod = dto.ComplaintPeriod;
                 complaintType.LastOperationTime = dto.OperationTime;
                 complaintType.LastOperationUserId = dto.OperationUserId;
                 OnUpdateAsync(db, dto, token);
@@ -143,6 +141,11 @@ namespace GuoGuoCommunity.Domain.Service
 
         private void OnUpdateAsync(GuoGuoCommunityContext db, ComplaintTypeDto dto, CancellationToken token = default)
         {
+            ComplaintTypeIncrementer complaintTypeIncrementer = new ComplaintTypeIncrementer();
+            
+            //投诉订阅
+            ComplaintRepository complaintRepository = new ComplaintRepository();
+            complaintRepository.OnSubscribe(complaintTypeIncrementer);
 
         }
 

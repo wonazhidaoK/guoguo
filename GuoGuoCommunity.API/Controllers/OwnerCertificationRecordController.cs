@@ -175,12 +175,14 @@ namespace GuoGuoCommunity.API.Controllers
             }, cancelToken);
 
             List<GetOwnerCertificationRecordOutput> list = new List<GetOwnerCertificationRecordOutput>();
-
+            var ownerList = await _ownerRepository.GetForIdsAsync(data.Select(x => x.OwnerId).ToList(), cancelToken);
+            var industryList = await _industryRepository.GetForIdsAsync(data.Select(x => x.IndustryId).ToList(), cancelToken);
+            var smallDistrictList = await _smallDistrictRepository.GetForIdsAsync(data.Select(x => x.SmallDistrictId).ToList(), cancelToken);
             foreach (var item in data)
             {
-                var owner = await _ownerRepository.GetAsync(item.OwnerId, cancelToken);
-                var industry = await _industryRepository.GetAsync(item.IndustryId, cancelToken);
-                var smallDistrict = await _smallDistrictRepository.GetAsync(item.SmallDistrictId, cancelToken);
+                var owner = ownerList.Where(x=>x.Id.ToString()==item.OwnerId).FirstOrDefault();
+                var industry = industryList.Where(x=>x.Id.ToString()==item.IndustryId).FirstOrDefault();
+                var smallDistrict = smallDistrictList.Where(x=>x.Id.ToString()==item.SmallDistrictId).FirstOrDefault();
                 list.Add(new GetOwnerCertificationRecordOutput
                 {
                     BuildingId = item.BuildingId,

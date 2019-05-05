@@ -39,7 +39,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("community/add")]
         public async Task<ApiResult<AddCommunityOutput>> Add([FromBody]AddCommunityInput input, CancellationToken cancelToken)
         {
-
             if (Authorization == null)
             {
                 return new ApiResult<AddCommunityOutput>(APIResultCode.Unknown, new AddCommunityOutput { }, APIResultMessage.TokenNull);
@@ -94,7 +93,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("community/update")]
         public async Task<ApiResult> Update([FromBody]UpdateCommunityInput input, CancellationToken cancellationToken)
         {
-
             if (Authorization == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
@@ -118,7 +116,6 @@ namespace GuoGuoCommunity.API.Controllers
             });
 
             return new ApiResult();
-
         }
 
         /// <summary>
@@ -131,7 +128,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("community/delete")]
         public async Task<ApiResult> Delete([FromUri]string id, CancellationToken cancelToken)
         {
-
             if (Authorization == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
@@ -210,6 +206,10 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("community/getAll")]
         public async Task<ApiResult<GetAllCommunityOutput>> GetAll([FromUri]GetAllCommunityInput input, CancellationToken cancelToken)
         {
+            if (input == null)
+            {
+                return new ApiResult<GetAllCommunityOutput>(APIResultCode.Success_NoB, new GetAllCommunityOutput { }, "分页参数必传");
+            }
             if (Authorization == null)
             {
                 return new ApiResult<GetAllCommunityOutput>(APIResultCode.Unknown, new GetAllCommunityOutput { }, APIResultMessage.TokenNull);
@@ -253,11 +253,10 @@ namespace GuoGuoCommunity.API.Controllers
                 }).ToList(),
                 TotalCount = listCount
             });
-
         }
 
         /// <summary>
-        /// 根据街道办获取社区(小程序可用)
+        /// 根据街道办获取所有社区
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>

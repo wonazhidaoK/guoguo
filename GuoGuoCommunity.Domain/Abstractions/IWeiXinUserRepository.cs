@@ -20,6 +20,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<WeiXinUser> GetAsync(string unionid, CancellationToken token = default);
 
+        Task<List<WeiXinUser>> GetForUnionIdsAsync(List<string> ids, CancellationToken token = default);
+
         Task<List<WeiXinUser>> GetListAsync(WeiXinUserDto dto, CancellationToken token = default);
     }
 }

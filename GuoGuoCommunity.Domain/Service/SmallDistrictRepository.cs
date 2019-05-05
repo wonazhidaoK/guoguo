@@ -56,7 +56,7 @@ namespace GuoGuoCommunity.Domain.Service
                     StreetOfficeName = streetOffice.Name,
                     CommunityId = dto.CommunityId,
                     CommunityName = communities.Name,
-                     PhoneNumber=dto.PhoneNumber
+                    PhoneNumber = dto.PhoneNumber
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -257,6 +257,14 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 await db.SmallDistricts.Where(x => x.CommunityId == community.Id.ToString()).UpdateAsync(x => new SmallDistrict { CommunityName = community.Name });
+            }
+        }
+
+        public async Task<List<SmallDistrict>> GetForIdsAsync(List<string> ids, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await (from x in db.SmallDistricts where ids.Contains(x.Id.ToString()) select x).ToListAsync(token);
             }
         }
     }

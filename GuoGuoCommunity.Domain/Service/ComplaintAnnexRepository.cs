@@ -19,7 +19,6 @@ namespace GuoGuoCommunity.Domain.Service
                 var entity = db.ComplaintAnnices.Add(new ComplaintAnnex
                 {
                     ComplaintId = dto.ComplaintId,
-                    //AnnexContent = dto.AnnexContent,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     ComplaintFollowUpId = dto.ComplaintFollowUpId
@@ -72,7 +71,7 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public async Task<ComplaintAnnex> GetAsync(string id, CancellationToken token = default)
+        public async Task<ComplaintAnnex> GetByComplaintIdAsync(string id, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
@@ -80,11 +79,27 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async Task<ComplaintAnnex> GetForFollowUpIdAsync(string id, CancellationToken token = default)
+        public async Task<List<ComplaintAnnex>> GetByComplaintIdsAsync(List<string> ids, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.ComplaintAnnices.Where(x => ids.Contains(x.ComplaintId)).ToListAsync(token);
+            }
+        }
+
+        public async Task<ComplaintAnnex> GetByFollowUpIdAsync(string id, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
                 return await db.ComplaintAnnices.Where(x => x.ComplaintFollowUpId == id).FirstOrDefaultAsync(token);
+            }
+        }
+
+        public async Task<List<ComplaintAnnex>> GetByFollowUpIdsAsync(List<string> ids, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.ComplaintAnnices.Where(x => ids.Contains(x.ComplaintFollowUpId)).ToListAsync(token);
             }
         }
 

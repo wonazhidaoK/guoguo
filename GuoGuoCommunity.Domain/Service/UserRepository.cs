@@ -1,4 +1,5 @@
-﻿using GuoGuoCommunity.Domain.Abstractions;
+﻿using EntityFramework.Extensions;
+using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using GuoGuoCommunity.Domain.Models.Enum;
@@ -301,7 +302,6 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-
         public async Task UpdateTokenAsync(UserDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -382,11 +382,24 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async Task<List<User>> GetForIdsAsync(List<string> ids, CancellationToken token = default)
+        public async Task<List<User>> GetByIdsAsync(List<string> ids, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
                 return await db.Users.Where(x => ids.Contains(x.Id.ToString())).ToListAsync(token);
+            }
+        }
+
+        public void OnSubscribe(CommunityIncrementer incrementer)
+        {
+            incrementer.CommunityEvent += CommunityChanging;
+        }
+
+        public async void CommunityChanging(GuoGuoCommunityContext dbs, Community community, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.Users.Where(x => x.CommunityId == community.Id.ToString()).UpdateAsync(x => new User { CommunityName = community.Name });
             }
         }
     }

@@ -51,7 +51,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("smallDistrict/getListForUserId")]
         public async Task<ApiResult<List<GetListForUserIdOutput>>> GetListForUserId(CancellationToken cancelToken)
         {
-
             if (Authorization == null)
             {
                 return new ApiResult<List<GetListForUserIdOutput>>(APIResultCode.Unknown, new List<GetListForUserIdOutput> { }, APIResultMessage.TokenNull);
@@ -68,9 +67,10 @@ namespace GuoGuoCommunity.API.Controllers
             }, cancelToken)).Select(x => x.SmallDistrictId).Distinct();
 
             List<GetListForUserIdOutput> list = new List<GetListForUserIdOutput>();
+            var smallDistrictList = await _smallDistrictRepository.GetForIdsAsync(data.Select(x => x).ToList(), cancelToken);
             foreach (var item in data)
             {
-                var entity = await _smallDistrictRepository.GetAsync(item, cancelToken);
+                var entity = smallDistrictList.Where(x => x.Id.ToString() == item).FirstOrDefault();
                 list.Add(new GetListForUserIdOutput
                 {
                     Id = entity.Id.ToString(),
@@ -78,7 +78,6 @@ namespace GuoGuoCommunity.API.Controllers
                 });
             }
             return new ApiResult<List<GetListForUserIdOutput>>(APIResultCode.Success, list);
-
         }
 
         /// <summary>
@@ -91,7 +90,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("ownerCertificationRecord/getAllForSmallDistrictId")]
         public async Task<ApiResult<GetListOwnerCertificationRecordOutput>> GetAllForSmallDistrictId([FromUri]string SmallDistrictId, CancellationToken cancelToken)
         {
-
             if (Authorization == null)
             {
                 return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordOutput { }, APIResultMessage.TokenNull);
@@ -106,12 +104,15 @@ namespace GuoGuoCommunity.API.Controllers
                 UserId = user.Id.ToString(),
                 SmallDistrictId = SmallDistrictId
             }, cancelToken);
+
             List<GetOwnerCertificationRecordOutput> list = new List<GetOwnerCertificationRecordOutput>();
+            var ownerList = await _ownerRepository.GetForIdsAsync(data.Select(x => x.OwnerId).ToList(), cancelToken);
+            var industryList = await _industryRepository.GetForIdsAsync(data.Select(x => x.IndustryId).ToList(), cancelToken);
 
             foreach (var item in data)
             {
-                var owner = await _ownerRepository.GetAsync(item.OwnerId, cancelToken);
-                var industry = await _industryRepository.GetAsync(item.IndustryId, cancelToken);
+                var owner = ownerList.Where(x => x.Id.ToString() == item.OwnerId).FirstOrDefault();
+                var industry = industryList.Where(x => x.Id.ToString() == item.IndustryId).FirstOrDefault();
                 list.Add(new GetOwnerCertificationRecordOutput
                 {
                     BuildingId = item.BuildingId,
@@ -121,7 +122,6 @@ namespace GuoGuoCommunity.API.Controllers
                     CertificationResult = item.CertificationResult,
                     CertificationStatusName = item.CertificationStatusName,
                     CertificationStatusValue = item.CertificationStatusValue,
-                    //CertificationTime = item.CertificationTime,
                     CommunityId = item.CommunityId,
                     CommunityName = item.CommunityName,
                     Id = item.Id.ToString(),
@@ -148,7 +148,6 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 List = list
             });
-
         }
 
         /// <summary>

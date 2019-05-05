@@ -77,6 +77,14 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public async Task<List<Menu>> GetByIdsAsync(List<string> ids, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await(from x in db.Menus where ids.Contains(x.Id.ToString()) select x).ToListAsync(token);
+            }
+        }
+
         public Task UpdateAsync(MenuDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();

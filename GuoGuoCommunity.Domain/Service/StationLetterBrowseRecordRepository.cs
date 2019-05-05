@@ -42,6 +42,14 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public async Task<List<StationLetterBrowseRecord>> GetForStationLetterIdsAsync(List<string> stationLetterIds, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.StationLetterBrowseRecords.Where(x => stationLetterIds.Contains(x.StationLetterId)).ToListAsync(token);
+            }
+        }
+
         public async Task<List<StationLetterBrowseRecord>> GetListAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())

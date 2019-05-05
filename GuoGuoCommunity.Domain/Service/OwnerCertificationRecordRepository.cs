@@ -14,6 +14,86 @@ namespace GuoGuoCommunity.Domain.Service
 {
     public class OwnerCertificationRecordRepository : IOwnerCertificationRecordRepository
     {
+        #region 事件
+
+        private void OnUpdate(GuoGuoCommunityContext db, OwnerCertificationRecordDto dto, CancellationToken token = default)
+        {
+
+        }
+
+        private bool OnDelete(GuoGuoCommunityContext db, OwnerCertificationRecordDto dto, CancellationToken token = default)
+        {
+
+            return false;
+        }
+
+        public void OnSubscribe(StreetOfficeIncrementer incrementer)
+        {
+            incrementer.StreetOfficeEvent += StreetOfficeChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void StreetOfficeChanging(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.OwnerCertificationRecords.Where(x => x.StreetOfficeId == streetOffice.Id.ToString()).UpdateAsync(x => new OwnerCertificationRecord { StreetOfficeName = streetOffice.Name });
+            }
+        }
+
+        public void OnSubscribe(CommunityIncrementer incrementer)
+        {
+            incrementer.CommunityEvent += CommunityChanging;
+        }
+
+        public async void CommunityChanging(GuoGuoCommunityContext dbs, Community community, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.OwnerCertificationRecords.Where(x => x.CommunityId == community.Id.ToString()).UpdateAsync(x => new OwnerCertificationRecord { CommunityName = community.Name });
+            }
+        }
+
+        public void OnSubscribe(SmallDistrictIncrementer incrementer)
+        {
+            incrementer.SmallDistrictEvent += SmallDistrictChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void SmallDistrictChanging(GuoGuoCommunityContext dbs, SmallDistrict smallDistrict, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.OwnerCertificationRecords.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new OwnerCertificationRecord { SmallDistrictName = smallDistrict.Name });
+            }
+        }
+
+        public void OnSubscribe(BuildingIncrementer incrementer)
+        {
+            incrementer.BuildingEvent += BuildingChanging;
+        }
+
+        public async void BuildingChanging(GuoGuoCommunityContext dbs, Building building, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.OwnerCertificationRecords.Where(x => x.BuildingId == building.Id.ToString()).UpdateAsync(x => new OwnerCertificationRecord { BuildingName = building.Name });
+            }
+        }
+
+        public void OnSubscribe(BuildingUnitIncrementer incrementer)
+        {
+            incrementer.BuildingUnitEvent += BuildingUnitChanging;
+        }
+
+        public async void BuildingUnitChanging(GuoGuoCommunityContext dbs, BuildingUnit buildingUnit, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.OwnerCertificationRecords.Where(x => x.BuildingUnitId == buildingUnit.Id.ToString()).UpdateAsync(x => new OwnerCertificationRecord { BuildingUnitName = buildingUnit.UnitName });
+            }
+        }
+
+        #endregion
+
         public async Task<OwnerCertificationRecord> AddAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -96,7 +176,7 @@ namespace GuoGuoCommunity.Domain.Service
                 }
 
                 //&& x.IndustryId == dto.IndustryId && x.CertificationStatusValue != OwnerCertification.Failure.Value
-                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.UserId == dto.UserId  && x.IsDeleted == false && x.IsInvalid == false).FirstOrDefaultAsync(token);
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.UserId == dto.UserId && x.IsDeleted == false && x.IsInvalid == false).FirstOrDefaultAsync(token);
                 if (ownerCertificationRecord != null)
                 {
                     throw new NotImplementedException("该业主信息已存在！");
@@ -208,13 +288,13 @@ namespace GuoGuoCommunity.Domain.Service
                 ownerCertificationRecord.CertificationResult = dto.CertificationResult;
                 ownerCertificationRecord.LastOperationTime = dto.OperationTime;
                 ownerCertificationRecord.LastOperationUserId = dto.OperationUserId;
-                ownerCertificationRecord.CertificationTime= dto.OperationTime;
+                ownerCertificationRecord.CertificationTime = dto.OperationTime;
                 OnUpdate(db, dto, token);
                 await db.SaveChangesAsync(token);
                 return ownerCertificationRecord;
             }
         }
-        
+
         public Task UpdateStatusAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
@@ -251,90 +331,11 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        #region 事件
-        private void OnUpdate(GuoGuoCommunityContext db, OwnerCertificationRecordDto dto, CancellationToken token = default)
-        {
-
-        }
-
-        private bool OnDelete(GuoGuoCommunityContext db, OwnerCertificationRecordDto dto, CancellationToken token = default)
-        {
-
-            return false;
-        }
-
-        public void OnSubscribe(StreetOfficeIncrementer incrementer)
-        {
-            incrementer.StreetOfficeEvent += StreetOfficeChanging;//在发布者私有委托里增加方法
-        }
-
-        public async void StreetOfficeChanging(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                await db.OwnerCertificationRecords.Where(x => x.StreetOfficeId == streetOffice.Id.ToString()).UpdateAsync(x => new OwnerCertificationRecord { StreetOfficeName = streetOffice.Name });
-            }
-        }
-
-        public void OnSubscribe(CommunityIncrementer incrementer)
-        {
-            incrementer.CommunityEvent += CommunityChanging;//在发布者私有委托里增加方法
-        }
-
-        public async void CommunityChanging(GuoGuoCommunityContext dbs, Community community, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                await db.OwnerCertificationRecords.Where(x => x.CommunityId == community.Id.ToString()).UpdateAsync(x => new OwnerCertificationRecord { CommunityName = community.Name });
-            }
-        }
-
-        public void OnSubscribe(SmallDistrictIncrementer incrementer)
-        {
-            incrementer.SmallDistrictEvent += SmallDistrictChanging;//在发布者私有委托里增加方法
-        }
-
-        public async void SmallDistrictChanging(GuoGuoCommunityContext dbs, SmallDistrict smallDistrict, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                await db.OwnerCertificationRecords.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new OwnerCertificationRecord { SmallDistrictName = smallDistrict.Name });
-            }
-        }
-
-        public void OnSubscribe(BuildingIncrementer incrementer)
-        {
-            incrementer.BuildingEvent += BuildingChanging;
-        }
-
-        public async void BuildingChanging(GuoGuoCommunityContext dbs, Building building, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                await db.OwnerCertificationRecords.Where(x => x.BuildingId == building.Id.ToString()).UpdateAsync(x => new OwnerCertificationRecord { BuildingName = building.Name });
-            }
-        }
-
-        public void OnSubscribe(BuildingUnitIncrementer incrementer)
-        {
-            incrementer.BuildingUnitEvent += BuildingUnitChanging;
-        }
-
-        public async void BuildingUnitChanging(GuoGuoCommunityContext dbs, BuildingUnit  buildingUnit, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                await db.OwnerCertificationRecords.Where(x => x.BuildingUnitId == buildingUnit.Id.ToString()).UpdateAsync(x => new OwnerCertificationRecord {  BuildingUnitName = buildingUnit.UnitName });
-            }
-        }
-
-        #endregion
-
         public async Task<List<OwnerCertificationRecord>> GetListForSmallDistrictIdAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId&&x.IsInvalid==false).ToListAsync(token);
+                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId && x.IsInvalid == false).ToListAsync(token);
             }
         }
 
@@ -342,7 +343,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId&&x.UserId==dto.UserId).ToListAsync(token);
+                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId && x.UserId == dto.UserId).ToListAsync(token);
             }
         }
 
@@ -350,7 +351,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.OwnerCertificationRecords.Where(x => x.IsDeleted==false).ToListAsync(token);
+                var list = await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false).ToListAsync(token);
                 return (from x in list where ids.Contains(x.Id.ToString()) select x).ToList();
             }
         }

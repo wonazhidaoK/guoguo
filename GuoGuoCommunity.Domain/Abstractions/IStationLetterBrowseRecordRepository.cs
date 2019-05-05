@@ -19,5 +19,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<StationLetterBrowseRecord> GetAsync(string id, CancellationToken token = default);
 
         Task<List<StationLetterBrowseRecord>> GetListAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default);
+
+        Task<List<StationLetterBrowseRecord>> GetForStationLetterIdsAsync(List<string> stationLetterIds, CancellationToken token = default);
     }
 }

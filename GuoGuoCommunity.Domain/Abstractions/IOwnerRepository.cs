@@ -20,6 +20,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<Owner> GetAsync(string id, CancellationToken token = default);
 
+        Task<List<Owner>> GetForIdsAsync(List<string> ids, CancellationToken token = default);
+
         Task<List<Owner>> GetListAsync(OwnerDto dto, CancellationToken token = default);
 
         /// <summary>

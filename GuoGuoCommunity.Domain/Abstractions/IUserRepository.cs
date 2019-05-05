@@ -56,7 +56,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<User> GetForIdAsync(string id, CancellationToken token = default);
 
-        Task<List<User>> GetForIdsAsync(List<string> ids, CancellationToken token = default);
+        Task<List<User>> GetByIdsAsync(List<string> ids, CancellationToken token = default);
 
         Task UpdateTokenAsync(UserDto dto, CancellationToken token = default);
 

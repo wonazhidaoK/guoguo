@@ -1,4 +1,5 @@
-﻿using GuoGuoCommunity.Domain.Abstractions;
+﻿using EntityFramework.Extensions;
+using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using GuoGuoCommunity.Domain.Models.Enum;
@@ -126,7 +127,7 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 var list = await db.Complaints.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.WuYe.Value && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
-                
+
                 list = list.Where(x => x.CreateOperationTime >= dto.StartTime && x.CreateOperationTime <= dto.EndTime).ToList();
                 if (!string.IsNullOrWhiteSpace(dto.StatusValue))
                 {
@@ -201,7 +202,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("投诉id信息不正确");
                 }
-                var entity = await db.Complaints.Where(x => x.IsDeleted == false && x.Id == guid ).FirstOrDefaultAsync(token);
+                var entity = await db.Complaints.Where(x => x.IsDeleted == false && x.Id == guid).FirstOrDefaultAsync(token);
                 if (entity == null)
                 {
                     throw new NotImplementedException("投诉信息不存在");
@@ -348,6 +349,32 @@ namespace GuoGuoCommunity.Domain.Service
                 entity.StatusValue = ComplaintStatus.Processing.Value;
                 entity.StatusName = ComplaintStatus.Processing.Name;
                 await db.SaveChangesAsync(token);
+            }
+        }
+
+        public void OnSubscribe(CommunityIncrementer incrementer)
+        {
+            incrementer.CommunityEvent += CommunityChanging;
+        }
+
+        public async void CommunityChanging(GuoGuoCommunityContext dbs, Community community, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.Complaints.Where(x => x.CommunityId == community.Id.ToString()).UpdateAsync(x => new Complaint { CommunityName = community.Name });
+            }
+        }
+
+        public void OnSubscribe(ComplaintTypeIncrementer incrementer)
+        {
+            incrementer.ComplaintTypeEvent += ComplaintTypeChanging;
+        }
+
+        public async void ComplaintTypeChanging(GuoGuoCommunityContext dbs, ComplaintType complaintType, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.Complaints.Where(x => x.ComplaintTypeId == complaintType.Id.ToString()).UpdateAsync(x => new Complaint { ComplaintTypeName = complaintType.Name });
             }
         }
     }

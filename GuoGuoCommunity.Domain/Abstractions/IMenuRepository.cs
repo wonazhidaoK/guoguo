@@ -17,5 +17,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task UpdateAsync(MenuDto dto, CancellationToken token = default);
 
         Task<Menu> GetByIdAsync(string id, CancellationToken token = default);
+
+        Task<List<Menu>> GetByIdsAsync(List<string> ids, CancellationToken token = default);
     }
 }

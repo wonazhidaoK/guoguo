@@ -184,6 +184,7 @@
       <DependentUpon>201904220211388_update-VoteRecordDetail.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Enum\StationLetterReadStatus.cs" />
+    <Compile Include="Models\event\ComplaintTypeIncrementer.cs" />
     <Compile Include="Models\IDCardPhotoRecord.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />

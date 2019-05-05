@@ -18,6 +18,8 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<Industry> GetAsync(string id, CancellationToken token = default);
 
+        Task<List<Industry>> GetForIdsAsync(List<string> ids, CancellationToken token = default);
+
         Task<List<Industry>> GetListAsync(IndustryDto dto, CancellationToken token = default);
     }
 }

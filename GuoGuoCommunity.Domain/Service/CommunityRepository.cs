@@ -156,18 +156,31 @@ namespace GuoGuoCommunity.Domain.Service
         private async Task OnUpdate(GuoGuoCommunityContext db, Community dto, CancellationToken token = default)
         {
             CommunityIncrementer incrementer = new CommunityIncrementer();
+
             //小区订阅
             SmallDistrictRepository smallDistrictRepository = new SmallDistrictRepository();
             smallDistrictRepository.OnSubscribe(incrementer);
+
             //公告订阅
             AnnouncementRepository announcementRepository = new AnnouncementRepository();
             announcementRepository.OnSubscribe(incrementer);
+
             //业主认证订阅
             OwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
             ownerCertificationRecordRepository.OnSubscribe(incrementer);
-            //投诉订阅
+
+            //投票订阅
             VoteRepository voteRepository = new VoteRepository();
             voteRepository.OnSubscribe(incrementer);
+
+            //投诉订阅
+            ComplaintRepository complaintRepository = new ComplaintRepository();
+            complaintRepository.OnSubscribe(incrementer);
+
+            //用户订阅
+            UserRepository userRepository = new UserRepository();
+            userRepository.OnSubscribe(incrementer);
+
             await incrementer.OnUpdate(db, dto, token);
         }
 

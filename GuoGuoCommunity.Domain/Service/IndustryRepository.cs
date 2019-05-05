@@ -35,7 +35,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("楼宇单元信息不存在！");
                 }
-                var industries = await db.Industries.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.BuildingId == dto.BuildingId&&x.BuildingUnitId==dto.BuildingUnitId).FirstOrDefaultAsync(token);
+                var industries = await db.Industries.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.BuildingId == dto.BuildingId && x.BuildingUnitId == dto.BuildingUnitId).FirstOrDefaultAsync(token);
                 if (industries != null)
                 {
                     throw new NotImplementedException("该业户信息已存在！");
@@ -97,10 +97,10 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 var list = await db.Industries.Where(x => x.IsDeleted == false).ToListAsync(token);
 
-                var buildingList = (await db.Buildings.Where(x => x.IsDeleted == false&&x.SmallDistrictId==dto.OperationUserSmallDistrictId).Select(x =>  x.Id.ToString()  ).ToListAsync(token));
-                
-                list = list.Where(x => buildingList.Contains( x.BuildingId)).ToList();
-                
+                var buildingList = (await db.Buildings.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.OperationUserSmallDistrictId).Select(x => x.Id.ToString()).ToListAsync(token));
+
+                list = list.Where(x => buildingList.Contains(x.BuildingId)).ToList();
+
 
                 if (!string.IsNullOrWhiteSpace(dto.BuildingId))
                 {
@@ -202,6 +202,14 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 await db.Industries.Where(x => x.BuildingUnitId == buildingUnit.Id.ToString()).UpdateAsync(x => new Industry { BuildingUnitName = buildingUnit.UnitName });
+            }
+        }
+
+        public async Task<List<Industry>> GetForIdsAsync(List<string> ids, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await (from x in db.Industries where ids.Contains(x.Id.ToString()) select x).ToListAsync(token);
             }
         }
     }

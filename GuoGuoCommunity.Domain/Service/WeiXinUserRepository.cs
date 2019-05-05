@@ -186,5 +186,13 @@ namespace GuoGuoCommunity.Domain.Service
                 await db.SaveChangesAsync(token);
             }
         }
+
+        public async Task<List<WeiXinUser>> GetForUnionIdsAsync(List<string> ids, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.WeiXinUsers.Where(x => ids.Contains(x.Unionid)).ToListAsync(token);
+            }
+        }
     }
 }

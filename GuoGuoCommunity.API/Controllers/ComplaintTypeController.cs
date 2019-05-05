@@ -69,7 +69,6 @@ namespace GuoGuoCommunity.API.Controllers
             }
             var entity = await _complaintTypeRepository.AddAsync(new ComplaintTypeDto
             {
-
                 Name = input.Name,
                 Description = input.Description,
                 Level = input.Level,
