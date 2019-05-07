@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 街道办
     /// </summary>
-    public class StreetOffice : IDeleted,ILastOperation, ICreateOperation
+    public class StreetOffice : IEntitity
     {
         /// <summary>
         /// 

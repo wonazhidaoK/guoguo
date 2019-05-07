@@ -145,9 +145,9 @@ namespace GuoGuoCommunity.Domain.Service
         private async Task OnUpdate(GuoGuoCommunityContext db, StreetOffice dto, CancellationToken token = default)
         {
             StreetOfficeIncrementer incrementer = new StreetOfficeIncrementer();
-            //社区订阅
-            CommunityRepository communityRepository = new CommunityRepository();
-            communityRepository.OnSubscribe(incrementer);
+            ////社区订阅
+            //CommunityRepository communityRepository = new CommunityRepository();
+            //communityRepository.OnSubscribe(incrementer);
             //小区订阅
             SmallDistrictRepository smallDistrictRepository = new SmallDistrictRepository();
             smallDistrictRepository.OnSubscribe(incrementer);

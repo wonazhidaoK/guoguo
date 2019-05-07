@@ -205,10 +205,10 @@ namespace GuoGuoCommunity.API.Controllers
                 VoteId = input.Id
             }, cancellationToken))).Where(x => x.Feedback != "");
             List<GetFeedbackOutput> list = new List<GetFeedbackOutput>();
-            var operationList = await _ownerCertificationRecordRepository.GetListForIdArrayAsync(data.Select(x => x.Id.ToString()).ToList());
+            var operationList = await _ownerCertificationRecordRepository.GetListForIdArrayAsync(data.Select(x => x.OwnerCertificationId.ToString()).ToList());
             foreach (var item in data)
             {
-                string OperationName = operationList?.Where(x => x.Id.ToString() == item.OwnerCertificationId).FirstOrDefault().OwnerName;
+                string OperationName = operationList.Where(x => x.Id.ToString() == item.OwnerCertificationId).FirstOrDefault()?.OwnerName;
 
                 list.Add(new GetFeedbackOutput
                 {

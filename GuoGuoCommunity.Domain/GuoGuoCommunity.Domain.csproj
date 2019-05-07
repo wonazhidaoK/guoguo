@@ -129,9 +129,17 @@
     <Compile Include="Abstractions\IVoteRepository.cs" />
     <Compile Include="Abstractions\IVoteResultRecordRepository.cs" />
     <Compile Include="Abstractions\IWeiXinUserRepository.cs" />
+    <Compile Include="Abstractions\Models\IBuilding.cs" />
+    <Compile Include="Abstractions\Models\IBuildingUnit.cs" />
+    <Compile Include="Abstractions\Models\ICommunity.cs" />
     <Compile Include="Abstractions\Models\ICreateOperation.cs" />
     <Compile Include="Abstractions\Models\IDeleted.cs" />
+    <Compile Include="Abstractions\Models\IEntitity.cs" />
+    <Compile Include="Abstractions\Models\IIndustry.cs" />
     <Compile Include="Abstractions\Models\ILastOperation.cs" />
+    <Compile Include="Abstractions\Models\IOwner.cs" />
+    <Compile Include="Abstractions\Models\ISmallDistrict.cs" />
+    <Compile Include="Abstractions\Models\IStreetOffice.cs" />
     <Compile Include="Dto\AnnouncementAnnexDto.cs" />
     <Compile Include="Dto\AnnouncementDto.cs" />
     <Compile Include="Dto\BuildingDto.cs" />

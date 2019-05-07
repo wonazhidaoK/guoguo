@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 社区
     /// </summary>
-    public class Community : IDeleted, ILastOperation, ICreateOperation
+    public class Community : IEntitity, IStreetOffice
     {
         /// <summary>
         /// 
@@ -47,11 +47,11 @@ namespace GuoGuoCommunity.Domain.Models
         [Required]
         public string StreetOfficeId { get; set; }
 
-        /// <summary>
-        /// 街道办名称
-        /// </summary>
-        [Required]
-        public string StreetOfficeName { get; set; }
+        ///// <summary>
+        ///// 街道办名称
+        ///// </summary>
+        //[Required]
+        //public string StreetOfficeName { get; set; }
 
         public bool IsDeleted { get; set; }
 

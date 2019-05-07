@@ -964,7 +964,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("complaint/getAllForProperty")]
         public async Task<ApiResult<GetAllComplaintForPropertyOutput>> GetAllForProperty([FromUri]GetAllComplaintForPropertyInput input, CancellationToken cancelToken)
         {
-
             if (Authorization == null)
             {
                 return new ApiResult<GetAllComplaintForPropertyOutput>(APIResultCode.Unknown, new GetAllComplaintForPropertyOutput { }, APIResultMessage.TokenNull);

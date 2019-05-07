@@ -43,7 +43,7 @@ namespace GuoGuoCommunity.Domain.Service
                     LastOperationTime = dto.OperationTime,
                     LastOperationUserId = dto.OperationUserId,
                     StreetOfficeId = dto.StreetOfficeId,
-                    StreetOfficeName = streetOffice.Name
+                    //StreetOfficeName = streetOffice.Name
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -210,17 +210,17 @@ namespace GuoGuoCommunity.Domain.Service
 
         }
 
-        public void OnSubscribe(StreetOfficeIncrementer incrementer)
-        {
-            incrementer.StreetOfficeEvent += StreetOfficeChanging;//在发布者私有委托里增加方法
-        }
+        //public void OnSubscribe(StreetOfficeIncrementer incrementer)
+        //{
+        //    incrementer.StreetOfficeEvent += StreetOfficeChanging;//在发布者私有委托里增加方法
+        //}
 
-        public async void StreetOfficeChanging(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                await db.Communities.Where(x => x.StreetOfficeId == streetOffice.Id.ToString()).UpdateAsync(x => new Community { StreetOfficeName = streetOffice.Name });
-            }
-        }
+        //public async void StreetOfficeChanging(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)
+        //{
+        //    using (var db = new GuoGuoCommunityContext())
+        //    {
+        //        await db.Communities.Where(x => x.StreetOfficeId == streetOffice.Id.ToString()).UpdateAsync(x => new Community { StreetOfficeName = streetOffice.Name });
+        //    }
+        //}
     }
 }

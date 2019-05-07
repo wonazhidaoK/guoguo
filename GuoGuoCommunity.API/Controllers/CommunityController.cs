@@ -187,7 +187,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Region = data.Region,
                     Name = data.Name,
                     StreetOfficeId = data.StreetOfficeId,
-                    StreetOfficeName = data.StreetOfficeName
+                    //StreetOfficeName = data.StreetOfficeName
                 });
             }
             catch (Exception e)
@@ -249,7 +249,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Region = x.Region,
                     Name = x.Name,
                     StreetOfficeId = x.StreetOfficeId,
-                    StreetOfficeName = x.StreetOfficeName
+                    //StreetOfficeName = x.StreetOfficeName
                 }).ToList(),
                 TotalCount = listCount
             });
