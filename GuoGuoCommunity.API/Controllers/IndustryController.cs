@@ -194,11 +194,11 @@ namespace GuoGuoCommunity.API.Controllers
                 Name = data.Name,
                 Oriented = data.Oriented,
                 NumberOfLayers = data.NumberOfLayers,
-                BuildingId = data.BuildingId,
+                BuildingId = data.BuildingUnit.BuildingId.ToString(),
                 Acreage = data.Acreage,
-                BuildingUnitId = data.BuildingUnitId,
-                BuildingName = data.BuildingName,
-                BuildingUnitName = data.BuildingUnitName
+                BuildingUnitId = data.BuildingUnitId.ToString(),
+                BuildingName = data.BuildingUnit.Building.Name,
+                BuildingUnitName = data.BuildingUnit.UnitName
             });
 
         }
@@ -250,11 +250,11 @@ namespace GuoGuoCommunity.API.Controllers
                     Id = x.Id.ToString(),
                     Name = x.Name,
                     Acreage = x.Acreage,
-                    BuildingId = x.BuildingId,
+                    BuildingId = x.BuildingUnit.BuildingId.ToString(),
                     Oriented = x.Oriented,
-                    BuildingName = x.BuildingName,
-                    BuildingUnitId = x.BuildingUnitId,
-                    BuildingUnitName = x.BuildingUnitName,
+                    BuildingName = x.BuildingUnit.Building.Name,
+                    BuildingUnitId = x.BuildingUnitId.ToString(),
+                    BuildingUnitName = x.BuildingUnit.UnitName,
                     NumberOfLayers = x.NumberOfLayers
                 }).ToList(),
                 TotalCount = listCount

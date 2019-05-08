@@ -1,10 +1,12 @@
-﻿namespace GuoGuoCommunity.Domain.Abstractions.Models
+﻿using System;
+
+namespace GuoGuoCommunity.Domain.Abstractions.Models
 {
     /// <summary>
     /// 业户
     /// </summary>
     public  interface IIndustry
     {
-        string IndustryId { get; set; }
+        Guid IndustryId { get; set; }
     }
 }

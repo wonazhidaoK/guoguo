@@ -213,8 +213,8 @@ namespace GuoGuoCommunity.API.Controllers
                 Name = data.Name,
                 IsValid = data.IsValid,
                 RemarkName = data.RemarkName,
-                SmallDistrictId = data.SmallDistrictId,
-                SmallDistrictName = data.SmallDistrictName
+                SmallDistrictId = data.SmallDistrictId.ToString(),
+                SmallDistrictName = data.SmallDistrict.Name
             });
         }
 
@@ -264,8 +264,8 @@ namespace GuoGuoCommunity.API.Controllers
                     Id = x.Id.ToString(),
                     IsValid = x.IsValid,
                     RemarkName = x.RemarkName,
-                    SmallDistrictId = x.SmallDistrictId,
-                    SmallDistrictName = x.SmallDistrictName,
+                    SmallDistrictId = x.SmallDistrictId.ToString(),
+                    SmallDistrictName = x.SmallDistrict.Name,
                     Name = x.Name,
                     IsElection = x.IsElection,
                     IsCanDeleted = !x.IsElection,

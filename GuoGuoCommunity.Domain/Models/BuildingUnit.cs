@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 楼宇单元信息
     /// </summary>
-    public class BuildingUnit : IDeleted, ILastOperation, ICreateOperation
+    public class BuildingUnit : IEntitity,IBuilding
     {
         /// <summary>
         /// 
@@ -32,7 +32,10 @@ namespace GuoGuoCommunity.Domain.Models
         /// 楼宇Id
         /// </summary>
         [Required]
-        public string BuildingId { get; set; }
+        [ForeignKey("Building")]
+        public Guid BuildingId { get; set; }
+
+        public Building Building { get; set; }
 
         public string LastOperationUserId { get; set; }
 

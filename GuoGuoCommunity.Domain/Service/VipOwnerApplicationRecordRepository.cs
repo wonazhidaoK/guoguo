@@ -240,7 +240,7 @@ namespace GuoGuoCommunity.Domain.Service
                 var list = await db.VipOwnerApplicationRecords.Where(x => x.IsDeleted == false).ToListAsync(token);
                 if (string.IsNullOrWhiteSpace(dto.SmallDistrictId))
                 {
-                    var smallDistricts = await db.SmallDistricts.Where(x => x.StreetOfficeId == dto.OperationUserStreetOfficeId && x.IsDeleted == false).Select(x => x.Id.ToString()).ToListAsync(token);
+                    var smallDistricts = await db.SmallDistricts.Where(x => x.Community.StreetOfficeId.ToString() == dto.OperationUserStreetOfficeId && x.IsDeleted == false).Select(x => x.Id.ToString()).ToListAsync(token);
                     list = list.Where(x => smallDistricts.Contains(x.SmallDistrictId)).ToList();
                 }
                 else

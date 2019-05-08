@@ -26,7 +26,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("业户信息不存在！");
                 }
 
-                var owner = await db.Owners.Where(x => x.IDCard == dto.IDCard && x.IsDeleted == false && x.IndustryId == dto.IndustryId).FirstOrDefaultAsync(token);
+                var owner = await db.Owners.Where(x => x.IDCard == dto.IDCard && x.IsDeleted == false && x.IndustryId == industryId).FirstOrDefaultAsync(token);
                 if (owner != null)
                 {
                     throw new NotImplementedException("该业主信息已存在！");
@@ -38,8 +38,8 @@ namespace GuoGuoCommunity.Domain.Service
                     Gender = dto.Gender,
                     IDCard = dto.IDCard,
                     PhoneNumber = dto.PhoneNumber,
-                    IndustryId = dto.IndustryId,
-                    IndustryName = industrie.Name,
+                    IndustryId = industryId,
+                    //IndustryName = industrie.Name,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
@@ -84,14 +84,14 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Owners.Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.Owners.Include(x=>x.Industry).Where(x => x.IsDeleted == false).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.IDCard))
                 {
                     list = list.Where(x => x.IDCard.Contains(dto.IDCard)).ToList();
                 }
                 if (!string.IsNullOrWhiteSpace(dto.IndustryId))
                 {
-                    list = list.Where(x => x.IndustryId == dto.IndustryId).ToList();
+                    list = list.Where(x => x.IndustryId.ToString() == dto.IndustryId).ToList();
                 }
                 if (!string.IsNullOrWhiteSpace(dto.PhoneNumber))
                 {
@@ -125,7 +125,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.Owners.Where(x => x.IsDeleted == false && x.IndustryId == dto.IndustryId).ToListAsync(token);
+                return await db.Owners.Where(x => x.IsDeleted == false && x.IndustryId.ToString() == dto.IndustryId).ToListAsync(token);
             }
         }
 
@@ -178,7 +178,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.Owners.Where(x => x.IsDeleted == false && x.IsLegalize == false && x.IndustryId == dto.IndustryId).ToListAsync(token);
+                return await db.Owners.Where(x => x.IsDeleted == false && x.IsLegalize == false && x.IndustryId.ToString() == dto.IndustryId).ToListAsync(token);
             }
         }
 

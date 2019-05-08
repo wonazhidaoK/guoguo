@@ -1,7 +1,9 @@
-﻿namespace GuoGuoCommunity.Domain.Abstractions.Models
+﻿using System;
+
+namespace GuoGuoCommunity.Domain.Abstractions.Models
 {
     public interface IBuildingUnit
     {
-        string BuildingUnitId { get; set; }
+        Guid BuildingUnitId { get; set; }
     }
 }

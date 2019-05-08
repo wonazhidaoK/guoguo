@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 业主信息
     /// </summary>
-    public class Owner : IDeleted, ILastOperation, ICreateOperation
+    public class Owner : IEntitity, IIndustry
     {
         /// <summary>
         /// 
@@ -45,12 +45,15 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 业户Id
         /// </summary>
-        public string IndustryId { get; set; }
+        [Required]
+        [ForeignKey("Industry")]
+        public Guid IndustryId { get; set; }
 
-        /// <summary>
-        /// 业户名称
-        /// </summary>
-        public string IndustryName { get; set; }
+        public Industry Industry { get; set; }
+        ///// <summary>
+        ///// 业户名称
+        ///// </summary>
+        //public string IndustryName { get; set; }
 
         /// <summary>
         /// 业主认证申请id

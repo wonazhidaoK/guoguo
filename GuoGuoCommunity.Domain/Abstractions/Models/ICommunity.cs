@@ -1,10 +1,12 @@
-﻿namespace GuoGuoCommunity.Domain.Abstractions.Models
+﻿using System;
+
+namespace GuoGuoCommunity.Domain.Abstractions.Models
 {
     /// <summary>
     /// 社区
     /// </summary>
     public interface ICommunity
     {
-        string CommunityId { get; set; }
+        Guid CommunityId { get; set; }
     }
 }

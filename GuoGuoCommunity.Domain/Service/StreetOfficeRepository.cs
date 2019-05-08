@@ -170,12 +170,12 @@ namespace GuoGuoCommunity.Domain.Service
         private async Task<bool> OnDelete(GuoGuoCommunityContext db, StreetOfficeDto dto, CancellationToken token = default)
         {
             //社区
-            if (await db.Communities.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            if (await db.Communities.Where(x => x.StreetOfficeId.ToString() == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }
             //小区
-            if (await db.SmallDistricts.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            if (await db.SmallDistricts.Where(x => x.Community.StreetOfficeId.ToString() == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }

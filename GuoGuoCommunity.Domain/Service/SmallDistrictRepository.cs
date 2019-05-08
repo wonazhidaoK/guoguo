@@ -1,5 +1,4 @@
-﻿using EntityFramework.Extensions;
-using GuoGuoCommunity.Domain.Abstractions;
+﻿using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
@@ -37,11 +36,13 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("社区办信息不存在！");
                 }
 
-                var smallDistricts = await db.SmallDistricts.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.CommunityId == dto.CommunityId).FirstOrDefaultAsync(token);
+                var smallDistricts = await db.SmallDistricts.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.CommunityId == communityId).FirstOrDefaultAsync(token);
                 if (smallDistricts != null)
                 {
                     throw new NotImplementedException("该小区已存在！");
                 }
+
+
                 var entity = db.SmallDistricts.Add(new SmallDistrict
                 {
                     Name = dto.Name,
@@ -52,10 +53,10 @@ namespace GuoGuoCommunity.Domain.Service
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
                     LastOperationUserId = dto.OperationUserId,
-                    StreetOfficeId = dto.StreetOfficeId,
-                    StreetOfficeName = streetOffice.Name,
-                    CommunityId = dto.CommunityId,
-                    CommunityName = communities.Name,
+                    //StreetOfficeId = streetOfficeId,
+                    // StreetOfficeName = streetOffice.Name,
+                    CommunityId = communityId,
+                    // CommunityName = communities.Name,
                     PhoneNumber = dto.PhoneNumber
                 });
                 await db.SaveChangesAsync(token);
@@ -92,7 +93,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.SmallDistricts.Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.SmallDistricts.Include(x => x.Community).Include(x=>x.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.State))
                 {
                     list = list.Where(x => x.State == dto.State).ToList();
@@ -107,11 +108,11 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 if (!string.IsNullOrWhiteSpace(dto.StreetOfficeId))
                 {
-                    list = list.Where(x => x.StreetOfficeId == dto.StreetOfficeId).ToList();
+                    list = list.Where(x => x.Community.StreetOfficeId.ToString() == dto.StreetOfficeId).ToList();
                 }
                 if (!string.IsNullOrWhiteSpace(dto.CommunityId))
                 {
-                    list = list.Where(x => x.CommunityId == dto.CommunityId).ToList();
+                    list = list.Where(x => x.CommunityId.ToString() == dto.CommunityId).ToList();
                 }
                 if (!string.IsNullOrWhiteSpace(dto.Name))
                 {
@@ -138,7 +139,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.SmallDistricts.Where(x => x.IsDeleted == false && x.CommunityId == dto.CommunityId).ToListAsync(token);
+                return await db.SmallDistricts.Where(x => x.IsDeleted == false && x.CommunityId.ToString() == dto.CommunityId).ToListAsync(token);
             }
         }
 
@@ -155,7 +156,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该小区不存在！");
                 }
-                if (await db.SmallDistricts.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.StreetOfficeId == smallDistrict.StreetOfficeId && x.Id != uid).FirstOrDefaultAsync(token) != null)
+                if (await db.SmallDistricts.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.Community.StreetOfficeId == smallDistrict.Community.StreetOfficeId && x.Id != uid).FirstOrDefaultAsync(token) != null)
                 {
                     throw new NotImplementedException("该小区名称已存在！");
                 }
@@ -202,15 +203,15 @@ namespace GuoGuoCommunity.Domain.Service
         private async Task<bool> OnDelete(GuoGuoCommunityContext db, SmallDistrictDto dto, CancellationToken token = default)
         {
             //楼宇
-            if (await db.Buildings.Where(x => x.SmallDistrictId == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            if (await db.Buildings.Where(x => x.SmallDistrictId.ToString() == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }
             //业委会
-            if (await db.VipOwners.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
-            {
-                return true;
-            }
+            //if (await db.VipOwners.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
             ////公告
             //if (await db.Announcements.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
             //{
@@ -241,10 +242,10 @@ namespace GuoGuoCommunity.Domain.Service
 
         public async void StreetOfficeChanging(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)
         {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                await db.SmallDistricts.Where(x => x.StreetOfficeId == streetOffice.Id.ToString()).UpdateAsync(x => new SmallDistrict { StreetOfficeName = streetOffice.Name });
-            }
+            //using (var db = new GuoGuoCommunityContext())
+            //{
+            //    await db.SmallDistricts.Where(x => x.StreetOfficeId == streetOffice.Id).UpdateAsync(x => new SmallDistrict { StreetOfficeName = streetOffice.Name });
+            //}
         }
 
         public void OnSubscribe(CommunityIncrementer incrementer)
@@ -254,10 +255,10 @@ namespace GuoGuoCommunity.Domain.Service
 
         public async void CommunityChanging(GuoGuoCommunityContext dbs, Community community, CancellationToken token = default)
         {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                await db.SmallDistricts.Where(x => x.CommunityId == community.Id.ToString()).UpdateAsync(x => new SmallDistrict { CommunityName = community.Name });
-            }
+            //using (var db = new GuoGuoCommunityContext())
+            //{
+            //    await db.SmallDistricts.Where(x => x.CommunityId == community.Id.ToString()).UpdateAsync(x => new SmallDistrict { CommunityName = community.Name });
+            //}
         }
 
         public async Task<List<SmallDistrict>> GetForIdsAsync(List<string> ids, CancellationToken token = default)

@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 业户信息
     /// </summary>
-    public class Industry : IDeleted, ILastOperation, ICreateOperation
+    public class Industry : IEntitity,IBuildingUnit
     {
         /// <summary>
         /// 
@@ -37,26 +37,29 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public string Oriented { get; set; }
 
-        /// <summary>
-        /// 楼宇Id
-        /// </summary>
-        [Required]
-        public string BuildingId { get; set; }
+        ///// <summary>
+        ///// 楼宇Id
+        ///// </summary>
+        //[Required]
+        //public string BuildingId { get; set; }
 
-        /// <summary>
-        /// 楼宇名称
-        /// </summary>
-        public string BuildingName { get; set; }
+        ///// <summary>
+        ///// 楼宇名称
+        ///// </summary>
+        //public string BuildingName { get; set; }
 
         /// <summary>
         /// 楼宇单元Id
         /// </summary>
-        public string BuildingUnitId { get; set; }
+        [Required]
+        [ForeignKey("BuildingUnit")]
+        public Guid BuildingUnitId { get; set; }
 
-        /// <summary>
-        /// 楼宇单元名称
-        /// </summary>
-        public string BuildingUnitName { get; set; }
+        public BuildingUnit BuildingUnit { get; set; }
+        ///// <summary>
+        ///// 楼宇单元名称
+        ///// </summary>
+        //public string BuildingUnitName { get; set; }
 
         public bool IsDeleted { get; set; }
 

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace GuoGuoCommunity.API.Models
+﻿namespace GuoGuoCommunity.API.Models
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class GetAllComplaintFollowUpOutput
     {
     }

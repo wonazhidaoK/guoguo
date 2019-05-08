@@ -167,8 +167,8 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 Id = data.Id.ToString(),
                 Name = data.Name,
-                SmallDistrictId = data.SmallDistrictId,
-                SmallDistrictName = data.SmallDistrictName
+                SmallDistrictId = data.SmallDistrictId.ToString(),
+                SmallDistrictName = data.SmallDistrict.Name
             });
         }
 
@@ -216,8 +216,8 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     Id = x.Id.ToString(),
                     Name = x.Name,
-                    SmallDistrictId = x.SmallDistrictId,
-                    SmallDistrictName = x.SmallDistrictName,
+                    SmallDistrictId = x.SmallDistrictId.ToString(),
+                    SmallDistrictName = x.SmallDistrict.Name,
                 }).ToList(),
                 TotalCount = listCount
             });

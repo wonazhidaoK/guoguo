@@ -198,8 +198,8 @@ namespace GuoGuoCommunity.API.Controllers
                 Birthday = data.Birthday,
                 Gender = data.Gender,
                 IDCard = data.IDCard,
-                IndustryId = data.IndustryId,
-                IndustryName = data.IndustryName,
+                IndustryId = data.IndustryId.ToString(),
+                IndustryName = data.Industry.Name,
                 PhoneNumber = data.PhoneNumber,
                 IsLegalize = data.IsLegalize
             });
@@ -258,10 +258,10 @@ namespace GuoGuoCommunity.API.Controllers
                     Name = x.Name,
                     Gender = x.Gender,
                     PhoneNumber = x.PhoneNumber,
-                    IndustryId = x.IndustryId,
+                    IndustryId = x.IndustryId.ToString(),
                     IDCard = x.IDCard,
                     Birthday = x.Birthday,
-                    IndustryName = x.IndustryName,
+                    IndustryName = x.Industry.Name,
                     IsLegalize = x.IsLegalize
                 }).ToList(),
                 TotalCount = listCount

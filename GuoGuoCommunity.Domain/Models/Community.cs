@@ -45,8 +45,10 @@ namespace GuoGuoCommunity.Domain.Models
         /// 街道办Id
         /// </summary>
         [Required]
-        public string StreetOfficeId { get; set; }
+        [ForeignKey("StreetOffice")]
+        public Guid StreetOfficeId { get; set; }
 
+        public StreetOffice  StreetOffice { get; set; }
         ///// <summary>
         ///// 街道办名称
         ///// </summary>

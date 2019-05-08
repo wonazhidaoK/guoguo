@@ -191,6 +191,34 @@
     <Compile Include="Migrations\201904220211388_update-VoteRecordDetail.Designer.cs">
       <DependentUpon>201904220211388_update-VoteRecordDetail.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201905070248352_update-Community.cs" />
+    <Compile Include="Migrations\201905070248352_update-Community.Designer.cs">
+      <DependentUpon>201905070248352_update-Community.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905070550286_update-SmallDistrict.cs" />
+    <Compile Include="Migrations\201905070550286_update-SmallDistrict.Designer.cs">
+      <DependentUpon>201905070550286_update-SmallDistrict.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905070612128_update-Building.cs" />
+    <Compile Include="Migrations\201905070612128_update-Building.Designer.cs">
+      <DependentUpon>201905070612128_update-Building.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905070634307_update-BuildingUnit.cs" />
+    <Compile Include="Migrations\201905070634307_update-BuildingUnit.Designer.cs">
+      <DependentUpon>201905070634307_update-BuildingUnit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905070720400_update-Industry.cs" />
+    <Compile Include="Migrations\201905070720400_update-Industry.Designer.cs">
+      <DependentUpon>201905070720400_update-Industry.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905070737323_update-Owner.cs" />
+    <Compile Include="Migrations\201905070737323_update-Owner.Designer.cs">
+      <DependentUpon>201905070737323_update-Owner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905070809049_update-VipOwner.cs" />
+    <Compile Include="Migrations\201905070809049_update-VipOwner.Designer.cs">
+      <DependentUpon>201905070809049_update-VipOwner.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Enum\StationLetterReadStatus.cs" />
     <Compile Include="Models\event\ComplaintTypeIncrementer.cs" />
     <Compile Include="Models\IDCardPhotoRecord.cs" />
@@ -324,6 +352,27 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201904220211388_update-VoteRecordDetail.resx">
       <DependentUpon>201904220211388_update-VoteRecordDetail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905070248352_update-Community.resx">
+      <DependentUpon>201905070248352_update-Community.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905070550286_update-SmallDistrict.resx">
+      <DependentUpon>201905070550286_update-SmallDistrict.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905070612128_update-Building.resx">
+      <DependentUpon>201905070612128_update-Building.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905070634307_update-BuildingUnit.resx">
+      <DependentUpon>201905070634307_update-BuildingUnit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905070720400_update-Industry.resx">
+      <DependentUpon>201905070720400_update-Industry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905070737323_update-Owner.resx">
+      <DependentUpon>201905070737323_update-Owner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905070809049_update-VipOwner.resx">
+      <DependentUpon>201905070809049_update-VipOwner.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

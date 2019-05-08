@@ -35,7 +35,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("楼宇单元信息不存在！");
                 }
-                var industries = await db.Industries.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.BuildingId == dto.BuildingId && x.BuildingUnitId == dto.BuildingUnitId).FirstOrDefaultAsync(token);
+                var industries = await db.Industries.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.BuildingUnitId == buildingUnitId&&x.BuildingUnit.BuildingId== buildingId).FirstOrDefaultAsync(token);
                 if (industries != null)
                 {
                     throw new NotImplementedException("该业户信息已存在！");
@@ -47,10 +47,10 @@ namespace GuoGuoCommunity.Domain.Service
                 var entity = db.Industries.Add(new Industry
                 {
                     Name = dto.Name,
-                    BuildingId = dto.BuildingId,
-                    BuildingUnitName = buildingUnit.UnitName,
-                    BuildingUnitId = dto.BuildingUnitId,
-                    BuildingName = building.Name,
+                   // BuildingId = dto.BuildingId,
+                    //BuildingUnitName = buildingUnit.UnitName,
+                    BuildingUnitId = buildingUnitId,
+                   // BuildingName = building.Name,
                     Acreage = dto.Acreage,
                     NumberOfLayers = dto.NumberOfLayers,
                     Oriented = dto.Oriented,
@@ -95,20 +95,20 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Industries.Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.Industries.Include(x=>x.BuildingUnit).Include(x=>x.BuildingUnit.Building).Where(x => x.IsDeleted == false).ToListAsync(token);
 
-                var buildingList = (await db.Buildings.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.OperationUserSmallDistrictId).Select(x => x.Id.ToString()).ToListAsync(token));
+                var buildingList = (await db.Buildings.Where(x => x.IsDeleted == false && x.SmallDistrictId.ToString() == dto.OperationUserSmallDistrictId).Select(x => x.Id.ToString()).ToListAsync(token));
 
-                list = list.Where(x => buildingList.Contains(x.BuildingId)).ToList();
+                list = list.Where(x => buildingList.Contains(x.BuildingUnit.BuildingId.ToString())).ToList();
 
 
                 if (!string.IsNullOrWhiteSpace(dto.BuildingId))
                 {
-                    list = list.Where(x => x.BuildingId == dto.BuildingId).ToList();
+                    list = list.Where(x => x.BuildingUnit.BuildingId.ToString() == dto.BuildingId).ToList();
                 }
                 if (!string.IsNullOrWhiteSpace(dto.BuildingUnitId))
                 {
-                    list = list.Where(x => x.BuildingUnitId == dto.BuildingUnitId).ToList();
+                    list = list.Where(x => x.BuildingUnitId.ToString() == dto.BuildingUnitId).ToList();
                 }
                 if (!string.IsNullOrWhiteSpace(dto.Name))
                 {
@@ -135,7 +135,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.Industries.Where(x => x.IsDeleted == false && x.BuildingUnitId == dto.BuildingUnitId && x.NumberOfLayers == dto.NumberOfLayers).ToListAsync(token);
+                return await db.Industries.Where(x => x.IsDeleted == false && x.BuildingUnitId.ToString() == dto.BuildingUnitId && x.NumberOfLayers == dto.NumberOfLayers).ToListAsync(token);
             }
         }
 
@@ -153,7 +153,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该业户不存在！");
                 }
 
-                if (await db.Industries.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.BuildingId == industrie.BuildingId && x.Id != uid && x.BuildingUnitId == dto.BuildingUnitId).FirstOrDefaultAsync(token) != null)
+                if (await db.Industries.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.BuildingUnit.BuildingId == industrie.BuildingUnit.BuildingId && x.Id != uid && x.BuildingUnitId.ToString() == dto.BuildingUnitId).FirstOrDefaultAsync(token) != null)
                 {
                     throw new NotImplementedException("该业户名称已存在！");
                 }
@@ -167,15 +167,15 @@ namespace GuoGuoCommunity.Domain.Service
 
         private async Task OnUpdateAsync(GuoGuoCommunityContext db, IndustryDto dto, CancellationToken token = default)
         {
-            await db.Owners.Where(x => x.IndustryId == dto.Id).UpdateAsync(x => new Owner { IndustryName = dto.Name });
+            //await db.Owners.Where(x => x.IndustryId == dto.Id).UpdateAsync(x => new Owner { IndustryName = dto.Name });
         }
 
         private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, IndustryDto dto, CancellationToken token = default)
         {
-            if (await db.Owners.Where(x => x.IndustryId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
-            {
-                return true;
-            }
+            //if (await db.Owners.Where(x => x.IndustryId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
             return false;
         }
 
@@ -188,7 +188,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                await db.Industries.Where(x => x.BuildingId == building.Id.ToString()).UpdateAsync(x => new Industry { BuildingName = building.Name });
+                //await db.Industries.Where(x => x.BuildingId == building.Id.ToString()).UpdateAsync(x => new Industry { BuildingName = building.Name });
             }
         }
 
@@ -201,7 +201,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                await db.Industries.Where(x => x.BuildingUnitId == buildingUnit.Id.ToString()).UpdateAsync(x => new Industry { BuildingUnitName = buildingUnit.UnitName });
+                //await db.Industries.Where(x => x.BuildingUnitId == buildingUnit.Id.ToString()).UpdateAsync(x => new Industry { BuildingUnitName = buildingUnit.UnitName });
             }
         }
 

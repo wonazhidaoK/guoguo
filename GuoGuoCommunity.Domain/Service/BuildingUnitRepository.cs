@@ -26,7 +26,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("楼宇信息不存在！");
                 }
 
-                var buildingUnits = await db.BuildingUnits.Where(x => x.UnitName == dto.UnitName && x.IsDeleted == false && x.BuildingId == dto.BuildingId).FirstOrDefaultAsync(token);
+                var buildingUnits = await db.BuildingUnits.Where(x => x.UnitName == dto.UnitName && x.IsDeleted == false && x.BuildingId == buildingId).FirstOrDefaultAsync(token);
                 if (buildingUnits != null)
                 {
                     throw new NotImplementedException("该楼宇单元信息已存在！");
@@ -35,7 +35,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     UnitName = dto.UnitName,
                     NumberOfLayers = dto.NumberOfLayers,
-                    BuildingId = dto.BuildingId,
+                    BuildingId = buildingId,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
@@ -76,7 +76,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.BuildingUnits.Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.BuildingUnits.Include(x=>x.Building).Where(x => x.IsDeleted == false).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.UnitName))
                 {
                     list = list.Where(x => x.UnitName.Contains(dto.UnitName)).ToList();
@@ -87,7 +87,7 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 if (!string.IsNullOrWhiteSpace(dto.BuildingId))
                 {
-                    list = list.Where(x => x.BuildingId == dto.BuildingId).ToList();
+                    list = list.Where(x => x.BuildingId.ToString() == dto.BuildingId).ToList();
                 }
                 return list;
             }
@@ -109,7 +109,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.BuildingUnits.Where(x => x.IsDeleted == false && x.BuildingId == dto.BuildingId).ToListAsync(token);
+                return await db.BuildingUnits.Where(x => x.IsDeleted == false && x.BuildingId.ToString() == dto.BuildingId).ToListAsync(token);
             }
         }
 
@@ -157,7 +157,7 @@ namespace GuoGuoCommunity.Domain.Service
         private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, BuildingUnitDto dto, CancellationToken token = default)
         {
             //业户信息
-            if (await db.Industries.Where(x => x.BuildingUnitId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            if (await db.Industries.Where(x => x.BuildingUnitId.ToString() == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }

@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 楼宇
     /// </summary>
-    public class Building : IDeleted, ILastOperation, ICreateOperation
+    public class Building : IEntitity,ISmallDistrict
     {
         /// <summary>
         /// 
@@ -26,14 +26,15 @@ namespace GuoGuoCommunity.Domain.Models
         /// 小区Id
         /// </summary>
         [Required]
-        public string SmallDistrictId { get; set; }
+        [ForeignKey("SmallDistrict")]
+        public Guid SmallDistrictId { get; set; }
 
-        /// <summary>
-        /// 小区名称
-        /// </summary>
-        [Required]
-        public string SmallDistrictName { get; set; }
-
+        ///// <summary>
+        ///// 小区名称
+        ///// </summary>
+        //[Required]
+        //public string SmallDistrictName { get; set; }
+        public SmallDistrict  SmallDistrict { get; set; }
         public bool IsDeleted { get; set; }
 
         public DateTimeOffset? DeletedTime { get; set; }

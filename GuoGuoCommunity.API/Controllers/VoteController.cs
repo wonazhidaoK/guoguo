@@ -1380,7 +1380,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var vipOwner = await vipOwnerRepository.GetAsync(voteAssociationVipOwner.VipOwnerId);
                 var vipOwnerOld = await vipOwnerRepository.GetForSmallDistrictIdAsync(new VipOwnerDto
                 {
-                    SmallDistrictId = vipOwner.SmallDistrictId
+                    SmallDistrictId = vipOwner.SmallDistrictId.ToString()
                 });
                 if (vipOwnerOld != null)
                 {

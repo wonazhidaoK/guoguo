@@ -186,7 +186,7 @@ namespace GuoGuoCommunity.API.Controllers
                     City = data.City,
                     Region = data.Region,
                     Name = data.Name,
-                    StreetOfficeId = data.StreetOfficeId,
+                    StreetOfficeId = data.StreetOfficeId.ToString(),
                     //StreetOfficeName = data.StreetOfficeName
                 });
             }
@@ -238,7 +238,16 @@ namespace GuoGuoCommunity.API.Controllers
             }
             var listCount = data.Count();
             var list = data.Skip(startRow).Take(input.PageSize);
+            List<GetCommunityOutput> listsss = new List<GetCommunityOutput>();
 
+            foreach (var item in list)
+            {
+                listsss.Add(new GetCommunityOutput
+                {
+                    StreetOfficeId = item.StreetOfficeId.ToString(),
+                    StreetOfficeName = item.StreetOffice.Name
+                });
+            }
             return new ApiResult<GetAllCommunityOutput>(APIResultCode.Success, new GetAllCommunityOutput
             {
                 List = list.Select(x => new GetCommunityOutput
@@ -248,7 +257,8 @@ namespace GuoGuoCommunity.API.Controllers
                     City = x.City,
                     Region = x.Region,
                     Name = x.Name,
-                    StreetOfficeId = x.StreetOfficeId,
+                    StreetOfficeId = x.StreetOfficeId.ToString(),
+                    StreetOfficeName = x.StreetOffice.Name
                     //StreetOfficeName = x.StreetOfficeName
                 }).ToList(),
                 TotalCount = listCount

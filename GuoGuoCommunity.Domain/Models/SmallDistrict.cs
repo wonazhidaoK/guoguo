@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 小区
     /// </summary>
-    public class SmallDistrict : IDeleted, ILastOperation, ICreateOperation
+    public class SmallDistrict : IEntitity, ICommunity
     {
         /// <summary>
         /// 
@@ -41,30 +41,23 @@ namespace GuoGuoCommunity.Domain.Models
         [Required]
         public string Name { get; set; }
 
-        /// <summary>
-        /// 街道办Id
-        /// </summary>
-        [Required]
-        public string StreetOfficeId { get; set; }
+        ///// <summary>
+        ///// 街道办Id
+        ///// </summary>
+        //[Required]
+        //[ForeignKey("SmallDistrict_StreetOffice")]
+        //public Guid StreetOfficeId { get; set; }
 
-        /// <summary>
-        /// 街道办名称
-        /// </summary>
-        [Required]
-        public string StreetOfficeName { get; set; }
+        //public StreetOffice SmallDistrict_StreetOffice { get; set; }
 
         /// <summary>
         /// 社区Id
         /// </summary>
         [Required]
-        public string CommunityId { get; set; }
+        [ForeignKey("Community")]
+        public Guid CommunityId { get; set; }
 
-        /// <summary>
-        /// 社区名称
-        /// </summary>
-        [Required]
-        public string CommunityName { get; set; }
-
+        public Community Community { get; set; }
         /// <summary>
         /// 是否有效
         /// </summary>

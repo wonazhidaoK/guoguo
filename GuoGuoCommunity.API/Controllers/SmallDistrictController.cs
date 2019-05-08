@@ -201,10 +201,10 @@ namespace GuoGuoCommunity.API.Controllers
                 City = data.City,
                 Region = data.Region,
                 Name = data.Name,
-                CommunityId = data.CommunityId,
-                CommunityName = data.CommunityName,
-                StreetOfficeId = data.StreetOfficeId,
-                StreetOfficeName = data.StreetOfficeName,
+                CommunityId = data.CommunityId.ToString(),
+                CommunityName = data.Community.Name,
+                StreetOfficeId = data.ToString(),
+                StreetOfficeName = data.Community.StreetOffice.Name,
                 PhoneNumber = data.PhoneNumber
             });
 
@@ -261,10 +261,10 @@ namespace GuoGuoCommunity.API.Controllers
                     City = x.City,
                     Region = x.Region,
                     Name = x.Name,
-                    CommunityId = x.CommunityId,
-                    CommunityName = x.CommunityName,
-                    StreetOfficeId = x.StreetOfficeId,
-                    StreetOfficeName = x.StreetOfficeName,
+                    CommunityId = x.CommunityId.ToString(),
+                    CommunityName = x.Community.Name,
+                    StreetOfficeId = x.Community.StreetOfficeId.ToString(),
+                    StreetOfficeName = x.Community.StreetOffice.Name,
                     PhoneNumber = x.PhoneNumber
                 }).ToList(),
                 TotalCount = listCount
@@ -343,10 +343,10 @@ namespace GuoGuoCommunity.API.Controllers
                     City = x.City,
                     Region = x.Region,
                     Name = x.Name,
-                    CommunityId = x.CommunityId,
-                    CommunityName = x.CommunityName,
-                    StreetOfficeId = x.StreetOfficeId,
-                    StreetOfficeName = x.StreetOfficeName
+                    CommunityId = x.CommunityId.ToString(),
+                    CommunityName = x.Community.Name,
+                    StreetOfficeId = x.Community.StreetOfficeId.ToString(),
+                    StreetOfficeName = x.Community.StreetOffice.Name
                 }).ToList(),
                 TotalCount = data.Count()
             });

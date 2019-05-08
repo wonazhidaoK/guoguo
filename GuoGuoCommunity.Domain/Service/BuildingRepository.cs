@@ -1,5 +1,4 @@
-﻿using EntityFramework.Extensions;
-using GuoGuoCommunity.Domain.Abstractions;
+﻿using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
@@ -27,7 +26,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("小区信息不存在！");
                 }
 
-                var duilding = await db.Buildings.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId).FirstOrDefaultAsync(token);
+                var duilding = await db.Buildings.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.SmallDistrictId == smallDistrictId).FirstOrDefaultAsync(token);
                 if (duilding != null)
                 {
                     throw new NotImplementedException("该楼宇信息已存在！");
@@ -35,8 +34,8 @@ namespace GuoGuoCommunity.Domain.Service
                 var entity = db.Buildings.Add(new Building
                 {
                     Name = dto.Name,
-                    SmallDistrictId = dto.SmallDistrictId,
-                    SmallDistrictName = smallDistricts.Name,
+                    SmallDistrictId = smallDistrictId,
+                   // SmallDistrictName = smallDistricts.Name,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
@@ -78,10 +77,10 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Buildings.Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.Buildings.Include(x=>x.SmallDistrict).Where(x => x.IsDeleted == false).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.SmallDistrictId))
                 {
-                    list = list.Where(x => x.SmallDistrictId == dto.SmallDistrictId).ToList();
+                    list = list.Where(x => x.SmallDistrictId.ToString() == dto.SmallDistrictId).ToList();
                 }
                 if (!string.IsNullOrWhiteSpace(dto.Name))
                 {
@@ -107,7 +106,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.Buildings.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
+                return await db.Buildings.Where(x => x.IsDeleted == false && x.SmallDistrictId.ToString() == dto.SmallDistrictId).ToListAsync(token);
             }
         }
 
@@ -152,10 +151,10 @@ namespace GuoGuoCommunity.Domain.Service
         private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, BuildingDto dto, CancellationToken token = default)
         {
             //业户信息
-            if (await db.Industries.Where(x => x.BuildingId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
-            {
-                return true;
-            }
+            //if (await db.Industries.Where(x => x.BuildingId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
 
             //业主认证记录
             //if (await db.OwnerCertificationRecords.Where(x => x.BuildingId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
@@ -174,7 +173,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                await db.Buildings.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new Building { SmallDistrictName = smallDistrict.Name });
+                //await db.Buildings.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new Building { SmallDistrictName = smallDistrict.Name });
             }
         }
     }

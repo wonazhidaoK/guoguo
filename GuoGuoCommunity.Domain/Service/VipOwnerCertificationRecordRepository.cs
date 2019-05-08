@@ -78,7 +78,7 @@ namespace GuoGuoCommunity.Domain.Service
                 var list = await db.VipOwnerCertificationRecords.Where(x => x.IsDeleted == false).ToListAsync(token);
                 if (string.IsNullOrWhiteSpace(dto.VipOwnerId))
                 {
-                    var vipOwner = await db.VipOwners.Where(x => x.SmallDistrictId == dto.OperationUserSmallDistrictId && x.IsDeleted == false).Select(x => x.Id.ToString()).ToListAsync(token);
+                    var vipOwner = await db.VipOwners.Where(x => x.SmallDistrictId.ToString() == dto.OperationUserSmallDistrictId && x.IsDeleted == false).Select(x => x.Id.ToString()).ToListAsync(token);
                     list = list.Where(x => vipOwner.Contains(x.VipOwnerId)).ToList();
                 }
                 else

@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 业委会
     /// </summary>
-    public class VipOwner : IDeleted, ILastOperation, ICreateOperation
+    public class VipOwner : IEntitity,ISmallDistrict
     {
         /// <summary>
         /// 
@@ -31,13 +31,15 @@ namespace GuoGuoCommunity.Domain.Models
         /// 小区Id
         /// </summary>
         [Required]
-        public string SmallDistrictId { get; set; }
+        [ForeignKey("SmallDistrict")]
+        public Guid SmallDistrictId { get; set; }
 
-        /// <summary>
-        /// 小区名称
-        /// </summary>
-        [Required]
-        public string SmallDistrictName { get; set; }
+        public SmallDistrict SmallDistrict { get; set; }
+        ///// <summary>
+        ///// 小区名称
+        ///// </summary>
+        //[Required]
+        //public string SmallDistrictName { get; set; }
 
         /// <summary>
         /// 是否有效
