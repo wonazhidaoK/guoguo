@@ -1,7 +1,9 @@
-﻿namespace GuoGuoCommunity.Domain.Abstractions.Models
+﻿using System;
+
+namespace GuoGuoCommunity.Domain.Abstractions.Models
 {
     public interface IOwner
     {
-        string OwnerId { get; set; }
+        Guid? OwnerId { get; set; }
     }
 }

@@ -14,7 +14,7 @@ namespace GuoGuoCommunity.Domain.Models.Enum
             WuYe = new Department { Name = "物业", Value = "Property" };
             JieDaoBan = new Department { Name = "街道办", Value = "StreetOffice" };
         }
-        
+
         public string Name { get; set; }
 
         public string Value { get; set; }

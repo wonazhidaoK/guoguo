@@ -35,11 +35,6 @@ namespace GuoGuoCommunity.Domain.Models
         public Guid SmallDistrictId { get; set; }
 
         public SmallDistrict SmallDistrict { get; set; }
-        ///// <summary>
-        ///// 小区名称
-        ///// </summary>
-        //[Required]
-        //public string SmallDistrictName { get; set; }
 
         /// <summary>
         /// 是否有效

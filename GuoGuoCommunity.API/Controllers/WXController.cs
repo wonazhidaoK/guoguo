@@ -267,11 +267,11 @@ namespace GuoGuoCommunity.API.Controllers
                 /*
                  * 一期只有一个认证
                  */
-                var ownerCertificationList = await _ownerCertificationRecordRepository.GetListAsync(new OwnerCertificationRecordDto() { UserId = user.Id.ToString() });
+                var ownerCertificationList = await _ownerCertificationRecordRepository.GetListIncludeAsync(new OwnerCertificationRecordDto() { UserId = user.Id.ToString() });
                 var isVipOwner = false;
                 if (ownerCertificationList.Any())
                 {
-                    var vipOwner = await _vipOwnerRepository.GetForSmallDistrictIdAsync(new VipOwnerDto { SmallDistrictId = ownerCertificationList.FirstOrDefault().SmallDistrictId });
+                    var vipOwner = await _vipOwnerRepository.GetForSmallDistrictIdAsync(new VipOwnerDto { SmallDistrictId = ownerCertificationList.FirstOrDefault().Industry.BuildingUnit.Building.SmallDistrictId.ToString() });
                     if (vipOwner != null)
                     {
                         var vipOwnerCertificationRecord = await _vipOwnerCertificationRecordRepository.GetForVipOwnerIdAsync(new VipOwnerCertificationRecordDto

@@ -41,15 +41,6 @@ namespace GuoGuoCommunity.Domain.Models
         [Required]
         public string Name { get; set; }
 
-        ///// <summary>
-        ///// 街道办Id
-        ///// </summary>
-        //[Required]
-        //[ForeignKey("SmallDistrict_StreetOffice")]
-        //public Guid StreetOfficeId { get; set; }
-
-        //public StreetOffice SmallDistrict_StreetOffice { get; set; }
-
         /// <summary>
         /// 社区Id
         /// </summary>
@@ -58,15 +49,6 @@ namespace GuoGuoCommunity.Domain.Models
         public Guid CommunityId { get; set; }
 
         public Community Community { get; set; }
-        /// <summary>
-        /// 是否有效
-        /// </summary>
-        public string IsInvalid { get; set; }
-
-        /// <summary>
-        /// 是否选举
-        /// </summary>
-        public bool IsElection { get; set; }
 
         /// <summary>
         /// 电话

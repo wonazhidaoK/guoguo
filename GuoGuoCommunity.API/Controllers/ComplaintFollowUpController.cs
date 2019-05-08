@@ -217,12 +217,12 @@ namespace GuoGuoCommunity.API.Controllers
                 bool IsCreateUser = false;
                 if (item.OperationDepartmentValue == Department.YeZhu.Value)
                 {
-                    OperationName = (await _ownerCertificationRecordRepository.GetAsync(item.OwnerCertificationId, cancelToken))?.OwnerName;
+                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationId, cancelToken))?.Owner.Name;
                     IsCreateUser = item.OwnerCertificationId == input.OwnerCertificationId ? true : false;
                 }
                 else if (item.OperationDepartmentValue == Department.YeZhuWeiYuanHui.Value)
                 {
-                    OperationName = (await _ownerCertificationRecordRepository.GetAsync(item.OwnerCertificationId, cancelToken))?.OwnerName;
+                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationId, cancelToken))?.Owner.Name;
                     IsCreateUser = item.OwnerCertificationId == input.OwnerCertificationId ? true : false;
                 }
                 else

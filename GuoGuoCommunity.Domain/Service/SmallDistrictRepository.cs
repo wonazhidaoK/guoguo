@@ -93,7 +93,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.SmallDistricts.Include(x => x.Community).Include(x=>x.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.SmallDistricts.Include(x=>x.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.State))
                 {
                     list = list.Where(x => x.State == dto.State).ToList();
@@ -151,7 +151,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("小区信息不正确！");
                 }
-                var smallDistrict = await db.SmallDistricts.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                var smallDistrict = await db.SmallDistricts.Include(x=>x.Community).Where(x => x.Id == uid).FirstOrDefaultAsync(token);
                 if (smallDistrict == null)
                 {
                     throw new NotImplementedException("该小区不存在！");

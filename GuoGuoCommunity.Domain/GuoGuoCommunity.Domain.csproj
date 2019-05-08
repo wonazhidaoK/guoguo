@@ -219,6 +219,14 @@
     <Compile Include="Migrations\201905070809049_update-VipOwner.Designer.cs">
       <DependentUpon>201905070809049_update-VipOwner.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201905080144594_update_SmallDistrict.cs" />
+    <Compile Include="Migrations\201905080144594_update_SmallDistrict.Designer.cs">
+      <DependentUpon>201905080144594_update_SmallDistrict.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905080836019_updata-OwnerCertificationRecord.cs" />
+    <Compile Include="Migrations\201905080836019_updata-OwnerCertificationRecord.Designer.cs">
+      <DependentUpon>201905080836019_updata-OwnerCertificationRecord.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Enum\StationLetterReadStatus.cs" />
     <Compile Include="Models\event\ComplaintTypeIncrementer.cs" />
     <Compile Include="Models\IDCardPhotoRecord.cs" />
@@ -373,6 +381,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201905070809049_update-VipOwner.resx">
       <DependentUpon>201905070809049_update-VipOwner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905080144594_update_SmallDistrict.resx">
+      <DependentUpon>201905080144594_update_SmallDistrict.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905080836019_updata-OwnerCertificationRecord.resx">
+      <DependentUpon>201905080836019_updata-OwnerCertificationRecord.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

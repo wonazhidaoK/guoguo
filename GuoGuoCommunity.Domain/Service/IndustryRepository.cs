@@ -95,7 +95,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Industries.Include(x=>x.BuildingUnit).Include(x=>x.BuildingUnit.Building).Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.Industries.Include(x=>x.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
 
                 var buildingList = (await db.Buildings.Where(x => x.IsDeleted == false && x.SmallDistrictId.ToString() == dto.OperationUserSmallDistrictId).Select(x => x.Id.ToString()).ToListAsync(token));
 
@@ -147,7 +147,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("业户信息不正确！");
                 }
-                var industrie = await db.Industries.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                var industrie = await db.Industries.Include(x => x.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.Id == uid).FirstOrDefaultAsync(token);
                 if (industrie == null)
                 {
                     throw new NotImplementedException("该业户不存在！");
@@ -160,7 +160,7 @@ namespace GuoGuoCommunity.Domain.Service
                 industrie.Name = dto.Name;
                 industrie.LastOperationTime = dto.OperationTime;
                 industrie.LastOperationUserId = dto.OperationUserId;
-                await OnUpdateAsync(db, dto, token);
+                //await OnUpdateAsync(db, dto, token);
                 await db.SaveChangesAsync(token);
             }
         }

@@ -76,7 +76,7 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async Task<List<Community>> GetAllAsync(CommunityDto dto, CancellationToken token = default)
+        public async Task<List<Community>> GetAllAIncludesync(CommunityDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {

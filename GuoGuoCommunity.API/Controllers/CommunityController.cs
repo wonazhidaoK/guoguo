@@ -223,7 +223,7 @@ namespace GuoGuoCommunity.API.Controllers
                 input.PageSize = 10;
             }
             int startRow = (input.PageIndex - 1) * input.PageSize;
-            var data = await _communityRepository.GetAllAsync(new CommunityDto
+            var data = await _communityRepository.GetAllAIncludesync(new CommunityDto
             {
                 Name = input?.Name,
                 City = input?.City,

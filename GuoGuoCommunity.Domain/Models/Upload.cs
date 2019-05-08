@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GuoGuoCommunity.Domain.Models
 {
-    public class Upload : IDeleted, ILastOperation, ICreateOperation
+    public class Upload : IEntitity
     {
         /// <summary>
         /// 

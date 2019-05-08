@@ -57,7 +57,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("业主认证信息不存在！");
                 }
 
-                var ownerName = await db.OwnerCertificationRecords.Where(x => x.UserId == dto.UserId && x.SmallDistrictId == dto.SmallDistrictId && x.IsDeleted == false).Select(x => x.OwnerName).FirstOrDefaultAsync(token);
+                var ownerName = await db.OwnerCertificationRecords.Where(x => x.UserId == dto.UserId && x.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString() == dto.SmallDistrictId && x.IsDeleted == false).Select(x => x.Owner.Name).FirstOrDefaultAsync(token);
 
                 var vipOwnerApplicationRecord = await db.VipOwnerApplicationRecords.Where(x => x.UserId == dto.UserId && x.IsDeleted == false && x.IsInvalid == false).FirstOrDefaultAsync(token);
                 if (vipOwnerApplicationRecord != null)

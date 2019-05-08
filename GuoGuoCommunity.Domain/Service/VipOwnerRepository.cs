@@ -72,7 +72,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.VipOwners.Include(x=>x.SmallDistrict).Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.VipOwners.Include(x=>x.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.SmallDistrictId))
                 {
                     list = list.Where(x => x.SmallDistrictId.ToString() == dto.SmallDistrictId).ToList();

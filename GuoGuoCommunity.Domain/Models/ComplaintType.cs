@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 投诉类别
     /// </summary>
-    public class ComplaintType : IDeleted, ILastOperation, ICreateOperation
+    public class ComplaintType : IEntitity
     {
         /// <summary>
         /// 

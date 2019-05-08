@@ -12,7 +12,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task UpdateAsync(CommunityDto dto, CancellationToken token = default);
 
-        Task<List<Community>> GetAllAsync(CommunityDto dto, CancellationToken token = default);
+        Task<List<Community>> GetAllAIncludesync(CommunityDto dto, CancellationToken token = default);
 
         Task DeleteAsync(CommunityDto dto, CancellationToken token = default);
 

@@ -18,7 +18,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task DeleteAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
 
-        Task<OwnerCertificationRecord> GetAsync(string id, CancellationToken token = default);
+        Task<OwnerCertificationRecord> GetIncludeAsync(string id, CancellationToken token = default);
 
         /// <summary>
         /// 当前登陆用户认证业户列表
@@ -26,9 +26,9 @@ namespace GuoGuoCommunity.Domain.Abstractions
         /// <param name="dto"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<List<OwnerCertificationRecord>> GetListAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
+        Task<List<OwnerCertificationRecord>> GetListIncludeAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
 
-        Task<List<OwnerCertificationRecord>> GetAllForSmallDistrictIdAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
+        Task<List<OwnerCertificationRecord>> GetAllForSmallDistrictIdIncludeAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
 
         Task<List<OwnerCertificationRecord>> GetListForOwnerAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
 
@@ -40,7 +40,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         /// <param name="dto"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<List<OwnerCertificationRecord>> GetListForSmallDistrictIdAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
+        Task<List<OwnerCertificationRecord>> GetListForSmallDistrictIdIncludeAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
 
         /// <summary>
         /// 根据业主认证id集合获取认证集合
@@ -48,6 +48,6 @@ namespace GuoGuoCommunity.Domain.Abstractions
         /// <param name="ids"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<List<OwnerCertificationRecord>> GetListForIdArrayAsync(List<string> ids, CancellationToken token = default);
+        Task<List<OwnerCertificationRecord>> GetListForIdArrayIncludeAsync(List<string> ids, CancellationToken token = default);
     }
 }

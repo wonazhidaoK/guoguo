@@ -67,7 +67,7 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 if (!string.IsNullOrWhiteSpace(dto.Name))
                 {
-                    list = list.Where(x => x.Name == dto.Name).ToList();
+                    list = list.Where(x => x.Name.Contains(dto.Name)).ToList();
                 }
                 return list;
             }

@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 楼宇
     /// </summary>
-    public class Building : IEntitity,ISmallDistrict
+    public class Building : IEntitity, ISmallDistrict
     {
         /// <summary>
         /// 
@@ -16,9 +16,9 @@ namespace GuoGuoCommunity.Domain.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
-        
+
         /// <summary>
-        ///楼宇名称 
+        /// 楼宇名称 
         /// </summary>
         public string Name { get; set; }
 
@@ -29,12 +29,8 @@ namespace GuoGuoCommunity.Domain.Models
         [ForeignKey("SmallDistrict")]
         public Guid SmallDistrictId { get; set; }
 
-        ///// <summary>
-        ///// 小区名称
-        ///// </summary>
-        //[Required]
-        //public string SmallDistrictName { get; set; }
-        public SmallDistrict  SmallDistrict { get; set; }
+        public SmallDistrict SmallDistrict { get; set; }
+
         public bool IsDeleted { get; set; }
 
         public DateTimeOffset? DeletedTime { get; set; }

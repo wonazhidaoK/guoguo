@@ -40,12 +40,12 @@ namespace GuoGuoCommunity.Domain.Service
 
                 var entity = db.Complaints.Add(new Complaint
                 {
-                    CommunityId = ownerCertificationRecord.CommunityId,
-                    CommunityName = ownerCertificationRecord.CommunityName,
-                    SmallDistrictId = ownerCertificationRecord.SmallDistrictId,
-                    SmallDistrictName = ownerCertificationRecord.SmallDistrictName,
-                    StreetOfficeId = ownerCertificationRecord.StreetOfficeId,
-                    StreetOfficeName = ownerCertificationRecord.StreetOfficeName,
+                    CommunityId = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.CommunityId.ToString(),
+                    CommunityName = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.Name,
+                    SmallDistrictId = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
+                    SmallDistrictName = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.Name,
+                    StreetOfficeId = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(),
+                    StreetOfficeName = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name,
                     ComplaintTypeId = complaintType.Id.ToString(),
                     ComplaintTypeName = complaintType.Name,
                     ProcessUpTime = DateTimeOffset.Now.AddDays(complaintType.ProcessingPeriod),
@@ -173,7 +173,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("业主认证信息不存在！");
                 }
-                return await db.Complaints.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.YeZhuWeiYuanHui.Value && x.SmallDistrictId == ownerCertificationRecord.SmallDistrictId).ToListAsync(token);
+                return await db.Complaints.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.YeZhuWeiYuanHui.Value && x.SmallDistrictId == ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToListAsync(token);
             }
         }
 

@@ -787,11 +787,11 @@ namespace GuoGuoCommunity.API.Controllers
                 string OperationName = "";
                 if (item.OperationDepartmentValue == Department.YeZhu.Value)
                 {
-                    OperationName = (await _ownerCertificationRecordRepository.GetAsync(item.OwnerCertificationId, cancelToken))?.OwnerName;
+                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationId, cancelToken))?.Owner.Name;
                 }
                 else if (item.OperationDepartmentValue == Department.YeZhuWeiYuanHui.Value)
                 {
-                    OperationName = (await _ownerCertificationRecordRepository.GetAsync(item.OwnerCertificationId, cancelToken))?.OwnerName;
+                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationId, cancelToken))?.Owner.Name;
                 }
                 var complaintFollowUp = (await _complaintFollowUpRepository.GetListForComplaintIdAsync(item.Id.ToString(), cancelToken)).Where(x => x.Aappeal != null).FirstOrDefault();
                 var complaintFollowUpLists = (await _complaintFollowUpRepository.GetAllAsync(new ComplaintFollowUpDto { ComplaintId = item.Id.ToString() }, cancelToken)).Where(x => x.OperationDepartmentValue == Department.JieDaoBan.Value).ToList();
@@ -1021,11 +1021,11 @@ namespace GuoGuoCommunity.API.Controllers
                 string OperationName = "";
                 if (item.OperationDepartmentValue == Department.YeZhu.Value)
                 {
-                    OperationName = (await _ownerCertificationRecordRepository.GetAsync(item.OwnerCertificationId, cancelToken))?.OwnerName;
+                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationId, cancelToken))?.Owner.Name;
                 }
                 else if (item.OperationDepartmentValue == Department.YeZhuWeiYuanHui.Value)
                 {
-                    OperationName = (await _ownerCertificationRecordRepository.GetAsync(item.OwnerCertificationId, cancelToken))?.OwnerName;
+                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationId, cancelToken))?.Owner.Name;
                 }
                 listOutput.Add(new GetComplaintOutput
                 {

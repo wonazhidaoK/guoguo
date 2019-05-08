@@ -50,10 +50,6 @@ namespace GuoGuoCommunity.Domain.Models
         public Guid IndustryId { get; set; }
 
         public Industry Industry { get; set; }
-        ///// <summary>
-        ///// 业户名称
-        ///// </summary>
-        //public string IndustryName { get; set; }
 
         /// <summary>
         /// 业主认证申请id

@@ -84,7 +84,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Owners.Include(x=>x.Industry).Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.Owners.Include(x=>x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.IDCard))
                 {
                     list = list.Where(x => x.IDCard.Contains(dto.IDCard)).ToList();
@@ -147,7 +147,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该业主名称已存在！");
                 }
-                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.OwnerId == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.OwnerId.ToString() == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (ownerCertificationRecord == null)
                 {
                     owner.Birthday = dto.Birthday;
@@ -178,7 +178,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.Owners.Where(x => x.IsDeleted == false && x.IsLegalize == false && x.IndustryId.ToString() == dto.IndustryId).ToListAsync(token);
+                return await db.Owners.Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.IsLegalize == false && x.IndustryId.ToString() == dto.IndustryId).ToListAsync(token);
             }
         }
 

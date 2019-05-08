@@ -76,12 +76,12 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.BuildingUnits.Include(x=>x.Building).Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.BuildingUnits.Include(x => x.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.UnitName))
                 {
                     list = list.Where(x => x.UnitName.Contains(dto.UnitName)).ToList();
                 }
-                if (dto.NumberOfLayers!=0)
+                if (dto.NumberOfLayers != 0)
                 {
                     list = list.Where(x => x.NumberOfLayers == dto.NumberOfLayers).ToList();
                 }

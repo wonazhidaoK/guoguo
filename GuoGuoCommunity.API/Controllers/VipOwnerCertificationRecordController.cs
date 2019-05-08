@@ -88,7 +88,7 @@ namespace GuoGuoCommunity.API.Controllers
 
             var listCount = data.Count();
             var list = data.Skip(startRow).Take(input.PageSize);
-            var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForIdArrayAsync(list.Select(x => x.OwnerCertificationId).ToList());
+            var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForIdArrayIncludeAsync(list.Select(x => x.OwnerCertificationId).ToList());
             return new ApiResult<GetAllVipOwnerCertificationRecordOutpu>(APIResultCode.Success, new GetAllVipOwnerCertificationRecordOutpu
             {
                 List = list.Select(x => new GetVipOwnerCertificationRecordOutpu
@@ -98,7 +98,7 @@ namespace GuoGuoCommunity.API.Controllers
                     IsInvalid = x.IsInvalid,
                     VipOwnerName = x.VipOwnerName,
                     VipOwnerStructureName = x.VipOwnerStructureName,
-                    OwnerCertificationName = ownerCertificationRecordList.Where(o => o.Id.ToString() == x.OwnerCertificationId).Select(o => o.OwnerName).FirstOrDefault()
+                    OwnerCertificationName = ownerCertificationRecordList.Where(o => o.Id.ToString() == x.OwnerCertificationId).Select(o => o.Owner.Name).FirstOrDefault()
                 }).ToList(),
                 TotalCount = listCount
             });

@@ -111,7 +111,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
 
             var url = (await _announcementAnnexRepository.GetAsync(entity.Id.ToString()))?.AnnexContent;
-            var OperationName = (await _ownerCertificationRecordRepository.GetAsync(entity.OwnerCertificationId, cancelToken))?.OwnerName;
+            var OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(entity.OwnerCertificationId, cancelToken))?.Owner.Name;
             await AnnouncementPushRemind(new AnnouncementPushModel
             {
                 Content = entity.Content,
@@ -359,7 +359,7 @@ namespace GuoGuoCommunity.API.Controllers
 
             var listCount = data.Count();
             var dataList = data.OrderByDescending(a => a.CreateOperationTime).Skip(startRow).Take(input.PageSize).ToList();
-            var userList = await _ownerCertificationRecordRepository.GetListForIdArrayAsync(dataList.Select(x => x.OwnerCertificationId).ToList());
+            var userList = await _ownerCertificationRecordRepository.GetListForIdArrayIncludeAsync(dataList.Select(x => x.OwnerCertificationId).ToList());
             var urlList = await _announcementAnnexRepository.GetForAnnouncementIdsAsync(dataList.Select(x => x.Id.ToString()).ToList(), cancelToken);
             List<GetVipOwnerAnnouncementOutput> list = new List<GetVipOwnerAnnouncementOutput>();
             foreach (var item in dataList)
@@ -372,7 +372,7 @@ namespace GuoGuoCommunity.API.Controllers
                     ReleaseTime = item.CreateOperationTime.Value,
                     Summary = item.Summary,
                     Url = urlList.Where(x => x.AnnouncementId == item.Id.ToString()).FirstOrDefault()?.AnnexContent,
-                    CreateUserName = userList.Where(x => x.Id.ToString() == item.OwnerCertificationId).FirstOrDefault()?.OwnerName
+                    CreateUserName = userList.Where(x => x.Id.ToString() == item.OwnerCertificationId).FirstOrDefault()?.Owner.Name
                 });
             }
 
@@ -700,7 +700,7 @@ namespace GuoGuoCommunity.API.Controllers
             IUserRepository userRepository = new UserRepository();
             IWeiXinUserRepository weiXinUserRepository = new WeiXinUserRepository();
 
-            var userIdList = (await ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto
+            var userIdList = (await ownerCertificationRecordRepository.GetListForSmallDistrictIdIncludeAsync(new OwnerCertificationRecordDto
             {
                 SmallDistrictId = smallDistrict
             })).Select(x => x.UserId).Distinct().ToList();
