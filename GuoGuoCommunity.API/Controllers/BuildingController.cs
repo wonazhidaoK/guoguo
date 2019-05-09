@@ -66,7 +66,6 @@ namespace GuoGuoCommunity.API.Controllers
             }, cancelToken);
 
             return new ApiResult<AddBuildingOutput>(APIResultCode.Success, new AddBuildingOutput { Id = entity.Id.ToString() });
-
         }
 
         /// <summary>
@@ -161,7 +160,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("楼宇Id信息为空！");
             }
-            var data = await _buildingService.GetAsync(id, cancelToken);
+            var data = await _buildingService.GetIncludeAsync(id, cancelToken);
 
             return new ApiResult<GetBuildingOutput>(APIResultCode.Success, new GetBuildingOutput
             {
@@ -201,7 +200,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
             int startRow = (input.PageIndex - 1) * input.PageSize;
 
-            var data = await _buildingService.GetAllAsync(new BuildingDto
+            var data = await _buildingService.GetAllIncludeAsync(new BuildingDto
             {
                 Name = input?.Name,
                 SmallDistrictId = input.SmallDistrictId
@@ -224,7 +223,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 根据小区获取楼宇(小程序可用)
+        /// 根据小区获取楼宇
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>

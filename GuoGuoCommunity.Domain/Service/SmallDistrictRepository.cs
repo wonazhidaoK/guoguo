@@ -12,163 +12,7 @@ namespace GuoGuoCommunity.Domain.Service
 {
     public class SmallDistrictRepository : ISmallDistrictRepository
     {
-        public async Task<SmallDistrict> AddAsync(SmallDistrictDto dto, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                if (!Guid.TryParse(dto.StreetOfficeId, out var streetOfficeId))
-                {
-                    throw new NotImplementedException("街道办信息不正确！");
-                }
-                var streetOffice = await db.StreetOffices.Where(x => x.Id == streetOfficeId && x.IsDeleted == false).FirstOrDefaultAsync(token);
-                if (streetOffice == null)
-                {
-                    throw new NotImplementedException("街道办信息不存在！");
-                }
-
-                if (!Guid.TryParse(dto.CommunityId, out var communityId))
-                {
-                    throw new NotImplementedException("社区信息不正确！");
-                }
-                var communities = await db.Communities.Where(x => x.Id == communityId && x.IsDeleted == false).FirstOrDefaultAsync(token);
-                if (communities == null)
-                {
-                    throw new NotImplementedException("社区办信息不存在！");
-                }
-
-                var smallDistricts = await db.SmallDistricts.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.CommunityId == communityId).FirstOrDefaultAsync(token);
-                if (smallDistricts != null)
-                {
-                    throw new NotImplementedException("该小区已存在！");
-                }
-
-
-                var entity = db.SmallDistricts.Add(new SmallDistrict
-                {
-                    Name = dto.Name,
-                    City = dto.City,
-                    Region = dto.Region,
-                    State = dto.State,
-                    CreateOperationTime = dto.OperationTime,
-                    CreateOperationUserId = dto.OperationUserId,
-                    LastOperationTime = dto.OperationTime,
-                    LastOperationUserId = dto.OperationUserId,
-                    //StreetOfficeId = streetOfficeId,
-                    // StreetOfficeName = streetOffice.Name,
-                    CommunityId = communityId,
-                    // CommunityName = communities.Name,
-                    PhoneNumber = dto.PhoneNumber
-                });
-                await db.SaveChangesAsync(token);
-                return entity;
-            }
-        }
-
-        public async Task DeleteAsync(SmallDistrictDto dto, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                if (!Guid.TryParse(dto.Id, out var uid))
-                {
-                    throw new NotImplementedException("小区信息不正确！");
-                }
-                var smallDistrict = await db.SmallDistricts.Where(x => x.Id == uid && x.IsDeleted == false).FirstOrDefaultAsync(token);
-                if (smallDistrict == null)
-                {
-                    throw new NotImplementedException("该小区不存在！");
-                }
-                if (await OnDelete(db, dto, token))
-                {
-                    throw new NotImplementedException("该小区下存在下级业务数据");
-                }
-                smallDistrict.LastOperationTime = dto.OperationTime;
-                smallDistrict.LastOperationUserId = dto.OperationUserId;
-                smallDistrict.DeletedTime = dto.OperationTime;
-                smallDistrict.IsDeleted = true;
-                await db.SaveChangesAsync(token);
-            }
-        }
-
-        public async Task<List<SmallDistrict>> GetAllAsync(SmallDistrictDto dto, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                var list = await db.SmallDistricts.Include(x=>x.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
-                if (!string.IsNullOrWhiteSpace(dto.State))
-                {
-                    list = list.Where(x => x.State == dto.State).ToList();
-                }
-                if (!string.IsNullOrWhiteSpace(dto.City))
-                {
-                    list = list.Where(x => x.City == dto.City).ToList();
-                }
-                if (!string.IsNullOrWhiteSpace(dto.Region))
-                {
-                    list = list.Where(x => x.Region.Contains(dto.Region)).ToList();
-                }
-                if (!string.IsNullOrWhiteSpace(dto.StreetOfficeId))
-                {
-                    list = list.Where(x => x.Community.StreetOfficeId.ToString() == dto.StreetOfficeId).ToList();
-                }
-                if (!string.IsNullOrWhiteSpace(dto.CommunityId))
-                {
-                    list = list.Where(x => x.CommunityId.ToString() == dto.CommunityId).ToList();
-                }
-                if (!string.IsNullOrWhiteSpace(dto.Name))
-                {
-                    list = list.Where(x => x.Name.Contains(dto.Name)).ToList();
-                }
-
-                return list;
-            }
-        }
-
-        public async Task<SmallDistrict> GetAsync(string id, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                if (Guid.TryParse(id, out var uid))
-                {
-                    return await db.SmallDistricts.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
-                }
-                throw new NotImplementedException("该小区信息不正确！");
-            }
-        }
-
-        public async Task<List<SmallDistrict>> GetListAsync(SmallDistrictDto dto, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                return await db.SmallDistricts.Where(x => x.IsDeleted == false && x.CommunityId.ToString() == dto.CommunityId).ToListAsync(token);
-            }
-        }
-
-        public async Task UpdateAsync(SmallDistrictDto dto, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                if (!Guid.TryParse(dto.Id, out var uid))
-                {
-                    throw new NotImplementedException("小区信息不正确！");
-                }
-                var smallDistrict = await db.SmallDistricts.Include(x=>x.Community).Where(x => x.Id == uid).FirstOrDefaultAsync(token);
-                if (smallDistrict == null)
-                {
-                    throw new NotImplementedException("该小区不存在！");
-                }
-                if (await db.SmallDistricts.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.Community.StreetOfficeId == smallDistrict.Community.StreetOfficeId && x.Id != uid).FirstOrDefaultAsync(token) != null)
-                {
-                    throw new NotImplementedException("该小区名称已存在！");
-                }
-                smallDistrict.Name = dto.Name;
-                smallDistrict.LastOperationTime = dto.OperationTime;
-                smallDistrict.LastOperationUserId = dto.OperationUserId;
-                smallDistrict.PhoneNumber = dto.PhoneNumber;
-                await OnUpdate(db, smallDistrict, token);
-                await db.SaveChangesAsync(token);
-            }
-        }
-
+        #region 事件
         private async Task OnUpdate(GuoGuoCommunityContext db, SmallDistrict dto, CancellationToken token = default)
         {
             SmallDistrictIncrementer incrementer = new SmallDistrictIncrementer();
@@ -260,12 +104,219 @@ namespace GuoGuoCommunity.Domain.Service
             //    await db.SmallDistricts.Where(x => x.CommunityId == community.Id.ToString()).UpdateAsync(x => new SmallDistrict { CommunityName = community.Name });
             //}
         }
+        #endregion
 
-        public async Task<List<SmallDistrict>> GetForIdsAsync(List<string> ids, CancellationToken token = default)
+        public async Task<SmallDistrict> AddAsync(SmallDistrictDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await (from x in db.SmallDistricts where ids.Contains(x.Id.ToString()) select x).ToListAsync(token);
+                if (!Guid.TryParse(dto.StreetOfficeId, out var streetOfficeId))
+                {
+                    throw new NotImplementedException("街道办信息不正确！");
+                }
+                var streetOffice = await db.StreetOffices.Where(x => x.Id == streetOfficeId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (streetOffice == null)
+                {
+                    throw new NotImplementedException("街道办信息不存在！");
+                }
+
+                if (!Guid.TryParse(dto.CommunityId, out var communityId))
+                {
+                    throw new NotImplementedException("社区信息不正确！");
+                }
+                var communities = await db.Communities.Where(x => x.Id == communityId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (communities == null)
+                {
+                    throw new NotImplementedException("社区办信息不存在！");
+                }
+
+                var smallDistricts = await db.SmallDistricts.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.CommunityId == communityId).FirstOrDefaultAsync(token);
+                if (smallDistricts != null)
+                {
+                    throw new NotImplementedException("该小区已存在！");
+                }
+                var entity = db.SmallDistricts.Add(new SmallDistrict
+                {
+                    Name = dto.Name,
+                    City = dto.City,
+                    Region = dto.Region,
+                    State = dto.State,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                    LastOperationTime = dto.OperationTime,
+                    LastOperationUserId = dto.OperationUserId,
+                    CommunityId = communityId,
+                    PhoneNumber = dto.PhoneNumber
+                });
+                await db.SaveChangesAsync(token);
+                return entity;
+            }
+        }
+
+        public async Task DeleteAsync(SmallDistrictDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("小区信息不正确！");
+                }
+                var smallDistrict = await db.SmallDistricts.Where(x => x.Id == uid && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (smallDistrict == null)
+                {
+                    throw new NotImplementedException("该小区不存在！");
+                }
+                if (await OnDelete(db, dto, token))
+                {
+                    throw new NotImplementedException("该小区下存在下级业务数据");
+                }
+                smallDistrict.LastOperationTime = dto.OperationTime;
+                smallDistrict.LastOperationUserId = dto.OperationUserId;
+                smallDistrict.DeletedTime = dto.OperationTime;
+                smallDistrict.IsDeleted = true;
+                await db.SaveChangesAsync(token);
+            }
+        }
+
+        public async Task<List<SmallDistrict>> GetAllAsync(SmallDistrictDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.SmallDistricts.Where(x => x.IsDeleted == false).ToListAsync(token);
+                if (!string.IsNullOrWhiteSpace(dto.State))
+                {
+                    list = list.Where(x => x.State == dto.State).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.City))
+                {
+                    list = list.Where(x => x.City == dto.City).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.Region))
+                {
+                    list = list.Where(x => x.Region.Contains(dto.Region)).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.StreetOfficeId))
+                {
+                    list = list.Where(x => x.Community.StreetOfficeId.ToString() == dto.StreetOfficeId).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.CommunityId))
+                {
+                    list = list.Where(x => x.CommunityId.ToString() == dto.CommunityId).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.Name))
+                {
+                    list = list.Where(x => x.Name.Contains(dto.Name)).ToList();
+                }
+
+                return list;
+            }
+        }
+
+        public async Task<SmallDistrict> GetAsync(string id, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (Guid.TryParse(id, out var uid))
+                {
+                    return await db.SmallDistricts.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                }
+                throw new NotImplementedException("该小区信息不正确！");
+            }
+        }
+
+        public async Task<List<SmallDistrict>> GetListAsync(SmallDistrictDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.SmallDistricts.Where(x => x.IsDeleted == false && x.CommunityId.ToString() == dto.CommunityId).ToListAsync(token);
+            }
+        }
+
+        public async Task UpdateAsync(SmallDistrictDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("小区信息不正确！");
+                }
+                var smallDistrict = await db.SmallDistricts.Include(x => x.Community).Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (smallDistrict == null)
+                {
+                    throw new NotImplementedException("该小区不存在！");
+                }
+                if (await db.SmallDistricts.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.Community.StreetOfficeId == smallDistrict.Community.StreetOfficeId && x.Id != uid).FirstOrDefaultAsync(token) != null)
+                {
+                    throw new NotImplementedException("该小区名称已存在！");
+                }
+                smallDistrict.Name = dto.Name;
+                smallDistrict.LastOperationTime = dto.OperationTime;
+                smallDistrict.LastOperationUserId = dto.OperationUserId;
+                smallDistrict.PhoneNumber = dto.PhoneNumber;
+                await OnUpdate(db, smallDistrict, token);
+                await db.SaveChangesAsync(token);
+            }
+        }
+
+        public async Task<List<SmallDistrict>> GetForIdsIncludeAsync(List<string> ids, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await (from x in db.SmallDistricts.Include(x => x.Community.StreetOffice) where ids.Contains(x.Id.ToString()) select x).ToListAsync(token);
+            }
+        }
+
+        public async Task<List<SmallDistrict>> GetAllIncludeAsync(SmallDistrictDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.SmallDistricts.Include(x => x.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
+                if (!string.IsNullOrWhiteSpace(dto.State))
+                {
+                    list = list.Where(x => x.State == dto.State).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.City))
+                {
+                    list = list.Where(x => x.City == dto.City).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.Region))
+                {
+                    list = list.Where(x => x.Region.Contains(dto.Region)).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.StreetOfficeId))
+                {
+                    list = list.Where(x => x.Community.StreetOfficeId.ToString() == dto.StreetOfficeId).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.CommunityId))
+                {
+                    list = list.Where(x => x.CommunityId.ToString() == dto.CommunityId).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.Name))
+                {
+                    list = list.Where(x => x.Name.Contains(dto.Name)).ToList();
+                }
+
+                return list;
+            }
+        }
+
+        public async Task<SmallDistrict> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (Guid.TryParse(id, out var uid))
+                {
+                    return await db.SmallDistricts.Include(x => x.Community.StreetOffice).Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                }
+                throw new NotImplementedException("该小区信息不正确！");
+            }
+        }
+
+        public async Task<List<SmallDistrict>> GetListIncludeAsync(SmallDistrictDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.SmallDistricts.Include(x => x.Community.StreetOffice).Where(x => x.IsDeleted == false && x.CommunityId.ToString() == dto.CommunityId).ToListAsync(token);
             }
         }
     }

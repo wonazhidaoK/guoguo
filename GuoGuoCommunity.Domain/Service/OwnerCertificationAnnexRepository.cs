@@ -17,9 +17,13 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
+                if (Guid.TryParse(dto.ApplicationRecordId, out Guid applicationRecordId))
+                {
+
+                }
                 var entity = db.OwnerCertificationAnnices.Add(new OwnerCertificationAnnex
                 {
-                    ApplicationRecordId = dto.ApplicationRecordId,
+                    ApplicationRecordId = applicationRecordId,
                     OwnerCertificationAnnexTypeValue = dto.OwnerCertificationAnnexTypeValue,
                     AnnexContent = dto.AnnexContent,
                     CreateOperationTime = dto.OperationTime,
@@ -30,7 +34,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("业主认证附件id信息不正确！");
                 }
                 var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
-                entity.AnnexId = dto.AnnexContent;
+                entity.AnnexId = annexContent;
                 entity.AnnexContent = upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -51,7 +55,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.OwnerCertificationAnnices.Where(x => x.ApplicationRecordId == id).FirstOrDefaultAsync(token);
+                return await db.OwnerCertificationAnnices.Where(x => x.ApplicationRecordId.ToString() == id).FirstOrDefaultAsync(token);
             }
         }
 
@@ -73,11 +77,11 @@ namespace GuoGuoCommunity.Domain.Service
                         throw new NotImplementedException("认证附件id信息不正确！");
                     }
                     var entity = db.OwnerCertificationAnnices.Where(x => x.Id == uid).FirstOrDefault();
-                    if (!Guid.TryParse(entity.AnnexId, out var annexId))
-                    {
-                        throw new NotImplementedException("认证附件id信息不正确！");
-                    }
-                    var upload = db.Uploads.Where(x => x.Id == annexId).FirstOrDefault();
+                    //if (!Guid.TryParse(entity.AnnexId, out var annexId))
+                    //{
+                    //    throw new NotImplementedException("认证附件id信息不正确！");
+                    //}
+                    var upload = db.Uploads.Where(x => x.Id == entity.AnnexId).FirstOrDefault();
                     DirectoryInfo rootDir = Directory.GetParent(Environment.CurrentDirectory);
                     string root = rootDir.Parent.Parent.FullName;
                     return upload.Domain + "\\" + upload.Directory + "\\" + upload.File;
@@ -95,7 +99,7 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 using (var db = new GuoGuoCommunityContext())
                 {
-                    var entity = db.OwnerCertificationAnnices.Where(x => x.ApplicationRecordId == id).FirstOrDefault();
+                    var entity = db.OwnerCertificationAnnices.Where(x => x.ApplicationRecordId.ToString() == id).FirstOrDefault();
                     if (!Guid.TryParse(entity.AnnexContent, out var annexContent))
                     {
                         throw new NotImplementedException("认证附件id信息不正确！");

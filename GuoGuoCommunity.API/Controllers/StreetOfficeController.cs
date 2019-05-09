@@ -240,7 +240,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 根据区获取街道办列表(小程序可用)
+        /// 根据区获取街道办列表
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>

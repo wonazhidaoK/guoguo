@@ -12,8 +12,6 @@ namespace GuoGuoCommunity.Domain.Service
 {
     public class StreetOfficeRepository : IStreetOfficeRepository
     {
-        //public delegate void StreetOfficeUpdateHandler(StreetOffice streetOffice);
-
         public async Task<StreetOffice> AddAsync(StreetOfficeDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -201,7 +199,5 @@ namespace GuoGuoCommunity.Domain.Service
             //}
             return false;
         }
-
-
     }
 }

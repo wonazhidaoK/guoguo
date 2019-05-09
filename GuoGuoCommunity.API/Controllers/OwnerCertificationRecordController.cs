@@ -4,7 +4,6 @@ using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using GuoGuoCommunity.Domain.Models.Enum;
-using GuoGuoCommunity.Domain.Service;
 using Newtonsoft.Json;
 using Senparc.Weixin.MP.AdvancedAPIs;
 using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
@@ -151,7 +150,7 @@ namespace GuoGuoCommunity.API.Controllers
 
                 if (itemEntity.OwnerCertificationAnnexTypeValue == OwnerCertificationAnnexType.IDCardFront.Value)
                 {
-                    await Send(itemEntity);
+                    await Verification(itemEntity);
                 }
             }
 
@@ -183,17 +182,16 @@ namespace GuoGuoCommunity.API.Controllers
             }, cancelToken);
 
             List<GetOwnerCertificationRecordOutput> list = new List<GetOwnerCertificationRecordOutput>();
-            var ownerList = await _ownerRepository.GetForIdsAsync(data.Select(x => x.OwnerId.ToString()).ToList(), cancelToken);
-            var industryList = await _industryRepository.GetForIdsAsync(data.Select(x => x.IndustryId.ToString()).ToList(), cancelToken);
-            var smallDistrictList = await _smallDistrictRepository.GetForIdsAsync(data.Select(x => x.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToList(), cancelToken);
-            //var operationList = await _ownerCertificationRecordRepository.GetListForIdArrayIncludeAsync(data.Select(x => x.Id.ToString()).ToList());
+            // var ownerList = await _ownerRepository.GetForIdsAsync(data.Select(x => x.OwnerId.ToString()).ToList(), cancelToken);
+            // var industryList = await _industryRepository.GetForIdsAsync(data.Select(x => x.IndustryId.ToString()).ToList(), cancelToken);
+            //var smallDistrictList = await _smallDistrictRepository.GetForIdsIncludeAsync(data.Select(x => x.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToList(), cancelToken);
             var vipOwnerList = await _vipOwnerRepository.GetForSmallDistrictIdsAsync(data.Select(x => x.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToList());
             var vipOwnerCertificationRecordList = await _vipOwnerCertificationRecordRepository.GetForVipOwnerIdsAsync(vipOwnerList.Select(x => x.Id.ToString()).ToList());
             foreach (var item in data)
             {
-                var owner = ownerList.Where(x => x.Id == item.OwnerId).FirstOrDefault();
-                var industry = industryList.Where(x => x.Id.ToString() == item.IndustryId.ToString()).FirstOrDefault();
-                var smallDistrict = smallDistrictList.Where(x => x.Id == item.Industry.BuildingUnit.Building.SmallDistrictId).FirstOrDefault();
+                //var owner = ownerList.Where(x => x.Id == item.OwnerId).FirstOrDefault();
+                //var industry = industryList.Where(x => x.Id.ToString() == item.IndustryId.ToString()).FirstOrDefault();
+                //var smallDistrict = smallDistrictList.Where(x => x.Id == item.Industry.BuildingUnit.Building.SmallDistrictId).FirstOrDefault();
                 var isVipOwner = false;
                 var vipOwner = vipOwnerList.Where(x => x.SmallDistrictId.ToString() == item.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).FirstOrDefault();
                 if (vipOwner != null)
@@ -225,15 +223,15 @@ namespace GuoGuoCommunity.API.Controllers
                     StreetOfficeId = item.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(),
                     StreetOfficeName = item.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name,
                     UserId = item.UserId,
-                    Name = owner?.Name,
-                    Birthday = owner?.Birthday,
-                    Gender = owner?.Gender,
-                    IDCard = owner?.IDCard,
-                    PhoneNumber = owner?.PhoneNumber,
-                    NumberOfLayers = industry?.NumberOfLayers,
-                    Acreage = industry?.Acreage,
-                    Oriented = industry?.Oriented,
-                    SmallDistrictPhoneNumber = smallDistrict?.PhoneNumber,
+                    Name = item.Owner?.Name,
+                    Birthday = item.Owner?.Birthday,
+                    Gender = item.Owner?.Gender,
+                    IDCard = item.Owner?.IDCard,
+                    PhoneNumber = item.Owner?.PhoneNumber,
+                    NumberOfLayers = item.Industry?.NumberOfLayers,
+                    Acreage = item.Industry?.Acreage,
+                    Oriented = item.Industry?.Oriented,
+                    SmallDistrictPhoneNumber = item.Industry.BuildingUnit.Building.SmallDistrict?.PhoneNumber,
                     IsVipOwner = isVipOwner
                 });
             }
@@ -247,10 +245,9 @@ namespace GuoGuoCommunity.API.Controllers
         /// 后台执行校验 上传图片认证信息
         /// </summary>
         /// <param name="annex"></param>
-        public static async Task<ApiResult> Send(OwnerCertificationAnnex annex)
+        private async Task<ApiResult> Verification(OwnerCertificationAnnex annex)
         {
-            IOwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
-            var ownerCertificationRecordEntity = await ownerCertificationRecordRepository.GetIncludeAsync(annex.ApplicationRecordId);
+            var ownerCertificationRecordEntity = await _ownerCertificationRecordRepository.GetIncludeAsync(annex.ApplicationRecordId.ToString());
             try
             {
                 OwnerCertificationRecordDto dto = new OwnerCertificationRecordDto
@@ -259,7 +256,6 @@ namespace GuoGuoCommunity.API.Controllers
                     OperationUserId = "system",
                     Id = ownerCertificationRecordEntity.Id.ToString()
                 };
-                IOwnerRepository ownerRepository = new OwnerRepository();
 
                 try
                 {
@@ -277,40 +273,39 @@ namespace GuoGuoCommunity.API.Controllers
                     {
                         throw new NotImplementedException("未识别到身份证信息，请提交正规清晰的身份证照片!");
                     }
-                    var owner = (await ownerRepository.GetListForLegalizeAsync(new OwnerDto { IndustryId = ownerCertificationRecordEntity.IndustryId.ToString() })).Where(x => x.IDCard == json.Num).FirstOrDefault();
+                    var owner = (await _ownerRepository.GetListForLegalizeIncludeAsync(new OwnerDto { IndustryId = ownerCertificationRecordEntity.IndustryId.ToString() })).Where(x => x.IDCard == json.Num).FirstOrDefault();
 
                     if (owner != null)
                     {
-                        dto.CertificationStatusValue = OwnerCertification.Success.Value;
-                        dto.CertificationStatusName = OwnerCertification.Success.Name;
+                        dto.CertificationStatusValue = OwnerCertificationStatus.Success.Value;
+                        dto.CertificationStatusName = OwnerCertificationStatus.Success.Name;
                         dto.OwnerId = owner.Id.ToString();
                         dto.OwnerName = owner.Name.ToString();
                         dto.CertificationResult = "认证通过";
                     }
                     else
                     {
-                        dto.CertificationStatusValue = OwnerCertification.Failure.Value;
-                        dto.CertificationStatusName = OwnerCertification.Failure.Name;
+                        dto.CertificationStatusValue = OwnerCertificationStatus.Failure.Value;
+                        dto.CertificationStatusName = OwnerCertificationStatus.Failure.Name;
                         dto.CertificationResult = "未查询到相关业主信息";
                     }
 
                 }
                 catch (Exception e)
                 {
-                    dto.CertificationStatusValue = OwnerCertification.Failure.Value;
-                    dto.CertificationStatusName = OwnerCertification.Failure.Name;
+                    dto.CertificationStatusValue = OwnerCertificationStatus.Failure.Value;
+                    dto.CertificationStatusName = OwnerCertificationStatus.Failure.Name;
                     dto.CertificationResult = e.Message;
                     throw new NotImplementedException(e.Message);
                 }
-                var recordEntity = await ownerCertificationRecordRepository.UpdateAsync(dto);
+                var recordEntity = await _ownerCertificationRecordRepository.UpdateStatusAsync(dto);
 
                 if (string.IsNullOrWhiteSpace(dto.OwnerId))
                 {
                     throw new NotImplementedException("未查询到相关业主信息");
                 }
 
-
-                await ownerRepository.UpdateForLegalizeAsync(new OwnerDto
+                await _ownerRepository.UpdateForLegalizeAsync(new OwnerDto
                 {
                     OwnerCertificationRecordId = ownerCertificationRecordEntity.Id.ToString(),
                     Id = recordEntity.OwnerId.ToString(),
@@ -321,13 +316,13 @@ namespace GuoGuoCommunity.API.Controllers
             }
             catch (Exception e)
             {
-                await ownerCertificationRecordRepository.UpdateInvalidAsync(new OwnerCertificationRecordDto
+                await _ownerCertificationRecordRepository.UpdateInvalidAsync(new OwnerCertificationRecordDto
                 {
                     Id = ownerCertificationRecordEntity.Id.ToString(),
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = "system",
                 });
-                await ownerCertificationRecordRepository.DeleteAsync(new OwnerCertificationRecordDto
+                await _ownerCertificationRecordRepository.DeleteAsync(new OwnerCertificationRecordDto
                 {
                     Id = ownerCertificationRecordEntity.Id.ToString(),
                     OperationTime = DateTimeOffset.Now,
@@ -342,13 +337,12 @@ namespace GuoGuoCommunity.API.Controllers
         /// </summary>
         /// <param name="annex"></param>
         /// <returns></returns>
-        public async static Task<IDCardPhotoRecord> PostALiYun(OwnerCertificationAnnex annex)
+        private async Task<IDCardPhotoRecord> PostALiYun(OwnerCertificationAnnex annex)
         {
             string aLiYunApiUrl = ALiYunApiUrl;
             string appcode = ALiYunApiAppCode;
 
-            IOwnerCertificationAnnexRepository ownerCertificationAnnexRepository = new OwnerCertificationAnnexRepository();
-            var url = ownerCertificationAnnexRepository.GetPath(annex.Id.ToString());
+            var url = _ownerCertificationAnnexRepository.GetPath(annex.Id.ToString());
             string img_file = HttpRuntime.AppDomainAppPath.ToString() + url;
 
             bool is_old_format = false;
@@ -443,14 +437,10 @@ namespace GuoGuoCommunity.API.Controllers
                     Stream st = httpResponse.GetResponseStream();
                     StreamReader reader = new StreamReader(st, Encoding.GetEncoding("utf-8"));
                     json = reader.ReadToEnd();
-                    //JavaScriptSerializer js = new JavaScriptSerializer(); 
-                    //JsonModel s = JsonConvert.DeserializeObject<JsonModel>(json);
-                    //List<JsonClass> jc = js.Deserialize<List<JsonClass>>(json);
                 }
-                IIDCardPhotoRecordRepository iDCardPhotoRecordRepository = new IDCardPhotoRecordRepository();
-                var entity = await iDCardPhotoRecordRepository.AddAsync(new IDCardPhotoRecordDto
+                var entity = await _iDCardPhotoRecordRepository.AddAsync(new IDCardPhotoRecordDto
                 {
-                    ApplicationRecordId = annex.ApplicationRecordId,
+                    ApplicationRecordId = annex.ApplicationRecordId.ToString(),
                     OwnerCertificationAnnexId = annex.Id.ToString(),
                     Message = json,
                     OperationTime = DateTimeOffset.Now,
@@ -462,8 +452,24 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="certificate"></param>
+        /// <param name="chain"></param>
+        /// <param name="errors"></param>
+        /// <returns></returns>
+        private bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+        {
+            return true;
+        }
+
+        #region 
+
+        /// <summary>
         /// 认证结果通知
         /// </summary>
+        [Obsolete]
         public static void OwnerCertificationRecordPushRemind(OwnerCertificationRecordPushModel model)
         {
             try
@@ -489,19 +495,6 @@ namespace GuoGuoCommunity.API.Controllers
             {
 
             }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="certificate"></param>
-        /// <param name="chain"></param>
-        /// <param name="errors"></param>
-        /// <returns></returns>
-        public static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
-        {
-            return true;
         }
 
         /// <summary>
@@ -587,5 +580,7 @@ namespace GuoGuoCommunity.API.Controllers
                 List = list
             });
         }
+
+        #endregion
     }
 }

@@ -189,7 +189,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<GetOwnerOutput>(APIResultCode.Unknown, new GetOwnerOutput { }, APIResultMessage.TokenError);
             }
 
-            var data = await _ownerRepository.GetAsync(id, cancelToken);
+            var data = await _ownerRepository.GetIncludeAsync(id, cancelToken);
 
             return new ApiResult<GetOwnerOutput>(APIResultCode.Success, new GetOwnerOutput
             {
@@ -238,7 +238,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllOwnerOutput>(APIResultCode.Unknown, new GetAllOwnerOutput { }, APIResultMessage.TokenError);
             }
-            var data = await _ownerRepository.GetAllAsync(new OwnerDto
+            var data = await _ownerRepository.GetAllIncludeAsync(new OwnerDto
             {
                 Name = input?.Name,
                 IDCard = input?.IDCard,

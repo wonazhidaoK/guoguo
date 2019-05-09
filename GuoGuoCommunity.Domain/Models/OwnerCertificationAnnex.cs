@@ -25,7 +25,11 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 申请Id
         /// </summary>
-        public string ApplicationRecordId { get; set; }
+        [Required]
+        [ForeignKey("OwnerCertificationRecord")]
+        public Guid ApplicationRecordId { get; set; }
+
+        public OwnerCertificationRecord OwnerCertificationRecord { get; set; }
 
         /// <summary>
         /// 附件内容
@@ -35,8 +39,11 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 附件Id(当附件为文件时保存附件Id)
         /// </summary>
-        public string AnnexId { get; set; }
+        [Required]
+        [ForeignKey("Upload")]
+        public Guid AnnexId { get; set; }
 
+        public Upload Upload { get; set; }
 
         public string CreateOperationUserId { get; set; }
 

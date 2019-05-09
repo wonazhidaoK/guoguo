@@ -23,7 +23,6 @@ namespace GuoGuoCommunity.API.Controllers
     /// </summary>
     public class VoteController : BaseController
     {
-
         private readonly IVoteRepository _voteRepository;
         private readonly IVoteQuestionRepository _voteQuestionRepository;
         private readonly IVoteQuestionOptionRepository _voteQuestionOptionRepository;
@@ -169,7 +168,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("投票结束时间小于投票创建时间！");
             }
-            var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdIncludeAsync(new OwnerCertificationRecordDto
+            var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto
             {
                 SmallDistrictId = input.SmallDistrict
             });
@@ -275,7 +274,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<AddVoteForPropertyOutput>(APIResultCode.Unknown, new AddVoteForPropertyOutput { }, APIResultMessage.TokenError);
             }
-            var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdIncludeAsync(new OwnerCertificationRecordDto
+            var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto
             {
                 SmallDistrictId = user.SmallDistrictId
             });
@@ -500,7 +499,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("当前通过申请人数为" + vipOwnerApplicationRecordList.Count + "！投票数大于竞选人数！");
             }
-            var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdIncludeAsync(new OwnerCertificationRecordDto
+            var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto
             {
                 SmallDistrictId = input.SmallDistrictId
             });
@@ -859,7 +858,7 @@ namespace GuoGuoCommunity.API.Controllers
                 VoteId = vote.Id.ToString(),
                 OperationUserId = user.Id.ToString()
             });
-            var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdIncludeAsync(new OwnerCertificationRecordDto
+            var ownerCertificationRecordList = await _ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto
             {
                 SmallDistrictId = vote.SmallDistrictArray
             });
@@ -916,7 +915,7 @@ namespace GuoGuoCommunity.API.Controllers
                                 VoteQuestionId = voteQuestionOptionItem.VoteQuestionId,
                                 VoteQuestionOptionId = voteQuestionOptionItem.Id.ToString()
                             });
-                            var ownerCertificationRecord = await _ownerCertificationRecordRepository.GetIncludeAsync(vipOwnerApplicationRecord.OwnerCertificationId.ToString(), cancelToken);
+                            var ownerCertificationRecord = await _ownerCertificationRecordRepository.GetAsync(vipOwnerApplicationRecord.OwnerCertificationId.ToString(), cancelToken);
                             var ownerCertificationRecordUser = await _userRepository.GetForIdAsync(ownerCertificationRecord.UserId);
                             var weiXinUser = await _weiXinUserRepository.GetAsync(ownerCertificationRecordUser.UnionId);
                             model.Headimgurl = weiXinUser.Headimgurl;
@@ -1227,7 +1226,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 IOwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
                 IUserRepository userRepository = new UserRepository();
-                var ownerCertificationRecord = await ownerCertificationRecordRepository.GetIncludeAsync(ownerCertificationId);
+                var ownerCertificationRecord = await ownerCertificationRecordRepository.GetAsync(ownerCertificationId);
                 IOwnerRepository ownerRepository = new OwnerRepository();
 
                 var owner = await ownerRepository.GetForOwnerCertificationRecordIdAsync(new OwnerDto { OwnerCertificationRecordId = ownerCertificationRecord.Id.ToString() });
@@ -1284,7 +1283,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var voteQuestionOption2 = voteQuestionOptionList.Where(x => x.Describe == "不同意").FirstOrDefault();
 
                 IOwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
-                var ownerCertificationRecordList = await ownerCertificationRecordRepository.GetListForSmallDistrictIdIncludeAsync(new OwnerCertificationRecordDto { SmallDistrictId = voteEntity.SmallDistrictArray });
+                var ownerCertificationRecordList = await ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto { SmallDistrictId = voteEntity.SmallDistrictArray });
 
                 VoteResult result = VoteResult.Overrule;
                 if (voteEntity.CalculationMethodValue == CalculationMethod.EndorsedNumber.Value)
@@ -1359,7 +1358,7 @@ namespace GuoGuoCommunity.API.Controllers
                 var voteEntity = await voteRepository.GetAsync(guid.ToString());
                 var voteQuestionList = await voteQuestionRepository.GetListAsync(new VoteQuestionDto() { VoteId = voteEntity.Id.ToString() });
                 var voteQuestion = voteQuestionList[0];
-                var ownerCertificationRecordList = await ownerCertificationRecordRepository.GetListIncludeAsync(new OwnerCertificationRecordDto { SmallDistrictId = voteEntity.SmallDistrictArray });
+                var ownerCertificationRecordList = await ownerCertificationRecordRepository.GetListAsync(new OwnerCertificationRecordDto { SmallDistrictId = voteEntity.SmallDistrictArray });
                 var voteResultRecordList = await recordRepository.GetListAsync(new VoteRecordDto
                 {
                     VoteId = voteEntity.Id.ToString()

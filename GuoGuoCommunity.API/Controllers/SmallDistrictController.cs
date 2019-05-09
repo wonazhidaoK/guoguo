@@ -86,7 +86,6 @@ namespace GuoGuoCommunity.API.Controllers
             }, cancelToken);
 
             return new ApiResult<AddSmallDistrictOutput>(APIResultCode.Success, new AddSmallDistrictOutput { Id = entity.Id.ToString() });
-
         }
 
         /// <summary>
@@ -99,7 +98,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("smallDistrict/update")]
         public async Task<ApiResult> Update([FromBody]UpdateSmallDistrictInput input, CancellationToken cancelToken)
         {
-
             if (Authorization == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
@@ -128,7 +126,6 @@ namespace GuoGuoCommunity.API.Controllers
             }, cancelToken);
 
             return new ApiResult();
-
         }
 
         /// <summary>
@@ -141,7 +138,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("smallDistrict/delete")]
         public async Task<ApiResult> Delete([FromUri]string id, CancellationToken cancelToken)
         {
-
             if (Authorization == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
@@ -164,7 +160,6 @@ namespace GuoGuoCommunity.API.Controllers
             }, cancelToken);
 
             return new ApiResult();
-
         }
 
         /// <summary>
@@ -177,7 +172,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("smallDistrict/get")]
         public async Task<ApiResult<GetSmallDistrictOutput>> Get([FromUri]string id, CancellationToken cancelToken)
         {
-
             if (Authorization == null)
             {
                 return new ApiResult<GetSmallDistrictOutput>(APIResultCode.Unknown, new GetSmallDistrictOutput { }, APIResultMessage.TokenNull);
@@ -192,7 +186,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetSmallDistrictOutput>(APIResultCode.Unknown, new GetSmallDistrictOutput { }, APIResultMessage.TokenError);
             }
-            var data = await _smallDistrictRepository.GetAsync(id, cancelToken);
+            var data = await _smallDistrictRepository.GetIncludeAsync(id, cancelToken);
 
             return new ApiResult<GetSmallDistrictOutput>(APIResultCode.Success, new GetSmallDistrictOutput
             {
@@ -203,11 +197,10 @@ namespace GuoGuoCommunity.API.Controllers
                 Name = data.Name,
                 CommunityId = data.CommunityId.ToString(),
                 CommunityName = data.Community.Name,
-                StreetOfficeId = data.ToString(),
+                StreetOfficeId = data.Community.StreetOfficeId.ToString(),
                 StreetOfficeName = data.Community.StreetOffice.Name,
                 PhoneNumber = data.PhoneNumber
             });
-
         }
 
         /// <summary>
@@ -239,7 +232,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<GetAllSmallDistrictOutput>(APIResultCode.Unknown, new GetAllSmallDistrictOutput { }, APIResultMessage.TokenError);
             }
             int startRow = (input.PageIndex - 1) * input.PageSize;
-            var data = await _smallDistrictRepository.GetAllAsync(new SmallDistrictDto
+            var data = await _smallDistrictRepository.GetAllIncludeAsync(new SmallDistrictDto
             {
                 Name = input?.Name,
                 City = input?.City,
@@ -272,7 +265,7 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 根据社区获取小区列表(小程序可用)
+        /// 根据社区获取小区列表
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>
@@ -329,7 +322,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<GetAllSmallDistrictOutput>(APIResultCode.Unknown, new GetAllSmallDistrictOutput { }, APIResultMessage.TokenError);
             }
 
-            var data = await _smallDistrictRepository.GetAllAsync(new SmallDistrictDto
+            var data = await _smallDistrictRepository.GetAllIncludeAsync(new SmallDistrictDto
             {
                 StreetOfficeId = input?.StreetOfficeId
             }, cancelToken);

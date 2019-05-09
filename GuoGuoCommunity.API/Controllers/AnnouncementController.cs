@@ -326,19 +326,19 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Success_NoB, new GetAllAnnouncementOutput { }, "分页参数必传");
             }
-            if (Authorization == null)
-            {
-                return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Unknown, new GetAllAnnouncementOutput { }, APIResultMessage.TokenNull);
-            }
-            if (string.IsNullOrWhiteSpace(input.OwnerCertificationId))
-            {
-                throw new NotImplementedException("业主认证Id信息为空！");
-            }
-            var user = _tokenManager.GetUser(Authorization);
-            if (user == null)
-            {
-                return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Unknown, new GetAllAnnouncementOutput { }, APIResultMessage.TokenError);
-            }
+            //if (Authorization == null)
+            //{
+            //    return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Unknown, new GetAllAnnouncementOutput { }, APIResultMessage.TokenNull);
+            //}
+            //if (string.IsNullOrWhiteSpace(input.OwnerCertificationId))
+            //{
+            //    throw new NotImplementedException("业主认证Id信息为空！");
+            //}
+            //var user = _tokenManager.GetUser(Authorization);
+            //if (user == null)
+            //{
+            //    return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Unknown, new GetAllAnnouncementOutput { }, APIResultMessage.TokenError);
+            //}
 
             if (input.PageIndex < 1)
             {
@@ -371,8 +371,8 @@ namespace GuoGuoCommunity.API.Controllers
                     Content = item.Content,
                     ReleaseTime = item.CreateOperationTime.Value,
                     Summary = item.Summary,
-                    Url = urlList.Where(x => x.AnnouncementId == item.Id.ToString()).FirstOrDefault()?.AnnexContent,
-                    CreateUserName = userList.Where(x => x.Id.ToString() == item.OwnerCertificationId).FirstOrDefault()?.Owner.Name
+                    Url = urlList.Any()? urlList.Where(x => x.AnnouncementId == item.Id.ToString()).FirstOrDefault().AnnexContent:"",
+                    CreateUserName = userList.Any()? userList.Where(x => x.Id.ToString() == item.OwnerCertificationId).FirstOrDefault().Owner.Name:""
                 });
             }
 
@@ -700,7 +700,7 @@ namespace GuoGuoCommunity.API.Controllers
             IUserRepository userRepository = new UserRepository();
             IWeiXinUserRepository weiXinUserRepository = new WeiXinUserRepository();
 
-            var userIdList = (await ownerCertificationRecordRepository.GetListForSmallDistrictIdIncludeAsync(new OwnerCertificationRecordDto
+            var userIdList = (await ownerCertificationRecordRepository.GetListForSmallDistrictIdAsync(new OwnerCertificationRecordDto
             {
                 SmallDistrictId = smallDistrict
             })).Select(x => x.UserId).Distinct().ToList();

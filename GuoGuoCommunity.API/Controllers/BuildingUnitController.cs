@@ -225,11 +225,10 @@ namespace GuoGuoCommunity.API.Controllers
                 }).ToList(),
                 TotalCount = list.Count()
             });
-
         }
 
         /// <summary>
-        /// 根据楼宇id获取楼宇单元列表(小程序可用)
+        /// 根据楼宇id获取楼宇单元列表
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancelToken"></param>

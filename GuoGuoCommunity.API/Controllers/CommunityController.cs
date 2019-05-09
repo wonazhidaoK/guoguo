@@ -177,7 +177,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     return new ApiResult<GetCommunityOutput>(APIResultCode.Unknown, new GetCommunityOutput { }, APIResultMessage.TokenError);
                 }
-                var data = await _communityRepository.GetAsync(id, cancelToken);
+                var data = await _communityRepository.GetIncludeAsync(id, cancelToken);
 
                 return new ApiResult<GetCommunityOutput>(APIResultCode.Success, new GetCommunityOutput
                 {
@@ -187,7 +187,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Region = data.Region,
                     Name = data.Name,
                     StreetOfficeId = data.StreetOfficeId.ToString(),
-                    //StreetOfficeName = data.StreetOfficeName
+                    StreetOfficeName = data.StreetOffice.Name
                 });
             }
             catch (Exception e)
@@ -223,7 +223,7 @@ namespace GuoGuoCommunity.API.Controllers
                 input.PageSize = 10;
             }
             int startRow = (input.PageIndex - 1) * input.PageSize;
-            var data = await _communityRepository.GetAllAIncludesync(new CommunityDto
+            var data = await _communityRepository.GetAllIncludeAsync(new CommunityDto
             {
                 Name = input?.Name,
                 City = input?.City,
@@ -259,7 +259,6 @@ namespace GuoGuoCommunity.API.Controllers
                     Name = x.Name,
                     StreetOfficeId = x.StreetOfficeId.ToString(),
                     StreetOfficeName = x.StreetOffice.Name
-                    //StreetOfficeName = x.StreetOfficeName
                 }).ToList(),
                 TotalCount = listCount
             });

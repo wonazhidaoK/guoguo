@@ -6,23 +6,13 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public interface IOwnerRepository
+    public interface IOwnerRepository : IIncludeRepository<Owner, OwnerDto>
     {
-        Task<Owner> AddAsync(OwnerDto dto, CancellationToken token = default);
-
-        Task UpdateAsync(OwnerDto dto, CancellationToken token = default);
-
         Task UpdateForLegalizeAsync(OwnerDto dto, CancellationToken token = default);
-
-        Task<List<Owner>> GetAllAsync(OwnerDto dto, CancellationToken token = default);
-
-        Task DeleteAsync(OwnerDto dto, CancellationToken token = default);
-
-        Task<Owner> GetAsync(string id, CancellationToken token = default);
 
         Task<List<Owner>> GetForIdsAsync(List<string> ids, CancellationToken token = default);
 
-        Task<List<Owner>> GetListAsync(OwnerDto dto, CancellationToken token = default);
+        Task<List<Owner>> GetForIdsIncludeAsync(List<string> ids, CancellationToken token = default);
 
         /// <summary>
         /// 获取业户下未认证业主信息
@@ -30,7 +20,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         /// <param name="dto"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<List<Owner>> GetListForLegalizeAsync(OwnerDto dto, CancellationToken token = default);
+        Task<List<Owner>> GetListForLegalizeIncludeAsync(OwnerDto dto, CancellationToken token = default);
 
         Task<Owner> GetForOwnerCertificationRecordIdAsync(OwnerDto dto, CancellationToken token = default);
     }

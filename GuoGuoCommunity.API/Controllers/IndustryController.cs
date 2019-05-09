@@ -186,7 +186,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetIndustryOutput>(APIResultCode.Unknown, new GetIndustryOutput { }, APIResultMessage.TokenError);
             }
-            var data = await _industryRepository.GetAsync(id, cancelToken);
+            var data = await _industryRepository.GetIncludeAsync(id, cancelToken);
 
             return new ApiResult<GetIndustryOutput>(APIResultCode.Success, new GetIndustryOutput
             {
@@ -232,7 +232,7 @@ namespace GuoGuoCommunity.API.Controllers
                 input.PageSize = 10;
             }
             int startRow = (input.PageIndex - 1) * input.PageSize;
-            var data = await _industryRepository.GetAllAsync(new IndustryDto
+            var data = await _industryRepository.GetAllIncludeAsync(new IndustryDto
             {
                 Name = input?.Name,
                 BuildingId = input?.BuildingId,

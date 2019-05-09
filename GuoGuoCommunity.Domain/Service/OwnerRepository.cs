@@ -12,6 +12,21 @@ namespace GuoGuoCommunity.Domain.Service
 {
     public class OwnerRepository : IOwnerRepository
     {
+        #region 事件
+
+        private void OnUpdate(GuoGuoCommunityContext db, OwnerDto dto, CancellationToken token = default)
+        {
+
+        }
+
+        private bool OnDelete(GuoGuoCommunityContext db, OwnerDto dto, CancellationToken token = default)
+        {
+
+            return false;
+        }
+
+        #endregion
+
         public async Task<Owner> AddAsync(OwnerDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -84,7 +99,8 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Owners.Include(x=>x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.Owners.Where(x => x.IsDeleted == false).ToListAsync(token);
+
                 if (!string.IsNullOrWhiteSpace(dto.IDCard))
                 {
                     list = list.Where(x => x.IDCard.Contains(dto.IDCard)).ToList();
@@ -163,18 +179,53 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        private void OnUpdate(GuoGuoCommunityContext db, OwnerDto dto, CancellationToken token = default)
+        public async Task<List<Owner>> GetAllIncludeAsync(OwnerDto dto, CancellationToken token = default)
         {
-
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.Owners.Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
+                if (!string.IsNullOrWhiteSpace(dto.IDCard))
+                {
+                    list = list.Where(x => x.IDCard.Contains(dto.IDCard)).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.IndustryId))
+                {
+                    list = list.Where(x => x.IndustryId.ToString() == dto.IndustryId).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.PhoneNumber))
+                {
+                    list = list.Where(x => x.PhoneNumber.Contains(dto.PhoneNumber)).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.Gender))
+                {
+                    list = list.Where(x => x.Gender == dto.Gender).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.Name))
+                {
+                    list = list.Where(x => x.Name.Contains(dto.Name)).ToList();
+                }
+                return list;
+            }
         }
 
-        private bool OnDelete(GuoGuoCommunityContext db, OwnerDto dto, CancellationToken token = default)
+        public async Task<Owner> GetIncludeAsync(string id, CancellationToken token = default)
         {
-
-            return false;
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (Guid.TryParse(id, out var uid))
+                {
+                    return await db.Owners.Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                }
+                return null;
+            }
         }
 
-        public async Task<List<Owner>> GetListForLegalizeAsync(OwnerDto dto, CancellationToken token = default)
+        public Task<List<Owner>> GetListIncludeAsync(OwnerDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<Owner>> GetListForLegalizeIncludeAsync(OwnerDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
@@ -215,6 +266,15 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 var list = await db.Owners.Where(x => x.IsDeleted == false).ToListAsync(token);
+                return (from x in list where ids.Contains(x.Id.ToString()) select x).ToList();
+            }
+        }
+
+        public async Task<List<Owner>> GetForIdsIncludeAsync(List<string> ids, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.Owners.Include(x => x.Industry.BuildingUnit.Building.SmallDistrict).Where(x => x.IsDeleted == false).ToListAsync(token);
                 return (from x in list where ids.Contains(x.Id.ToString()) select x).ToList();
             }
         }

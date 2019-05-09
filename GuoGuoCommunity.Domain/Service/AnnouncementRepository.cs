@@ -111,7 +111,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("业主认证Id不正确！");
                 }
-                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Include(x=>x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (ownerCertificationRecord == null)
                 {
                     throw new NotImplementedException("业主认证信息不存在！");
@@ -141,7 +141,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("业主认证Id不正确！");
                 }
-                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (ownerCertificationRecord == null)
                 {
                     throw new NotImplementedException("业主认证信息不存在！");

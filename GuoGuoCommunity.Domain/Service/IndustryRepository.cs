@@ -1,5 +1,4 @@
-﻿using EntityFramework.Extensions;
-using GuoGuoCommunity.Domain.Abstractions;
+﻿using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using System;
@@ -13,6 +12,50 @@ namespace GuoGuoCommunity.Domain.Service
 {
     public class IndustryRepository : IIndustryRepository
     {
+        #region 事件
+
+        private async Task OnUpdateAsync(GuoGuoCommunityContext db, IndustryDto dto, CancellationToken token = default)
+        {
+            //await db.Owners.Where(x => x.IndustryId == dto.Id).UpdateAsync(x => new Owner { IndustryName = dto.Name });
+        }
+
+        private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, IndustryDto dto, CancellationToken token = default)
+        {
+            //if (await db.Owners.Where(x => x.IndustryId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            //{
+            //    return true;
+            //}
+            return false;
+        }
+
+        public void OnSubscribe(BuildingIncrementer incrementer)
+        {
+            incrementer.BuildingEvent += BuildingChanging;
+        }
+
+        public async void BuildingChanging(GuoGuoCommunityContext dbs, Building building, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                //await db.Industries.Where(x => x.BuildingId == building.Id.ToString()).UpdateAsync(x => new Industry { BuildingName = building.Name });
+            }
+        }
+
+        public void OnSubscribe(BuildingUnitIncrementer incrementer)
+        {
+            incrementer.BuildingUnitEvent += BuildingUnitChanging;
+        }
+
+        public async void BuildingUnitChanging(GuoGuoCommunityContext dbs, BuildingUnit buildingUnit, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                //await db.Industries.Where(x => x.BuildingUnitId == buildingUnit.Id.ToString()).UpdateAsync(x => new Industry { BuildingUnitName = buildingUnit.UnitName });
+            }
+        }
+
+        #endregion
+
         public async Task<Industry> AddAsync(IndustryDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -95,7 +138,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Industries.Include(x=>x.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.Industries.Where(x => x.IsDeleted == false).ToListAsync(token);
 
                 var buildingList = (await db.Buildings.Where(x => x.IsDeleted == false && x.SmallDistrictId.ToString() == dto.OperationUserSmallDistrictId).Select(x => x.Id.ToString()).ToListAsync(token));
 
@@ -164,44 +207,51 @@ namespace GuoGuoCommunity.Domain.Service
                 await db.SaveChangesAsync(token);
             }
         }
-
-        private async Task OnUpdateAsync(GuoGuoCommunityContext db, IndustryDto dto, CancellationToken token = default)
-        {
-            //await db.Owners.Where(x => x.IndustryId == dto.Id).UpdateAsync(x => new Owner { IndustryName = dto.Name });
-        }
-
-        private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, IndustryDto dto, CancellationToken token = default)
-        {
-            //if (await db.Owners.Where(x => x.IndustryId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
-            return false;
-        }
-
-        public void OnSubscribe(BuildingIncrementer incrementer)
-        {
-            incrementer.BuildingEvent += BuildingChanging;
-        }
-
-        public async void BuildingChanging(GuoGuoCommunityContext dbs, Building building, CancellationToken token = default)
+        
+        public async Task<List<Industry>> GetAllIncludeAsync(IndustryDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                //await db.Industries.Where(x => x.BuildingId == building.Id.ToString()).UpdateAsync(x => new Industry { BuildingName = building.Name });
+                var list = await db.Industries.Include(x => x.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
+
+                var buildingList = (await db.Buildings.Where(x => x.IsDeleted == false && x.SmallDistrictId.ToString() == dto.OperationUserSmallDistrictId).Select(x => x.Id.ToString()).ToListAsync(token));
+
+                list = list.Where(x => buildingList.Contains(x.BuildingUnit.BuildingId.ToString())).ToList();
+                
+                if (!string.IsNullOrWhiteSpace(dto.BuildingId))
+                {
+                    list = list.Where(x => x.BuildingUnit.BuildingId.ToString() == dto.BuildingId).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.BuildingUnitId))
+                {
+                    list = list.Where(x => x.BuildingUnitId.ToString() == dto.BuildingUnitId).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.Name))
+                {
+                    list = list.Where(x => x.Name.Contains(dto.Name)).ToList();
+                }
+
+                return list;
             }
         }
 
-        public void OnSubscribe(BuildingUnitIncrementer incrementer)
-        {
-            incrementer.BuildingUnitEvent += BuildingUnitChanging;
-        }
-
-        public async void BuildingUnitChanging(GuoGuoCommunityContext dbs, BuildingUnit buildingUnit, CancellationToken token = default)
+        public async Task<Industry> GetIncludeAsync(string id, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                //await db.Industries.Where(x => x.BuildingUnitId == buildingUnit.Id.ToString()).UpdateAsync(x => new Industry { BuildingUnitName = buildingUnit.UnitName });
+                if (Guid.TryParse(id, out var uid))
+                {
+                    return await db.Industries.Include(x => x.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                }
+                return null;
+            }
+        }
+
+        public async Task<List<Industry>> GetListIncludeAsync(IndustryDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.Industries.Include(x => x.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.BuildingUnitId.ToString() == dto.BuildingUnitId && x.NumberOfLayers == dto.NumberOfLayers).ToListAsync(token);
             }
         }
 

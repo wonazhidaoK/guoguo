@@ -2,7 +2,7 @@
 
 namespace GuoGuoCommunity.Domain.Dto
 {
-    public  class StreetOfficeDto
+    public class StreetOfficeDto
     {
         /// <summary>
         /// 

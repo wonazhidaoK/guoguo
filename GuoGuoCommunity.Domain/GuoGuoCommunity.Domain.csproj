@@ -92,6 +92,9 @@
     <Compile Include="Abstractions\IBuildingRepository.cs" />
     <Compile Include="Abstractions\IBuildingUnitRepository.cs" />
     <Compile Include="Abstractions\ICityRepository.cs" />
+    <Compile Include="Abstractions\base\IDto.cs" />
+    <Compile Include="Abstractions\base\IIncludeRepository.cs" />
+    <Compile Include="Abstractions\base\IRepository.cs" />
     <Compile Include="Abstractions\ICommunityRepository.cs" />
     <Compile Include="Abstractions\IComplaintAnnexRepository.cs" />
     <Compile Include="Abstractions\IComplaintFollowUpRepository.cs" />
@@ -227,6 +230,14 @@
     <Compile Include="Migrations\201905080836019_updata-OwnerCertificationRecord.Designer.cs">
       <DependentUpon>201905080836019_updata-OwnerCertificationRecord.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201905090908335_update-OwnerCertificationAnnex.cs" />
+    <Compile Include="Migrations\201905090908335_update-OwnerCertificationAnnex.Designer.cs">
+      <DependentUpon>201905090908335_update-OwnerCertificationAnnex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905090919413_update-OwnerCertificationAnnex2.cs" />
+    <Compile Include="Migrations\201905090919413_update-OwnerCertificationAnnex2.Designer.cs">
+      <DependentUpon>201905090919413_update-OwnerCertificationAnnex2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Enum\StationLetterReadStatus.cs" />
     <Compile Include="Models\event\ComplaintTypeIncrementer.cs" />
     <Compile Include="Models\IDCardPhotoRecord.cs" />
@@ -262,7 +273,7 @@
     <Compile Include="Models\Community.cs" />
     <Compile Include="Models\ComplaintType.cs" />
     <Compile Include="Models\Enum\FileType.cs" />
-    <Compile Include="Models\Enum\OwnerCertification.cs" />
+    <Compile Include="Models\Enum\OwnerCertificationStatus.cs" />
     <Compile Include="Models\Industry.cs" />
     <Compile Include="Models\Enum\Department.cs" />
     <Compile Include="Models\Menu.cs" />
@@ -387,6 +398,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201905080836019_updata-OwnerCertificationRecord.resx">
       <DependentUpon>201905080836019_updata-OwnerCertificationRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905090908335_update-OwnerCertificationAnnex.resx">
+      <DependentUpon>201905090908335_update-OwnerCertificationAnnex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905090919413_update-OwnerCertificationAnnex2.resx">
+      <DependentUpon>201905090919413_update-OwnerCertificationAnnex2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

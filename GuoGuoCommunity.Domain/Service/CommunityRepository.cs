@@ -76,36 +76,6 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async Task<List<Community>> GetAllAIncludesync(CommunityDto dto, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                var list = await db.Communities.Include(x=>x.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
-                if (!string.IsNullOrWhiteSpace(dto.State))
-                {
-                    list = list.Where(x => x.State == dto.State).ToList();
-                }
-                if (!string.IsNullOrWhiteSpace(dto.City))
-                {
-                    list = list.Where(x => x.City == dto.City).ToList();
-                }
-                if (!string.IsNullOrWhiteSpace(dto.Region))
-                {
-                    list = list.Where(x => x.Region == dto.Region).ToList();
-                }
-                if (!string.IsNullOrWhiteSpace(dto.StreetOfficeId))
-                {
-                    list = list.Where(x => x.StreetOfficeId.ToString() == dto.StreetOfficeId).ToList();
-                }
-                if (!string.IsNullOrWhiteSpace(dto.Name))
-                {
-                    list = list.Where(x => x.Name.Contains(dto.Name)).ToList();
-                }
-
-                return list;
-            }
-        }
-
         public async Task<Community> GetAsync(string id, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -150,6 +120,58 @@ namespace GuoGuoCommunity.Domain.Service
                 await OnUpdate(db, community, token);
                 await db.SaveChangesAsync(token);
             }
+        }
+
+        public Task<List<Community>> GetAllAsync(CommunityDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<Community>> GetAllIncludeAsync(CommunityDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.Communities.Include(x => x.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
+                if (!string.IsNullOrWhiteSpace(dto.State))
+                {
+                    list = list.Where(x => x.State == dto.State).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.City))
+                {
+                    list = list.Where(x => x.City == dto.City).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.Region))
+                {
+                    list = list.Where(x => x.Region == dto.Region).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.StreetOfficeId))
+                {
+                    list = list.Where(x => x.StreetOfficeId.ToString() == dto.StreetOfficeId).ToList();
+                }
+                if (!string.IsNullOrWhiteSpace(dto.Name))
+                {
+                    list = list.Where(x => x.Name.Contains(dto.Name)).ToList();
+                }
+
+                return list;
+            }
+        }
+
+        public async Task<Community> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (Guid.TryParse(id, out var uid))
+                {
+                    return await db.Communities.Include(x => x.StreetOffice).Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                }
+                throw new NotImplementedException("该社区信息不正确！");
+            }
+        }
+
+        public Task<List<Community>> GetListIncludeAsync(CommunityDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
 
         private async Task OnUpdate(GuoGuoCommunityContext db, Community dto, CancellationToken token = default)
@@ -208,18 +230,5 @@ namespace GuoGuoCommunity.Domain.Service
             return false;
 
         }
-
-        //public void OnSubscribe(StreetOfficeIncrementer incrementer)
-        //{
-        //    incrementer.StreetOfficeEvent += StreetOfficeChanging;//在发布者私有委托里增加方法
-        //}
-
-        //public async void StreetOfficeChanging(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)
-        //{
-        //    using (var db = new GuoGuoCommunityContext())
-        //    {
-        //        await db.Communities.Where(x => x.StreetOfficeId == streetOffice.Id.ToString()).UpdateAsync(x => new Community { StreetOfficeName = streetOffice.Name });
-        //    }
-        //}
     }
 }

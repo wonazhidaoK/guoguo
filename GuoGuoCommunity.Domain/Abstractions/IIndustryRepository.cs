@@ -6,20 +6,8 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public interface IIndustryRepository
+    public interface IIndustryRepository:IIncludeRepository<Industry, IndustryDto>
     {
-        Task<Industry> AddAsync(IndustryDto dto, CancellationToken token = default);
-
-        Task UpdateAsync(IndustryDto dto, CancellationToken token = default);
-
-        Task<List<Industry>> GetAllAsync(IndustryDto dto, CancellationToken token = default);
-
-        Task DeleteAsync(IndustryDto dto, CancellationToken token = default);
-
-        Task<Industry> GetAsync(string id, CancellationToken token = default);
-
         Task<List<Industry>> GetForIdsAsync(List<string> ids, CancellationToken token = default);
-
-        Task<List<Industry>> GetListAsync(IndustryDto dto, CancellationToken token = default);
     }
 }

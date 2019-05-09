@@ -267,7 +267,7 @@ namespace GuoGuoCommunity.API.Controllers
                 /*
                  * 一期只有一个认证
                  */
-                var ownerCertificationList = await _ownerCertificationRecordRepository.GetListIncludeAsync(new OwnerCertificationRecordDto() { UserId = user.Id.ToString() });
+                var ownerCertificationList = await _ownerCertificationRecordRepository.GetListAsync(new OwnerCertificationRecordDto() { UserId = user.Id.ToString() });
                 //var isVipOwner = false;
                 //if (ownerCertificationList.Any())
                 //{

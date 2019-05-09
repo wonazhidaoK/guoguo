@@ -60,17 +60,17 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<List<GetListForUserIdOutput>>(APIResultCode.Unknown, new List<GetListForUserIdOutput> { }, APIResultMessage.TokenError);
             }
-            var a = (await _ownerCertificationRecordRepository.GetListIncludeAsync(new OwnerCertificationRecordDto
-            {
-                UserId = user.Id.ToString()
-            }, cancelToken));
+            //var a = (await _ownerCertificationRecordRepository.GetListIncludeAsync(new OwnerCertificationRecordDto
+            //{
+            //    UserId = user.Id.ToString()
+            //}, cancelToken));
             var data = (await _ownerCertificationRecordRepository.GetListIncludeAsync(new OwnerCertificationRecordDto
             {
                 UserId = user.Id.ToString()
             }, cancelToken)).Select(x => x.Industry.BuildingUnit.Building.SmallDistrictId).Distinct();
 
             List<GetListForUserIdOutput> list = new List<GetListForUserIdOutput>();
-            var smallDistrictList = await _smallDistrictRepository.GetForIdsAsync(data.Select(x => x.ToString()).ToList(), cancelToken);
+            var smallDistrictList = await _smallDistrictRepository.GetForIdsIncludeAsync(data.Select(x => x.ToString()).ToList(), cancelToken);
             foreach (var item in data)
             {
                 var entity = smallDistrictList.Where(x => x.Id == item).FirstOrDefault();

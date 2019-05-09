@@ -174,7 +174,6 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("业户信息不存在！");
                 }
 
-                //&& x.IndustryId == dto.IndustryId && x.CertificationStatusValue != OwnerCertification.Failure.Value
                 var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.UserId == dto.UserId && x.IsDeleted == false && x.IsInvalid == false).FirstOrDefaultAsync(token);
                 if (ownerCertificationRecord != null)
                 {
@@ -184,13 +183,13 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     CertificationResult = dto.CertificationResult,
                     UserId = dto.UserId,
-                    CertificationStatusName = OwnerCertification.Executing.Name,
-                    CertificationStatusValue = OwnerCertification.Executing.Value,
+                    CertificationStatusName = OwnerCertificationStatus.Executing.Name,
+                    CertificationStatusValue = OwnerCertificationStatus.Executing.Value,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
                     LastOperationUserId = dto.OperationUserId,
-                     IndustryId= industrie.Id
+                    IndustryId = industrie.Id
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -224,39 +223,12 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public Task<List<OwnerCertificationRecord>> GetAllAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
+        public Task UpdateAsync(OwnerCertificationRecordDto dto, CancellationToken token)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<OwnerCertificationRecord> GetIncludeAsync(string id, CancellationToken token = default)
-        {
-            try
-            {
-                using (var db = new GuoGuoCommunityContext())
-                {
-                    if (Guid.TryParse(id, out var uid))
-                    {
-                        return await db.OwnerCertificationRecords.Include(x=>x.Owner).Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.Id == uid).FirstOrDefaultAsync(token);
-                    }
-                    throw new NotImplementedException("该认证Id信息不正确！");
-                }
-            }
-            catch (Exception)
-            {
-                return new OwnerCertificationRecord();
-            }
-        }
-
-        public async Task<List<OwnerCertificationRecord>> GetListIncludeAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                return await db.OwnerCertificationRecords.Include(x=>x.Owner).Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.UserId == dto.UserId && x.IsInvalid == false).ToListAsync(token);
-            }
-        }
-
-        public async Task<OwnerCertificationRecord> UpdateAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
+        public async Task<OwnerCertificationRecord> UpdateStatusAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
@@ -272,7 +244,7 @@ namespace GuoGuoCommunity.Domain.Service
                 if (Guid.TryParse(dto.OwnerId, out var ownerId))
                 {
                     //throw new NotImplementedException("业主Id信息不正确！");
-                ownerCertificationRecord.OwnerId = ownerId;
+                    ownerCertificationRecord.OwnerId = ownerId;
                 }
                 //ownerCertificationRecord.OwnerName = dto.OwnerName;
                 ownerCertificationRecord.CertificationStatusName = dto.CertificationStatusName;
@@ -286,17 +258,39 @@ namespace GuoGuoCommunity.Domain.Service
                 return ownerCertificationRecord;
             }
         }
-
-        public Task UpdateStatusAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
+        public Task<List<OwnerCertificationRecord>> GetAllAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<OwnerCertificationRecord>> GetListForOwnerAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
+        public async Task<OwnerCertificationRecord> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            try
+            {
+                using (var db = new GuoGuoCommunityContext())
+                {
+                    if (Guid.TryParse(id, out var uid))
+                    {
+                        return await db.OwnerCertificationRecords
+                            .Include(x => x.Owner)
+                            .Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice)
+                            .Where(x => x.Id == uid)
+                            .FirstOrDefaultAsync(token);
+                    }
+                    throw new NotImplementedException("该认证Id信息不正确！");
+                }
+            }
+            catch (Exception)
+            {
+                return new OwnerCertificationRecord();
+            }
+        }
+
+        public async Task<List<OwnerCertificationRecord>> GetListIncludeAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.OwnerId.ToString() == dto.OwnerId).ToListAsync(token);
+                return await db.OwnerCertificationRecords.Include(x => x.Owner).Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.UserId == dto.UserId && x.IsInvalid == false).ToListAsync(token);
             }
         }
 
@@ -335,7 +329,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.OwnerCertificationRecords.Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.Industry.BuildingUnit.Building.SmallDistrictId.ToString() == dto.SmallDistrictId && x.UserId == dto.UserId).ToListAsync(token);
+                return await db.OwnerCertificationRecords.Include(x => x.Owner).Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.Industry.BuildingUnit.Building.SmallDistrictId.ToString() == dto.SmallDistrictId && x.UserId == dto.UserId).ToListAsync(token);
             }
         }
 
@@ -343,7 +337,56 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.OwnerCertificationRecords.Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.OwnerCertificationRecords.Include(x => x.Owner).Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
+                return (from x in list where ids.Contains(x.Id.ToString()) select x).ToList();
+            }
+        }
+
+        public Task<List<OwnerCertificationRecord>> GetAllIncludeAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<OwnerCertificationRecord> GetAsync(string id, CancellationToken token = default)
+        {
+            try
+            {
+                using (var db = new GuoGuoCommunityContext())
+                {
+                    if (Guid.TryParse(id, out var uid))
+                    {
+                        return await db.OwnerCertificationRecords.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                    }
+                    throw new NotImplementedException("该认证Id信息不正确！");
+                }
+            }
+            catch (Exception)
+            {
+                return new OwnerCertificationRecord();
+            }
+        }
+
+        public async Task<List<OwnerCertificationRecord>> GetListAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.UserId == dto.UserId && x.IsInvalid == false).ToListAsync(token);
+            }
+        }
+
+        public async Task<List<OwnerCertificationRecord>> GetListForSmallDistrictIdAsync(OwnerCertificationRecordDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.Industry.BuildingUnit.Building.SmallDistrictId.ToString() == dto.SmallDistrictId && x.IsInvalid == false).ToListAsync(token);
+            }
+        }
+
+        public async Task<List<OwnerCertificationRecord>> GetListForIdArrayAsync(List<string> ids, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false).ToListAsync(token);
                 return (from x in list where ids.Contains(x.Id.ToString()) select x).ToList();
             }
         }
