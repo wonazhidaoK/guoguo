@@ -189,7 +189,8 @@ namespace GuoGuoCommunity.Domain.Service
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
-                    LastOperationUserId = dto.OperationUserId
+                    LastOperationUserId = dto.OperationUserId,
+                     IndustryId= industrie.Id
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -236,7 +237,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     if (Guid.TryParse(id, out var uid))
                     {
-                        return await db.OwnerCertificationRecords.Include(x=>x.Owner).Include(x => x.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                        return await db.OwnerCertificationRecords.Include(x=>x.Owner).Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.Id == uid).FirstOrDefaultAsync(token);
                     }
                     throw new NotImplementedException("该认证Id信息不正确！");
                 }
@@ -251,7 +252,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.OwnerCertificationRecords.Include(x=>x.Owner).Include(x => x.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.UserId == dto.UserId && x.IsInvalid == false).ToListAsync(token);
+                return await db.OwnerCertificationRecords.Include(x=>x.Owner).Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.UserId == dto.UserId && x.IsInvalid == false).ToListAsync(token);
             }
         }
 
@@ -268,11 +269,11 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该认证信息不存在！");
                 }
-                if (!Guid.TryParse(dto.OwnerId, out var ownerId))
+                if (Guid.TryParse(dto.OwnerId, out var ownerId))
                 {
-                    throw new NotImplementedException("业主Id信息不正确！");
-                }
+                    //throw new NotImplementedException("业主Id信息不正确！");
                 ownerCertificationRecord.OwnerId = ownerId;
+                }
                 //ownerCertificationRecord.OwnerName = dto.OwnerName;
                 ownerCertificationRecord.CertificationStatusName = dto.CertificationStatusName;
                 ownerCertificationRecord.CertificationStatusValue = dto.CertificationStatusValue;
@@ -326,7 +327,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.OwnerCertificationRecords.Include(x => x.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString() == dto.SmallDistrictId && x.IsInvalid == false).ToListAsync(token);
+                return await db.OwnerCertificationRecords.Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.Industry.BuildingUnit.Building.SmallDistrictId.ToString() == dto.SmallDistrictId && x.IsInvalid == false).ToListAsync(token);
             }
         }
 
@@ -334,7 +335,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.OwnerCertificationRecords.Include(x => x.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString() == dto.SmallDistrictId && x.UserId == dto.UserId).ToListAsync(token);
+                return await db.OwnerCertificationRecords.Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.Industry.BuildingUnit.Building.SmallDistrictId.ToString() == dto.SmallDistrictId && x.UserId == dto.UserId).ToListAsync(token);
             }
         }
 
@@ -342,7 +343,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.OwnerCertificationRecords.Include(x => x.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.OwnerCertificationRecords.Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
                 return (from x in list where ids.Contains(x.Id.ToString()) select x).ToList();
             }
         }

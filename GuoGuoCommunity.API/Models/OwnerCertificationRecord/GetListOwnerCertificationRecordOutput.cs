@@ -176,5 +176,10 @@ namespace GuoGuoCommunity.API.Models
 
         #endregion
 
+        /// <summary>
+        /// 是否是业委会成员
+        /// </summary>
+        public bool IsVipOwner { get; set; }
+
     }
 }

@@ -34,6 +34,8 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IIndustryRepository _industryRepository;
         private readonly IIDCardPhotoRecordRepository _iDCardPhotoRecordRepository;
         private readonly ISmallDistrictRepository _smallDistrictRepository;
+        private readonly IVipOwnerRepository _vipOwnerRepository;
+        private readonly IVipOwnerCertificationRecordRepository _vipOwnerCertificationRecordRepository;
         private TokenManager _tokenManager;
 
         /// <summary>
@@ -44,14 +46,18 @@ namespace GuoGuoCommunity.API.Controllers
         /// <param name="ownerRepository"></param>
         /// <param name="industryRepository"></param>
         /// <param name="iDCardPhotoRecordRepository"></param>
+        /// <param name="vipOwnerCertificationRecordRepository"></param>
         /// <param name="smallDistrictRepository"></param>
+        /// <param name="vipOwnerRepository"></param>
         public OwnerCertificationRecordController(
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
             IOwnerCertificationAnnexRepository ownerCertificationAnnexRepository,
             IOwnerRepository ownerRepository,
             IIndustryRepository industryRepository,
             IIDCardPhotoRecordRepository iDCardPhotoRecordRepository,
-            ISmallDistrictRepository smallDistrictRepository)
+             IVipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository,
+            ISmallDistrictRepository smallDistrictRepository,
+            IVipOwnerRepository vipOwnerRepository)
         {
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _ownerCertificationAnnexRepository = ownerCertificationAnnexRepository;
@@ -59,6 +65,8 @@ namespace GuoGuoCommunity.API.Controllers
             _industryRepository = industryRepository;
             _iDCardPhotoRecordRepository = iDCardPhotoRecordRepository;
             _smallDistrictRepository = smallDistrictRepository;
+            _vipOwnerCertificationRecordRepository = vipOwnerCertificationRecordRepository ?? throw new ArgumentNullException(nameof(vipOwnerCertificationRecordRepository));
+            _vipOwnerRepository = vipOwnerRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -123,7 +131,7 @@ namespace GuoGuoCommunity.API.Controllers
                 BuildingId = input.BuildingId,
                 UserId = user.Id.ToString(),
                 OperationTime = DateTimeOffset.Now,
-                OperationUserId = user.Id.ToString()
+                OperationUserId = user.Id.ToString(),
             }, cancelToken);
 
             foreach (var item in input.Models)
@@ -176,33 +184,46 @@ namespace GuoGuoCommunity.API.Controllers
 
             List<GetOwnerCertificationRecordOutput> list = new List<GetOwnerCertificationRecordOutput>();
             var ownerList = await _ownerRepository.GetForIdsAsync(data.Select(x => x.OwnerId.ToString()).ToList(), cancelToken);
-            var industryList = await _industryRepository.GetForIdsAsync(data.Select(x => x.Owner.IndustryId.ToString()).ToList(), cancelToken);
-            var smallDistrictList = await _smallDistrictRepository.GetForIdsAsync(data.Select(x => x.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToList(), cancelToken);
+            var industryList = await _industryRepository.GetForIdsAsync(data.Select(x => x.IndustryId.ToString()).ToList(), cancelToken);
+            var smallDistrictList = await _smallDistrictRepository.GetForIdsAsync(data.Select(x => x.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToList(), cancelToken);
+            //var operationList = await _ownerCertificationRecordRepository.GetListForIdArrayIncludeAsync(data.Select(x => x.Id.ToString()).ToList());
+            var vipOwnerList = await _vipOwnerRepository.GetForSmallDistrictIdsAsync(data.Select(x => x.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToList());
+            var vipOwnerCertificationRecordList = await _vipOwnerCertificationRecordRepository.GetForVipOwnerIdsAsync(vipOwnerList.Select(x => x.Id.ToString()).ToList());
             foreach (var item in data)
             {
                 var owner = ownerList.Where(x => x.Id == item.OwnerId).FirstOrDefault();
-                var industry = industryList.Where(x => x.Id.ToString() == item.Owner.IndustryId.ToString()).FirstOrDefault();
-                var smallDistrict = smallDistrictList.Where(x => x.Id == item.Owner.Industry.BuildingUnit.Building.SmallDistrictId).FirstOrDefault();
+                var industry = industryList.Where(x => x.Id.ToString() == item.IndustryId.ToString()).FirstOrDefault();
+                var smallDistrict = smallDistrictList.Where(x => x.Id == item.Industry.BuildingUnit.Building.SmallDistrictId).FirstOrDefault();
+                var isVipOwner = false;
+                var vipOwner = vipOwnerList.Where(x => x.SmallDistrictId.ToString() == item.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).FirstOrDefault();
+                if (vipOwner != null)
+                {
+                    var vipOwnerCertificationRecord = vipOwnerCertificationRecordList.Where(x => x.VipOwnerId == vipOwner.Id.ToString() && x.OwnerCertificationId == item.Id.ToString()).FirstOrDefault();
+                    if (vipOwnerCertificationRecord != null)
+                    {
+                        isVipOwner = true;
+                    }
+                }
                 list.Add(new GetOwnerCertificationRecordOutput
                 {
-                    BuildingId = item.Owner.Industry.BuildingUnit.BuildingId.ToString(),
-                    BuildingName = item.Owner.Industry.BuildingUnit.Building.Name,
-                    BuildingUnitId = item.Owner.Industry.BuildingUnitId.ToString(),
-                    BuildingUnitName = item.Owner.Industry.BuildingUnit.UnitName,
+                    BuildingId = item.Industry.BuildingUnit.BuildingId.ToString(),
+                    BuildingName = item.Industry.BuildingUnit.Building.Name,
+                    BuildingUnitId = item.Industry.BuildingUnitId.ToString(),
+                    BuildingUnitName = item.Industry.BuildingUnit.UnitName,
                     CertificationResult = item.CertificationResult,
                     CertificationStatusName = item.CertificationStatusName,
                     CertificationStatusValue = item.CertificationStatusValue,
-                    CommunityId = item.Owner.Industry.BuildingUnit.Building.SmallDistrict.CommunityId.ToString(),
-                    CommunityName = item.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.Name,
+                    CommunityId = item.Industry.BuildingUnit.Building.SmallDistrict.CommunityId.ToString(),
+                    CommunityName = item.Industry.BuildingUnit.Building.SmallDistrict.Community.Name,
                     Id = item.Id.ToString(),
-                    IndustryId = item.Owner.IndustryId.ToString(),
-                    IndustryName = item.Owner.Industry.Name,
+                    IndustryId = item.IndustryId.ToString(),
+                    IndustryName = item.Industry.Name,
                     OwnerId = item.OwnerId.ToString(),
                     OwnerName = item.Owner.Name,
-                    SmallDistrictId = item.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
-                    SmallDistrictName = item.Owner.Industry.BuildingUnit.Building.SmallDistrict.Name,
-                    StreetOfficeId = item.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(),
-                    StreetOfficeName = item.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name,
+                    SmallDistrictId = item.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
+                    SmallDistrictName = item.Industry.BuildingUnit.Building.SmallDistrict.Name,
+                    StreetOfficeId = item.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(),
+                    StreetOfficeName = item.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name,
                     UserId = item.UserId,
                     Name = owner?.Name,
                     Birthday = owner?.Birthday,
@@ -212,7 +233,8 @@ namespace GuoGuoCommunity.API.Controllers
                     NumberOfLayers = industry?.NumberOfLayers,
                     Acreage = industry?.Acreage,
                     Oriented = industry?.Oriented,
-                    SmallDistrictPhoneNumber = smallDistrict?.PhoneNumber
+                    SmallDistrictPhoneNumber = smallDistrict?.PhoneNumber,
+                    IsVipOwner = isVipOwner
                 });
             }
             return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Success, new GetListOwnerCertificationRecordOutput
@@ -255,7 +277,7 @@ namespace GuoGuoCommunity.API.Controllers
                     {
                         throw new NotImplementedException("未识别到身份证信息，请提交正规清晰的身份证照片!");
                     }
-                    var owner = (await ownerRepository.GetListForLegalizeAsync(new OwnerDto { IndustryId = ownerCertificationRecordEntity.Owner.IndustryId.ToString() })).Where(x => x.IDCard == json.Num).FirstOrDefault();
+                    var owner = (await ownerRepository.GetListForLegalizeAsync(new OwnerDto { IndustryId = ownerCertificationRecordEntity.IndustryId.ToString() })).Where(x => x.IDCard == json.Num).FirstOrDefault();
 
                     if (owner != null)
                     {
@@ -280,13 +302,13 @@ namespace GuoGuoCommunity.API.Controllers
                     dto.CertificationResult = e.Message;
                     throw new NotImplementedException(e.Message);
                 }
-
                 var recordEntity = await ownerCertificationRecordRepository.UpdateAsync(dto);
 
                 if (string.IsNullOrWhiteSpace(dto.OwnerId))
                 {
                     throw new NotImplementedException("未查询到相关业主信息");
                 }
+
 
                 await ownerRepository.UpdateForLegalizeAsync(new OwnerDto
                 {
@@ -528,28 +550,28 @@ namespace GuoGuoCommunity.API.Controllers
             foreach (var item in data)
             {
                 var owner = await _ownerRepository.GetAsync(item.OwnerId.ToString(), cancelToken);
-                var industry = await _industryRepository.GetAsync(item.Owner.IndustryId.ToString(), cancelToken);
+                var industry = await _industryRepository.GetAsync(item.IndustryId.ToString(), cancelToken);
                 list.Add(new GetOwnerCertificationRecordOutput
                 {
-                    BuildingId = item.Owner.Industry.BuildingUnit.BuildingId.ToString(),
-                    BuildingName = item.Owner.Industry.BuildingUnit.Building.Name,
-                    BuildingUnitId = item.Owner.Industry.BuildingUnitId.ToString(),
-                    BuildingUnitName = item.Owner.Industry.BuildingUnit.UnitName,
+                    BuildingId = item.Industry.BuildingUnit.BuildingId.ToString(),
+                    BuildingName = item.Industry.BuildingUnit.Building.Name,
+                    BuildingUnitId = item.Industry.BuildingUnitId.ToString(),
+                    BuildingUnitName = item.Industry.BuildingUnit.UnitName,
                     CertificationResult = item.CertificationResult,
                     CertificationStatusName = item.CertificationStatusName,
                     CertificationStatusValue = item.CertificationStatusValue,
                     CertificationTime = item.CreateOperationTime.ToString(),
-                    CommunityId = item.Owner.Industry.BuildingUnit.Building.SmallDistrict.CommunityId.ToString(),
-                    CommunityName = item.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.Name,
+                    CommunityId = item.Industry.BuildingUnit.Building.SmallDistrict.CommunityId.ToString(),
+                    CommunityName = item.Industry.BuildingUnit.Building.SmallDistrict.Community.Name,
                     Id = item.Id.ToString(),
-                    IndustryId = item.Owner.IndustryId.ToString(),
-                    IndustryName = item.Owner.Industry.Name,
+                    IndustryId = item.IndustryId.ToString(),
+                    IndustryName = item.Industry.Name,
                     OwnerId = item.OwnerId.ToString(),
                     OwnerName = item.Owner.Name,
-                    SmallDistrictId = item.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
-                    SmallDistrictName = item.Owner.Industry.BuildingUnit.Building.SmallDistrict.Name,
-                    StreetOfficeId = item.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(),
-                    StreetOfficeName = item.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name,
+                    SmallDistrictId = item.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
+                    SmallDistrictName = item.Industry.BuildingUnit.Building.SmallDistrict.Name,
+                    StreetOfficeId = item.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(),
+                    StreetOfficeName = item.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name,
                     UserId = item.UserId,
                     Name = owner?.Name,
                     Birthday = owner?.Birthday,

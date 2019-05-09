@@ -272,5 +272,13 @@ namespace GuoGuoCommunity.Domain.Service
                 return await db.VipOwners.Where(x => x.IsDeleted == false && x.SmallDistrictId.ToString() == dto.SmallDistrictId).ToListAsync(token);
             }
         }
+
+        public async Task<List<VipOwner>> GetForSmallDistrictIdsAsync(List<string> ids, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.VipOwners.Where(x => ids.Contains( x.SmallDistrictId.ToString()) && x.IsValid == true).ToListAsync(token);
+            }
+        }
     }
 }

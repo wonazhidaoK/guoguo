@@ -86,43 +86,43 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("业主认证Id信息不正确！");
                 }
-                var ownerCertificationRecord = await db.OwnerCertificationRecords.Include(x => x.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (ownerCertificationRecord == null)
                 {
                     throw new NotImplementedException("业主认证信息不存在！");
                 }
 
 
-                var smallDistrict = await db.SmallDistricts.Where(x => x.Id == ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrictId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var smallDistrict = await db.SmallDistricts.Where(x => x.Id == ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (smallDistrict == null)
                 {
                     throw new NotImplementedException("小区信息不存在！");
                 }
 
-                var communitie = await db.Communities.Where(x => x.Id == ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.CommunityId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var communitie = await db.Communities.Where(x => x.Id == ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.CommunityId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (communitie == null)
                 {
                     throw new NotImplementedException("社区信息不存在！");
                 }
-                var streetOffice = await db.StreetOffices.Where(x => x.Id == ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var streetOffice = await db.StreetOffices.Where(x => x.Id == ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (streetOffice == null)
                 {
                     throw new NotImplementedException("街道办信息不存在！");
                 }
-                var ownerCertificationRecordList = await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.Owner.Industry.BuildingUnit.Building.SmallDistrictId == ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrictId).ToListAsync(token);
+                var ownerCertificationRecordList = await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.Industry.BuildingUnit.Building.SmallDistrictId == ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId).ToListAsync(token);
                 if (!ownerCertificationRecordList.Any())
                 {
                     throw new NotImplementedException("当前小区人数为0不能发起投票！");
                 }
                 var entity = db.Votes.Add(new Vote
                 {
-                    CommunityId = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.CommunityId.ToString(),
+                    CommunityId = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.CommunityId.ToString(),
                     CommunityName = communitie.Name,
-                    SmallDistrictId = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
+                    SmallDistrictId = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
                     SmallDistrictName = smallDistrict.Name,
-                    StreetOfficeId = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(),
+                    StreetOfficeId = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(),
                     StreetOfficeName = streetOffice.Name,
-                    SmallDistrictArray = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
+                    SmallDistrictArray = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
                     Deadline = dto.Deadline,
                     Summary = dto.Summary,
                     Title = dto.Title,
@@ -214,12 +214,12 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("业主认证Id不正确！");
                 }
-                var ownerCertificationRecord = await db.OwnerCertificationRecords.Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (ownerCertificationRecord == null)
                 {
                     throw new NotImplementedException("业主认证信息不存在！");
                 }
-                var list = await db.Votes.Where(x => x.IsDeleted == false && x.DepartmentValue == dto.DepartmentValue && x.SmallDistrictArray == ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToListAsync(token);
+                var list = await db.Votes.Where(x => x.IsDeleted == false && x.DepartmentValue == dto.DepartmentValue && x.SmallDistrictArray == ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.Title))
                 {
                     list = list.Where(x => x.Title.Contains(dto.Title)).ToList();

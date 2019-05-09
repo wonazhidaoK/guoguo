@@ -50,7 +50,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("业主认证Id不正确！");
                 }
-                var ownerCertificationRecord = await db.OwnerCertificationRecords.Include(x=>x.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                var ownerCertificationRecord = await db.OwnerCertificationRecords.Include(x=>x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.Id == ownerCertificationId && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (ownerCertificationRecord == null)
                 {
                     throw new NotImplementedException("业主认证信息不存在！");
@@ -59,7 +59,7 @@ namespace GuoGuoCommunity.Domain.Service
                 var entity = db.Announcements.Add(new Announcement
                 {
                     Content = dto.Content,
-                    SmallDistrictArray = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
+                    SmallDistrictArray = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
                     DepartmentName = dto.DepartmentName,
                     DepartmentValue = dto.DepartmentValue,
                     Summary = dto.Summary,
@@ -68,12 +68,12 @@ namespace GuoGuoCommunity.Domain.Service
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
                     LastOperationUserId = dto.OperationUserId,
-                    CommunityId = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.CommunityId.ToString(),
-                    CommunityName = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.Name,
-                    SmallDistrictId = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
-                    SmallDistrictName = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.Name,
-                    StreetOfficeId = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(),
-                    StreetOfficeName = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name,
+                    CommunityId = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.CommunityId.ToString(),
+                    CommunityName = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.Name,
+                    SmallDistrictId = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
+                    SmallDistrictName = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Name,
+                    StreetOfficeId = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(),
+                    StreetOfficeName = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name,
                     OwnerCertificationId = dto.OwnerCertificationId
                 });
                 await db.SaveChangesAsync(token);
@@ -123,11 +123,11 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 if (dto.DepartmentValue != Department.JieDaoBan.Value)
                 {
-                    list = list.Where(x => x.SmallDistrictArray == ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToList();
+                    list = list.Where(x => x.SmallDistrictArray == ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToList();
                 }
                 else
                 {
-                    list = list.Where(x => x.SmallDistrictArray.Split(',').Contains(ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString())).ToList();
+                    list = list.Where(x => x.SmallDistrictArray.Split(',').Contains(ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString())).ToList();
                 }
                 return list;
             }
@@ -152,7 +152,7 @@ namespace GuoGuoCommunity.Domain.Service
                     list = list.Where(x => x.Title.Contains(dto.Title)).ToList();
                 }
 
-                list = list.Where(x => x.SmallDistrictArray == ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToList();
+                list = list.Where(x => x.SmallDistrictArray == ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToList();
 
                 return list;
             }

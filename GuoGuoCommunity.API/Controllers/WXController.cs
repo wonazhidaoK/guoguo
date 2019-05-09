@@ -268,23 +268,23 @@ namespace GuoGuoCommunity.API.Controllers
                  * 一期只有一个认证
                  */
                 var ownerCertificationList = await _ownerCertificationRecordRepository.GetListIncludeAsync(new OwnerCertificationRecordDto() { UserId = user.Id.ToString() });
-                var isVipOwner = false;
-                if (ownerCertificationList.Any())
-                {
-                    var vipOwner = await _vipOwnerRepository.GetForSmallDistrictIdAsync(new VipOwnerDto { SmallDistrictId = ownerCertificationList.FirstOrDefault().Industry.BuildingUnit.Building.SmallDistrictId.ToString() });
-                    if (vipOwner != null)
-                    {
-                        var vipOwnerCertificationRecord = await _vipOwnerCertificationRecordRepository.GetForVipOwnerIdAsync(new VipOwnerCertificationRecordDto
-                        {
-                            VipOwnerId = vipOwner.Id.ToString(),
-                            UserId = user.Id.ToString()
-                        });
-                        if (vipOwnerCertificationRecord != null)
-                        {
-                            isVipOwner = true;
-                        }
-                    }
-                }
+                //var isVipOwner = false;
+                //if (ownerCertificationList.Any())
+                //{
+                //    var vipOwner = await _vipOwnerRepository.GetForSmallDistrictIdAsync(new VipOwnerDto { SmallDistrictId = ownerCertificationList.FirstOrDefault().Industry.BuildingUnit.Building.SmallDistrictId.ToString() });
+                //    if (vipOwner != null)
+                //    {
+                //        var vipOwnerCertificationRecord = await _vipOwnerCertificationRecordRepository.GetForVipOwnerIdAsync(new VipOwnerCertificationRecordDto
+                //        {
+                //            VipOwnerId = vipOwner.Id.ToString(),
+                //            UserId = user.Id.ToString()
+                //        });
+                //        if (vipOwnerCertificationRecord != null)
+                //        {
+                //            isVipOwner = true;
+                //        }
+                //    }
+                //}
                 return new ApiResult<WXLoginOutput>(APIResultCode.Success, new WXLoginOutput()
                 {
                     OpenId = user.OpenId,
@@ -293,7 +293,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Nickname = weiXinUser?.Nickname,
                     IsSubscription = weiXinUser == null ? false : true,
                     IsOwner = ownerCertificationList.Any(),
-                    IsVipOwner = isVipOwner
+                    //IsVipOwner = isVipOwner
                 }, APIResultMessage.Success);
 
             }

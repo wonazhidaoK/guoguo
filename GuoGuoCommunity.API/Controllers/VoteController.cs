@@ -1093,7 +1093,7 @@ namespace GuoGuoCommunity.API.Controllers
                 });
             }
             var ownerCertificationRecord = await _ownerCertificationRecordRepository.GetIncludeAsync(vipOwnerApplicationRecord?.OwnerCertificationId.ToString(), cancelToken);
-            var streetOffice = await _streetOfficeRepository.GetAsync(ownerCertificationRecord?.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(), cancelToken);
+            var streetOffice = await _streetOfficeRepository.GetAsync(ownerCertificationRecord?.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(), cancelToken);
             var owner = await _ownerRepository.GetAsync(ownerCertificationRecord?.OwnerId.ToString(), cancelToken);
             var userEntity = await _userRepository.GetForIdAsync(ownerCertificationRecord?.UserId);
             var weiXinUser = await _weiXinUserRepository.GetAsync(userEntity?.UnionId);
@@ -1104,7 +1104,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
             return new ApiResult<GetUserInfoOutput>(APIResultCode.Success, new GetUserInfoOutput
             {
-                Address = streetOffice?.State + "省" + streetOffice?.City + "市" + streetOffice?.Region + ownerCertificationRecord?.Owner.Industry.BuildingUnit.Building.SmallDistrict.Name + " " + ownerCertificationRecord?.Owner.Industry.BuildingUnit.Building.Name + ownerCertificationRecord?.Owner.Industry.BuildingUnit.UnitName + ownerCertificationRecord?.Owner.Industry.Name,
+                Address = streetOffice?.State + "省" + streetOffice?.City + "市" + streetOffice?.Region + ownerCertificationRecord?.Industry.BuildingUnit.Building.SmallDistrict.Name + " " + ownerCertificationRecord?.Industry.BuildingUnit.Building.Name + ownerCertificationRecord?.Industry.BuildingUnit.UnitName + ownerCertificationRecord?.Industry.Name,
                 Birthday = owner?.Birthday,
                 Gender = owner?.Gender,
                 Headimgurl = weiXinUser != null ? weiXinUser?.Headimgurl : "https://www.guoguoshequ.com/icon-mrtx.png",
@@ -1146,7 +1146,7 @@ namespace GuoGuoCommunity.API.Controllers
                         {
                             first = new TemplateDataItem("请参与投票"),
                             keyword1 = new TemplateDataItem(voteEntity.Title),
-                            keyword2 = new TemplateDataItem(item.Owner.Industry.BuildingUnit.Building.SmallDistrict.Name),
+                            keyword2 = new TemplateDataItem(item.Industry.BuildingUnit.Building.SmallDistrict.Name),
                             keyword3 = new TemplateDataItem(voteEntity.CreateOperationTime.Value.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
                             keyword4 = new TemplateDataItem(voteEntity.Deadline.ToString("yyyy年MM月dd日")),
                             remark = new TemplateDataItem(">>请点击参与投票，感谢你的参与<<", "#FF0000")
@@ -1198,7 +1198,7 @@ namespace GuoGuoCommunity.API.Controllers
                     {
                         first = new TemplateDataItem("您小区内的投票结果已产生"),
                         keyword1 = new TemplateDataItem(voteEntity.Title),
-                        keyword2 = new TemplateDataItem(item.Owner.Industry.BuildingUnit.Building.SmallDistrict.Name),
+                        keyword2 = new TemplateDataItem(item.Industry.BuildingUnit.Building.SmallDistrict.Name),
                         keyword3 = new TemplateDataItem(DateTimeOffset.Now.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
                         remark = new TemplateDataItem(">>点击查看投票结果<<", "#FF0000")
                     };
