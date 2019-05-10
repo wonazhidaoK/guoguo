@@ -16,7 +16,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var complaintType = await db.ComplaintTypes.Where(x => x.Name == dto.Name && x.IsDeleted == false&&x.InitiatingDepartmentValue == dto.InitiatingDepartmentValue).FirstOrDefaultAsync(token);
+                var complaintType = await db.ComplaintTypes.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.InitiatingDepartmentValue == dto.InitiatingDepartmentValue).FirstOrDefaultAsync(token);
                 if (complaintType != null)
                 {
                     throw new NotImplementedException("该投诉类型已存在！");
@@ -54,7 +54,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该投诉类型不存在！");
                 }
 
-                if (OnDeleteAsync(db, dto, token))
+                if (await OnDeleteAsync(db, dto, token))
                 {
                     throw new NotImplementedException("该投诉类型存在下级数据！");
                 }
@@ -103,7 +103,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.ComplaintTypes.Where(x => x.IsDeleted == false ).ToListAsync(token);
+                var list = await db.ComplaintTypes.Where(x => x.IsDeleted == false).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.InitiatingDepartmentValue))
                 {
                     list = list.Where(x => x.InitiatingDepartmentValue == dto.InitiatingDepartmentValue).ToList();
@@ -142,15 +142,20 @@ namespace GuoGuoCommunity.Domain.Service
         private void OnUpdateAsync(GuoGuoCommunityContext db, ComplaintTypeDto dto, CancellationToken token = default)
         {
             ComplaintTypeIncrementer complaintTypeIncrementer = new ComplaintTypeIncrementer();
-            
+
             //投诉订阅
             ComplaintRepository complaintRepository = new ComplaintRepository();
             complaintRepository.OnSubscribe(complaintTypeIncrementer);
 
         }
 
-        private bool OnDeleteAsync(GuoGuoCommunityContext db, ComplaintTypeDto dto, CancellationToken token = default)
+        private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, ComplaintTypeDto dto, CancellationToken token = default)
         {
+            //投诉信息
+            if (await db.Complaints.Where(x => x.ComplaintTypeId == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
             return false;
         }
     }

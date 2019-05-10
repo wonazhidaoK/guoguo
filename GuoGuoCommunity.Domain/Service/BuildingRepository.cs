@@ -31,10 +31,10 @@ namespace GuoGuoCommunity.Domain.Service
         private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, BuildingDto dto, CancellationToken token = default)
         {
             //业户信息
-            //if (await db.Industries.Where(x => x.BuildingId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
+            if (await db.BuildingUnits.Where(x => x.BuildingId.ToString() == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
 
             //业主认证记录
             //if (await db.OwnerCertificationRecords.Where(x => x.BuildingId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)

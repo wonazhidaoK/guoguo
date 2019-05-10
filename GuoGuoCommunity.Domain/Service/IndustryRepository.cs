@@ -21,10 +21,11 @@ namespace GuoGuoCommunity.Domain.Service
 
         private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, IndustryDto dto, CancellationToken token = default)
         {
-            //if (await db.Owners.Where(x => x.IndustryId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
+            //业主信息
+            if (await db.Owners.Where(x => x.IndustryId.ToString() == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
             return false;
         }
 
@@ -78,7 +79,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("楼宇单元信息不存在！");
                 }
-                var industries = await db.Industries.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.BuildingUnitId == buildingUnitId&&x.BuildingUnit.BuildingId== buildingId).FirstOrDefaultAsync(token);
+                var industries = await db.Industries.Where(x => x.Name == dto.Name && x.IsDeleted == false && x.BuildingUnitId == buildingUnitId && x.BuildingUnit.BuildingId == buildingId).FirstOrDefaultAsync(token);
                 if (industries != null)
                 {
                     throw new NotImplementedException("该业户信息已存在！");
@@ -90,10 +91,10 @@ namespace GuoGuoCommunity.Domain.Service
                 var entity = db.Industries.Add(new Industry
                 {
                     Name = dto.Name,
-                   // BuildingId = dto.BuildingId,
+                    // BuildingId = dto.BuildingId,
                     //BuildingUnitName = buildingUnit.UnitName,
                     BuildingUnitId = buildingUnitId,
-                   // BuildingName = building.Name,
+                    // BuildingName = building.Name,
                     Acreage = dto.Acreage,
                     NumberOfLayers = dto.NumberOfLayers,
                     Oriented = dto.Oriented,
@@ -207,7 +208,7 @@ namespace GuoGuoCommunity.Domain.Service
                 await db.SaveChangesAsync(token);
             }
         }
-        
+
         public async Task<List<Industry>> GetAllIncludeAsync(IndustryDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -217,7 +218,7 @@ namespace GuoGuoCommunity.Domain.Service
                 var buildingList = (await db.Buildings.Where(x => x.IsDeleted == false && x.SmallDistrictId.ToString() == dto.OperationUserSmallDistrictId).Select(x => x.Id.ToString()).ToListAsync(token));
 
                 list = list.Where(x => buildingList.Contains(x.BuildingUnit.BuildingId.ToString())).ToList();
-                
+
                 if (!string.IsNullOrWhiteSpace(dto.BuildingId))
                 {
                     list = list.Where(x => x.BuildingUnit.BuildingId.ToString() == dto.BuildingId).ToList();

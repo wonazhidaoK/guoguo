@@ -71,7 +71,17 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("业主业户Id信息为空！");
             }
-
+            if ((await _ownerRepository.GetAllAsync(new OwnerDto
+            {
+                IndustryId = input.IndustryId
+            })).Any())
+            {
+                throw new NotImplementedException("该业户下存在业主！暂不支持多业主，不能添加");
+            }
+            await _ownerRepository.GetAllAsync(new OwnerDto
+            {
+                IndustryId = input.IndustryId
+            });
             var user = _tokenManager.GetUser(Authorization);
             if (user == null)
             {
