@@ -79,8 +79,12 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("描述信息为空！");
             }
-            var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
 
+            var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
+            if (complaintEntity.StatusValue == ComplaintStatus.Completed.Value)
+            {
+                return new ApiResult<AddComplaintFollowUpOutput>(APIResultCode.Success_NoB, new AddComplaintFollowUpOutput { }, "投诉状态已完成并关闭，不能继续进行操作");
+            }
             var user = _tokenManager.GetUser(Authorization);
             if (user == null)
             {
@@ -150,7 +154,10 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<AddComplaintFollowUpOutput>(APIResultCode.Unknown, new AddComplaintFollowUpOutput { }, APIResultMessage.TokenError);
             }
-
+            if (complaintEntity.DepartmentValue == Department.JieDaoBan.Value)
+            {
+                throw new NotImplementedException("街道办为最高级别部门不允许申诉！");
+            }
             var entity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
             {
                 Description = "由于问题一直没有得到解决，我已向街道办投诉！",
@@ -297,7 +304,10 @@ namespace GuoGuoCommunity.API.Controllers
             }
 
             var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
-
+            if (complaintEntity.StatusValue == ComplaintStatus.Completed.Value)
+            {
+                return new ApiResult<AddComplaintFollowUpOutput>(APIResultCode.Success_NoB, new AddComplaintFollowUpOutput { }, "投诉状态已完成并关闭，不能继续进行操作");
+            }
             var complaintFollowUpList = await _complaintFollowUpRepository.GetListAsync(new ComplaintFollowUpDto
             {
                 ComplaintId = input.ComplaintId,

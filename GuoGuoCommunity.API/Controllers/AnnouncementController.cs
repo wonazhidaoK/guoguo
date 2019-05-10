@@ -371,8 +371,8 @@ namespace GuoGuoCommunity.API.Controllers
                     Content = item.Content,
                     ReleaseTime = item.CreateOperationTime.Value,
                     Summary = item.Summary,
-                    Url = urlList.Any()? urlList.Where(x => x.AnnouncementId == item.Id.ToString()).FirstOrDefault().AnnexContent:"",
-                    CreateUserName = userList.Any()? userList.Where(x => x.Id.ToString() == item.OwnerCertificationId).FirstOrDefault().Owner.Name:""
+                    Url = urlList.Where(x => x.AnnouncementId == item.Id.ToString()).Any() ? urlList.Where(x => x.AnnouncementId == item.Id.ToString()).FirstOrDefault().AnnexContent : "",
+                    CreateUserName = userList.Where(x => x.Id.ToString() == item.OwnerCertificationId).Any() ? userList.Where(x => x.Id.ToString() == item.OwnerCertificationId).FirstOrDefault().Owner.Name : ""
                 });
             }
 

@@ -163,7 +163,10 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
             }
             var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
-
+            if (complaintEntity.StatusValue== ComplaintStatus.Completed.Value)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, "投诉状态已完成并关闭，不能继续进行操作");
+            }
             await _complaintRepository.ClosedAsync(new ComplaintDto
             {
                 Id = input.ComplaintId,
@@ -283,7 +286,10 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
             }
             var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
-
+            if (complaintEntity.StatusValue == ComplaintStatus.Completed.Value)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, "投诉状态已完成并关闭，不能继续进行操作");
+            }
             if (complaintEntity.StatusValue != ComplaintStatus.NotAccepted.Value)
             {
                 return new ApiResult(APIResultCode.Success_NoB, "投诉已被授理,不能删除！可选择关闭投诉");
@@ -623,6 +629,10 @@ namespace GuoGuoCommunity.API.Controllers
 
             var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
 
+            if (complaintEntity.StatusValue == ComplaintStatus.Completed.Value)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, "投诉状态已完成并关闭，不能继续进行操作");
+            }
             if (complaintEntity.StatusValue != ComplaintStatus.NotAccepted.Value)
             {
                 return new ApiResult(APIResultCode.Success_NoB, "投诉已被授理,不能删除！可选择关闭投诉");
@@ -683,7 +693,10 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
             }
             var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
-
+            if (complaintEntity.StatusValue == ComplaintStatus.Completed.Value)
+            {
+                return new ApiResult(APIResultCode.Success_NoB, "投诉状态已完成并关闭，不能继续进行操作");
+            }
             await _complaintRepository.ClosedAsync(new ComplaintDto
             {
                 Id = input.ComplaintId,
