@@ -30,12 +30,15 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 投诉跟进id
         /// </summary>
-        public string ComplaintFollowUpId { get; set; }
+        [ForeignKey("ComplaintFollowUp")]
+        public Guid ComplaintFollowUpId { get; set; }
 
-        /// <summary>
-        /// 投诉Id
-        /// </summary>
-        public string ComplaintId { get; set; }
+        public ComplaintFollowUp ComplaintFollowUp { get; set; }
+
+        ///// <summary>
+        ///// 投诉Id
+        ///// </summary>
+        //public string ComplaintId { get; set; }
 
         public string CreateOperationUserId { get; set; }
 

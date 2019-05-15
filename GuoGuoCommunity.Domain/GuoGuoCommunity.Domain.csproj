@@ -264,6 +264,10 @@
     <Compile Include="Migrations\201905150234568_update-ComplaintAnnex2.Designer.cs">
       <DependentUpon>201905150234568_update-ComplaintAnnex2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201905150535225_update-ComplaintStatusChangeRecording.cs" />
+    <Compile Include="Migrations\201905150535225_update-ComplaintStatusChangeRecording.Designer.cs">
+      <DependentUpon>201905150535225_update-ComplaintStatusChangeRecording.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Enum\StationLetterReadStatus.cs" />
     <Compile Include="Models\event\ComplaintTypeIncrementer.cs" />
     <Compile Include="Models\IDCardPhotoRecord.cs" />
@@ -448,6 +452,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201905150234568_update-ComplaintAnnex2.resx">
       <DependentUpon>201905150234568_update-ComplaintAnnex2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905150535225_update-ComplaintStatusChangeRecording.resx">
+      <DependentUpon>201905150535225_update-ComplaintStatusChangeRecording.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
