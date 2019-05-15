@@ -17,15 +17,22 @@ namespace GuoGuoCommunity.Domain.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        /// <summary>
-        /// 投诉Id
-        /// </summary>
-        public string ComplaintId { get; set; }
+        ///// <summary>
+        ///// 投诉Id
+        ///// </summary>
+        //[Required]
+        //[ForeignKey("Complaint")]
+        //public Guid ComplaintId { get; set; }
+
+        //public Complaint Complaint { get; set; }
 
         /// <summary>
         /// 投诉跟进Id
         /// </summary>
-        public string ComplaintFollowUpId { get; set; }
+        [ForeignKey("ComplaintFollowUp")]
+        public Guid? ComplaintFollowUpId { get; set; }
+
+        public ComplaintFollowUp ComplaintFollowUp { get; set; }
 
         /// <summary>
         ///  附件内容
@@ -35,7 +42,11 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 附件id(当附件为文件时保存附件Id)
         /// </summary>
-        public string AnnexId { get; set; }
+        [Required]
+        [ForeignKey("Upload")]
+        public Guid AnnexId { get; set; }
+
+        public Upload Upload { get; set; }
 
         public string CreateOperationUserId { get; set; }
 

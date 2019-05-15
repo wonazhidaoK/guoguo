@@ -29,7 +29,7 @@ namespace GuoGuoCommunity.Domain.Service
 
                 var entity = db.ComplaintFollowUps.Add(new ComplaintFollowUp
                 {
-                    ComplaintId = dto.ComplaintId,
+                    ComplaintId = complaintId,
                     Description = dto.Description,
                     OperationDepartmentName = dto.OperationDepartmentName,
                     OperationDepartmentValue = dto.OperationDepartmentValue,
@@ -37,9 +37,13 @@ namespace GuoGuoCommunity.Domain.Service
                     CreateOperationUserId = dto.OperationUserId,
                     LastOperationTime = dto.OperationTime,
                     LastOperationUserId = dto.OperationUserId,
-                    OwnerCertificationId = dto.OwnerCertificationId,
-                    Aappeal=dto.Aappeal
+                    //OwnerCertificationRecordId =Guid.Parse(dto.OwnerCertificationId),
+                    Aappeal = dto.Aappeal
                 });
+                if (!string.IsNullOrWhiteSpace(dto.OwnerCertificationId))
+                {
+                    entity.OwnerCertificationRecordId = Guid.Parse(dto.OwnerCertificationId);
+                }
                 await db.SaveChangesAsync(token);
                 return entity;
             }
@@ -60,7 +64,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId == dto.ComplaintId ).ToListAsync(token);
+                return await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId.ToString() == dto.ComplaintId).ToListAsync(token);
             }
         }
 
@@ -80,7 +84,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId == dto.ComplaintId&&x.OwnerCertificationId==dto.OwnerCertificationId).ToListAsync(token);
+                return await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId.ToString() == dto.ComplaintId && x.OwnerCertificationRecordId.ToString() == dto.OwnerCertificationId).ToListAsync(token);
             }
         }
 
@@ -88,8 +92,8 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var a = await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId == complaintId).ToListAsync(token);
-                return await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId == complaintId).ToListAsync(token);
+                var a = await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId.ToString() == complaintId).ToListAsync(token);
+                return await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId.ToString() == complaintId).ToListAsync(token);
             }
         }
 

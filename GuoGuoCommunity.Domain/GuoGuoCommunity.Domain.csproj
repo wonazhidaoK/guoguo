@@ -135,12 +135,14 @@
     <Compile Include="Abstractions\Models\IBuilding.cs" />
     <Compile Include="Abstractions\Models\IBuildingUnit.cs" />
     <Compile Include="Abstractions\Models\ICommunity.cs" />
+    <Compile Include="Abstractions\Models\IComplaintType.cs" />
     <Compile Include="Abstractions\Models\ICreateOperation.cs" />
     <Compile Include="Abstractions\Models\IDeleted.cs" />
     <Compile Include="Abstractions\Models\IEntitity.cs" />
     <Compile Include="Abstractions\Models\IIndustry.cs" />
     <Compile Include="Abstractions\Models\ILastOperation.cs" />
     <Compile Include="Abstractions\Models\IOwner.cs" />
+    <Compile Include="Abstractions\Models\IOwnerCertificationRecord.cs" />
     <Compile Include="Abstractions\Models\ISmallDistrict.cs" />
     <Compile Include="Abstractions\Models\IStreetOffice.cs" />
     <Compile Include="Dto\AnnouncementAnnexDto.cs" />
@@ -237,6 +239,30 @@
     <Compile Include="Migrations\201905090919413_update-OwnerCertificationAnnex2.cs" />
     <Compile Include="Migrations\201905090919413_update-OwnerCertificationAnnex2.Designer.cs">
       <DependentUpon>201905090919413_update-OwnerCertificationAnnex2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905140109075_update-Complaint.cs" />
+    <Compile Include="Migrations\201905140109075_update-Complaint.Designer.cs">
+      <DependentUpon>201905140109075_update-Complaint.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905140113297_update-Complaint2.cs" />
+    <Compile Include="Migrations\201905140113297_update-Complaint2.Designer.cs">
+      <DependentUpon>201905140113297_update-Complaint2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905140240537_update-ComplaintFollowUp.cs" />
+    <Compile Include="Migrations\201905140240537_update-ComplaintFollowUp.Designer.cs">
+      <DependentUpon>201905140240537_update-ComplaintFollowUp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905140242282_update-ComplaintFollowUp2.cs" />
+    <Compile Include="Migrations\201905140242282_update-ComplaintFollowUp2.Designer.cs">
+      <DependentUpon>201905140242282_update-ComplaintFollowUp2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905140523297_update-ComplaintAnnex.cs" />
+    <Compile Include="Migrations\201905140523297_update-ComplaintAnnex.Designer.cs">
+      <DependentUpon>201905140523297_update-ComplaintAnnex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905150234568_update-ComplaintAnnex2.cs" />
+    <Compile Include="Migrations\201905150234568_update-ComplaintAnnex2.Designer.cs">
+      <DependentUpon>201905150234568_update-ComplaintAnnex2.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Enum\StationLetterReadStatus.cs" />
     <Compile Include="Models\event\ComplaintTypeIncrementer.cs" />
@@ -404,6 +430,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201905090919413_update-OwnerCertificationAnnex2.resx">
       <DependentUpon>201905090919413_update-OwnerCertificationAnnex2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905140109075_update-Complaint.resx">
+      <DependentUpon>201905140109075_update-Complaint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905140113297_update-Complaint2.resx">
+      <DependentUpon>201905140113297_update-Complaint2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905140240537_update-ComplaintFollowUp.resx">
+      <DependentUpon>201905140240537_update-ComplaintFollowUp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905140242282_update-ComplaintFollowUp2.resx">
+      <DependentUpon>201905140242282_update-ComplaintFollowUp2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905140523297_update-ComplaintAnnex.resx">
+      <DependentUpon>201905140523297_update-ComplaintAnnex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905150234568_update-ComplaintAnnex2.resx">
+      <DependentUpon>201905150234568_update-ComplaintAnnex2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

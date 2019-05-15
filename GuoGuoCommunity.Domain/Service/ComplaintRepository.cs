@@ -1,5 +1,4 @@
-﻿using EntityFramework.Extensions;
-using GuoGuoCommunity.Domain.Abstractions;
+﻿using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using GuoGuoCommunity.Domain.Models.Enum;
@@ -40,20 +39,20 @@ namespace GuoGuoCommunity.Domain.Service
 
                 var entity = db.Complaints.Add(new Complaint
                 {
-                    CommunityId = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.CommunityId.ToString(),
-                    CommunityName = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.Name,
-                    SmallDistrictId = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
-                    SmallDistrictName = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Name,
-                    StreetOfficeId = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(),
-                    StreetOfficeName = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name,
-                    ComplaintTypeId = complaintType.Id.ToString(),
-                    ComplaintTypeName = complaintType.Name,
+                    //CommunityId = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.CommunityId.ToString(),
+                    //CommunityName = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.Name,
+                    //SmallDistrictId = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
+                    //SmallDistrictName = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Name,
+                    //StreetOfficeId = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(),
+                    //StreetOfficeName = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name,
+                    ComplaintTypeId = complaintType.Id,
+                    //ComplaintTypeName = complaintType.Name,
                     ProcessUpTime = DateTimeOffset.Now.AddDays(complaintType.ProcessingPeriod),
                     ExpiredTime = DateTimeOffset.Now.AddDays(complaintType.ComplaintPeriod),
                     DepartmentName = dto.DepartmentName,
                     DepartmentValue = dto.DepartmentValue,
                     Description = dto.Description,
-                    OwnerCertificationId = dto.OwnerCertificationId,
+                    OwnerCertificationRecordId = ownerCertificationId,
                     StatusName = ComplaintStatus.NotAccepted.Name,
                     StatusValue = ComplaintStatus.NotAccepted.Value,
                     CreateOperationTime = dto.OperationTime,
@@ -78,7 +77,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("投诉id信息不正确");
                 }
-                var entity = await db.Complaints.Where(x => x.IsDeleted == false && x.Id == guid && x.OwnerCertificationId == dto.OwnerCertificationId).FirstOrDefaultAsync(token);
+                var entity = await db.Complaints.Where(x => x.IsDeleted == false && x.Id == guid && x.OwnerCertificationRecordId.ToString() == dto.OwnerCertificationId).FirstOrDefaultAsync(token);
                 if (entity == null)
                 {
                     throw new NotImplementedException("投诉信息不存在");
@@ -118,15 +117,15 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.Complaints.Where(x => x.IsDeleted == false && x.OwnerCertificationId == dto.OwnerCertificationId).ToListAsync(token);
+                return await db.Complaints.Where(x => x.IsDeleted == false && x.OwnerCertificationRecordId.ToString() == dto.OwnerCertificationId).ToListAsync(token);
             }
         }
 
-        public async Task<List<Complaint>> GetAllForPropertyAsync(ComplaintDto dto, CancellationToken token = default)
+        public async Task<List<Complaint>> GetAllForPropertyIncludeAsync(ComplaintDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Complaints.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.WuYe.Value && x.SmallDistrictId == dto.SmallDistrictId).ToListAsync(token);
+                var list = await db.Complaints.Include(x => x.ComplaintType).Include(x => x.OwnerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.DepartmentValue == Department.WuYe.Value && x.OwnerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString() == dto.SmallDistrictId).ToListAsync(token);
 
                 list = list.Where(x => x.CreateOperationTime >= dto.StartTime && x.CreateOperationTime <= dto.EndTime).ToList();
                 if (!string.IsNullOrWhiteSpace(dto.StatusValue))
@@ -141,12 +140,11 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async Task<List<Complaint>> GetAllForStreetOfficeAsync(ComplaintDto dto, CancellationToken token = default)
+        public async Task<List<Complaint>> GetAllForStreetOfficeIncludeAsync(ComplaintDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.Complaints.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.JieDaoBan.Value && x.StreetOfficeId == dto.StreetOfficeId).ToListAsync(token);
-                //TODO 条件筛选 1.状态值 2时间段
+                var list = await db.Complaints.Include(x => x.ComplaintType).Include(x => x.OwnerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.DepartmentValue == Department.JieDaoBan.Value && x.OwnerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString() == dto.StreetOfficeId).ToListAsync(token);
                 list = list.Where(x => x.CreateOperationTime >= dto.StartTime && x.CreateOperationTime <= dto.EndTime).ToList();
                 if (!string.IsNullOrWhiteSpace(dto.StatusValue))
                 {
@@ -173,7 +171,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("业主认证信息不存在！");
                 }
-                return await db.Complaints.Where(x => x.IsDeleted == false && x.DepartmentValue == Department.YeZhuWeiYuanHui.Value && x.SmallDistrictId == ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToListAsync(token);
+                return await db.Complaints.Include(x => x.OwnerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.DepartmentValue == Department.YeZhuWeiYuanHui.Value && x.OwnerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString() == ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString()).ToListAsync(token);
             }
         }
 
@@ -361,7 +359,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                await db.Complaints.Where(x => x.CommunityId == community.Id.ToString()).UpdateAsync(x => new Complaint { CommunityName = community.Name });
+                //await db.Complaints.Where(x => x.OwnerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString() == community.Id.ToString()).UpdateAsync(x => new Complaint { CommunityName = community.Name });
             }
         }
 
@@ -374,8 +372,30 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                await db.Complaints.Where(x => x.ComplaintTypeId == complaintType.Id.ToString()).UpdateAsync(x => new Complaint { ComplaintTypeName = complaintType.Name });
+                //await db.Complaints.Where(x => x.ComplaintTypeId == complaintType.Id.ToString()).UpdateAsync(x => new Complaint { ComplaintTypeName = complaintType.Name });
             }
+        }
+
+        public Task<List<Complaint>> GetAllIncludeAsync(ComplaintDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Complaint> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (Guid.TryParse(id, out var uid))
+                {
+                    return await db.Complaints.Include(x => x.ComplaintType).Include(x => x.OwnerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                }
+                throw new NotImplementedException("该投诉Id信息不正确！");
+            }
+        }
+
+        public Task<List<Complaint>> GetListIncludeAsync(ComplaintDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

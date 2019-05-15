@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public  interface IComplaintRepository
+    public  interface IComplaintRepository : IIncludeRepository<Complaint, ComplaintDto>
     {
-        Task<Complaint> AddAsync(ComplaintDto dto, CancellationToken token = default);
+        //Task<Complaint> AddAsync(ComplaintDto dto, CancellationToken token = default);
 
-        Task UpdateAsync(ComplaintDto dto, CancellationToken token = default);
+        //Task UpdateAsync(ComplaintDto dto, CancellationToken token = default);
 
         Task UpdateForAppealAsync(ComplaintDto dto, CancellationToken token = default);
 
@@ -18,19 +18,19 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task UpdateForStreetOfficeAsync(ComplaintDto dto, CancellationToken token = default);
 
-        Task<List<Complaint>> GetAllAsync(ComplaintDto dto, CancellationToken token = default);
+        //Task<List<Complaint>> GetAllAsync(ComplaintDto dto, CancellationToken token = default);
 
         Task<List<Complaint>> GetAllForVipOwnerAsync(ComplaintDto dto, CancellationToken token = default);
 
-        Task<List<Complaint>> GetAllForPropertyAsync(ComplaintDto dto, CancellationToken token = default);
+        Task<List<Complaint>> GetAllForPropertyIncludeAsync(ComplaintDto dto, CancellationToken token = default);
 
-        Task<List<Complaint>> GetAllForStreetOfficeAsync(ComplaintDto dto, CancellationToken token = default);
+        Task<List<Complaint>> GetAllForStreetOfficeIncludeAsync(ComplaintDto dto, CancellationToken token = default);
 
-        Task DeleteAsync(ComplaintDto dto, CancellationToken token = default);
+       // Task DeleteAsync(ComplaintDto dto, CancellationToken token = default);
 
-        Task<Complaint> GetAsync(string id, CancellationToken token = default);
+       // Task<Complaint> GetAsync(string id, CancellationToken token = default);
 
-        Task<List<Complaint>> GetListAsync(ComplaintDto dto, CancellationToken token = default);
+       // Task<List<Complaint>> GetListAsync(ComplaintDto dto, CancellationToken token = default);
 
         Task ClosedAsync(ComplaintDto dto, CancellationToken token = default);
 

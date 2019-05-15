@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 投诉跟进
     /// </summary>
-    public class ComplaintFollowUp : IDeleted, ILastOperation, ICreateOperation
+    public class ComplaintFollowUp : IEntitity
     {
         /// <summary>
         /// 
@@ -20,7 +20,11 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 投诉Id
         /// </summary>
-        public string ComplaintId { get; set; }
+        [Required]
+        [ForeignKey("Complaint")]
+        public Guid ComplaintId { get; set; }
+
+        public Complaint Complaint { get; set; }
 
         /// <summary>
         /// 描述
@@ -40,7 +44,10 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 业主认证Id
         /// </summary>
-        public string OwnerCertificationId { get; set; }
+        [ForeignKey("OwnerCertificationRecord")]
+        public Guid? OwnerCertificationRecordId { get; set; }
+
+        public OwnerCertificationRecord OwnerCertificationRecord { get; set; }
 
         /// <summary>
         /// 是否是申诉操作

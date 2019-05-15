@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 /dist/static
 /GuoGuoCommunity.API/Upload
+/project.rar

@@ -94,7 +94,7 @@ namespace GuoGuoCommunity.API.Controllers
             var complaintFollowUpList = (await _complaintFollowUpRepository.GetListAsync(new ComplaintFollowUpDto
             {
                 ComplaintId = input.ComplaintId,
-                OwnerCertificationId = complaintEntity.OwnerCertificationId
+                OwnerCertificationId = complaintEntity.OwnerCertificationRecordId.ToString()
             }, cancelToken));
 
             var date = DateTimeOffset.Now.Date;
@@ -106,7 +106,7 @@ namespace GuoGuoCommunity.API.Controllers
             var entity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
             {
                 Description = input.Description,
-                OwnerCertificationId = complaintEntity.OwnerCertificationId,
+                OwnerCertificationId = complaintEntity.OwnerCertificationRecordId.ToString(),
                 ComplaintId = input.ComplaintId,
                 OperationDepartmentName = Department.YeZhu.Name,
                 OperationDepartmentValue = Department.YeZhu.Value,
@@ -119,7 +119,7 @@ namespace GuoGuoCommunity.API.Controllers
                 await _complaintAnnexRepository.AddForFollowUpIdAsync(new ComplaintAnnexDto
                 {
                     AnnexContent = input.AnnexId,
-                    ComplaintId = entity.Id.ToString(),
+                    ComplaintId = complaintEntity.Id.ToString(),
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString(),
                     ComplaintFollowUpId = entity.Id.ToString()
@@ -161,7 +161,7 @@ namespace GuoGuoCommunity.API.Controllers
             var entity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
             {
                 Description = "由于问题一直没有得到解决，我已向街道办投诉！",
-                OwnerCertificationId = complaintEntity.OwnerCertificationId,
+                OwnerCertificationId = complaintEntity.OwnerCertificationRecordId.ToString(),
                 ComplaintId = input.ComplaintId,
                 OperationDepartmentName = complaintEntity.OperationDepartmentName,
                 OperationDepartmentValue = complaintEntity.OperationDepartmentValue,
@@ -224,13 +224,13 @@ namespace GuoGuoCommunity.API.Controllers
                 bool IsCreateUser = false;
                 if (item.OperationDepartmentValue == Department.YeZhu.Value)
                 {
-                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationId, cancelToken))?.Owner.Name;
-                    IsCreateUser = item.OwnerCertificationId == input.OwnerCertificationId ? true : false;
+                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationRecordId.ToString(), cancelToken))?.Owner.Name;
+                    IsCreateUser = item.OwnerCertificationRecordId.ToString() == input.OwnerCertificationId ? true : false;
                 }
                 else if (item.OperationDepartmentValue == Department.YeZhuWeiYuanHui.Value)
                 {
-                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationId, cancelToken))?.Owner.Name;
-                    IsCreateUser = item.OwnerCertificationId == input.OwnerCertificationId ? true : false;
+                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationRecordId.ToString(), cancelToken))?.Owner.Name;
+                    IsCreateUser = item.OwnerCertificationRecordId.ToString() == input.OwnerCertificationId ? true : false;
                 }
                 else
                 {
@@ -244,14 +244,14 @@ namespace GuoGuoCommunity.API.Controllers
                     Description = item.Description,
                     OperationDepartmentName = item.OperationDepartmentName,
                     OperationName = OperationName,
-                    Url = (complaintAnnexList?.Where(x => x.ComplaintFollowUpId == item.Id.ToString())).FirstOrDefault()?.AnnexContent,
+                    Url = (complaintAnnexList?.Where(x => x.ComplaintFollowUpId == item.Id)).FirstOrDefault()?.AnnexContent,
                     CreateTime = item.CreateOperationTime.Value
                 };
                 list.Add(entity);
             }
 
-            var complaintEntity = await _complaintRepository.GetAsync(input.Id, cancelToken);
-            var complaintTypeEntyity = await _complaintTypeRepository.GetAsync(complaintEntity.ComplaintTypeId, cancelToken);
+            var complaintEntity = await _complaintRepository.GetIncludeAsync(input.Id, cancelToken);
+            var complaintTypeEntyity = await _complaintTypeRepository.GetAsync(complaintEntity.ComplaintTypeId.ToString(), cancelToken);
             var remainingPeriod = (complaintEntity.ExpiredTime - DateTimeOffset.Now).Value.Days + 1;
             return new ApiResult<GetComplaintFollowUpOutput>(APIResultCode.Success, new GetComplaintFollowUpOutput
             {
@@ -264,7 +264,7 @@ namespace GuoGuoCommunity.API.Controllers
                 DepartmentName = complaintEntity.DepartmentName,
                 DepartmentValue = complaintEntity.DepartmentValue,
                 Description = complaintEntity.Description,
-                ComplaintTypeName = complaintEntity.ComplaintTypeName,
+                ComplaintTypeName = complaintEntity.ComplaintType.Name,
                 List = list,
                 RemainingPeriod = remainingPeriod > 0 ? remainingPeriod : 0
             });
@@ -311,7 +311,7 @@ namespace GuoGuoCommunity.API.Controllers
             var complaintFollowUpList = await _complaintFollowUpRepository.GetListAsync(new ComplaintFollowUpDto
             {
                 ComplaintId = input.ComplaintId,
-                OwnerCertificationId = complaintEntity.OwnerCertificationId
+                OwnerCertificationId = complaintEntity.OwnerCertificationRecordId.ToString()
             }, cancelToken);
             var date = DateTimeOffset.Now.Date;
 
@@ -322,7 +322,7 @@ namespace GuoGuoCommunity.API.Controllers
             var entity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
             {
                 Description = input.Description,
-                OwnerCertificationId = complaintEntity.OwnerCertificationId,
+                OwnerCertificationId = complaintEntity.OwnerCertificationRecordId.ToString(),
                 ComplaintId = input.ComplaintId,
                 OperationDepartmentName = Department.YeZhuWeiYuanHui.Name,
                 OperationDepartmentValue = Department.YeZhuWeiYuanHui.Value,
@@ -335,7 +335,7 @@ namespace GuoGuoCommunity.API.Controllers
                 await _complaintAnnexRepository.AddForFollowUpIdAsync(new ComplaintAnnexDto
                 {
                     AnnexContent = input.AnnexId,
-                    ComplaintId = entity.Id.ToString(),
+                    ComplaintId = complaintEntity.Id.ToString(),
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString(),
                     ComplaintFollowUpId = entity.Id.ToString()
@@ -394,7 +394,7 @@ namespace GuoGuoCommunity.API.Controllers
                 await _complaintAnnexRepository.AddForFollowUpIdAsync(new ComplaintAnnexDto
                 {
                     AnnexContent = input.AnnexId,
-                    ComplaintId = entity.Id.ToString(),
+                    ComplaintId = entity.ComplaintId.ToString(),
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString(),
                     ComplaintFollowUpId = entity.Id.ToString()
@@ -469,7 +469,7 @@ namespace GuoGuoCommunity.API.Controllers
                 await _complaintAnnexRepository.AddForFollowUpIdAsync(new ComplaintAnnexDto
                 {
                     AnnexContent = input.AnnexId,
-                    ComplaintId = entity.Id.ToString(),
+                    ComplaintId = entity.ComplaintId.ToString(),
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString(),
                     ComplaintFollowUpId = entity.Id.ToString()
@@ -544,7 +544,7 @@ namespace GuoGuoCommunity.API.Controllers
                 await _complaintAnnexRepository.AddForFollowUpIdAsync(new ComplaintAnnexDto
                 {
                     AnnexContent = input.AnnexId,
-                    ComplaintId = entity.Id.ToString(),
+                    ComplaintId = entity.ComplaintId.ToString(),
                     OperationTime = DateTimeOffset.Now,
                     OperationUserId = user.Id.ToString(),
                     ComplaintFollowUpId = entity.Id.ToString()

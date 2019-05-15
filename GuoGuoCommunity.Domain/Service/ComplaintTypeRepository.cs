@@ -152,7 +152,7 @@ namespace GuoGuoCommunity.Domain.Service
         private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, ComplaintTypeDto dto, CancellationToken token = default)
         {
             //投诉信息
-            if (await db.Complaints.Where(x => x.ComplaintTypeId == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            if (await db.Complaints.Where(x => x.ComplaintTypeId.ToString() == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }

@@ -163,7 +163,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
             }
             var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
-            if (complaintEntity.StatusValue== ComplaintStatus.Completed.Value)
+            if (complaintEntity.StatusValue == ComplaintStatus.Completed.Value)
             {
                 return new ApiResult(APIResultCode.Success_NoB, "投诉状态已完成并关闭，不能继续进行操作");
             }
@@ -172,7 +172,7 @@ namespace GuoGuoCommunity.API.Controllers
                 Id = input.ComplaintId,
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = user.Id.ToString(),
-                OwnerCertificationId = complaintEntity.OwnerCertificationId
+                OwnerCertificationId = complaintEntity.OwnerCertificationRecordId.ToString()
             }, cancelToken);
 
             var complaintFollowUpEntity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
@@ -183,7 +183,7 @@ namespace GuoGuoCommunity.API.Controllers
                 Description = "业主通过小程序关闭投诉！",
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = user.Id.ToString(),
-                OwnerCertificationId = complaintEntity.OwnerCertificationId
+                OwnerCertificationId = complaintEntity.OwnerCertificationRecordId.ToString()
             }, cancelToken);
 
             await _complaintStatusChangeRecordingRepository.AddAsync(new ComplaintStatusChangeRecordingDto
@@ -246,8 +246,8 @@ namespace GuoGuoCommunity.API.Controllers
                     Description = item.Description,
                     StatusName = item.StatusName,
                     StatusValue = item.StatusValue,
-                    Url = (complaintAnnexList?.Where(x => x.ComplaintId == item.Id.ToString())).FirstOrDefault()?.AnnexContent,
-                    OwnerCertificationId = item.OwnerCertificationId
+                    Url = (complaintAnnexList?.Where(x => x.ComplaintFollowUp.ComplaintId == item.Id)).FirstOrDefault()?.AnnexContent,
+                    OwnerCertificationId = item.OwnerCertificationRecordId.ToString()
                 });
             }
             return new ApiResult<GetAllComplaintOutput>(APIResultCode.Success, new GetAllComplaintOutput
@@ -310,7 +310,7 @@ namespace GuoGuoCommunity.API.Controllers
                 Description = "业主删除投诉！",
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = user.Id.ToString(),
-                OwnerCertificationId = complaintEntity.OwnerCertificationId
+                OwnerCertificationId = complaintEntity.OwnerCertificationRecordId.ToString()
             }, cancelToken);
 
             await _complaintStatusChangeRecordingRepository.AddAsync(new ComplaintStatusChangeRecordingDto
@@ -529,7 +529,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Description = item.Description,
                     StatusName = item.StatusName,
                     StatusValue = item.StatusValue,
-                    Url = (complaintAnnexList?.Where(x => x.ComplaintId == item.Id.ToString())).FirstOrDefault()?.AnnexContent
+                    Url = (complaintAnnexList?.Where(x => x.ComplaintFollowUp.ComplaintId == item.Id)).FirstOrDefault()?.AnnexContent
                 });
             }
             return new ApiResult<GetAllComplaintForVipOwnerOutput>(APIResultCode.Success, new GetAllComplaintForVipOwnerOutput
@@ -653,7 +653,7 @@ namespace GuoGuoCommunity.API.Controllers
                 Description = "业主委员会删除投诉！",
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = user.Id.ToString(),
-                OwnerCertificationId = complaintEntity.OwnerCertificationId
+                OwnerCertificationId = complaintEntity.OwnerCertificationRecordId.ToString()
             }, cancelToken);
 
             await _complaintStatusChangeRecordingRepository.AddAsync(new ComplaintStatusChangeRecordingDto
@@ -702,7 +702,7 @@ namespace GuoGuoCommunity.API.Controllers
                 Id = input.ComplaintId,
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = user.Id.ToString(),
-                OwnerCertificationId = complaintEntity.OwnerCertificationId
+                OwnerCertificationId = complaintEntity.OwnerCertificationRecordId.ToString()
             }, cancelToken);
 
             var complaintFollowUpEntity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
@@ -713,7 +713,7 @@ namespace GuoGuoCommunity.API.Controllers
                 Description = "业委会通过小程序关闭投诉！",
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = user.Id.ToString(),
-                OwnerCertificationId = complaintEntity.OwnerCertificationId
+                OwnerCertificationId = complaintEntity.OwnerCertificationRecordId.ToString()
             }, cancelToken);
 
             await _complaintStatusChangeRecordingRepository.AddAsync(new ComplaintStatusChangeRecordingDto
@@ -775,7 +775,7 @@ namespace GuoGuoCommunity.API.Controllers
 
             int startRow = (input.PageIndex - 1) * input.PageSize;
 
-            var data = await _complaintRepository.GetAllForStreetOfficeAsync(new ComplaintDto
+            var data = await _complaintRepository.GetAllForStreetOfficeIncludeAsync(new ComplaintDto
             {
                 StatusValue = input.StatusValue,
                 StreetOfficeId = user.StreetOfficeId,
@@ -789,7 +789,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
             if (!string.IsNullOrWhiteSpace(input?.ComplaintTypeId))
             {
-                data = data.Where(x => x.ComplaintTypeId == input.ComplaintTypeId).ToList();
+                data = data.Where(x => x.ComplaintTypeId.ToString() == input.ComplaintTypeId).ToList();
             }
             var listCount = data.Count();
             var list = data.OrderByDescending(a => a.CreateOperationTime).Skip(startRow).Take(input.PageSize);
@@ -800,11 +800,11 @@ namespace GuoGuoCommunity.API.Controllers
                 string OperationName = "";
                 if (item.OperationDepartmentValue == Department.YeZhu.Value)
                 {
-                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationId, cancelToken))?.Owner.Name;
+                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationRecordId.ToString(), cancelToken))?.Owner.Name;
                 }
                 else if (item.OperationDepartmentValue == Department.YeZhuWeiYuanHui.Value)
                 {
-                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationId, cancelToken))?.Owner.Name;
+                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationRecordId.ToString(), cancelToken))?.Owner.Name;
                 }
                 var complaintFollowUp = (await _complaintFollowUpRepository.GetListForComplaintIdAsync(item.Id.ToString(), cancelToken)).Where(x => x.Aappeal != null).FirstOrDefault();
                 var complaintFollowUpLists = (await _complaintFollowUpRepository.GetAllAsync(new ComplaintFollowUpDto { ComplaintId = item.Id.ToString() }, cancelToken)).Where(x => x.OperationDepartmentValue == Department.JieDaoBan.Value).ToList();
@@ -828,10 +828,10 @@ namespace GuoGuoCommunity.API.Controllers
                     Description = item.Description,
                     StatusName = item.StatusName,
                     StatusValue = item.StatusValue,
-                    Url = (await _complaintAnnexRepository.GetByComplaintIdAsync(item.Id.ToString()))?.AnnexContent,
+                    Url = (await _complaintAnnexRepository.GetByComplaintIdIncludeAsync(item.Id.ToString()))?.AnnexContent,
                     OperationName = OperationName,
                     OperationDepartmentName = item.OperationDepartmentName,
-                    ComplaintTypeName = item.ComplaintTypeName,//complaintFollowUp
+                    ComplaintTypeName = item.ComplaintType.Name,//complaintFollowUp
                     Aappeal = Aappeal
                 });
             }
@@ -867,13 +867,13 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
             }
             var complaintEntity = await _complaintRepository.GetAsync(input.ComplaintId, cancelToken);
-            var complaintFollowUpList = (await _complaintFollowUpRepository.GetAllAsync(new ComplaintFollowUpDto { ComplaintId = input.ComplaintId }, cancelToken)).Where(x => x.Description == "街道办已查看正在处理！");
-            if (complaintFollowUpList.Any())
+            var complaintFollowUpList = (await _complaintFollowUpRepository.GetAllAsync(new ComplaintFollowUpDto { ComplaintId = input.ComplaintId }, cancelToken));
+            if (complaintFollowUpList.Where(x => x.Description == "街道办已查看正在处理！").Any())
             {
                 return new ApiResult(APIResultCode.Success);
             }
 
-            var complaintFollowUpLists = (await _complaintFollowUpRepository.GetAllAsync(new ComplaintFollowUpDto { ComplaintId = input.ComplaintId }, cancelToken)).Where(x => x.Description == "由于问题一直没有得到解决，我已向街道办投诉！").ToList();
+            //var complaintFollowUpLists = (await _complaintFollowUpRepository.GetAllAsync(new ComplaintFollowUpDto { ComplaintId = input.ComplaintId }, cancelToken)).Where(x => x.Aappeal == "true");//.Where(x => x.Description == "由于问题一直没有得到解决，我已向街道办投诉！").ToList();
             var complaintFollowUpEntity = await _complaintFollowUpRepository.AddAsync(new ComplaintFollowUpDto
             {
                 ComplaintId = input.ComplaintId,
@@ -884,7 +884,7 @@ namespace GuoGuoCommunity.API.Controllers
                 OperationUserId = user.Id.ToString()
             }, cancelToken);
 
-            if (!complaintFollowUpLists.Any())
+            if (!complaintFollowUpList.Where(x => x.Aappeal == "true").Any())
             {
                 await _complaintRepository.ViewForStreetOfficeAsync(new ComplaintDto
                 {
@@ -1008,7 +1008,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
 
             int startRow = (input.PageIndex - 1) * input.PageSize;
-            var data = await _complaintRepository.GetAllForPropertyAsync(new ComplaintDto
+            var data = await _complaintRepository.GetAllForPropertyIncludeAsync(new ComplaintDto
             {
                 StatusValue = input.StatusValue,
                 SmallDistrictId = user.SmallDistrictId,
@@ -1022,7 +1022,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
             if (!string.IsNullOrWhiteSpace(input?.ComplaintTypeId))
             {
-                data = data.Where(x => x.ComplaintTypeId == input.ComplaintTypeId).ToList();
+                data = data.Where(x => x.ComplaintTypeId.ToString() == input.ComplaintTypeId).ToList();
             }
             var listCount = data.Count();
             var list = data.OrderByDescending(a => a.CreateOperationTime).Skip(startRow).Take(input.PageSize);
@@ -1034,11 +1034,11 @@ namespace GuoGuoCommunity.API.Controllers
                 string OperationName = "";
                 if (item.OperationDepartmentValue == Department.YeZhu.Value)
                 {
-                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationId, cancelToken))?.Owner.Name;
+                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationRecordId.ToString(), cancelToken))?.Owner.Name;
                 }
                 else if (item.OperationDepartmentValue == Department.YeZhuWeiYuanHui.Value)
                 {
-                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationId, cancelToken))?.Owner.Name;
+                    OperationName = (await _ownerCertificationRecordRepository.GetIncludeAsync(item.OwnerCertificationRecordId.ToString(), cancelToken))?.Owner.Name;
                 }
                 listOutput.Add(new GetComplaintOutput
                 {
@@ -1047,10 +1047,10 @@ namespace GuoGuoCommunity.API.Controllers
                     Description = item.Description,
                     StatusName = item.StatusName,
                     StatusValue = item.StatusValue,
-                    Url = (complaintAnnexList?.Where(x => x.ComplaintId == item.Id.ToString())).FirstOrDefault()?.AnnexContent,
+                    Url = (complaintAnnexList?.Where(x => x.ComplaintFollowUp.ComplaintId == item.Id)).FirstOrDefault()?.AnnexContent,
                     OperationName = OperationName,
                     OperationDepartmentName = item.OperationDepartmentName,
-                    ComplaintTypeName = item.ComplaintTypeName
+                    ComplaintTypeName = item.ComplaintType.Name
                 });
             }
 
