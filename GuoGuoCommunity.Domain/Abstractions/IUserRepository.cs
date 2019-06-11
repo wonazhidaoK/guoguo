@@ -25,6 +25,14 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<List<User>> GetAllStreetOfficeAsync(UserDto dto, CancellationToken token = default);
 
         /// <summary>
+        /// 获取商户账户
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task<UserPageDto> GetAllShopAsync(UserDto dto, CancellationToken token = default);
+
+        /// <summary>
         /// 添加街道办账号
         /// </summary>
         /// <param name="dto"></param>
@@ -39,6 +47,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         /// <param name="token"></param>
         /// <returns></returns>
         Task<User> AddPropertyAsync(UserDto dto, CancellationToken token = default);
+        Task<User> AddShopAsync(UserDto dto, CancellationToken token = default);
 
         /// <summary>
         /// 添加微信用户
@@ -54,6 +63,10 @@ namespace GuoGuoCommunity.Domain.Abstractions
 
         Task<User> GetAsync(UserDto dto, CancellationToken token = default);
 
+        Task<User> GetIncludeAsync(UserDto dto, CancellationToken token = default);
+
+        Task<User> GetIncludeAsync(string id, CancellationToken token = default);
+
         Task<User> GetForIdAsync(string id, CancellationToken token = default);
 
         Task<List<User>> GetByIdsAsync(List<string> ids, CancellationToken token = default);
@@ -63,5 +76,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<User> GetForOpenIdAsync(UserDto dto, CancellationToken token = default);
 
         Task<User> GetForUnionIdAsync(UserDto dto, CancellationToken token = default);
+
+        Task<List<User>> GetByShopIdAsync(string shopId, CancellationToken token = default);
     }
 }

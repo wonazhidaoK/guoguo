@@ -14,5 +14,10 @@
         /// 图片文件Id
         /// </summary>
         public string Id { get; set; }
+
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        //public string ServicePath { get; set; }
     }
 }

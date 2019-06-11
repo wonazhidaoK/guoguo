@@ -44,7 +44,7 @@ namespace GuoGuoCommunity.Domain.Service
         public async Task<List<StationLetter>> GetAllAsync(StationLetterDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
-            { 
+            {
                 var list = await db.StationLetters.Where(x => x.IsDeleted == false && x.StreetOfficeId == dto.StreetOfficeId).ToListAsync(token);
 
                 if (!string.IsNullOrWhiteSpace(dto.SmallDistrictArray))
@@ -74,21 +74,21 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 var list = await db.StationLetters.Where(x => x.IsDeleted == false).ToListAsync(token);
-                
+
                 if (!string.IsNullOrWhiteSpace(dto.SmallDistrictArray))
                 {
                     list = list.Where(x => x.SmallDistrictArray.Split(',').Contains(dto.SmallDistrictArray)).ToList();
                 }
                 if (!string.IsNullOrWhiteSpace(dto.ReadStatus))
                 {
-                    var letterIdList =   await db.StationLetterBrowseRecords.Where(x => x.CreateOperationUserId == dto.OperationUserId).Select(x=>x.StationLetterId).ToListAsync(token);
+                    var letterIdList = await db.StationLetterBrowseRecords.Where(x => x.CreateOperationUserId == dto.OperationUserId).Select(x => x.StationLetterId).ToListAsync(token);
                     if (dto.ReadStatus == StationLetterReadStatus.HaveRead.Value)
                     {
                         list = list.Where(x => letterIdList.Contains(x.Id.ToString())).ToList();
                     }
-                    else if(dto.ReadStatus == StationLetterReadStatus.UnRead.Value)
+                    else if (dto.ReadStatus == StationLetterReadStatus.UnRead.Value)
                     {
-                        list =( from x in list where !letterIdList.Contains(x.Id.ToString()) select x).ToList(); //.Where(x => letterIdList.Contains(x.Id.ToString())).ToList();
+                        list = (from x in list where !letterIdList.Contains(x.Id.ToString()) select x).ToList(); //.Where(x => letterIdList.Contains(x.Id.ToString())).ToList();
                     }
                 }
                 return list;

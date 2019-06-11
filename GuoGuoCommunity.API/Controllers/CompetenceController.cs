@@ -17,37 +17,37 @@ namespace GuoGuoCommunity.API.Controllers
     /// </summary>
     public class CompetenceController : BaseController
     {
-        private readonly ITestRepository _testRepository;
         private readonly IMenuRepository _menuRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly IRoleMenuRepository _roleMenuRepository;
         private readonly IUserRepository _userRepository;
         private readonly IStationLetterRepository _stationLetterRepository;
-        private TokenManager _tokenManager;
+        private readonly ISmallDistrictRepository _smallDistrictRepository;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// 权限
         /// </summary>
-        /// <param name="testRepository"></param>
         /// <param name="menuRepository"></param>
         /// <param name="roleRepository"></param>
         /// <param name="roleMenuRepository"></param>
         /// <param name="userRepository"></param>
         /// <param name="stationLetterRepository"></param>
+        /// <param name="smallDistrictRepository"></param>
         public CompetenceController(
-            ITestRepository testRepository,
             IMenuRepository menuRepository,
             IRoleRepository roleRepository,
             IRoleMenuRepository roleMenuRepository,
             IUserRepository userRepository,
-            IStationLetterRepository stationLetterRepository)
+            IStationLetterRepository stationLetterRepository,
+            ISmallDistrictRepository smallDistrictRepository)
         {
-            _testRepository = testRepository;
             _menuRepository = menuRepository;
             _roleRepository = roleRepository;
             _roleMenuRepository = roleMenuRepository;
             _userRepository = userRepository;
             _stationLetterRepository = stationLetterRepository;
+            _smallDistrictRepository = smallDistrictRepository;
             _tokenManager = new TokenManager();
         }
 
@@ -61,7 +61,7 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("user/Login")]
         public async Task<ApiResult<LoginOutput>> Login([FromBody] LoginInput input, CancellationToken cancelToken)
         {
-            var user = await _userRepository.GetAsync(new UserDto
+            var user = await _userRepository.GetIncludeAsync(new UserDto
             {
                 Name = input.Name,
                 Password = input.Pwd
@@ -95,7 +95,9 @@ namespace GuoGuoCommunity.API.Controllers
                     StreetOfficeId = user.StreetOfficeId,
                     StreetOfficeName = user.StreetOfficeName,
                     DepartmentName = "authorityMax",
-                    DepartmentValue = "authorityMax"
+                    DepartmentValue = "authorityMax",
+                    ShopId = user.ShopId.ToString(),
+                    Id = user.Id.ToString()
                 });
             }
 
@@ -115,6 +117,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<LoginOutput>(APIResultCode.Success_NoB, new LoginOutput { }, "登陆账户角色未分配菜单浏览权限!");
             }
             bool IsHaveUnRead = false;
+            string PropertyCompanyId = "";
             if (user.DepartmentValue == Department.WuYe.Value)
             {
                 var letterList = await _stationLetterRepository.GetListAsync(new StationLetterDto
@@ -124,7 +127,23 @@ namespace GuoGuoCommunity.API.Controllers
                     ReadStatus = "UnRead"
                 }, cancelToken);
                 IsHaveUnRead = letterList.Any();
+
+                var smallDistrict = await _smallDistrictRepository.GetAsync(user.SmallDistrictId, cancelToken);
+                if (smallDistrict != null)
+                {
+                    PropertyCompanyId = smallDistrict.PropertyCompanyId.HasValue ? smallDistrict.PropertyCompanyId.Value.ToString() : "";
+                }
             }
+            string printerName = "";
+            if (user.DepartmentValue == Department.Shop.Value)
+            {
+                if (user.Shop.IsDeleted)
+                {
+                    return new ApiResult<LoginOutput>(APIResultCode.Success_NoB, new LoginOutput { }, "商铺为注销状态，不允许登陆!");
+                }
+                printerName = user.Shop.PrinterName;
+            }
+
             return new ApiResult<LoginOutput>(APIResultCode.Success, new LoginOutput
             {
                 Roles = list.ToArray(),
@@ -142,7 +161,11 @@ namespace GuoGuoCommunity.API.Controllers
                 StreetOfficeName = user.StreetOfficeName,
                 IsHaveUnRead = IsHaveUnRead,
                 DepartmentValue = user.DepartmentValue,
-                DepartmentName = user.DepartmentValue
+                DepartmentName = user.DepartmentValue,
+                ShopId = user.ShopId.ToString(),
+                PropertyCompanyId = PropertyCompanyId,
+                Id = user.Id.ToString(),
+                PrinterName = printerName
             });
 
         }
@@ -182,7 +205,9 @@ namespace GuoGuoCommunity.API.Controllers
                     StreetOfficeId = user.StreetOfficeId,
                     StreetOfficeName = user.StreetOfficeName,
                     DepartmentName = "authorityMax",
-                    DepartmentValue = "authorityMax"
+                    DepartmentValue = "authorityMax",
+                    ShopId = user.ShopId.ToString(),
+                    Id = user.Id.ToString()
                 });
             }
 
@@ -199,6 +224,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
 
             bool IsHaveUnRead = false;
+            string PropertyCompanyId = "";
             if (user.DepartmentValue == Department.WuYe.Value)
             {
                 var letterList = await _stationLetterRepository.GetListAsync(new StationLetterDto
@@ -208,6 +234,25 @@ namespace GuoGuoCommunity.API.Controllers
                     ReadStatus = "UnRead"
                 }, cancelToken);
                 IsHaveUnRead = letterList.Any();
+                var smallDistrict = await _smallDistrictRepository.GetAsync(user.SmallDistrictId, cancelToken);
+                if (smallDistrict != null)
+                {
+                    PropertyCompanyId = smallDistrict.PropertyCompanyId.HasValue ? smallDistrict.PropertyCompanyId.Value.ToString() : "";
+                }
+            }
+            string printerName = "";
+            if (user.DepartmentValue == Department.Shop.Value)
+            {
+                if (user.Shop.IsDeleted)
+                {
+                    return new ApiResult<LoginTokenOutput>(APIResultCode.Success_NoB, new LoginTokenOutput { }, "商铺为注销状态，不允许登陆!");
+                }
+                var users = await _userRepository.GetIncludeAsync(new UserDto
+                {
+                    Name = user.PhoneNumber,
+                    Password = user.Password
+                });
+                printerName = users.Shop.PrinterName;
             }
             return new ApiResult<LoginTokenOutput>(APIResultCode.Success, new LoginTokenOutput
             {
@@ -225,11 +270,64 @@ namespace GuoGuoCommunity.API.Controllers
                 StreetOfficeName = user.StreetOfficeName,
                 IsHaveUnRead = IsHaveUnRead,
                 DepartmentValue = user.DepartmentValue,
-                DepartmentName = user.DepartmentValue
+                DepartmentName = user.DepartmentValue,
+                ShopId = user.ShopId.ToString(),
+                PropertyCompanyId = PropertyCompanyId,
+                Id = user.Id.ToString(),
+                PrinterName = printerName
             });
         }
 
         #region 账号管理
+
+        /// <summary>
+        /// 获取账号详情
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("user/Get")]
+        public async Task<ApiResult<GetUserOutput>> Get([FromUri]string id, CancellationToken cancelToken)
+        {
+            if (Authorization == null)
+            {
+                return new ApiResult<GetUserOutput>(APIResultCode.Unknown, new GetUserOutput { }, APIResultMessage.TokenNull);
+            }
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                throw new NotImplementedException("token无效！");
+            }
+
+            var data = await _userRepository.GetIncludeAsync(id, cancelToken);
+
+
+
+            return new ApiResult<GetUserOutput>(APIResultCode.Success, new GetUserOutput
+            {
+                Id = data.Id.ToString(),
+                Account = data.Account,
+                City = data.City,
+                CommunityId = data.CommunityId,
+                CommunityName = data.CommunityName,
+                DepartmentName = data.DepartmentName,
+                DepartmentValue = data.DepartmentValue,
+                Name = data.Name,
+                Password = data.Password,
+                PhoneNumber = data.PhoneNumber,
+                Region = data.Region,
+                RoleId = data.RoleId,
+                RoleName = data.RoleName,
+                SmallDistrictId = data.SmallDistrictId,
+                SmallDistrictName = data.SmallDistrictName,
+                State = data.State,
+                StreetOfficeId = data.StreetOfficeId,
+                StreetOfficeName = data.StreetOfficeName
+            });
+        }
+
+        #region 街道办账号管理
 
         /// <summary>
         /// 添加街道办账号
@@ -374,10 +472,14 @@ namespace GuoGuoCommunity.API.Controllers
                 RoleId = input.RoleId,
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = user.Id.ToString()
-            });
+            }, cancellationToken);
 
             return new ApiResult();
         }
+
+        #endregion
+
+        #region 物业账号管理
 
         /// <summary>
         /// 添加物业账号
@@ -526,10 +628,12 @@ namespace GuoGuoCommunity.API.Controllers
                 Password = input.Password,
                 RoleId = input.RoleId,
                 PhoneNumber = input.PhoneNumber
-            });
+            }, cancellationToken);
 
             return new ApiResult();
         }
+
+        #endregion
 
         /// <summary>
         /// 删除用户信息
@@ -565,6 +669,205 @@ namespace GuoGuoCommunity.API.Controllers
 
             return new ApiResult();
         }
+
+        #region 商户账号管理
+
+        /// <summary>
+        /// 添加商户帐号
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("user/addShopUser")]
+        public async Task<ApiResult<AddPropertyUserOutput>> AddShopUser([FromBody]AddShopUserInput input, CancellationToken cancelToken)
+        {
+            if (Authorization == null)
+            {
+                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Unknown, new AddPropertyUserOutput { }, APIResultMessage.TokenNull);
+            }
+            if (string.IsNullOrWhiteSpace(input.Account))
+            {
+                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, "账户名称为空！");
+            }
+            if (string.IsNullOrWhiteSpace(input.ShopId))
+            {
+                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, "商户Id信息为空！");
+            }
+            if (string.IsNullOrWhiteSpace(input.Name))
+            {
+                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, "名称为空！");
+            }
+            if (string.IsNullOrWhiteSpace(input.PhoneNumber))
+            {
+                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, "手机号为空！");
+            }
+            if (string.IsNullOrWhiteSpace(input.Password))
+            {
+                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, "密码为空！");
+            }
+            if (!re.IsMatch(input.Account))
+            {
+                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, "账户名称输入格式不正确");
+            }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<AddPropertyUserOutput>(APIResultCode.Unknown, new AddPropertyUserOutput { }, APIResultMessage.TokenError);
+            }
+
+            var entity = await _userRepository.AddShopAsync(new UserDto
+            {
+                Name = input.Name,
+                PhoneNumber = input.PhoneNumber,
+                Password = input.Password,
+                ShopId = input.ShopId,
+                RoleId = input.RoleId,
+                Account = input.Account,
+                DepartmentValue = Department.Shop.Value,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            }, cancelToken);
+
+            return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success, new AddPropertyUserOutput { Id = entity.Id.ToString() }, APIResultMessage.Success);
+        }
+
+        /// <summary>
+        /// 修改商户账号
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("user/updateShopUser")]
+        public async Task<ApiResult> UpdateShopUser([FromBody]UpdateShopUserInput input, CancellationToken cancelToken)
+        {
+            if (Authorization == null)
+            {
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+            }
+
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+            }
+
+            await _userRepository.UpdateAsync(new UserDto
+            {
+                Id = input.Id,
+                Name = input.Name,
+                PhoneNumber = input.PhoneNumber,
+                Password = input.Password,
+                RoleId = input.RoleId,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString(),
+            }, cancelToken);
+
+            return new ApiResult();
+        }
+
+        /// <summary>
+        /// 查询商家账户列表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("user/getAllShopUser")]
+        public async Task<ApiResult<GetAllShopUserOutput>> GetAllShopUser([FromUri]GetAllShopUserInput input, CancellationToken cancelToken)
+        {
+            if (Authorization == null)
+            {
+                return new ApiResult<GetAllShopUserOutput>(APIResultCode.Unknown, new GetAllShopUserOutput { }, APIResultMessage.TokenNull);
+            }
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<GetAllShopUserOutput>(APIResultCode.Unknown, new GetAllShopUserOutput { }, APIResultMessage.TokenError);
+            }
+            if (input.PageIndex < 1)
+            {
+                input.PageIndex = 1;
+            }
+            if (input.PageSize < 1)
+            {
+                input.PageSize = 10;
+            }
+
+            var data = await _userRepository.GetAllShopAsync(new UserDto
+            {
+                Name = input?.Name,
+                PhoneNumber = input?.PhoneNumber,
+                ShopId = input?.ShopId,
+                PageIndex = input.PageIndex,
+                PageSize = input.PageSize
+            }, cancelToken);
+
+            List<GetAllShopUserOutputModel> list = data.List.Select(x => new GetAllShopUserOutputModel
+            {
+                Account = x.Account,
+                Id = x.Id.ToString(),
+                Name = x.Name,
+                PhoneNumber = x.PhoneNumber,
+                RoleId = x.RoleId,
+                RoleName = x.RoleName,
+                Password = x.Password,
+                ShopId = x.ShopId.ToString(),
+                ShopName = x.Shop.Name,
+                CreateTime = x.CreateOperationTime.Value
+            }).ToList();
+
+            return new ApiResult<GetAllShopUserOutput>(APIResultCode.Success, new GetAllShopUserOutput
+            {
+                List = list,
+                TotalCount = data.Count
+            });
+        }
+
+        ///// <summary>
+        ///// 删除商户用户信息
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <param name="cancelToken"></param>
+        ///// <returns></returns>
+        //[HttpGet]
+        //[Route("user/deleteShopUser")]
+        //[Obsolete]
+        //public async Task<ApiResult> DeleteShopUser([FromUri]string id, CancellationToken cancelToken)
+        //{
+        //    if (Authorization == null)
+        //    {
+        //        return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+        //    }
+        //    if (string.IsNullOrWhiteSpace(id))
+        //    {
+        //        throw new NotImplementedException("用户Id信息为空！");
+        //    }
+
+        //    var user = _tokenManager.GetUser(Authorization);
+        //    if (user == null)
+        //    {
+        //        return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+        //    }
+
+        //    await _userRepository.DeleteAsync(new UserDto
+        //    {
+        //        Id = id,
+        //        OperationTime = DateTimeOffset.Now,
+        //        OperationUserId = user.Id.ToString()
+        //    }, cancelToken);
+        //    //await _shopRepository.DeleteAsync(new ShopDto
+        //    //{
+        //    //    UserId = id,
+        //    //    OperationTime = DateTimeOffset.Now,
+        //    //    OperationUserId = user.Id.ToString()
+        //    //}, cancelToken);
+        //    return new ApiResult();
+        //}
+
+        #endregion
 
         #endregion
 
@@ -817,6 +1120,35 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<List<GetRoleOutput>>(APIResultCode.Unknown, new List<GetRoleOutput> { }, APIResultMessage.TokenError);
             }
             var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.WuYe.Value }, cancelToken)).Select(x =>
+            new GetRoleOutput
+            {
+                Id = x.Id.ToString(),
+                Name = x.Name,
+                DepartmentName = x.DepartmentName,
+                DepartmentValue = x.DepartmentValue,
+                Description = x.Description
+            }).ToList();
+            return new ApiResult<List<GetRoleOutput>>(APIResultCode.Success, data);
+        }
+
+        /// <summary>
+        /// 获取商户用角色列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("role/getAllForShop")]
+        public async Task<ApiResult<List<GetRoleOutput>>> GetAllRoleForShop(CancellationToken cancelToken)
+        {
+            if (Authorization == null)
+            {
+                return new ApiResult<List<GetRoleOutput>>(APIResultCode.Unknown, new List<GetRoleOutput> { }, APIResultMessage.TokenNull);
+            }
+            var user = _tokenManager.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult<List<GetRoleOutput>>(APIResultCode.Unknown, new List<GetRoleOutput> { }, APIResultMessage.TokenError);
+            }
+            var data = (await _roleRepository.GetAllAsync(new RoleDto { DepartmentValue = Department.Shop.Value }, cancelToken)).Select(x =>
             new GetRoleOutput
             {
                 Id = x.Id.ToString(),

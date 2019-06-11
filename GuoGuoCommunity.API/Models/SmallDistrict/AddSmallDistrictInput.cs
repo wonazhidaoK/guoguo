@@ -41,22 +41,16 @@ namespace GuoGuoCommunity.API.Models
         /// 电话
         /// </summary>
         public string PhoneNumber { get; set; }
-        ///// <summary>
-        ///// 街道办名称
-        ///// </summary>
-        //[Required]
-        //public string StreetOfficeName { get; set; }
-
+        
         /// <summary>
         /// 社区Id
         /// </summary>
         [Required]
         public string CommunityId { get; set; }
 
-        ///// <summary>
-        ///// 社区名称
-        ///// </summary>
-        //[Required]
-        //public string CommunityName { get; set; }
+        /// <summary>
+        /// 物业公司Id
+        /// </summary>
+        public string PropertyCompanyId { get; set; }
     }
 }

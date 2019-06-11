@@ -14,7 +14,7 @@ namespace GuoGuoCommunity.API.Controllers
     [RoutePrefix("api/token")]
     public class TokenController : ApiController
     {
-        private TokenManager _tokenManager;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// 

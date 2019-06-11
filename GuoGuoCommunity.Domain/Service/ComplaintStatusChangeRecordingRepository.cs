@@ -16,7 +16,7 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 var entity = db.StatusChangeRecordings.Add(new ComplaintStatusChangeRecording
                 {
-                    ComplaintFollowUpId =Guid.Parse(dto.ComplaintFollowUpId) ,
+                    ComplaintFollowUpId = Guid.Parse(dto.ComplaintFollowUpId),
                     //ComplaintId = dto.ComplaintId,
                     NewStatus = dto.NewStatus,
                     OldStatus = dto.OldStatus,

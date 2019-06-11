@@ -1,10 +1,10 @@
-﻿namespace GuoGuoCommunity.API
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Web.Http.Dependencies;
-    using Unity;
+﻿using System;
+using System.Collections.Generic;
+using System.Web.Http.Dependencies;
+using Unity;
 
+namespace GuoGuoCommunity.API
+{
     /// <summary>
     /// 
     /// </summary>

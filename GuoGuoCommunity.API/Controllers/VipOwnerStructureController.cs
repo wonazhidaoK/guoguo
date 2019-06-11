@@ -17,7 +17,7 @@ namespace GuoGuoCommunity.API.Controllers
     public class VipOwnerStructureController : BaseController
     {
         private readonly IVipOwnerStructureRepository _vipOwnerStructureRepository;
-        private TokenManager _tokenManager;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// 

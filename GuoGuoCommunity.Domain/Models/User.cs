@@ -120,15 +120,13 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public string UnionId { get; set; }
 
-        ///// <summary>
-        ///// 是否是业主
-        ///// </summary>
-        //public string IsOwner { get; set; }
+        /// <summary>
+        /// 商家Id
+        /// </summary>
+        [ForeignKey("Shop")]
+        public Guid? ShopId { get; set; }
 
-        ///// <summary>
-        ///// 是否是业委会成员
-        ///// </summary>
-        //public string IsVipOwner { get; set; }
+        public Shop Shop { get; set; }
 
         /// <summary>
         /// 

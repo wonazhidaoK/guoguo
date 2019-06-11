@@ -12,6 +12,10 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -64,9 +68,6 @@
     <Reference Include="System.Interactive.Async, Version=3.2.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Interactive.Async.3.2.0\lib\net46\System.Interactive.Async.dll</HintPath>
     </Reference>
-    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
-    </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
@@ -74,6 +75,7 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -107,9 +109,14 @@
     <Compile Include="Abstractions\IOwnerCertificationAnnexRepository.cs" />
     <Compile Include="Abstractions\IOwnerCertificationRecordRepository.cs" />
     <Compile Include="Abstractions\IOwnerRepository.cs" />
+    <Compile Include="Abstractions\IPropertyCompanyRepository.cs" />
     <Compile Include="Abstractions\IRoleMenuRepository.cs" />
     <Compile Include="Abstractions\IRoleRepository.cs" />
     <Compile Include="Abstractions\ISmallDistrictRepository.cs" />
+    <Compile Include="Abstractions\Store\IOrdeItemRepository.cs" />
+    <Compile Include="Abstractions\Store\IOrderRepository.cs" />
+    <Compile Include="Abstractions\Store\IShopUserAddressRepository.cs" />
+    <Compile Include="Abstractions\Store\ISmallDistrictShopRepository.cs" />
     <Compile Include="Abstractions\IStationLetterAnnexRepository.cs" />
     <Compile Include="Abstractions\IStationLetterBrowseRecordRepository.cs" />
     <Compile Include="Abstractions\IStationLetterRepository.cs" />
@@ -145,6 +152,11 @@
     <Compile Include="Abstractions\Models\IOwnerCertificationRecord.cs" />
     <Compile Include="Abstractions\Models\ISmallDistrict.cs" />
     <Compile Include="Abstractions\Models\IStreetOffice.cs" />
+    <Compile Include="Abstractions\Store\IGoodsTypeRepository.cs" />
+    <Compile Include="Abstractions\Store\IPlatformCommodityRepository.cs" />
+    <Compile Include="Abstractions\Store\IShopCommodityRepository.cs" />
+    <Compile Include="Abstractions\Store\IShoppingTrolleyRepository.cs" />
+    <Compile Include="Abstractions\Store\IShopRepository.cs" />
     <Compile Include="Dto\AnnouncementAnnexDto.cs" />
     <Compile Include="Dto\AnnouncementDto.cs" />
     <Compile Include="Dto\BuildingDto.cs" />
@@ -160,6 +172,155 @@
     <Compile Include="Dto\OwnerCertificationAnnexDto.cs" />
     <Compile Include="Dto\OwnerCertificationRecordDto.cs" />
     <Compile Include="Dto\OwnerDto.cs" />
+    <Compile Include="Dto\PropertyCompanyDto.cs" />
+    <Compile Include="Dto\Store\GoodsTypeDto.cs" />
+    <Compile Include="Dto\Store\OrdeItemDto.cs" />
+    <Compile Include="Dto\Store\OrderDto.cs" />
+    <Compile Include="Dto\Store\PlatformCommodityDto.cs" />
+    <Compile Include="Dto\Store\ShopCommodityDto.cs" />
+    <Compile Include="Dto\Store\ShopDto.cs" />
+    <Compile Include="Dto\Store\ShoppingTrolleyDto.cs" />
+    <Compile Include="Dto\Store\ShopUserAddressDto.cs" />
+    <Compile Include="Dto\Store\SmallDistrictShopDto.cs" />
+    <Compile Include="Migrations\201904210504484_Initialization.cs" />
+    <Compile Include="Migrations\201904210504484_Initialization.designer.cs">
+      <DependentUpon>201904210504484_Initialization.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904220211388_update-VoteRecordDetail.cs" />
+    <Compile Include="Migrations\201904220211388_update-VoteRecordDetail.designer.cs">
+      <DependentUpon>201904220211388_update-VoteRecordDetail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905070248352_update-Community.cs" />
+    <Compile Include="Migrations\201905070248352_update-Community.designer.cs">
+      <DependentUpon>201905070248352_update-Community.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905070550286_update-SmallDistrict.cs" />
+    <Compile Include="Migrations\201905070550286_update-SmallDistrict.designer.cs">
+      <DependentUpon>201905070550286_update-SmallDistrict.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905070612128_update-Building.cs" />
+    <Compile Include="Migrations\201905070612128_update-Building.designer.cs">
+      <DependentUpon>201905070612128_update-Building.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905070634307_update-BuildingUnit.cs" />
+    <Compile Include="Migrations\201905070634307_update-BuildingUnit.designer.cs">
+      <DependentUpon>201905070634307_update-BuildingUnit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905070720400_update-Industry.cs" />
+    <Compile Include="Migrations\201905070720400_update-Industry.designer.cs">
+      <DependentUpon>201905070720400_update-Industry.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905070737323_update-Owner.cs" />
+    <Compile Include="Migrations\201905070737323_update-Owner.designer.cs">
+      <DependentUpon>201905070737323_update-Owner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905070809049_update-VipOwner.cs" />
+    <Compile Include="Migrations\201905070809049_update-VipOwner.designer.cs">
+      <DependentUpon>201905070809049_update-VipOwner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905080144594_update_SmallDistrict.cs" />
+    <Compile Include="Migrations\201905080144594_update_SmallDistrict.designer.cs">
+      <DependentUpon>201905080144594_update_SmallDistrict.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905080836019_updata-OwnerCertificationRecord.cs" />
+    <Compile Include="Migrations\201905080836019_updata-OwnerCertificationRecord.designer.cs">
+      <DependentUpon>201905080836019_updata-OwnerCertificationRecord.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905090908335_update-OwnerCertificationAnnex.cs" />
+    <Compile Include="Migrations\201905090908335_update-OwnerCertificationAnnex.designer.cs">
+      <DependentUpon>201905090908335_update-OwnerCertificationAnnex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905090919413_update-OwnerCertificationAnnex2.cs" />
+    <Compile Include="Migrations\201905090919413_update-OwnerCertificationAnnex2.designer.cs">
+      <DependentUpon>201905090919413_update-OwnerCertificationAnnex2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905140109075_update-Complaint.cs" />
+    <Compile Include="Migrations\201905140109075_update-Complaint.designer.cs">
+      <DependentUpon>201905140109075_update-Complaint.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905140113297_update-Complaint2.cs" />
+    <Compile Include="Migrations\201905140113297_update-Complaint2.designer.cs">
+      <DependentUpon>201905140113297_update-Complaint2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905140240537_update-ComplaintFollowUp.cs" />
+    <Compile Include="Migrations\201905140240537_update-ComplaintFollowUp.designer.cs">
+      <DependentUpon>201905140240537_update-ComplaintFollowUp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905140242282_update-ComplaintFollowUp2.cs" />
+    <Compile Include="Migrations\201905140242282_update-ComplaintFollowUp2.designer.cs">
+      <DependentUpon>201905140242282_update-ComplaintFollowUp2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905140523297_update-ComplaintAnnex.cs" />
+    <Compile Include="Migrations\201905140523297_update-ComplaintAnnex.designer.cs">
+      <DependentUpon>201905140523297_update-ComplaintAnnex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905150234568_update-ComplaintAnnex2.cs" />
+    <Compile Include="Migrations\201905150234568_update-ComplaintAnnex2.designer.cs">
+      <DependentUpon>201905150234568_update-ComplaintAnnex2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905150535225_update-ComplaintStatusChangeRecording.cs" />
+    <Compile Include="Migrations\201905150535225_update-ComplaintStatusChangeRecording.designer.cs">
+      <DependentUpon>201905150535225_update-ComplaintStatusChangeRecording.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905170726111_add-shop.cs" />
+    <Compile Include="Migrations\201905170726111_add-shop.designer.cs">
+      <DependentUpon>201905170726111_add-shop.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905170928112_add-PlatformCommodities.cs" />
+    <Compile Include="Migrations\201905170928112_add-PlatformCommodities.designer.cs">
+      <DependentUpon>201905170928112_add-PlatformCommodities.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905210129201_update-shop.cs" />
+    <Compile Include="Migrations\201905210129201_update-shop.designer.cs">
+      <DependentUpon>201905210129201_update-shop.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905220719298_add-ShopCommodity-ShoppingTrolleys-PropertyCompany.cs" />
+    <Compile Include="Migrations\201905220719298_add-ShopCommodity-ShoppingTrolleys-PropertyCompany.designer.cs">
+      <DependentUpon>201905220719298_add-ShopCommodity-ShoppingTrolleys-PropertyCompany.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905230320233_add-SmallDistrictShop.cs" />
+    <Compile Include="Migrations\201905230320233_add-SmallDistrictShop.designer.cs">
+      <DependentUpon>201905230320233_add-SmallDistrictShop.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905230753135_add-ShopUserAddresses.cs" />
+    <Compile Include="Migrations\201905230753135_add-ShopUserAddresses.Designer.cs">
+      <DependentUpon>201905230753135_add-ShopUserAddresses.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905280308410_add-Order.cs" />
+    <Compile Include="Migrations\201905280308410_add-Order.Designer.cs">
+      <DependentUpon>201905280308410_add-Order.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905280314285_add-OrdeItem.cs" />
+    <Compile Include="Migrations\201905280314285_add-OrdeItem.Designer.cs">
+      <DependentUpon>201905280314285_add-OrdeItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905290201560_update-Order.cs" />
+    <Compile Include="Migrations\201905290201560_update-Order.Designer.cs">
+      <DependentUpon>201905290201560_update-Order.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905290211508_update-ShopCommodity.cs" />
+    <Compile Include="Migrations\201905290211508_update-ShopCommodity.Designer.cs">
+      <DependentUpon>201905290211508_update-ShopCommodity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905290525268_update-OrderItem.cs" />
+    <Compile Include="Migrations\201905290525268_update-OrderItem.Designer.cs">
+      <DependentUpon>201905290525268_update-OrderItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905310150534_update-Shop-PrinterName.cs" />
+    <Compile Include="Migrations\201905310150534_update-Shop-PrinterName.Designer.cs">
+      <DependentUpon>201905310150534_update-Shop-PrinterName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Enum\MerchantCategory.cs" />
+    <Compile Include="Models\Enum\OrderStatus.cs" />
+    <Compile Include="Models\Enum\OwnerCertification.cs" />
+    <Compile Include="Models\Enum\PaymentStatus.cs" />
+    <Compile Include="Models\Enum\PaymentType.cs" />
+    <Compile Include="Models\Enum\SalesType.cs" />
+    <Compile Include="Models\PropertyCompany.cs" />
+    <Compile Include="Models\Store\GoodsType.cs" />
+    <Compile Include="Models\Store\OrdeItem.cs" />
+    <Compile Include="Models\Store\Order.cs" />
+    <Compile Include="Models\Store\PlatformCommodity.cs" />
     <Compile Include="Dto\RegionDto.cs" />
     <Compile Include="Dto\CityDto.cs" />
     <Compile Include="Dto\MenuDto.cs" />
@@ -188,88 +349,8 @@
     <Compile Include="Dto\VoteResultRecordDto.cs" />
     <Compile Include="Dto\WeiXinUserDto.cs" />
     <Compile Include="GuoGuoCommunityContext.cs" />
-    <Compile Include="Migrations\201904210504484_Initialization.cs" />
-    <Compile Include="Migrations\201904210504484_Initialization.Designer.cs">
-      <DependentUpon>201904210504484_Initialization.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904220211388_update-VoteRecordDetail.cs" />
-    <Compile Include="Migrations\201904220211388_update-VoteRecordDetail.Designer.cs">
-      <DependentUpon>201904220211388_update-VoteRecordDetail.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905070248352_update-Community.cs" />
-    <Compile Include="Migrations\201905070248352_update-Community.Designer.cs">
-      <DependentUpon>201905070248352_update-Community.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905070550286_update-SmallDistrict.cs" />
-    <Compile Include="Migrations\201905070550286_update-SmallDistrict.Designer.cs">
-      <DependentUpon>201905070550286_update-SmallDistrict.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905070612128_update-Building.cs" />
-    <Compile Include="Migrations\201905070612128_update-Building.Designer.cs">
-      <DependentUpon>201905070612128_update-Building.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905070634307_update-BuildingUnit.cs" />
-    <Compile Include="Migrations\201905070634307_update-BuildingUnit.Designer.cs">
-      <DependentUpon>201905070634307_update-BuildingUnit.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905070720400_update-Industry.cs" />
-    <Compile Include="Migrations\201905070720400_update-Industry.Designer.cs">
-      <DependentUpon>201905070720400_update-Industry.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905070737323_update-Owner.cs" />
-    <Compile Include="Migrations\201905070737323_update-Owner.Designer.cs">
-      <DependentUpon>201905070737323_update-Owner.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905070809049_update-VipOwner.cs" />
-    <Compile Include="Migrations\201905070809049_update-VipOwner.Designer.cs">
-      <DependentUpon>201905070809049_update-VipOwner.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905080144594_update_SmallDistrict.cs" />
-    <Compile Include="Migrations\201905080144594_update_SmallDistrict.Designer.cs">
-      <DependentUpon>201905080144594_update_SmallDistrict.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905080836019_updata-OwnerCertificationRecord.cs" />
-    <Compile Include="Migrations\201905080836019_updata-OwnerCertificationRecord.Designer.cs">
-      <DependentUpon>201905080836019_updata-OwnerCertificationRecord.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905090908335_update-OwnerCertificationAnnex.cs" />
-    <Compile Include="Migrations\201905090908335_update-OwnerCertificationAnnex.Designer.cs">
-      <DependentUpon>201905090908335_update-OwnerCertificationAnnex.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905090919413_update-OwnerCertificationAnnex2.cs" />
-    <Compile Include="Migrations\201905090919413_update-OwnerCertificationAnnex2.Designer.cs">
-      <DependentUpon>201905090919413_update-OwnerCertificationAnnex2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905140109075_update-Complaint.cs" />
-    <Compile Include="Migrations\201905140109075_update-Complaint.Designer.cs">
-      <DependentUpon>201905140109075_update-Complaint.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905140113297_update-Complaint2.cs" />
-    <Compile Include="Migrations\201905140113297_update-Complaint2.Designer.cs">
-      <DependentUpon>201905140113297_update-Complaint2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905140240537_update-ComplaintFollowUp.cs" />
-    <Compile Include="Migrations\201905140240537_update-ComplaintFollowUp.Designer.cs">
-      <DependentUpon>201905140240537_update-ComplaintFollowUp.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905140242282_update-ComplaintFollowUp2.cs" />
-    <Compile Include="Migrations\201905140242282_update-ComplaintFollowUp2.Designer.cs">
-      <DependentUpon>201905140242282_update-ComplaintFollowUp2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905140523297_update-ComplaintAnnex.cs" />
-    <Compile Include="Migrations\201905140523297_update-ComplaintAnnex.Designer.cs">
-      <DependentUpon>201905140523297_update-ComplaintAnnex.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905150234568_update-ComplaintAnnex2.cs" />
-    <Compile Include="Migrations\201905150234568_update-ComplaintAnnex2.Designer.cs">
-      <DependentUpon>201905150234568_update-ComplaintAnnex2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201905150535225_update-ComplaintStatusChangeRecording.cs" />
-    <Compile Include="Migrations\201905150535225_update-ComplaintStatusChangeRecording.Designer.cs">
-      <DependentUpon>201905150535225_update-ComplaintStatusChangeRecording.cs</DependentUpon>
-    </Compile>
     <Compile Include="Models\Enum\StationLetterReadStatus.cs" />
-    <Compile Include="Models\event\ComplaintTypeIncrementer.cs" />
+    <Compile Include="Models\Event\ComplaintTypeIncrementer.cs" />
     <Compile Include="Models\IDCardPhotoRecord.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Announcement.cs" />
@@ -284,17 +365,22 @@
     <Compile Include="Models\Enum\ComplaintStatus.cs" />
     <Compile Include="Models\Enum\VoteTypes.cs" />
     <Compile Include="Models\Enum\VoteStatus.cs" />
-    <Compile Include="Models\event\BuildingUnitIncrementer.cs" />
-    <Compile Include="Models\event\BuildingIncrementer.cs" />
-    <Compile Include="Models\event\SmallDistrictIncrementer.cs" />
-    <Compile Include="Models\event\CommunityIncrementer.cs" />
-    <Compile Include="Models\event\VipOwnerStructureIncrementer.cs" />
-    <Compile Include="Models\event\VipOwnerIncrementer.cs" />
-    <Compile Include="Models\event\StreetOfficeIncrementer.cs" />
+    <Compile Include="Models\Event\BuildingUnitIncrementer.cs" />
+    <Compile Include="Models\Event\BuildingIncrementer.cs" />
+    <Compile Include="Models\Event\SmallDistrictIncrementer.cs" />
+    <Compile Include="Models\Event\CommunityIncrementer.cs" />
+    <Compile Include="Models\Event\VipOwnerStructureIncrementer.cs" />
+    <Compile Include="Models\Event\VipOwnerIncrementer.cs" />
+    <Compile Include="Models\Event\StreetOfficeIncrementer.cs" />
     <Compile Include="Models\OwnerCertificationAnnex.cs" />
     <Compile Include="Models\StationLetter.cs" />
     <Compile Include="Models\StationLetterAnnex.cs" />
     <Compile Include="Models\StationLetterBrowseRecord.cs" />
+    <Compile Include="Models\Store\ShopCommodity.cs" />
+    <Compile Include="Models\Store\Shop.cs" />
+    <Compile Include="Models\Store\ShoppingTrolley.cs" />
+    <Compile Include="Models\Store\ShopUserAddress.cs" />
+    <Compile Include="Models\Store\SmallDistrictShop.cs" />
     <Compile Include="Models\Upload.cs" />
     <Compile Include="Models\Building.cs" />
     <Compile Include="Models\BuildingUnit.cs" />
@@ -335,9 +421,19 @@
     <Compile Include="Service\ComplaintRepository.cs" />
     <Compile Include="Service\ComplaintStatusChangeRecordingRepository.cs" />
     <Compile Include="Service\IDCardPhotoRecordRepository.cs" />
+    <Compile Include="Service\PropertyCompanyRepository.cs" />
+    <Compile Include="Service\Store\OrdeItemRepository.cs" />
+    <Compile Include="Service\Store\OrderRepository.cs" />
+    <Compile Include="Service\Store\ShopRepository.cs" />
+    <Compile Include="Service\Store\ShopUserAddressRepository.cs" />
+    <Compile Include="Service\Store\SmallDistrictShopRepository.cs" />
+    <Compile Include="Service\Store\PlatformCommodityRepository.cs" />
     <Compile Include="Service\StationLetterAnnexRepository.cs" />
     <Compile Include="Service\StationLetterBrowseRecordRepository.cs" />
     <Compile Include="Service\StationLetterRepository.cs" />
+    <Compile Include="Service\Store\GoodsTypeRepository.cs" />
+    <Compile Include="Service\Store\ShopCommodityRepository.cs" />
+    <Compile Include="Service\Store\ShoppingTrolleyRepository.cs" />
     <Compile Include="Service\VoteAnnexRepository.cs" />
     <Compile Include="Service\VoteAssociationVipOwnerRepository.cs" />
     <Compile Include="Service\VoteQuestionOptionRepository.cs" />
@@ -388,12 +484,10 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="UnitOfWork\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Models\city\App_List.xml" />
-    <Content Include="Models\city\Area_List.xml" />
+    <Content Include="Models\City\App_List.xml" />
+    <Content Include="Models\City\Area_List.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201904210504484_Initialization.resx">
@@ -455,6 +549,42 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201905150535225_update-ComplaintStatusChangeRecording.resx">
       <DependentUpon>201905150535225_update-ComplaintStatusChangeRecording.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905170726111_add-shop.resx">
+      <DependentUpon>201905170726111_add-shop.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905170928112_add-PlatformCommodities.resx">
+      <DependentUpon>201905170928112_add-PlatformCommodities.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905210129201_update-shop.resx">
+      <DependentUpon>201905210129201_update-shop.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905220719298_add-ShopCommodity-ShoppingTrolleys-PropertyCompany.resx">
+      <DependentUpon>201905220719298_add-ShopCommodity-ShoppingTrolleys-PropertyCompany.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905230320233_add-SmallDistrictShop.resx">
+      <DependentUpon>201905230320233_add-SmallDistrictShop.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905230753135_add-ShopUserAddresses.resx">
+      <DependentUpon>201905230753135_add-ShopUserAddresses.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905280308410_add-Order.resx">
+      <DependentUpon>201905280308410_add-Order.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905280314285_add-OrdeItem.resx">
+      <DependentUpon>201905280314285_add-OrdeItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905290201560_update-Order.resx">
+      <DependentUpon>201905290201560_update-Order.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905290211508_update-ShopCommodity.resx">
+      <DependentUpon>201905290211508_update-ShopCommodity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905290525268_update-OrderItem.resx">
+      <DependentUpon>201905290525268_update-OrderItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905310150534_update-Shop-PrinterName.resx">
+      <DependentUpon>201905310150534_update-Shop-PrinterName.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

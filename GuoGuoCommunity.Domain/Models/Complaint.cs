@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 投诉
     /// </summary>
-    public class Complaint : IEntitity, IOwnerCertificationRecord,IComplaintType
+    public class Complaint : IEntitity, IOwnerCertificationRecord, IComplaintType
     {
         /// <summary>
         /// 
@@ -30,10 +30,6 @@ namespace GuoGuoCommunity.Domain.Models
         public Guid ComplaintTypeId { get; set; }
 
         public ComplaintType ComplaintType { get; set; }
-        ///// <summary>
-        ///// 投诉类型名称
-        ///// </summary>
-        //public string ComplaintTypeName { get; set; }
 
         /// <summary>
         /// 部门名称
@@ -52,7 +48,7 @@ namespace GuoGuoCommunity.Domain.Models
         [ForeignKey("OwnerCertificationRecord")]
         public Guid OwnerCertificationRecordId { get; set; }
 
-        public OwnerCertificationRecord  OwnerCertificationRecord { get; set; }
+        public OwnerCertificationRecord OwnerCertificationRecord { get; set; }
 
         /// <summary>
         /// 投诉关闭时间
@@ -83,40 +79,6 @@ namespace GuoGuoCommunity.Domain.Models
         /// 状态值
         /// </summary>
         public string StatusValue { get; set; }
-
-        //#region 街道办结构
-
-        ///// <summary>
-        ///// 街道办Id
-        ///// </summary>
-        //public string StreetOfficeId { get; set; }
-
-        ///// <summary>
-        ///// 街道办名称
-        ///// </summary>
-        //public string StreetOfficeName { get; set; }
-
-        ///// <summary>
-        ///// 社区Id
-        ///// </summary>
-        //public string CommunityId { get; set; }
-
-        ///// <summary>
-        ///// 社区名称
-        ///// </summary>
-        //public string CommunityName { get; set; }
-
-        ///// <summary>
-        ///// 小区Id
-        ///// </summary>
-        //public string SmallDistrictId { get; set; }
-
-        ///// <summary>
-        ///// 小区名称
-        ///// </summary>
-        //public string SmallDistrictName { get; set; }
-
-        //#endregion
 
         /// <summary>
         /// 创建操作人部门名称

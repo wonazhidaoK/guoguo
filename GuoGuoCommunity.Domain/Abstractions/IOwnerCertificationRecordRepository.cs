@@ -8,11 +8,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
 {
     public interface IOwnerCertificationRecordRepository : IIncludeRepository<OwnerCertificationRecord, OwnerCertificationRecordDto>
     {
- 
-        
         Task<List<OwnerCertificationRecord>> GetAllForSmallDistrictIdIncludeAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
-
-        
 
         Task UpdateInvalidAsync(OwnerCertificationRecordDto dto, CancellationToken token = default);
 

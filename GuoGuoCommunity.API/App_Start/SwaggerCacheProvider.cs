@@ -12,8 +12,9 @@ namespace GuoGuoCommunity.API
     public class SwaggerCacheProvider : ISwaggerProvider
     {
         private readonly ISwaggerProvider _swaggerProvider;
-        private static ConcurrentDictionary<string, SwaggerDocument> _cache = new ConcurrentDictionary<string, SwaggerDocument>();
+        private static readonly ConcurrentDictionary<string, SwaggerDocument> _cache = new ConcurrentDictionary<string, SwaggerDocument>();
         private readonly string _xml;
+
         /// <summary>
         /// 
         /// </summary>
@@ -58,24 +59,21 @@ namespace GuoGuoCommunity.API
             {
                 XmlDocument xmldoc = new XmlDocument();
                 xmldoc.Load(xmlpath);
-                string type = string.Empty, path = string.Empty, controllerName = string.Empty;
-
                 string[] arrPath;
-                int length = -1, cCount = "Controller".Length;
-                XmlNode summaryNode = null;
+                int cCount = "Controller".Length;
                 foreach (XmlNode node in xmldoc.SelectNodes("//member"))
                 {
-                    type = node.Attributes["name"].Value;
+                    string type = node.Attributes["name"].Value;
                     if (type.StartsWith("T:"))
                     {
                         //控制器
                         arrPath = type.Split('.');
-                        length = arrPath.Length;
-                        controllerName = arrPath[length - 1];
+                        int length = arrPath.Length;
+                        string controllerName = arrPath[length - 1];
                         if (controllerName.EndsWith("Controller"))
                         {
                             //获取控制器注释
-                            summaryNode = node.SelectSingleNode("summary");
+                            XmlNode summaryNode = node.SelectSingleNode("summary");
                             string key = controllerName.Remove(controllerName.Length - cCount, cCount);
                             if (summaryNode != null && !string.IsNullOrEmpty(summaryNode.InnerText) && !controllerDescDict.ContainsKey(key))
                             {

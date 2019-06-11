@@ -1,4 +1,5 @@
 ﻿using GuoGuoCommunity.Domain.Models;
+using GuoGuoCommunity.Domain.Models.Store;
 using System.Data.Entity;
 
 namespace GuoGuoCommunity.Domain
@@ -211,5 +212,69 @@ namespace GuoGuoCommunity.Domain
         /// 身份证照片读取记录
         /// </summary>
         public DbSet<IDCardPhotoRecord> IDCardPhotoRecords { get; set; }
+
+        /// <summary>
+        /// 物业公司信息
+        /// </summary>
+        public DbSet<PropertyCompany> PropertyCompanies { get; set; }
+
+        #region 商超
+
+        /// <summary>
+        /// 平台商品
+        /// </summary>
+        public DbSet<PlatformCommodity> PlatformCommodities { get; set; }
+
+        /// <summary>
+        /// 店铺商品类别
+        /// </summary>
+        public DbSet<GoodsType> GoodsTypes { get; set; }
+
+        /// <summary>
+        /// 店铺商品
+        /// </summary>
+        public DbSet<ShopCommodity> ShopCommodities { get; set; }
+
+        /// <summary>
+        /// 店铺信息
+        /// </summary>
+        public DbSet<Shop> Shops { get; set; }
+
+        /// <summary>
+        /// 商家购物车
+        /// </summary>
+        public DbSet<ShoppingTrolley> ShoppingTrolleys { get; set; }
+
+        /// <summary>
+        /// 小区关联商户
+        /// </summary>
+        public DbSet<SmallDistrictShop>  SmallDistrictShops { get; set; }
+
+        /// <summary>
+        /// 商超用户地址管理
+        /// </summary>
+        public DbSet<ShopUserAddress> ShopUserAddresses { get; set; }
+
+        /// <summary>
+        /// 订单
+        /// </summary>
+        public DbSet<Order>  Orders { get; set; }
+
+        /// <summary>
+        /// 订单项
+        /// </summary>
+        public DbSet<OrderItem>  OrdeItems { get; set; }
+
+        #endregion
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            var shopUserAddress = modelBuilder.Entity<ShopUserAddress>();
+            shopUserAddress
+                .HasRequired(t => t.Industry).WithMany().WillCascadeOnDelete(false);
+            var ordeItem = modelBuilder.Entity<OrderItem>();
+            ordeItem.HasRequired(t => t.ShopCommodity).WithMany().WillCascadeOnDelete(false);
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

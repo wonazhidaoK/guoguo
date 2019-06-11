@@ -53,5 +53,15 @@
         /// 小区电话
         /// </summary>
         public string PhoneNumber { get; set; }
+
+        /// <summary>
+        /// 物业公司Id
+        /// </summary>
+        public string PropertyCompanyId { get; set; }
+
+        /// <summary>
+        /// 物业公司名称
+        /// </summary>
+        public string PropertyCompanyName { get; set; }
     }
 }

@@ -38,6 +38,11 @@ namespace GuoGuoCommunity.API.Models
         public string CommunityId { get; set; }
 
         /// <summary>
+        /// 物业公司Id
+        /// </summary>
+        public string PropertyCompanyId { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         [Required]

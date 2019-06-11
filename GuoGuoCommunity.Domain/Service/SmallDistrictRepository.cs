@@ -17,21 +17,9 @@ namespace GuoGuoCommunity.Domain.Service
         {
             SmallDistrictIncrementer incrementer = new SmallDistrictIncrementer();
 
-            //业委会
-            VipOwnerRepository vipOwnerRepository = new VipOwnerRepository();
-            vipOwnerRepository.OnSubscribe(incrementer);
-
-            //楼宇订阅
-            BuildingRepository buildingRepository = new BuildingRepository();
-            buildingRepository.OnSubscribe(incrementer);
-
             //公告订阅
             AnnouncementRepository announcementRepository = new AnnouncementRepository();
             announcementRepository.OnSubscribe(incrementer);
-
-            //业主认证订阅
-            OwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
-            ownerCertificationRecordRepository.OnSubscribe(incrementer);
 
             //投票订阅
             VoteRepository voteRepository = new VoteRepository();
@@ -40,6 +28,10 @@ namespace GuoGuoCommunity.Domain.Service
             //业委会成员申请表
             VipOwnerApplicationRecordRepository vipOwnerApplicationRecordRepository = new VipOwnerApplicationRecordRepository();
             vipOwnerApplicationRecordRepository.OnSubscribe(incrementer);
+
+            //用户
+            UserRepository userRepository = new UserRepository();
+            userRepository.OnSubscribe(incrementer);
 
             await incrementer.OnUpdate(db, dto, token);
         }
@@ -51,59 +43,46 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 return true;
             }
+
             //业委会
-            //if (await db.VipOwners.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
-            ////公告
-            //if (await db.Announcements.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
-            ////业主认证
-            //if (await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
-            ////投票
-            //if (await db.Votes.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
-            ////业委会成员申请
-            //if (await db.VipOwnerApplicationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
+            if (await db.VipOwners.Where(x => x.IsDeleted == false && x.SmallDistrictId.ToString() == dto.Id).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+
+            //公告
+            if (await db.Announcements.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+
+            //投票
+            if (await db.Votes.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+
+            //业委会成员申请
+            if (await db.VipOwnerApplicationRecords.Where(x => x.IsDeleted == false && x.SmallDistrictId == dto.Id).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+
+            //用户
+            if (await db.Users.Where(x => x.SmallDistrictId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+
+            //小区物业商户
+            if (await db.SmallDistrictShops.Where(x => x.SmallDistrictId.ToString() == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+
             return false;
         }
 
-        public void OnSubscribe(StreetOfficeIncrementer incrementer)
-        {
-            incrementer.StreetOfficeEvent += StreetOfficeChanging;//在发布者私有委托里增加方法
-        }
-
-        public async void StreetOfficeChanging(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)
-        {
-            //using (var db = new GuoGuoCommunityContext())
-            //{
-            //    await db.SmallDistricts.Where(x => x.StreetOfficeId == streetOffice.Id).UpdateAsync(x => new SmallDistrict { StreetOfficeName = streetOffice.Name });
-            //}
-        }
-
-        public void OnSubscribe(CommunityIncrementer incrementer)
-        {
-            incrementer.CommunityEvent += CommunityChanging;//在发布者私有委托里增加方法
-        }
-
-        public async void CommunityChanging(GuoGuoCommunityContext dbs, Community community, CancellationToken token = default)
-        {
-            //using (var db = new GuoGuoCommunityContext())
-            //{
-            //    await db.SmallDistricts.Where(x => x.CommunityId == community.Id.ToString()).UpdateAsync(x => new SmallDistrict { CommunityName = community.Name });
-            //}
-        }
         #endregion
 
         public async Task<SmallDistrict> AddAsync(SmallDistrictDto dto, CancellationToken token = default)
@@ -135,7 +114,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该小区已存在！");
                 }
-                var entity = db.SmallDistricts.Add(new SmallDistrict
+                var smallDistrict = new SmallDistrict
                 {
                     Name = dto.Name,
                     City = dto.City,
@@ -147,7 +126,21 @@ namespace GuoGuoCommunity.Domain.Service
                     LastOperationUserId = dto.OperationUserId,
                     CommunityId = communityId,
                     PhoneNumber = dto.PhoneNumber
-                });
+                };
+                if (!string.IsNullOrWhiteSpace(dto.PropertyCompanyId))
+                {
+                    if (!Guid.TryParse(dto.PropertyCompanyId, out var propertyCompanyId))
+                    {
+                        throw new NotImplementedException("物业公司Id信息不正确！");
+                    }
+                    var propertyCompany = await db.PropertyCompanies.Where(x => x.Id == propertyCompanyId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                    if (propertyCompany == null)
+                    {
+                        throw new NotImplementedException("物业公司不存在！");
+                    }
+                    smallDistrict.PropertyCompanyId = propertyCompanyId;
+                }
+                var entity = db.SmallDistricts.Add(smallDistrict);
                 await db.SaveChangesAsync(token);
                 return entity;
             }
@@ -249,6 +242,19 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该小区名称已存在！");
                 }
+                if (!string.IsNullOrWhiteSpace(dto.PropertyCompanyId))
+                {
+                    if (!Guid.TryParse(dto.PropertyCompanyId, out var propertyCompanyId))
+                    {
+                        throw new NotImplementedException("物业公司Id信息不正确！");
+                    }
+                    var propertyCompany = await db.PropertyCompanies.Where(x => x.Id == propertyCompanyId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                    if (propertyCompany == null)
+                    {
+                        throw new NotImplementedException("物业公司不存在！");
+                    }
+                    smallDistrict.PropertyCompanyId = propertyCompanyId;
+                }
                 smallDistrict.Name = dto.Name;
                 smallDistrict.LastOperationTime = dto.OperationTime;
                 smallDistrict.LastOperationUserId = dto.OperationUserId;
@@ -270,7 +276,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = await db.SmallDistricts.Include(x => x.Community.StreetOffice).Where(x => x.IsDeleted == false).ToListAsync(token);
+                var list = await db.SmallDistricts.Include(x => x.Community.StreetOffice).Include(x => x.PropertyCompany).Where(x => x.IsDeleted == false).ToListAsync(token);
                 if (!string.IsNullOrWhiteSpace(dto.State))
                 {
                     list = list.Where(x => x.State == dto.State).ToList();
@@ -295,7 +301,10 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     list = list.Where(x => x.Name.Contains(dto.Name)).ToList();
                 }
-
+                if (!string.IsNullOrWhiteSpace(dto.PropertyCompanyId))
+                {
+                    list = list.Where(x => x.PropertyCompanyId.ToString() == dto.PropertyCompanyId).ToList();
+                }
                 return list;
             }
         }
@@ -306,7 +315,7 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 if (Guid.TryParse(id, out var uid))
                 {
-                    return await db.SmallDistricts.Include(x => x.Community.StreetOffice).Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                    return await db.SmallDistricts.Include(x => x.Community.StreetOffice).Include(x => x.PropertyCompany).Where(x => x.Id == uid).FirstOrDefaultAsync(token);
                 }
                 throw new NotImplementedException("该小区信息不正确！");
             }

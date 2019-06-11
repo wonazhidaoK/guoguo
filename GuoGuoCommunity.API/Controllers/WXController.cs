@@ -32,7 +32,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IVipOwnerCertificationRecordRepository _vipOwnerCertificationRecordRepository;
         private readonly IVipOwnerApplicationRecordRepository _vipOwnerApplicationRecordRepository;
         private readonly IVipOwnerRepository _vipOwnerRepository;
-        private TokenManager _tokenManager;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// 
@@ -251,7 +251,13 @@ namespace GuoGuoCommunity.API.Controllers
 
                 if (user == null)
                 {
-                    user = await _userRepository.AddWeiXinAsync(new UserDto() { OpenId = openIdResult.openid, UnionId = openIdResult.unionid }, cancelToken);
+                    user = await _userRepository.AddWeiXinAsync(new UserDto()
+                    {
+                        OpenId = openIdResult.openid,
+                        UnionId = openIdResult.unionid,
+                        OperationTime = DateTimeOffset.Now,
+                        OperationUserId = "system"
+                    }, cancelToken);
                 }
                 //产生 Token
                 var token = _tokenManager.Create(user);

@@ -22,7 +22,7 @@ namespace GuoGuoCommunity.Domain.Service
                     AnnexContent = dto.AnnexContent,
                     CreateOperationTime = dto.OperationTime,
                     CreateOperationUserId = dto.OperationUserId,
-                   
+
                 });
                 if (!Guid.TryParse(entity.AnnexContent, out var annexContent))
                 {
@@ -59,7 +59,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.AnnouncementAnnices.Where(x =>ids.Contains(x.AnnouncementId)).ToListAsync(token);
+                return await db.AnnouncementAnnices.Where(x => ids.Contains(x.AnnouncementId)).ToListAsync(token);
             }
         }
 
@@ -87,7 +87,7 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 return "";
             }
-            
+
         }
 
         public Task UpdateAsync(AnnouncementAnnexDto dto, CancellationToken token = default)

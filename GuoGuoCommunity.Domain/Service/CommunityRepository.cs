@@ -178,25 +178,13 @@ namespace GuoGuoCommunity.Domain.Service
         {
             CommunityIncrementer incrementer = new CommunityIncrementer();
 
-            //小区订阅
-            SmallDistrictRepository smallDistrictRepository = new SmallDistrictRepository();
-            smallDistrictRepository.OnSubscribe(incrementer);
-
             //公告订阅
             AnnouncementRepository announcementRepository = new AnnouncementRepository();
             announcementRepository.OnSubscribe(incrementer);
 
-            //业主认证订阅
-            OwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
-            ownerCertificationRecordRepository.OnSubscribe(incrementer);
-
             //投票订阅
             VoteRepository voteRepository = new VoteRepository();
             voteRepository.OnSubscribe(incrementer);
-
-            //投诉订阅
-            ComplaintRepository complaintRepository = new ComplaintRepository();
-            complaintRepository.OnSubscribe(incrementer);
 
             //用户订阅
             UserRepository userRepository = new UserRepository();
@@ -212,21 +200,25 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 return true;
             }
-            ////公告
-            //if (await db.Announcements.Where(x => x.IsDeleted == false && x.CommunityId == dto.Id).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
-            ////业主认证
-            //if (await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false && x.CommunityId == dto.Id).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
-            ////投诉
-            //if (await db.Votes.Where(x => x.IsDeleted == false && x.CommunityId == dto.Id).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
+
+            //公告
+            if (await db.Announcements.Where(x => x.IsDeleted == false && x.CommunityId == dto.Id).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+          
+            //投诉
+            if (await db.Votes.Where(x => x.IsDeleted == false && x.CommunityId == dto.Id).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+
+            //用户
+            if (await db.Users.Where(x => x.CommunityId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+
             return false;
 
         }

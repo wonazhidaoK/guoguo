@@ -134,19 +134,8 @@ namespace GuoGuoCommunity.Domain.Service
                 complaintType.Description = dto.Description;
                 complaintType.LastOperationTime = dto.OperationTime;
                 complaintType.LastOperationUserId = dto.OperationUserId;
-                OnUpdateAsync(db, dto, token);
                 await db.SaveChangesAsync(token);
             }
-        }
-
-        private void OnUpdateAsync(GuoGuoCommunityContext db, ComplaintTypeDto dto, CancellationToken token = default)
-        {
-            ComplaintTypeIncrementer complaintTypeIncrementer = new ComplaintTypeIncrementer();
-
-            //投诉订阅
-            ComplaintRepository complaintRepository = new ComplaintRepository();
-            complaintRepository.OnSubscribe(complaintTypeIncrementer);
-
         }
 
         private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, ComplaintTypeDto dto, CancellationToken token = default)

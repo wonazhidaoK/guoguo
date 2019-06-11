@@ -20,7 +20,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IStationLetterAnnexRepository _stationLetterAnnexRepository;
         private readonly IStationLetterBrowseRecordRepository _stationLetterBrowseRecordRepository;
         private readonly IUserRepository _userRepository;
-        private TokenManager _tokenManager;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// 

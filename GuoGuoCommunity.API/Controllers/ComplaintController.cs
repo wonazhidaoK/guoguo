@@ -22,7 +22,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IComplaintFollowUpRepository _complaintFollowUpRepository;
         private readonly IComplaintStatusChangeRecordingRepository _complaintStatusChangeRecordingRepository;
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
-        private TokenManager _tokenManager;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// 

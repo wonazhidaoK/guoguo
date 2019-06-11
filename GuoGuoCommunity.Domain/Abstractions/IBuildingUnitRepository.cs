@@ -3,7 +3,7 @@ using GuoGuoCommunity.Domain.Models;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public interface IBuildingUnitRepository:IIncludeRepository<BuildingUnit, BuildingUnitDto>
+    public interface IBuildingUnitRepository : IIncludeRepository<BuildingUnit, BuildingUnitDto>
     {
     }
 }

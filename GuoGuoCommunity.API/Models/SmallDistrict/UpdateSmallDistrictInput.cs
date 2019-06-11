@@ -19,5 +19,10 @@
         /// 
         /// </summary>
         public string PhoneNumber { get; set; }
+
+        /// <summary>
+        /// 物业公司Id
+        /// </summary>
+        public string PropertyCompanyId { get; set; }
     }
 }

@@ -60,5 +60,10 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 操作时间
         /// </summary>
         public DateTimeOffset? OperationTime { get; set; }
+
+        /// <summary>
+        /// 物业公司Id
+        /// </summary>
+        public string PropertyCompanyId { get; set; }
     }
 }

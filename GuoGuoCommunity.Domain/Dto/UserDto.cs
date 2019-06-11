@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GuoGuoCommunity.Domain.Models;
+using System;
+using System.Collections.Generic;
 
 namespace GuoGuoCommunity.Domain.Dto
 {
@@ -41,7 +43,7 @@ namespace GuoGuoCommunity.Domain.Dto
         /// </summary>
         public string UnionId { get; set; }
 
-        
+
 
         /// <summary>
         /// 
@@ -72,12 +74,12 @@ namespace GuoGuoCommunity.Domain.Dto
         /// <summary>
         /// 街道办Id
         /// </summary>
-        public string StreetOfficeId { get; set; } 
+        public string StreetOfficeId { get; set; }
 
         /// <summary>
         /// 社区Id
         /// </summary>
-        public string CommunityId { get; set; } 
+        public string CommunityId { get; set; }
 
         /// <summary>
         /// 小区Id
@@ -100,5 +102,18 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 操作时间
         /// </summary>
         public DateTimeOffset? OperationTime { get; set; }
+
+        public string ShopId { get; set; }
+
+        public int PageIndex { get; set; }
+
+        public int PageSize { get; set; }
+    }
+
+    public class UserPageDto
+    {
+        public List<User> List { get; set; }
+
+        public int Count { get; set; }
     }
 }

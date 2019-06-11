@@ -35,7 +35,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly ISmallDistrictRepository _smallDistrictRepository;
         private readonly IVipOwnerRepository _vipOwnerRepository;
         private readonly IVipOwnerCertificationRecordRepository _vipOwnerCertificationRecordRepository;
-        private TokenManager _tokenManager;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// 

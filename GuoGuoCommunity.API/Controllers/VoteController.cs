@@ -43,7 +43,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IOwnerRepository _ownerRepository;
         private readonly IStreetOfficeRepository _streetOfficeRepository;
         private readonly IWeiXinUserRepository _weiXinUserRepository;
-        private TokenManager _tokenManager;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// 

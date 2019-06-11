@@ -21,7 +21,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("高级认证申请条件id信息不正确！");
                 }
                 var vipOwnerCertification = await db.VipOwnerCertificationConditions.Where(x => x.Id == certificationConditionId).FirstOrDefaultAsync(token);
-               
+
                 var entity = db.VipOwnerCertificationAnnices.Add(new VipOwnerCertificationAnnex
                 {
                     ApplicationRecordId = dto.ApplicationRecordId,
@@ -66,7 +66,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.VipOwnerCertificationAnnices.Where(x =>  x.ApplicationRecordId == dto.ApplicationRecordId).ToListAsync(token);
+                return await db.VipOwnerCertificationAnnices.Where(x => x.ApplicationRecordId == dto.ApplicationRecordId).ToListAsync(token);
             }
         }
 

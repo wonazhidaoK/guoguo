@@ -297,8 +297,8 @@ namespace GuoGuoCommunity.Domain.Service
 
         public void OnSubscribe(CommunityIncrementer incrementer)
         {
-            incrementer.CommunityEvent += CommunityChanging;//在发布者私有委托里增加方法
-        }
+            incrementer.CommunityEvent += CommunityChanging;
+        }
 
         public async void CommunityChanging(GuoGuoCommunityContext dbs, Community community, CancellationToken token = default)
         {

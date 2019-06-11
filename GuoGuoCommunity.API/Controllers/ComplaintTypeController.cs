@@ -18,7 +18,7 @@ namespace GuoGuoCommunity.API.Controllers
     public class ComplaintTypeController : BaseController
     {
         private readonly IComplaintTypeRepository _complaintTypeRepository;
-        private TokenManager _tokenManager;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// 
@@ -144,7 +144,7 @@ namespace GuoGuoCommunity.API.Controllers
                 Name = input.Name,
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = user.Id.ToString()
-            });
+            }, cancellationToken);
 
             return new ApiResult();
         }

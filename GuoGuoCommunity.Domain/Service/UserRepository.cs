@@ -64,7 +64,11 @@ namespace GuoGuoCommunity.Domain.Service
                     StreetOfficeId = dto.StreetOfficeId,
                     StreetOfficeName = streetOffice.Name,
                     DepartmentValue = dto.DepartmentValue,
-                    DepartmentName = Department.GetAll().Where(x => x.Value == dto.DepartmentValue).Select(x => x.Name).FirstOrDefault()
+                    DepartmentName = Department.GetAll().Where(x => x.Value == dto.DepartmentValue).Select(x => x.Name).FirstOrDefault(),
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                    LastOperationTime = dto.OperationTime,
+                    LastOperationUserId = dto.OperationUserId
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -144,7 +148,11 @@ namespace GuoGuoCommunity.Domain.Service
                     SmallDistrictId = dto.SmallDistrictId,
                     SmallDistrictName = smallDistrict.Name,
                     DepartmentValue = dto.DepartmentValue,
-                    DepartmentName = Department.GetAll().Where(x => x.Value == dto.DepartmentValue).Select(x => x.Name).FirstOrDefault()
+                    DepartmentName = Department.GetAll().Where(x => x.Value == dto.DepartmentValue).Select(x => x.Name).FirstOrDefault(),
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                    LastOperationTime = dto.OperationTime,
+                    LastOperationUserId = dto.OperationUserId
                 });
                 await db.SaveChangesAsync(token);
                 return entity;
@@ -286,10 +294,10 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("角色信息不存在！");
                 }
-                var entity = await db.Users.Where(x => (x.Name == dto.Name || x.PhoneNumber == dto.PhoneNumber) && x.IsDeleted == false && x.Id != uid).FirstOrDefaultAsync(token);
+                var entity = await db.Users.Where(x => x.PhoneNumber == dto.PhoneNumber && x.IsDeleted == false && x.Id != uid).FirstOrDefaultAsync(token);
                 if (entity != null)
                 {
-                    throw new NotImplementedException("该用户已存在！");
+                    throw new NotImplementedException("该手机号已存在！");
                 }
                 user.Name = dto.Name;
                 user.Password = dto.Password;
@@ -336,7 +344,11 @@ namespace GuoGuoCommunity.Domain.Service
                     OpenId = dto.OpenId,
                     UnionId = dto.UnionId,
                     DepartmentValue = Department.YeZhu.Value,
-                    DepartmentName = Department.YeZhu.Name
+                    DepartmentName = Department.YeZhu.Name,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId,
+                    LastOperationTime = dto.OperationTime,
+                    LastOperationUserId = dto.OperationUserId
                     //Name = dto.Name,
                     //PhoneNumber = dto.PhoneNumber,
                     //RoleId = dto.RoleId,
@@ -390,6 +402,8 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        #region 事件
+
         public void OnSubscribe(CommunityIncrementer incrementer)
         {
             incrementer.CommunityEvent += CommunityChanging;
@@ -400,6 +414,154 @@ namespace GuoGuoCommunity.Domain.Service
             using (var db = new GuoGuoCommunityContext())
             {
                 await db.Users.Where(x => x.CommunityId == community.Id.ToString()).UpdateAsync(x => new User { CommunityName = community.Name });
+            }
+        }
+
+        public void OnSubscribe(StreetOfficeIncrementer incrementer)
+        {
+            incrementer.StreetOfficeEvent += StreetOfficeChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void StreetOfficeChanging(GuoGuoCommunityContext dbs, StreetOffice streetOffice, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.Users.Where(x => x.StreetOfficeId == streetOffice.Id.ToString()).UpdateAsync(x => new User { StreetOfficeName = streetOffice.Name });
+            }
+        }
+
+        public void OnSubscribe(SmallDistrictIncrementer incrementer)
+        {
+            incrementer.SmallDistrictEvent += SmallDistrictChanging;//在发布者私有委托里增加方法
+        }
+
+        public async void SmallDistrictChanging(GuoGuoCommunityContext dbs, SmallDistrict smallDistrict, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                await db.Users.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new User { SmallDistrictName = smallDistrict.Name });
+            }
+        }
+
+        #endregion
+
+
+        public async Task<User> AddShopAsync(UserDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.RoleId, out var roleId))
+                {
+                    throw new NotImplementedException("角色Id信息不正确！");
+                }
+                var role = await db.User_Roles.Where(x => x.Id == roleId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (role == null)
+                {
+                    throw new NotImplementedException("角色信息不存在！");
+                }
+                if (string.IsNullOrWhiteSpace(Department.GetAll().Where(x => x.Value == dto.DepartmentValue).Select(x => x.Name).FirstOrDefault()))
+                {
+                    throw new NotImplementedException("部门信息不存在！");
+                }
+
+                if ((await db.Users.Where(x => x.Account == dto.Account && x.IsDeleted == false).FirstOrDefaultAsync(token)) != null)
+                {
+                    throw new NotImplementedException("该账号已存在！");
+                }
+                if ((await db.Users.Where(x => x.PhoneNumber == dto.PhoneNumber && x.IsDeleted == false).FirstOrDefaultAsync(token)) != null)
+                {
+                    throw new NotImplementedException("该手机号已注册过平台内账户！");
+                }
+
+                if (!Guid.TryParse(dto.ShopId, out var shopId))
+                {
+                    throw new NotImplementedException("角色Id信息不正确！");
+                }
+                var shop = await db.Shops.Where(x => x.Id == shopId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (shop == null)
+                {
+                    throw new NotImplementedException("商户信息不存在！");
+                }
+                var entity = db.Users.Add(new User
+                {
+                    Account = dto.Account,
+                    Name = dto.Name,
+                    PhoneNumber = dto.PhoneNumber,
+                    Password = dto.Password,
+                    RoleId = dto.RoleId,
+                    RoleName = role.Name,
+                    DepartmentValue = dto.DepartmentValue,
+                    DepartmentName = Department.GetAll().Where(x => x.Value == dto.DepartmentValue).Select(x => x.Name).FirstOrDefault(),
+                    ShopId = shopId,
+                    CreateOperationTime = dto.OperationTime,
+                    CreateOperationUserId = dto.OperationUserId
+                });
+                await db.SaveChangesAsync(token);
+                return entity;
+            }
+        }
+
+        public async Task<UserPageDto> GetAllShopAsync(UserDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var list = db.Users.Include(x => x.Shop).Where(x => x.IsDeleted == false && x.DepartmentValue == Department.Shop.Value);
+
+                if (!string.IsNullOrWhiteSpace(dto.PhoneNumber))
+                {
+                    list = list.Where(x => x.PhoneNumber.Contains(dto.PhoneNumber));
+                }
+                if (!string.IsNullOrWhiteSpace(dto.ShopId))
+                {
+                    list = list.Where(x => x.ShopId.ToString() == dto.ShopId);
+                }
+                if (!string.IsNullOrWhiteSpace(dto.Name))
+                {
+                    list = list.Where(x => x.Name.Contains(dto.Name));
+                }
+                list = list.OrderByDescending(item => item.CreateOperationTime);
+                List<User> resultList = await list.Skip((dto.PageIndex - 1) * dto.PageSize).Take(dto.PageSize).ToListAsync(token);
+                UserPageDto pagelist = new UserPageDto { List = resultList, Count = list.Count() };
+                return pagelist;
+            }
+        }
+
+        public async Task<User> GetIncludeAsync(UserDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var user = await db.Users.Include(x => x.Shop).Where(x => (x.Account == dto.Name || x.PhoneNumber == dto.Name) && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (user == null)
+                {
+                    throw new NotImplementedException("该用户不存在！");
+                }
+                if (user.Password != dto.Password)
+                {
+                    throw new NotImplementedException("密码不正确！");
+                }
+                return user;
+            }
+        }
+
+        public async Task<User> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                var user = await db.Users.Include(x => x.Shop).Where(x => x.Id.ToString() == id && x.IsDeleted == false).FirstOrDefaultAsync(token);
+                if (user == null)
+                {
+                    throw new NotImplementedException("该用户不存在！");
+                }
+
+                return user;
+            }
+        }
+
+        public async Task<List<User>> GetByShopIdAsync(string shopId, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                return await db.Users.Where(x => x.ShopId.ToString() == shopId).ToListAsync(token);
             }
         }
     }

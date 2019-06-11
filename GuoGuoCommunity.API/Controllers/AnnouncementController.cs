@@ -27,7 +27,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly ISmallDistrictRepository _smallDistrictRepository;
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private readonly IUserRepository _userRepository;
-        private TokenManager _tokenManager;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// 公告信息管理

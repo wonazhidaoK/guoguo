@@ -18,7 +18,7 @@ namespace GuoGuoCommunity.API.Controllers
     {
         private readonly IVipOwnerCertificationRecordRepository _vipOwnerCertificationRecordRepository;
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
-        private TokenManager _tokenManager;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// 

@@ -47,7 +47,7 @@ namespace GuoGuoCommunity.Domain.Service
                 }
 
                 voteQuestionOption.Votes = voteQuestionOption.Votes + 1;
-                
+
                 await db.SaveChangesAsync(token);
                 return voteQuestionOption;
             }
@@ -69,7 +69,7 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 if (Guid.TryParse(id, out var uid))
                 {
-                    return await db.VoteQuestionOptions.Where(x => x.IsDeleted == false && x.Id == uid ).FirstOrDefaultAsync(token);
+                    return await db.VoteQuestionOptions.Where(x => x.IsDeleted == false && x.Id == uid).FirstOrDefaultAsync(token);
                 }
                 throw new NotImplementedException("该投票问题选项Id信息不正确！");
             }

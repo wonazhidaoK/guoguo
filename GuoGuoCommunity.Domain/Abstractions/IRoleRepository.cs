@@ -15,5 +15,7 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task DeleteAsync(RoleDto dto, CancellationToken token = default);
 
         Task UpdateAsync(RoleDto dto, CancellationToken token = default);
+
+        Task<User_Role> GetAsync(string id, CancellationToken token = default);
     }
 }

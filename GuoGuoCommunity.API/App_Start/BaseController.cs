@@ -31,6 +31,11 @@ namespace GuoGuoCommunity.API
         public static readonly string AnnouncementTemplateId = ConfigurationManager.AppSettings["AnnouncementTemplateId"];
 
         /// <summary>
+        /// 微信推送下单成功模板Id
+        /// </summary>
+        public static readonly string OrderTemplateId = ConfigurationManager.AppSettings["OrderTemplateId"];
+
+        /// <summary>
         /// 创建账户正则
         /// </summary>
         public readonly Regex re = new Regex(@"^[a-zA-Z0-9_]{1,}$");
@@ -98,24 +103,10 @@ namespace GuoGuoCommunity.API
         /// <summary>
         /// 
         /// </summary>
-        public static string Authorization ="";
+        public static string Authorization = "";
 
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        //public int loginid { get; set; }
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        //public string loginname { get; set; }
-
-        /////// <summary>
-        /////// 
-        /////// </summary>
-        ////public BaseBll baseBll { get; set; }
-
+        private static readonly object Locker = new object();
+        private static short _sn = 0;
 
         /// <summary>
         /// 
@@ -157,41 +148,34 @@ namespace GuoGuoCommunity.API
                 //        this.baseBll = new OrdinaryBll();
                 //    }
             }
-            catch (Exception )
+            catch (Exception)
             {
                 //LogHelper.WriteErrorLog("Initialize", ex);
             }
         }
-        ///// <summary>
-        ///// 设置action返回信息
-        ///// </summary>
-        ///// <param name="result">返回实体</param>
-        ///// <returns></returns>
-        //protected HttpResponseMessage GetHttpResponseMessage(object result)
-        //{
-        //    //BaseResponseEntity<object> responseBaseEntity = new BaseResponseEntity<object>(0, result, string.Empty);
-        //    return new HttpResponseMessage();
-        //    //{
-        //    //    Content =
-        //    //       new StringContent(JsonConvert.SerializeObject(responseBaseEntity, dtConverter), System.Text.Encoding.UTF8,
-        //    //           "application/json")
-        //    //};
-        //}
-        ///// <summary>
-        ///// 设置action返回信息
-        ///// </summary>
-        ///// <param name="result">返回实体</param>
-        ///// <param name="msg">返回的信息参数</param>
-        ///// <returns></returns>
-        //protected HttpResponseMessage GetHttpResponseMessage(object result, ref string msg)
-        //{
-        //    //BaseResponseEntity<object> responseBaseEntity = new BaseResponseEntity<object>(0, result, msg ?? string.Empty);
-        //    return new HttpResponseMessage();
-        //    //{
-        //    //    Content =
-        //    //       new StringContent(JsonConvert.SerializeObject(responseBaseEntity, dtConverter), System.Text.Encoding.UTF8,
-        //    //           "application/json")
-        //    //};
-        //}
+
+        /// <summary>
+        /// 生成编号
+        /// </summary>
+        /// <param name="sign"></param>
+        /// <returns></returns>
+        protected string GenerateCode(string sign)
+        {
+            lock (Locker)  //lock 关键字可确保当一个线程位于代码的临界区时，另一个线程不会进入该临界区。 
+            {
+                if (_sn == short.MaxValue)
+                {
+                    _sn = 0;
+                }
+                else
+                {
+                    _sn++;
+                }
+
+                //Thread.Sleep(50);
+
+                return sign + DateTime.Now.ToString("yyyyMMddHHmmss") + (_sn.ToString().PadLeft(5, '0'));
+            }
+        }
     }
 }

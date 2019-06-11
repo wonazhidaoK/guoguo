@@ -60,7 +60,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.VoteRecords.Where(x => x.IsDeleted == false && x.VoteId == dto.VoteId&&x.OwnerCertificationId==dto.OwnerCertificationId).FirstOrDefaultAsync(token);
+                return await db.VoteRecords.Where(x => x.IsDeleted == false && x.VoteId == dto.VoteId && x.OwnerCertificationId == dto.OwnerCertificationId).FirstOrDefaultAsync(token);
             }
         }
 

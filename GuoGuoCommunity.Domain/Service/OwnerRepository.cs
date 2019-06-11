@@ -14,13 +14,14 @@ namespace GuoGuoCommunity.Domain.Service
     {
         #region 事件
 
-        private void OnUpdate(GuoGuoCommunityContext db, OwnerDto dto, CancellationToken token = default)
-        {
 
-        }
-
-        private bool OnDelete(GuoGuoCommunityContext db, OwnerDto dto, CancellationToken token = default)
+        private async Task<bool> OnDelete(GuoGuoCommunityContext db, OwnerDto dto, CancellationToken token = default)
         {
+            //业主认证申请信息
+            if (await db.OwnerCertificationRecords.Where(x => x.Owner.ToString() == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
 
             return false;
         }
@@ -40,7 +41,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("业户信息不存在！");
                 }
-
+                //var owner = await db.Owners.Where(x => x.IDCard == dto.IDCard && x.IsDeleted == false && x.IndustryId == industryId).FirstOrDefaultAsync(token);
                 var owner = await db.Owners.Where(x => x.IDCard == dto.IDCard && x.IsDeleted == false && x.IndustryId == industryId).FirstOrDefaultAsync(token);
                 if (owner != null)
                 {
@@ -82,7 +83,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("业主已认证不允许删除！");
                 }
-                if (OnDelete(db, dto, token))
+                if (await OnDelete(db, dto, token))
                 {
                     throw new NotImplementedException("该业主信息下存在下级数据");
                 }
@@ -174,7 +175,7 @@ namespace GuoGuoCommunity.Domain.Service
                 owner.PhoneNumber = dto.PhoneNumber;
                 owner.LastOperationTime = dto.OperationTime;
                 owner.LastOperationUserId = dto.OperationUserId;
-                OnUpdate(db, dto, token);
+
                 await db.SaveChangesAsync(token);
             }
         }

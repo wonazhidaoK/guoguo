@@ -163,19 +163,6 @@ namespace GuoGuoCommunity.Domain.Service
             return false;
         }
 
-        public void OnSubscribe(SmallDistrictIncrementer incrementer)
-        {
-            incrementer.SmallDistrictEvent += SmallDistrictChanging;//在发布者私有委托里增加方法
-        }
-
-        public async void SmallDistrictChanging(GuoGuoCommunityContext dbs, SmallDistrict smallDistrict, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                //await db.VipOwners.Where(x => x.SmallDistrictId.ToString() == smallDistrict.Id.ToString()).UpdateAsync(x => new VipOwner { SmallDistrictName = smallDistrict.Name });
-            }
-        }
-
         public async Task<List<VipOwner>> GetListForStreetOfficeIdAsync(VipOwnerDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())

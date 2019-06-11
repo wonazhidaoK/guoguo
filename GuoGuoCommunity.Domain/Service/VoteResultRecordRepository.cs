@@ -115,7 +115,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.VoteResultRecords.Where(x => x.VoteId == voteId ).ToListAsync(token);
+                return await db.VoteResultRecords.Where(x => x.VoteId == voteId).ToListAsync(token);
             }
         }
 

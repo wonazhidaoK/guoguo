@@ -14,19 +14,6 @@ namespace GuoGuoCommunity.Domain.Service
     {
         #region 事件
 
-        private async Task OnUpdateAsync(GuoGuoCommunityContext db, BuildingUnit dto, CancellationToken token = default)
-        {
-            BuildingUnitIncrementer incrementer = new BuildingUnitIncrementer();
-            //业主认证记录订阅
-            OwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
-            ownerCertificationRecordRepository.OnSubscribe(incrementer);
-            //业户信息订阅
-            IndustryRepository industryRepository = new IndustryRepository();
-            industryRepository.OnSubscribe(incrementer);
-
-            await incrementer.OnUpdate(db, dto, token);
-        }
-
         private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, BuildingUnitDto dto, CancellationToken token = default)
         {
             //业户信息
@@ -34,12 +21,6 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 return true;
             }
-
-            //业主认证记录
-            //if (await db.OwnerCertificationRecords.Where(x => x.BuildingId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
             return false;
         }
 
@@ -169,7 +150,6 @@ namespace GuoGuoCommunity.Domain.Service
                 buildingUnit.NumberOfLayers = dto.NumberOfLayers;
                 buildingUnit.LastOperationTime = dto.OperationTime;
                 buildingUnit.LastOperationUserId = dto.OperationUserId;
-                await OnUpdateAsync(db, buildingUnit, token);
                 await db.SaveChangesAsync(token);
             }
         }

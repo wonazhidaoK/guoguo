@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public interface IRepository<T,Dto>
+    public interface IRepository<T, Dto>
     {
         Task<T> AddAsync(Dto dto, CancellationToken token = default);
 
@@ -17,5 +17,10 @@ namespace GuoGuoCommunity.Domain.Abstractions
         Task<T> GetAsync(string id, CancellationToken token = default);
 
         Task<List<T>> GetListAsync(Dto dto, CancellationToken token = default);
+    }
+
+    public interface IPageRepository<T, Dto, TForPage> : IRepository<T, Dto>
+    {
+        Task<TForPage> GetListForPageAsync(Dto dto, CancellationToken token = default);
     }
 }

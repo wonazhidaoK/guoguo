@@ -21,7 +21,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IVoteQuestionOptionRepository _voteQuestionOptionRepository;
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private readonly IVoteAssociationVipOwnerRepository _voteAssociationVipOwnerRepository;
-        private TokenManager _tokenManager;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// 

@@ -51,9 +51,21 @@ namespace GuoGuoCommunity.Domain.Models
         public Community Community { get; set; }
 
         /// <summary>
+        /// 物业公司Id
+        /// </summary>
+        [ForeignKey("PropertyCompany")]
+        public Guid? PropertyCompanyId { get; set; }
+
+        public PropertyCompany PropertyCompany { get; set; }
+
+        #region 物业账户扩展信息
+
+        /// <summary>
         /// 电话
         /// </summary>
         public string PhoneNumber { get; set; }
+
+        #endregion
 
         public bool IsDeleted { get; set; }
 

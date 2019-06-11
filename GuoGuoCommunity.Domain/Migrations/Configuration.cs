@@ -41,7 +41,16 @@ namespace GuoGuoCommunity.Domain.Migrations
                     new Menu() { Name = "街道办后台-投票", Key = "jdb_vote", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
                     new Menu() { Name = "街道办后台-投诉", Key = "jdb_complaint", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
                     new Menu() { Name = "街道办后台-站内信", Key = "jdb_letter", DepartmentValue = Department.JieDaoBan.Value, DepartmentName = Department.JieDaoBan.Name },
-                    new Menu() { Name = "系统管理员", Key = "authorityMax" }
+                    new Menu() { Name = "系统管理员", Key = "authorityMax" },
+                    new Menu() { Name = "商家中心", Key = "shop_info", DepartmentValue = Department.Shop.Value, DepartmentName = Department.Shop.Name },
+                    new Menu() { Name = "商品类别", Key = "shop_type", DepartmentValue = Department.Shop.Value, DepartmentName = Department.Shop.Name },
+                    new Menu() { Name = "订单管理", Key = "shop_order", DepartmentValue = Department.Shop.Value, DepartmentName = Department.Shop.Name },
+                    new Menu() { Name = "订单统计", Key = "shop_order_num", DepartmentValue = Department.Shop.Value, DepartmentName = Department.Shop.Name },
+                    new Menu() { Name = "商品管理", Key = "shop_goods", DepartmentValue = Department.Shop.Value, DepartmentName = Department.Shop.Name },
+                    new Menu() { Name = "物业-基本信息", Key = "wy_info", DepartmentValue = Department.WuYe.Value, DepartmentName = Department.Shop.Name },
+                    new Menu() { Name = "物业-个人信息", Key = "wy_user_info", DepartmentValue = Department.WuYe.Value, DepartmentName = Department.Shop.Name },
+                    new Menu() { Name = "物业-关联商家", Key = "wy_shop", DepartmentValue = Department.WuYe.Value, DepartmentName = Department.Shop.Name },
+                    new Menu() { Name = "物业-订单管理", Key = "wy_order", DepartmentValue = Department.WuYe.Value, DepartmentName = Department.Shop.Name }
                     );
                 context.Users.AddOrUpdate(x => x.Name,
                     new User()

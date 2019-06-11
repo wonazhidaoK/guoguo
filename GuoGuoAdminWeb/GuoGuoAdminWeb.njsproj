@@ -1,0 +1,675 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <Name>GuoGuoAdminWeb</Name>
+    <RootNamespace>NodejsWebApp1</RootNamespace>
+    <LastActiveSolutionConfig>Debug|Any CPU</LastActiveSolutionConfig>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>0860d8b8-170a-4c65-9bc1-b621d89ba844</ProjectGuid>
+    <ProjectHome>
+    </ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <NodejsPort>1337</NodejsPort>
+    <StartWebBrowser>True</StartWebBrowser>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="build\" />
+    <Folder Include="config\" />
+    <Folder Include="src\" />
+    <Folder Include="src\api\" />
+    <Folder Include="src\assets\" />
+    <Folder Include="src\assets\401_images\" />
+    <Folder Include="src\assets\404_images\" />
+    <Folder Include="src\assets\custom-theme\" />
+    <Folder Include="src\assets\custom-theme\fonts\" />
+    <Folder Include="src\assets\default_images\" />
+    <Folder Include="src\components\" />
+    <Folder Include="src\components\BackToTop\" />
+    <Folder Include="src\components\Breadcrumb\" />
+    <Folder Include="src\components\Charts\" />
+    <Folder Include="src\components\Charts\mixins\" />
+    <Folder Include="src\components\DndList\" />
+    <Folder Include="src\components\DragSelect\" />
+    <Folder Include="src\components\Dropzone\" />
+    <Folder Include="src\components\ErrorLog\" />
+    <Folder Include="src\components\GithubCorner\" />
+    <Folder Include="src\components\Hamburger\" />
+    <Folder Include="src\components\HeaderSearch\" />
+    <Folder Include="src\components\ImageCropper\" />
+    <Folder Include="src\components\ImageCropper\utils\" />
+    <Folder Include="src\components\imgPreview\" />
+    <Folder Include="src\components\JsonEditor\" />
+    <Folder Include="src\components\Kanban\" />
+    <Folder Include="src\components\LangSelect\" />
+    <Folder Include="src\components\MarkdownEditor\" />
+    <Folder Include="src\components\MDinput\" />
+    <Folder Include="src\components\SignalrComs\" />
+    <Folder Include="src\components\Pagination\" />
+    <Folder Include="src\components\PanThumb\" />
+    <Folder Include="src\components\Screenfull\" />
+    <Folder Include="src\components\Share\" />
+    <Folder Include="src\components\SizeSelect\" />
+    <Folder Include="src\components\Sticky\" />
+    <Folder Include="src\components\SvgIcon\" />
+    <Folder Include="src\components\TextHoverEffect\" />
+    <Folder Include="src\components\ThemePicker\" />
+    <Folder Include="src\components\Tinymce\" />
+    <Folder Include="src\components\Tinymce\components\" />
+    <Folder Include="src\components\TreeTable\" />
+    <Folder Include="src\components\UploadExcel\" />
+    <Folder Include="src\components\Upload\" />
+    <Folder Include="src\directive\" />
+    <Folder Include="src\directive\clipboard\" />
+    <Folder Include="src\directive\el-dragDialog\" />
+    <Folder Include="src\directive\permission\" />
+    <Folder Include="src\directive\waves\" />
+    <Folder Include="src\filters\" />
+    <Folder Include="src\icons\" />
+    <Folder Include="src\icons\svg\" />
+    <Folder Include="src\lang\" />
+    <Folder Include="src\mock\" />
+    <Folder Include="src\router\" />
+    <Folder Include="src\router\modules\" />
+    <Folder Include="src\store\" />
+    <Folder Include="src\store\modules\" />
+    <Folder Include="src\styles\" />
+    <Folder Include="src\utils\" />
+    <Folder Include="src\vendor\" />
+    <Folder Include="src\views\" />
+    <Folder Include="src\views\charts\" />
+    <Folder Include="src\views\clipboard\" />
+    <Folder Include="src\views\components-demo\" />
+    <Folder Include="src\views\dashboard\" />
+    <Folder Include="src\views\dashboard\admin\" />
+    <Folder Include="src\views\dashboard\admin\components\" />
+    <Folder Include="src\views\dashboard\admin\components\TodoList\" />
+    <Folder Include="src\views\dashboard\editor\" />
+    <Folder Include="src\views\documentation\" />
+    <Folder Include="src\views\errorLog\" />
+    <Folder Include="src\views\errorPage\" />
+    <Folder Include="src\views\example\" />
+    <Folder Include="src\views\example\components\" />
+    <Folder Include="src\views\example\components\Dropdown\" />
+    <Folder Include="src\views\excel\" />
+    <Folder Include="src\views\excel\components\" />
+    <Folder Include="src\views\guide\" />
+    <Folder Include="src\views\i18n-demo\" />
+    <Folder Include="src\views\jdb_complaint\" />
+    <Folder Include="src\views\jdb_gj\" />
+    <Folder Include="src\views\jdb_letter\" />
+    <Folder Include="src\views\jdb_notice\" />
+    <Folder Include="src\views\jdb_vote\" />
+    <Folder Include="src\views\jsb_rz_owner\" />
+    <Folder Include="src\views\jsb_rz_tj\" />
+    <Folder Include="src\views\layout\" />
+    <Folder Include="src\views\layout\components\" />
+    <Folder Include="src\views\layout\components\Sidebar\" />
+    <Folder Include="src\views\layout\components\TagsView\" />
+    <Folder Include="src\views\layout\mixin\" />
+    <Folder Include="src\views\login\" />
+    <Folder Include="src\views\nested\" />
+    <Folder Include="src\views\nested\menu1\" />
+    <Folder Include="src\views\nested\menu1\menu1-1\" />
+    <Folder Include="src\views\nested\menu1\menu1-2\" />
+    <Folder Include="src\views\nested\menu1\menu1-2\menu1-2-1\" />
+    <Folder Include="src\views\nested\menu1\menu1-2\menu1-2-2\" />
+    <Folder Include="src\views\nested\menu1\menu1-3\" />
+    <Folder Include="src\views\nested\menu2\" />
+    <Folder Include="src\views\shop_goods\" />
+    <Folder Include="src\views\shop_info\" />
+    <Folder Include="src\views\shop_info\components\" />
+    <Folder Include="src\views\shop_order\" />
+    <Folder Include="src\views\shop_order_num\" />
+    <Folder Include="src\views\shop_type\" />
+    <Folder Include="src\views\ww_goods\" />
+    <Folder Include="src\views\ww_shop\" />
+    <Folder Include="src\views\pdf\" />
+    <Folder Include="src\views\permission\" />
+    <Folder Include="src\views\permission\components\" />
+    <Folder Include="src\views\qiniu\" />
+    <Folder Include="src\views\redirect\" />
+    <Folder Include="src\views\table\" />
+    <Folder Include="src\views\table\dynamicTable\" />
+    <Folder Include="src\views\table\treeTable\" />
+    <Folder Include="src\views\tab\" />
+    <Folder Include="src\views\tab\components\" />
+    <Folder Include="src\views\ww_jdb\" />
+    <Folder Include="src\views\ww_jdb_account\" />
+    <Folder Include="src\views\ww_ly\" />
+    <Folder Include="src\views\ww_menu\" />
+    <Folder Include="src\views\ww_role\" />
+    <Folder Include="src\views\ww_shop_account\" />
+    <Folder Include="src\views\ww_sq\" />
+    <Folder Include="src\views\ww_tslx\" />
+    <Folder Include="src\views\ww_wy\" />
+    <Folder Include="src\views\ww_wy_account\" />
+    <Folder Include="src\views\ww_xq\" />
+    <Folder Include="src\views\ww_ywhjg\" />
+    <Folder Include="src\views\ww_ywh\" />
+    <Folder Include="src\views\wy_authentication\" />
+    <Folder Include="src\views\wy_complaint\" />
+    <Folder Include="src\views\wy_household_information\" />
+    <Folder Include="src\views\wy_user_info\" />
+    <Folder Include="src\views\wy_user_info\components\" />
+    <Folder Include="src\views\wy_info\" />
+    <Folder Include="src\views\wy_info\components\" />
+    <Folder Include="src\views\wy_letter\" />
+    <Folder Include="src\views\wy_notice\" />
+    <Folder Include="src\views\wy_order\" />
+    <Folder Include="src\views\wy_owner\" />
+    <Folder Include="src\views\wy_shop\" />
+    <Folder Include="src\views\wy_vote\" />
+    <Folder Include="src\views\zip\" />
+    <Folder Include="static\" />
+    <Folder Include="static\tinymce4.7.5\" />
+    <Folder Include="static\tinymce4.7.5\langs\" />
+    <Folder Include="static\tinymce4.7.5\plugins\" />
+    <Folder Include="static\tinymce4.7.5\plugins\codesample\" />
+    <Folder Include="static\tinymce4.7.5\plugins\codesample\css\" />
+    <Folder Include="static\tinymce4.7.5\plugins\emoticons\" />
+    <Folder Include="static\tinymce4.7.5\plugins\emoticons\img\" />
+    <Folder Include="static\tinymce4.7.5\plugins\visualblocks\" />
+    <Folder Include="static\tinymce4.7.5\plugins\visualblocks\css\" />
+    <Folder Include="static\tinymce4.7.5\skins\" />
+    <Folder Include="static\tinymce4.7.5\skins\lightgray\" />
+    <Folder Include="static\tinymce4.7.5\skins\lightgray\fonts\" />
+    <Folder Include="static\tinymce4.7.5\skins\lightgray\img\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include=".eslintrc.js" />
+    <Compile Include=".postcssrc.js" />
+    <Compile Include="build\build.js" />
+    <Compile Include="build\check-versions.js" />
+    <Compile Include="build\utils.js" />
+    <Compile Include="build\vue-loader.conf.js" />
+    <Compile Include="build\webpack.base.conf.js" />
+    <Compile Include="build\webpack.dev.conf.js" />
+    <Compile Include="build\webpack.prod.conf.js" />
+    <Compile Include="config\dev.env.js" />
+    <Compile Include="config\index.js" />
+    <Compile Include="config\prod.env.js" />
+    <Compile Include="config\sit.env.js" />
+    <Compile Include="src\api\article1.js" />
+    <Compile Include="src\api\goods.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\api\jdbGaoji.js" />
+    <Compile Include="src\api\jdbLetter.js" />
+    <Compile Include="src\api\jdbNotice.js" />
+    <Compile Include="src\api\jdbOwner.js" />
+    <Compile Include="src\api\jdbTiaojian.js" />
+    <Compile Include="src\api\jdbTs.js" />
+    <Compile Include="src\api\jdbVote.js" />
+    <Compile Include="src\api\login.js" />
+    <Compile Include="src\api\qiniu.js" />
+    <Compile Include="src\api\remoteSearch.js" />
+    <Compile Include="src\api\role.js" />
+    <Compile Include="src\api\transaction.js" />
+    <Compile Include="src\api\tslx.js" />
+    <Compile Include="src\api\wwJdb.js" />
+    <Compile Include="src\api\wwmenu.js" />
+    <Compile Include="src\api\wyLetter.js" />
+    <Compile Include="src\api\wyNotice.js" />
+    <Compile Include="src\api\wyOwner.js" />
+    <Compile Include="src\api\wySelectList.js" />
+    <Compile Include="src\api\wyTs.js" />
+    <Compile Include="src\api\wyVote.js" />
+    <Compile Include="src\api\ywhjg.js" />
+    <Compile Include="src\components\Charts\mixins\resize.js" />
+    <Compile Include="src\components\ImageCropper\utils\data2blob.js" />
+    <Compile Include="src\components\ImageCropper\utils\effectRipple.js" />
+    <Compile Include="src\components\ImageCropper\utils\language.js" />
+    <Compile Include="src\components\ImageCropper\utils\mimes.js" />
+    <Compile Include="src\components\MarkdownEditor\defaultOptions.js" />
+    <Compile Include="src\components\Tinymce\plugins.js" />
+    <Compile Include="src\components\Tinymce\toolbar.js" />
+    <Compile Include="src\components\TreeTable\eval.js" />
+    <Compile Include="src\directive\clipboard\clipboard.js" />
+    <Compile Include="src\directive\clipboard\index.js" />
+    <Compile Include="src\directive\el-dragDialog\drag.js" />
+    <Compile Include="src\directive\el-dragDialog\index.js" />
+    <Compile Include="src\directive\permission\index.js" />
+    <Compile Include="src\directive\permission\permission.js" />
+    <Compile Include="src\directive\sticky.js" />
+    <Compile Include="src\directive\waves\index.js" />
+    <Compile Include="src\directive\waves\waves.js" />
+    <Compile Include="src\errorLog.js" />
+    <Compile Include="src\filters\index.js" />
+    <Compile Include="src\icons\index.js" />
+    <Compile Include="src\lang\en.js" />
+    <Compile Include="src\lang\es.js" />
+    <Compile Include="src\lang\index.js" />
+    <Compile Include="src\lang\zh.js" />
+    <Compile Include="src\main.js" />
+    <Compile Include="src\mock\article.js" />
+    <Compile Include="src\mock\index.js" />
+    <Compile Include="src\mock\login.js" />
+    <Compile Include="src\mock\remoteSearch.js" />
+    <Compile Include="src\mock\transaction.js" />
+    <Compile Include="src\permission.js" />
+    <Compile Include="src\router\index.js" />
+    <Compile Include="src\router\modules\charts.js" />
+    <Compile Include="src\router\modules\components.js" />
+    <Compile Include="src\router\modules\table.js" />
+    <Compile Include="src\store\getters.js" />
+    <Compile Include="src\store\index.js" />
+    <Compile Include="src\store\modules\app.js" />
+    <Compile Include="src\store\modules\errorLog.js" />
+    <Compile Include="src\store\modules\permission.js" />
+    <Compile Include="src\store\modules\tagsView.js" />
+    <Compile Include="src\store\modules\user.js" />
+    <Compile Include="src\utils\auth.js" />
+    <Compile Include="src\utils\clipboard.js" />
+    <Compile Include="src\utils\i18n.js" />
+    <Compile Include="src\utils\index.js" />
+    <Compile Include="src\utils\openWindow.js" />
+    <Compile Include="src\utils\permission.js" />
+    <Compile Include="src\utils\request.js" />
+    <Compile Include="src\utils\scrollTo.js" />
+    <Compile Include="src\utils\validate.js" />
+    <Compile Include="src\vendor\Export2Excel.js" />
+    <Compile Include="src\vendor\Export2Zip.js" />
+    <Compile Include="src\views\example\components\Dropdown\index.js" />
+    <Compile Include="src\views\guide\defineSteps.js" />
+    <Compile Include="src\views\i18n-demo\local.js" />
+    <Compile Include="src\views\layout\components\index.js" />
+    <Compile Include="src\views\layout\components\Sidebar\FixiOSBug.js" />
+    <Compile Include="src\views\layout\mixin\ResizeHandler.js" />
+    <Compile Include="src\views\pdf\content.js" />
+    <Compile Include="src\views\table\treeTable\customEval.js" />
+    <Compile Include="static\tinymce4.7.5\langs\zh_CN.js" />
+    <Compile Include="static\tinymce4.7.5\tinymce.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".babelrc" />
+    <Content Include=".editorconfig" />
+    <Content Include=".eslintignore" />
+    <Content Include=".travis.yml" />
+    <Content Include="build\logo.png" />
+    <Content Include="favicon.ico" />
+    <Content Include="index.html" />
+    <Content Include="package-lock.json" />
+    <Content Include="package.json" />
+    <Content Include="src\api\LodopFuncs.js" />
+    <Content Include="src\api\orderAll.js" />
+    <Content Include="src\api\shopGoods.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\api\shopOrder.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\api\wyinfo.js" />
+    <Content Include="src\api\shopinfo.js" />
+    <Content Include="src\api\shoptype.js" />
+    <Content Include="src\api\wwShop.js" />
+    <Content Include="src\api\wwWy.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\api\wyOrder.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\api\wyShop.js" />
+    <Content Include="src\App.vue" />
+    <Content Include="src\assets\401_images\401.gif" />
+    <Content Include="src\assets\404_images\404.png" />
+    <Content Include="src\assets\404_images\404_cloud.png" />
+    <Content Include="src\assets\custom-theme\fonts\element-icons.ttf" />
+    <Content Include="src\assets\custom-theme\fonts\element-icons.woff" />
+    <Content Include="src\assets\custom-theme\index.css" />
+    <Content Include="src\assets\default_images\icon-ts-mrpic.png" />
+    <Content Include="src\components\BackToTop\index.vue" />
+    <Content Include="src\components\Breadcrumb\index.vue" />
+    <Content Include="src\components\Charts\keyboard.vue" />
+    <Content Include="src\components\Charts\lineMarker.vue" />
+    <Content Include="src\components\Charts\mixChart.vue" />
+    <Content Include="src\components\DndList\index.vue" />
+    <Content Include="src\components\DragSelect\index.vue" />
+    <Content Include="src\components\Dropzone\index.vue" />
+    <Content Include="src\components\ErrorLog\index.vue" />
+    <Content Include="src\components\GithubCorner\index.vue" />
+    <Content Include="src\components\Hamburger\index.vue" />
+    <Content Include="src\components\HeaderSearch\index.vue" />
+    <Content Include="src\components\ImageCropper\index.vue" />
+    <Content Include="src\components\imgPreview\index.vue" />
+    <Content Include="src\components\JsonEditor\index.vue" />
+    <Content Include="src\components\Kanban\index.vue" />
+    <Content Include="src\components\LangSelect\index.vue" />
+    <Content Include="src\components\MarkdownEditor\index.vue" />
+    <Content Include="src\components\MDinput\index.vue" />
+    <Content Include="src\components\Pagination\index.vue" />
+    <Content Include="src\components\PanThumb\index.vue" />
+    <Content Include="src\components\Screenfull\index.vue" />
+    <Content Include="src\components\Share\dropdownMenu.vue" />
+    <Content Include="src\components\SignalrComs\index.vue" />
+    <Content Include="src\components\SizeSelect\index.vue" />
+    <Content Include="src\components\Sticky\index.vue" />
+    <Content Include="src\components\SvgIcon\index.vue" />
+    <Content Include="src\components\TextHoverEffect\Mallki.vue" />
+    <Content Include="src\components\ThemePicker\index.vue" />
+    <Content Include="src\components\Tinymce\components\editorImage.vue" />
+    <Content Include="src\components\Tinymce\index.vue" />
+    <Content Include="src\components\TreeTable\index.vue" />
+    <Content Include="src\components\TreeTable\readme.md" />
+    <Content Include="src\components\UploadExcel\index.vue" />
+    <Content Include="src\components\Upload\singleImage.vue" />
+    <Content Include="src\components\Upload\singleImage2.vue" />
+    <Content Include="src\components\Upload\singleImage3.vue" />
+    <Content Include="src\directive\waves\waves.css" />
+    <Content Include="src\icons\svgo.yml" />
+    <Content Include="src\icons\svg\404.svg" />
+    <Content Include="src\icons\svg\bug.svg" />
+    <Content Include="src\icons\svg\chart.svg" />
+    <Content Include="src\icons\svg\clipboard.svg" />
+    <Content Include="src\icons\svg\component.svg" />
+    <Content Include="src\icons\svg\dashboard.svg" />
+    <Content Include="src\icons\svg\ddgl.svg" />
+    <Content Include="src\icons\svg\ddtj.svg" />
+    <Content Include="src\icons\svg\documentation.svg" />
+    <Content Include="src\icons\svg\drag.svg" />
+    <Content Include="src\icons\svg\edit.svg" />
+    <Content Include="src\icons\svg\email.svg" />
+    <Content Include="src\icons\svg\example.svg" />
+    <Content Include="src\icons\svg\excel.svg" />
+    <Content Include="src\icons\svg\exit-fullscreen.svg" />
+    <Content Include="src\icons\svg\eye-open.svg" />
+    <Content Include="src\icons\svg\eye.svg" />
+    <Content Include="src\icons\svg\form.svg" />
+    <Content Include="src\icons\svg\fullscreen.svg" />
+    <Content Include="src\icons\svg\gg.svg" />
+    <Content Include="src\icons\svg\gl.svg" />
+    <Content Include="src\icons\svg\gl2.svg" />
+    <Content Include="src\icons\svg\glsj.svg" />
+    <Content Include="src\icons\svg\goods.svg" />
+    <Content Include="src\icons\svg\guide 2.svg" />
+    <Content Include="src\icons\svg\guide.svg" />
+    <Content Include="src\icons\svg\icon.svg" />
+    <Content Include="src\icons\svg\international.svg" />
+    <Content Include="src\icons\svg\jbxx.svg" />
+    <Content Include="src\icons\svg\jd.svg" />
+    <Content Include="src\icons\svg\jg.svg" />
+    <Content Include="src\icons\svg\language.svg" />
+    <Content Include="src\icons\svg\link.svg" />
+    <Content Include="src\icons\svg\list.svg" />
+    <Content Include="src\icons\svg\lock.svg" />
+    <Content Include="src\icons\svg\ly.svg" />
+    <Content Include="src\icons\svg\message.svg" />
+    <Content Include="src\icons\svg\money.svg" />
+    <Content Include="src\icons\svg\nested.svg" />
+    <Content Include="src\icons\svg\order.svg" />
+    <Content Include="src\icons\svg\password.svg" />
+    <Content Include="src\icons\svg\pdf.svg" />
+    <Content Include="src\icons\svg\people.svg" />
+    <Content Include="src\icons\svg\peoples.svg" />
+    <Content Include="src\icons\svg\qq.svg" />
+    <Content Include="src\icons\svg\rz.svg" />
+    <Content Include="src\icons\svg\search.svg" />
+    <Content Include="src\icons\svg\shophome.svg" />
+    <Content Include="src\icons\svg\shopping.svg" />
+    <Content Include="src\icons\svg\size.svg" />
+    <Content Include="src\icons\svg\spgl.svg" />
+    <Content Include="src\icons\svg\sq.svg" />
+    <Content Include="src\icons\svg\star.svg" />
+    <Content Include="src\icons\svg\tab.svg" />
+    <Content Include="src\icons\svg\table.svg" />
+    <Content Include="src\icons\svg\theme.svg" />
+    <Content Include="src\icons\svg\tj.svg" />
+    <Content Include="src\icons\svg\tp.svg" />
+    <Content Include="src\icons\svg\tree.svg" />
+    <Content Include="src\icons\svg\ts.svg" />
+    <Content Include="src\icons\svg\type.svg" />
+    <Content Include="src\icons\svg\user.svg" />
+    <Content Include="src\icons\svg\wechat.svg" />
+    <Content Include="src\icons\svg\wygs.svg" />
+    <Content Include="src\icons\svg\xq.svg" />
+    <Content Include="src\icons\svg\xx.svg" />
+    <Content Include="src\icons\svg\ywh.svg" />
+    <Content Include="src\icons\svg\zh.svg" />
+    <Content Include="src\icons\svg\zip.svg" />
+    <Content Include="src\icons\svg\znx.svg" />
+    <Content Include="src\styles\btn.scss" />
+    <Content Include="src\styles\element-ui.scss" />
+    <Content Include="src\styles\index.scss" />
+    <Content Include="src\styles\mixin.scss" />
+    <Content Include="src\styles\sidebar.scss" />
+    <Content Include="src\styles\transition.scss" />
+    <Content Include="src\styles\variables.scss" />
+    <Content Include="src\views\charts\keyboard.vue" />
+    <Content Include="src\views\charts\line.vue" />
+    <Content Include="src\views\charts\mixChart.vue" />
+    <Content Include="src\views\clipboard\index.vue" />
+    <Content Include="src\views\components-demo\avatarUpload.vue" />
+    <Content Include="src\views\components-demo\backToTop.vue" />
+    <Content Include="src\views\components-demo\countTo.vue" />
+    <Content Include="src\views\components-demo\dndList.vue" />
+    <Content Include="src\views\components-demo\dragDialog.vue" />
+    <Content Include="src\views\components-demo\dragKanban.vue" />
+    <Content Include="src\views\components-demo\dragSelect.vue" />
+    <Content Include="src\views\components-demo\dropzone.vue" />
+    <Content Include="src\views\components-demo\jsonEditor.vue" />
+    <Content Include="src\views\components-demo\markdown.vue" />
+    <Content Include="src\views\components-demo\mixin.vue" />
+    <Content Include="src\views\components-demo\splitpane.vue" />
+    <Content Include="src\views\components-demo\sticky.vue" />
+    <Content Include="src\views\components-demo\tinymce.vue" />
+    <Content Include="src\views\dashboard\admin\components\BarChart.vue" />
+    <Content Include="src\views\dashboard\admin\components\BoxCard.vue" />
+    <Content Include="src\views\dashboard\admin\components\LineChart.vue" />
+    <Content Include="src\views\dashboard\admin\components\PanelGroup.vue" />
+    <Content Include="src\views\dashboard\admin\components\PieChart.vue" />
+    <Content Include="src\views\dashboard\admin\components\RaddarChart.vue" />
+    <Content Include="src\views\dashboard\admin\components\TodoList\index.scss" />
+    <Content Include="src\views\dashboard\admin\components\TodoList\index.vue" />
+    <Content Include="src\views\dashboard\admin\components\TodoList\Todo.vue" />
+    <Content Include="src\views\dashboard\admin\components\TransactionTable.vue" />
+    <Content Include="src\views\dashboard\admin\index.vue" />
+    <Content Include="src\views\dashboard\editor\index.vue" />
+    <Content Include="src\views\dashboard\index.vue" />
+    <Content Include="src\views\documentation\index.vue" />
+    <Content Include="src\views\errorLog\errorTestA.vue" />
+    <Content Include="src\views\errorLog\errorTestB.vue" />
+    <Content Include="src\views\errorLog\index.vue" />
+    <Content Include="src\views\errorPage\401.vue" />
+    <Content Include="src\views\errorPage\404.vue" />
+    <Content Include="src\views\example\components\ArticleDetail.vue" />
+    <Content Include="src\views\example\components\Dropdown\Comment.vue" />
+    <Content Include="src\views\example\components\Dropdown\Platform.vue" />
+    <Content Include="src\views\example\components\Dropdown\SourceUrl.vue" />
+    <Content Include="src\views\example\components\Warning.vue" />
+    <Content Include="src\views\example\create.vue" />
+    <Content Include="src\views\example\edit.vue" />
+    <Content Include="src\views\example\list.vue" />
+    <Content Include="src\views\excel\components\AutoWidthOption.vue" />
+    <Content Include="src\views\excel\components\BookTypeOption.vue" />
+    <Content Include="src\views\excel\components\FilenameOption.vue" />
+    <Content Include="src\views\excel\exportExcel.vue" />
+    <Content Include="src\views\excel\selectExcel.vue" />
+    <Content Include="src\views\excel\uploadExcel.vue" />
+    <Content Include="src\views\guide\index.vue" />
+    <Content Include="src\views\i18n-demo\index.vue" />
+    <Content Include="src\views\jdb_complaint\index.vue" />
+    <Content Include="src\views\jdb_gj\index.vue" />
+    <Content Include="src\views\jdb_letter\index.vue" />
+    <Content Include="src\views\jdb_notice\index.vue" />
+    <Content Include="src\views\jdb_vote\index.vue" />
+    <Content Include="src\views\jsb_rz_owner\index.vue" />
+    <Content Include="src\views\jsb_rz_tj\index.vue" />
+    <Content Include="src\views\layout\components\AppMain.vue" />
+    <Content Include="src\views\layout\components\Navbar.vue" />
+    <Content Include="src\views\layout\components\Sidebar\index.vue" />
+    <Content Include="src\views\layout\components\Sidebar\Item.vue" />
+    <Content Include="src\views\layout\components\Sidebar\Link.vue" />
+    <Content Include="src\views\layout\components\Sidebar\SidebarItem.vue" />
+    <Content Include="src\views\layout\components\TagsView\index.vue" />
+    <Content Include="src\views\layout\components\TagsView\ScrollPane.vue" />
+    <Content Include="src\views\layout\Layout.vue" />
+    <Content Include="src\views\login\authredirect.vue" />
+    <Content Include="src\views\login\index.vue" />
+    <Content Include="src\views\login\socialsignin.vue" />
+    <Content Include="src\views\nested\menu1\index.vue" />
+    <Content Include="src\views\nested\menu1\menu1-1\index.vue" />
+    <Content Include="src\views\nested\menu1\menu1-2\index.vue" />
+    <Content Include="src\views\nested\menu1\menu1-2\menu1-2-1\index.vue" />
+    <Content Include="src\views\nested\menu1\menu1-2\menu1-2-2\index.vue" />
+    <Content Include="src\views\nested\menu1\menu1-3\index.vue" />
+    <Content Include="src\views\nested\menu2\index.vue" />
+    <Content Include="src\views\pdf\download.vue" />
+    <Content Include="src\views\pdf\index.vue" />
+    <Content Include="src\views\permission\components\SwitchRoles.vue" />
+    <Content Include="src\views\permission\directive.vue" />
+    <Content Include="src\views\permission\page.vue" />
+    <Content Include="src\views\qiniu\upload.vue" />
+    <Content Include="src\views\redirect\index.vue" />
+    <Content Include="src\views\shop_goods\index.vue" />
+    <Content Include="src\views\shop_info\components\Account.vue" />
+    <Content Include="src\views\shop_info\components\Activity.vue" />
+    <Content Include="src\views\shop_info\components\Timeline.vue" />
+    <Content Include="src\views\shop_info\components\UserCard.vue" />
+    <Content Include="src\views\shop_info\index.vue" />
+    <Content Include="src\views\shop_order\index.vue" />
+    <Content Include="src\views\shop_order_num\index.vue" />
+    <Content Include="src\views\shop_type\index.vue" />
+    <Content Include="src\views\table\complexTable.vue" />
+    <Content Include="src\views\table\dragTable.vue" />
+    <Content Include="src\views\table\dynamicTable\fixedThead.vue" />
+    <Content Include="src\views\table\dynamicTable\index.vue" />
+    <Content Include="src\views\table\dynamicTable\unfixedThead.vue" />
+    <Content Include="src\views\table\inlineEditTable.vue" />
+    <Content Include="src\views\table\treeTable\customTreeTable.vue" />
+    <Content Include="src\views\table\treeTable\treeTable.vue" />
+    <Content Include="src\views\tab\components\tabPane.vue" />
+    <Content Include="src\views\tab\index.vue" />
+    <Content Include="src\views\ww_goods\index.vue">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\views\ww_shop\index.vue">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\views\ww_jdb\index.vue" />
+    <Content Include="src\views\ww_jdb_account\index.vue" />
+    <Content Include="src\views\ww_ly\index.vue" />
+    <Content Include="src\views\ww_menu\index.vue" />
+    <Content Include="src\views\ww_role\index.vue" />
+    <Content Include="src\views\ww_shop_account\index.vue" />
+    <Content Include="src\views\ww_sq\index.vue" />
+    <Content Include="src\views\ww_tslx\index.vue" />
+    <Content Include="src\views\ww_wy\index.vue" />
+    <Content Include="src\views\ww_wy_account\index.vue" />
+    <Content Include="src\views\ww_xq\index.vue" />
+    <Content Include="src\views\ww_ywhjg\index.vue" />
+    <Content Include="src\views\ww_ywh\index.vue" />
+    <Content Include="src\views\wy_authentication\index.vue" />
+    <Content Include="src\views\wy_complaint\index.vue" />
+    <Content Include="src\views\wy_household_information\index.vue" />
+    <Content Include="src\views\wy_user_info\components\Account.vue" />
+    <Content Include="src\views\wy_user_info\components\UserCard.vue" />
+    <Content Include="src\views\wy_user_info\index.vue" />
+    <Content Include="src\views\wy_info\components\Account.vue" />
+    <Content Include="src\views\wy_info\components\UserCard.vue" />
+    <Content Include="src\views\wy_info\index.vue" />
+    <Content Include="src\views\wy_letter\index.vue" />
+    <Content Include="src\views\wy_notice\index.vue" />
+    <Content Include="src\views\wy_order\index.vue" />
+    <Content Include="src\views\wy_owner\index.vue" />
+    <Content Include="src\views\wy_shop\index.vue" />
+    <Content Include="src\views\wy_vote\index.vue" />
+    <Content Include="src\views\zip\index.vue" />
+    <Content Include="static\tinymce4.7.5\plugins\codesample\css\prism.css" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-cool.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-cry.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-embarassed.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-foot-in-mouth.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-frown.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-innocent.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-kiss.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-laughing.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-money-mouth.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-sealed.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-smile.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-surprised.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-tongue-out.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-undecided.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-wink.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\emoticons\img\smiley-yell.gif" />
+    <Content Include="static\tinymce4.7.5\plugins\visualblocks\css\visualblocks.css" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\content.inline.min.css" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\content.min.css" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\fonts\tinymce-mobile.woff" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\fonts\tinymce-small.eot" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\fonts\tinymce-small.svg" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\fonts\tinymce-small.ttf" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\fonts\tinymce-small.woff" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\fonts\tinymce.eot" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\fonts\tinymce.svg" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\fonts\tinymce.ttf" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\fonts\tinymce.woff" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\img\anchor.gif" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\img\loader.gif" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\img\object.gif" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\img\trans.gif" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\skin.min.css" />
+    <Content Include="static\tinymce4.7.5\skins\lightgray\skin.min.css.map" />
+  </ItemGroup>
+  <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

@@ -21,7 +21,7 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly ISmallDistrictRepository _smallDistrictRepository;
         private readonly IOwnerRepository _ownerRepository;
         private readonly IIndustryRepository _industryRepository;
-        private TokenManager _tokenManager;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// 
@@ -118,15 +118,15 @@ namespace GuoGuoCommunity.API.Controllers
                 var industry = industryList.Where(x => x.Id == item.IndustryId).FirstOrDefault();
                 list.Add(new GetOwnerCertificationRecordOutput
                 {
-                    BuildingId = item. Industry.BuildingUnit.BuildingId.ToString(),
-                    BuildingName = item. Industry.BuildingUnit.Building.Name,
-                    BuildingUnitId = item. Industry.BuildingUnitId.ToString(),
-                    BuildingUnitName = item. Industry.BuildingUnit.UnitName,
+                    BuildingId = item.Industry.BuildingUnit.BuildingId.ToString(),
+                    BuildingName = item.Industry.BuildingUnit.Building.Name,
+                    BuildingUnitId = item.Industry.BuildingUnitId.ToString(),
+                    BuildingUnitName = item.Industry.BuildingUnit.UnitName,
                     CertificationResult = item.CertificationResult,
                     CertificationStatusName = item.CertificationStatusName,
                     CertificationStatusValue = item.CertificationStatusValue,
-                    CommunityId = item. Industry.BuildingUnit.Building.SmallDistrict.CommunityId.ToString(),
-                    CommunityName = item. Industry.BuildingUnit.Building.SmallDistrict.Community.Name,
+                    CommunityId = item.Industry.BuildingUnit.Building.SmallDistrict.CommunityId.ToString(),
+                    CommunityName = item.Industry.BuildingUnit.Building.SmallDistrict.Community.Name,
                     Id = item.Id.ToString(),
                     IndustryId = item.IndustryId.ToString(),
                     IndustryName = item.Industry.Name,
@@ -176,7 +176,8 @@ namespace GuoGuoCommunity.API.Controllers
         public ApiResult<List<Department>> GetAll() => new ApiResult<List<Department>>(APIResultCode.Success, new List<Department>
         {
             Department.JieDaoBan,
-            Department .WuYe
+            Department .WuYe,
+            Department.Shop
         }.ToList());
 
         /// <summary>
@@ -189,6 +190,22 @@ namespace GuoGuoCommunity.API.Controllers
         {
             Department.YeZhu,
             Department.YeZhuWeiYuanHui
+        }.ToList());
+
+        /// <summary>
+        /// 创建投诉类型获取部门集合
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("merchantCategory/getAll")]
+        public ApiResult<List<MerchantCategory>> GetForMerchantCategoryAll() => new ApiResult<List<MerchantCategory>>(APIResultCode.Success, new List<MerchantCategory>
+        {
+            MerchantCategory.Supermarket,
+             MerchantCategory.Fresh,
+             MerchantCategory.HomeFashion,
+             MerchantCategory.Medicine,
+             MerchantCategory.Plant,
+             MerchantCategory.Cake
         }.ToList());
 
         /// <summary>
@@ -239,6 +256,14 @@ namespace GuoGuoCommunity.API.Controllers
         [HttpGet]
         [Route("ownerCertificationAnnexType/getAll")]
         public ApiResult<List<OwnerCertificationAnnexType>> GetOwnerCertificationAnnexTypeAll() => new ApiResult<List<OwnerCertificationAnnexType>>(APIResultCode.Success, OwnerCertificationAnnexType.GetAll().ToList());
+
+        /// <summary>
+        /// 获取销售状态接口
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("salesType/getAll")]
+        public ApiResult<List<SalesType>> GetSalesTypeAll() => new ApiResult<List<SalesType>>(APIResultCode.Success, SalesType.GetAll().ToList());
 
     }
 }

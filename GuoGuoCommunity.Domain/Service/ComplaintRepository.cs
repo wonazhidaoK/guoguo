@@ -350,32 +350,6 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public void OnSubscribe(CommunityIncrementer incrementer)
-        {
-            incrementer.CommunityEvent += CommunityChanging;
-        }
-
-        public async void CommunityChanging(GuoGuoCommunityContext dbs, Community community, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                //await db.Complaints.Where(x => x.OwnerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString() == community.Id.ToString()).UpdateAsync(x => new Complaint { CommunityName = community.Name });
-            }
-        }
-
-        public void OnSubscribe(ComplaintTypeIncrementer incrementer)
-        {
-            incrementer.ComplaintTypeEvent += ComplaintTypeChanging;
-        }
-
-        public async void ComplaintTypeChanging(GuoGuoCommunityContext dbs, ComplaintType complaintType, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                //await db.Complaints.Where(x => x.ComplaintTypeId == complaintType.Id.ToString()).UpdateAsync(x => new Complaint { ComplaintTypeName = complaintType.Name });
-            }
-        }
-
         public Task<List<Complaint>> GetAllIncludeAsync(ComplaintDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();

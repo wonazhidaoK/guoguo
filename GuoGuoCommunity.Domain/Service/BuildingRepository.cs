@@ -15,46 +15,15 @@ namespace GuoGuoCommunity.Domain.Service
 
         #region 事件
 
-        private async Task OnUpdateAsync(GuoGuoCommunityContext db, Building dto, CancellationToken token = default)
-        {
-            BuildingIncrementer incrementer = new BuildingIncrementer();
-            //业主认证记录订阅
-            OwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
-            ownerCertificationRecordRepository.OnSubscribe(incrementer);
-            //业户信息订阅
-            IndustryRepository industryRepository = new IndustryRepository();
-            industryRepository.OnSubscribe(incrementer);
-
-            await incrementer.OnUpdate(db, dto, token);
-        }
-
         private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, BuildingDto dto, CancellationToken token = default)
         {
-            //业户信息
+            //楼宇单元信息
             if (await db.BuildingUnits.Where(x => x.BuildingId.ToString() == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }
 
-            //业主认证记录
-            //if (await db.OwnerCertificationRecords.Where(x => x.BuildingId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
             return false;
-        }
-
-        public void OnSubscribe(SmallDistrictIncrementer incrementer)
-        {
-            incrementer.SmallDistrictEvent += SmallDistrictChanging;//在发布者私有委托里增加方法
-        }
-
-        public async void SmallDistrictChanging(GuoGuoCommunityContext dbs, SmallDistrict smallDistrict, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                //await db.Buildings.Where(x => x.SmallDistrictId == smallDistrict.Id.ToString()).UpdateAsync(x => new Building { SmallDistrictName = smallDistrict.Name });
-            }
         }
 
         #endregion
@@ -176,7 +145,6 @@ namespace GuoGuoCommunity.Domain.Service
                 building.Name = dto.Name;
                 building.LastOperationTime = dto.OperationTime;
                 building.LastOperationUserId = dto.OperationUserId;
-                await OnUpdateAsync(db, building, token);
                 await db.SaveChangesAsync(token);
             }
         }

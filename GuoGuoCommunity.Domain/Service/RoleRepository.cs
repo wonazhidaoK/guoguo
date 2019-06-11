@@ -73,6 +73,18 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public async Task<User_Role> GetAsync(string id, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (Guid.TryParse(id, out var uid))
+                {
+                    return await db.User_Roles.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                }
+                throw new NotImplementedException("该角色Id信息不正确！");
+            }
+        }
+
         public Task UpdateAsync(RoleDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();

@@ -40,6 +40,7 @@ namespace GuoGuoCommunity.API
                 }
             }
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -50,7 +51,7 @@ namespace GuoGuoCommunity.API
             Match m = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)");
             if (m.Success)
             {
-                return m.Groups[2].Value+ HttpContext.Current.Request.Url.Port;
+                return m.Groups[2].Value + HttpContext.Current.Request.Url.Port;
             }
             else
             {
@@ -61,7 +62,7 @@ namespace GuoGuoCommunity.API
                     string ip = ((System.Net.IPEndPoint)c.Client.LocalEndPoint).Address.ToString();
                     string port = ((System.Net.IPEndPoint)c.Client.LocalEndPoint).Port.ToString();
                     c.Close();
-                    return ip+":"+ ip;
+                    return ip + ":" + ip;
                 }
                 catch (Exception)
                 {
@@ -69,6 +70,7 @@ namespace GuoGuoCommunity.API
                 }
             }
         }
+
         /// <summary>  
         /// 获取本机主DNS  
         /// </summary>  

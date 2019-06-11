@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Service
 {
-    public class TestRepository : ITestRepository 
+    public class TestRepository : ITestRepository
     {
         private GuoGuoCommunityContext db = new GuoGuoCommunityContext();
 
         public async Task<Test> Add(string str)
         {
-            var entity=  db.Tests.Add(new Test {Id=0, Name=str });
+            var entity = db.Tests.Add(new Test { Id = 0, Name = str });
             await db.SaveChangesAsync();
             return entity;
         }

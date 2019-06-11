@@ -12,17 +12,16 @@ namespace GuoGuoCommunity.Domain.Service
 {
     public class MenuRepository : IMenuRepository
     {
-
         public async Task<Menu> AddAsync(MenuDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var menu = await db.Menus.Where(x => (x.Key == dto.Key || x.Name == dto.Name)&&x.IsDeleted==false).FirstOrDefaultAsync(token);
+                var menu = await db.Menus.Where(x => (x.Key == dto.Key || x.Name == dto.Name) && x.IsDeleted == false).FirstOrDefaultAsync(token);
                 if (menu != null)
                 {
                     throw new NotImplementedException("该菜单已存在！");
                 }
-               var entity= db.Menus.Add(new Menu
+                var entity = db.Menus.Add(new Menu
                 {
                     Key = dto.Key,
                     Name = dto.Name,
@@ -60,7 +59,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.Menus.Where(x => x.IsDeleted == false&&x.DepartmentValue==dto.DepartmentValue).ToListAsync(token);
+                return await db.Menus.Where(x => x.IsDeleted == false && x.DepartmentValue == dto.DepartmentValue).ToListAsync(token);
             }
         }
 
@@ -81,7 +80,7 @@ namespace GuoGuoCommunity.Domain.Service
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await(from x in db.Menus where ids.Contains(x.Id.ToString()) select x).ToListAsync(token);
+                return await (from x in db.Menus where ids.Contains(x.Id.ToString()) select x).ToListAsync(token);
             }
         }
 

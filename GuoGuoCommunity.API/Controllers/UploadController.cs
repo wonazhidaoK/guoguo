@@ -4,6 +4,7 @@ using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -20,7 +21,7 @@ namespace GuoGuoCommunity.API.Controllers
     public class UploadController : BaseController
     {
         private readonly IUploadRepository _uploadRepository;
-        private TokenManager _tokenManager;
+        private readonly TokenManager _tokenManager;
 
         /// <summary>
         /// 
@@ -70,7 +71,13 @@ namespace GuoGuoCommunity.API.Controllers
 
                 foreach (MultipartFileData file in provider.FileData)
                 {
-                    files.Add(await AddUpload(typeName, file.Headers.ContentDisposition.FileName.Trim('"'), user.Id.ToString(), cancelToken));
+                    string orfilename = file.Headers.ContentDisposition.FileName.TrimStart('"').TrimEnd('"');
+                    string fileExt = orfilename.Substring(orfilename.LastIndexOf('.'));
+                    FileInfo fileinfo = new FileInfo(file.LocalFileName);
+                    var newPath = DateTime.Now.ToString("yyyyMMddhhmmssffffff") + fileExt;
+                    fileinfo.CopyTo(Path.Combine(fileSaveLocation, newPath), true);
+                    fileinfo.Delete();
+                    files.Add(await AddUpload(typeName, newPath, user.Id.ToString(), cancelToken));
                 }
                 return new ApiResult<UploadOutput>(APIResultCode.Success, files[0], APIResultMessage.Success);
             }
@@ -119,7 +126,13 @@ namespace GuoGuoCommunity.API.Controllers
 
                 foreach (MultipartFileData file in provider.FileData)
                 {
-                    files.Add(await AddUpload(typeName, file.Headers.ContentDisposition.FileName.Trim('"'), user.Id.ToString(), cancelToken));
+                    string orfilename = file.Headers.ContentDisposition.FileName.TrimStart('"').TrimEnd('"');
+                    string fileExt = orfilename.Substring(orfilename.LastIndexOf('.'));
+                    FileInfo fileinfo = new FileInfo(file.LocalFileName);
+                    var newPath = DateTime.Now.ToString("yyyyMMddhhmmssffffff") + fileExt;
+                    fileinfo.CopyTo(Path.Combine(fileSaveLocation, newPath), true);
+                    fileinfo.Delete();
+                    files.Add(await AddUpload(typeName, newPath, user.Id.ToString(), cancelToken));
                 }
 
                 return new ApiResult<UploadOutput>(APIResultCode.Success, files[0], APIResultMessage.Success);
@@ -169,7 +182,13 @@ namespace GuoGuoCommunity.API.Controllers
 
                 foreach (MultipartFileData file in provider.FileData)
                 {
-                    files.Add(await AddUpload(typeName, file.Headers.ContentDisposition.FileName.Trim('"'), user.Id.ToString(), cancelToken));
+                    string orfilename = file.Headers.ContentDisposition.FileName.TrimStart('"').TrimEnd('"');
+                    string fileExt = orfilename.Substring(orfilename.LastIndexOf('.'));
+                    FileInfo fileinfo = new FileInfo(file.LocalFileName);
+                    var newPath = DateTime.Now.ToString("yyyyMMddhhmmssffffff") + fileExt;
+                    fileinfo.CopyTo(Path.Combine(fileSaveLocation, newPath), true);
+                    fileinfo.Delete();
+                    files.Add(await AddUpload(typeName, newPath, user.Id.ToString(), cancelToken));
                 }
 
                 return new ApiResult<UploadOutput>(APIResultCode.Success, files[0], APIResultMessage.Success);
@@ -219,7 +238,13 @@ namespace GuoGuoCommunity.API.Controllers
 
                 foreach (MultipartFileData file in provider.FileData)
                 {
-                    files.Add(await AddUpload(typeName, file.Headers.ContentDisposition.FileName.Trim('"'), user.Id.ToString(), cancelToken));
+                    string orfilename = file.Headers.ContentDisposition.FileName.TrimStart('"').TrimEnd('"');
+                    string fileExt = orfilename.Substring(orfilename.LastIndexOf('.'));
+                    FileInfo fileinfo = new FileInfo(file.LocalFileName);
+                    var newPath = DateTime.Now.ToString("yyyyMMddhhmmssffffff") + fileExt;
+                    fileinfo.CopyTo(Path.Combine(fileSaveLocation, newPath), true);
+                    fileinfo.Delete();
+                    files.Add(await AddUpload(typeName, newPath, user.Id.ToString(), cancelToken));
                 }
 
                 return new ApiResult<UploadOutput>(APIResultCode.Success, files[0], APIResultMessage.Success);
@@ -269,7 +294,13 @@ namespace GuoGuoCommunity.API.Controllers
 
                 foreach (MultipartFileData file in provider.FileData)
                 {
-                    files.Add(await AddUpload(typeName, file.Headers.ContentDisposition.FileName.Trim('"'), user.Id.ToString(), cancelToken));
+                    string orfilename = file.Headers.ContentDisposition.FileName.TrimStart('"').TrimEnd('"');
+                    string fileExt = orfilename.Substring(orfilename.LastIndexOf('.'));
+                    FileInfo fileinfo = new FileInfo(file.LocalFileName);
+                    var newPath = DateTime.Now.ToString("yyyyMMddhhmmssffffff") + fileExt;
+                    fileinfo.CopyTo(Path.Combine(fileSaveLocation, newPath), true);
+                    fileinfo.Delete();
+                    files.Add(await AddUpload(typeName, newPath, user.Id.ToString(), cancelToken));
                 }
 
                 return new ApiResult<UploadOutput>(APIResultCode.Success, files[0], APIResultMessage.Success);
@@ -319,9 +350,236 @@ namespace GuoGuoCommunity.API.Controllers
 
                 foreach (MultipartFileData file in provider.FileData)
                 {
-                    files.Add(await AddUpload(typeName, file.Headers.ContentDisposition.FileName.Trim('"'), user.Id.ToString(), cancelToken));
+                    string orfilename = file.Headers.ContentDisposition.FileName.TrimStart('"').TrimEnd('"');
+                    string fileExt = orfilename.Substring(orfilename.LastIndexOf('.'));
+                    FileInfo fileinfo = new FileInfo(file.LocalFileName);
+                    var newPath = DateTime.Now.ToString("yyyyMMddhhmmssffffff") + fileExt;
+                    fileinfo.CopyTo(Path.Combine(fileSaveLocation, newPath), true);
+                    fileinfo.Delete();
+                    files.Add(await AddUpload(typeName, newPath, user.Id.ToString(), cancelToken));
                 }
 
+                return new ApiResult<UploadOutput>(APIResultCode.Success, files[0], APIResultMessage.Success);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<UploadOutput>(APIResultCode.Error, new UploadOutput { }, e.Message);
+            }
+        }
+
+
+
+        /// <summary>
+        /// 上传物业公司Logo图
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/uploadPropertyCompany")]
+        public async Task<ApiResult<UploadOutput>> UploadPropertyCompany(CancellationToken cancelToken)
+        {
+            try
+            {
+                #region Token
+
+                if (Authorization == null)
+                {
+                    return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenNull);
+                }
+                var user = _tokenManager.GetUser(Authorization);
+                if (user == null)
+                {
+                    return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenError);
+                }
+
+                #endregion
+
+                string typeName = "PropertyCompany";
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                }
+
+                string fileSaveLocation = HttpContext.Current.Server.MapPath("~/Upload/" + typeName);
+                CustomMultipartFormDataStreamProvider provider = new CustomMultipartFormDataStreamProvider(fileSaveLocation);
+                List<UploadOutput> files = new List<UploadOutput>();
+
+                await Request.Content.ReadAsMultipartAsync(provider, cancelToken);
+
+                foreach (MultipartFileData file in provider.FileData)
+                {
+                    string orfilename = file.Headers.ContentDisposition.FileName.TrimStart('"').TrimEnd('"');
+                    string fileExt = orfilename.Substring(orfilename.LastIndexOf('.'));
+                    FileInfo fileinfo = new FileInfo(file.LocalFileName);
+                    var newPath = DateTime.Now.ToString("yyyyMMddhhmmssffffff") + fileExt;
+                    fileinfo.CopyTo(Path.Combine(fileSaveLocation, newPath), true);
+                    fileinfo.Delete();
+                    files.Add(await NewAddUpload(typeName, newPath, user.Id.ToString(), cancelToken));
+                }
+                return new ApiResult<UploadOutput>(APIResultCode.Success, files[0], APIResultMessage.Success);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<UploadOutput>(APIResultCode.Error, new UploadOutput { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 商户账户创建上传文件
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/uploadShop")]
+        public async Task<ApiResult<UploadOutput>> UploadShop(CancellationToken cancelToken)
+        {
+            try
+            {
+                #region Token
+
+                if (Authorization == null)
+                {
+                    return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenNull);
+                }
+                var user = _tokenManager.GetUser(Authorization);
+                if (user == null)
+                {
+                    return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenError);
+                }
+
+                #endregion
+
+                string typeName = "Shop";
+
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                }
+
+                string fileSaveLocation = HttpContext.Current.Server.MapPath("~/Upload/" + typeName);
+                CustomMultipartFormDataStreamProvider provider = new CustomMultipartFormDataStreamProvider(fileSaveLocation);
+                List<UploadOutput> files = new List<UploadOutput>();
+
+                await Request.Content.ReadAsMultipartAsync(provider, cancelToken);
+
+                foreach (MultipartFileData file in provider.FileData)
+                {
+                    string orfilename = file.Headers.ContentDisposition.FileName.TrimStart('"').TrimEnd('"');
+                    string fileExt = orfilename.Substring(orfilename.LastIndexOf('.'));
+                    FileInfo fileinfo = new FileInfo(file.LocalFileName);
+                    var newPath = DateTime.Now.ToString("yyyyMMddhhmmssffffff") + fileExt;
+                    fileinfo.CopyTo(Path.Combine(fileSaveLocation, newPath), true);
+                    fileinfo.Delete();
+                    files.Add(await NewAddUpload(typeName, newPath, user.Id.ToString(), cancelToken));
+                }
+
+                return new ApiResult<UploadOutput>(APIResultCode.Success, files[0], APIResultMessage.Success);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<UploadOutput>(APIResultCode.Error, new UploadOutput { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 上传商户商品图片
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/uploadShopCommodity")]
+        public async Task<ApiResult<UploadOutput>> UploadShopCommodity(CancellationToken cancelToken)
+        {
+            try
+            {
+                #region Token
+
+                if (Authorization == null)
+                {
+                    return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenNull);
+                }
+                var user = _tokenManager.GetUser(Authorization);
+                if (user == null)
+                {
+                    return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenError);
+                }
+
+                #endregion
+
+                string typeName = "ShopCommodity";
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                }
+
+                string fileSaveLocation = HttpContext.Current.Server.MapPath("~/Upload/" + typeName);
+                CustomMultipartFormDataStreamProvider provider = new CustomMultipartFormDataStreamProvider(fileSaveLocation);
+                List<UploadOutput> files = new List<UploadOutput>();
+
+                await Request.Content.ReadAsMultipartAsync(provider, cancelToken);
+
+                foreach (MultipartFileData file in provider.FileData)
+                {
+                    string orfilename = file.Headers.ContentDisposition.FileName.TrimStart('"').TrimEnd('"');
+                    string fileExt = orfilename.Substring(orfilename.LastIndexOf('.'));
+                    FileInfo fileinfo = new FileInfo(file.LocalFileName);
+                    var newPath = DateTime.Now.ToString("yyyyMMddhhmmssffffff") + fileExt;
+                    fileinfo.CopyTo(Path.Combine(fileSaveLocation, newPath), true);
+                    fileinfo.Delete();
+                    files.Add(await NewAddUpload(typeName, newPath, user.Id.ToString(), cancelToken));
+                }
+                return new ApiResult<UploadOutput>(APIResultCode.Success, files[0], APIResultMessage.Success);
+            }
+            catch (Exception e)
+            {
+                return new ApiResult<UploadOutput>(APIResultCode.Error, new UploadOutput { }, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 上传平台商品图片
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/uploadPlatformCommodityCertification")]
+        public async Task<ApiResult<UploadOutput>> UploadPlatformCommodityCertification(CancellationToken cancelToken)
+        {
+            try
+            {
+                #region Token
+
+                if (Authorization == null)
+                {
+                    return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenNull);
+                }
+                var user = _tokenManager.GetUser(Authorization);
+                if (user == null)
+                {
+                    return new ApiResult<UploadOutput>(APIResultCode.Unknown, new UploadOutput { }, APIResultMessage.TokenError);
+                }
+
+                #endregion
+
+                string typeName = "PlatformCommodityCertification";
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                }
+
+                string fileSaveLocation = HttpContext.Current.Server.MapPath("~/Upload/" + typeName);
+
+                CustomMultipartFormDataStreamProvider provider = new CustomMultipartFormDataStreamProvider(fileSaveLocation);
+                List<UploadOutput> files = new List<UploadOutput>();
+
+                await Request.Content.ReadAsMultipartAsync(provider, cancelToken);
+
+                foreach (MultipartFileData file in provider.FileData)
+                {
+                    string orfilename = file.Headers.ContentDisposition.FileName.TrimStart('"').TrimEnd('"');
+                    string fileExt = orfilename.Substring(orfilename.LastIndexOf('.'));
+                    FileInfo fileinfo = new FileInfo(file.LocalFileName);
+                    var newPath = DateTime.Now.ToString("yyyyMMddhhmmssffffff") + fileExt;
+                    fileinfo.CopyTo(Path.Combine(fileSaveLocation, newPath), true);
+                    fileinfo.Delete();
+                    files.Add(await NewAddUpload(typeName, newPath, user.Id.ToString(), cancelToken));
+                }
                 return new ApiResult<UploadOutput>(APIResultCode.Success, files[0], APIResultMessage.Success);
             }
             catch (Exception e)
@@ -353,6 +611,33 @@ namespace GuoGuoCommunity.API.Controllers
             if (upload != null)
             {
                 return new UploadOutput { Id = upload.Id.ToString(), Url = upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File };
+            }
+            return new UploadOutput { };
+        }
+
+        /// <summary>
+        /// 服务器地址和业务存储地址分开返回
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <param name="file"></param>
+        /// <param name="userId"></param>
+        /// <param name="cancelToken"></param>
+        private async Task<UploadOutput> NewAddUpload(string directory, string file, string userId, CancellationToken cancelToken = default)
+        {
+            var upload = await _uploadRepository.AddAsync(
+                  new UploadDto
+                  {
+                      Agreement = Agreement + "://",
+                      Host = Host + "/",
+                      Domain = "/Upload",
+                      Directory = "/" + directory,
+                      File = "/" + file,
+                      OperationTime = DateTimeOffset.Now,
+                      OperationUserId = userId
+                  }, cancelToken);
+            if (upload != null)
+            {
+                return new UploadOutput { Id = upload.Id.ToString(), Url = upload.Directory + upload.File };
             }
             return new UploadOutput { };
         }

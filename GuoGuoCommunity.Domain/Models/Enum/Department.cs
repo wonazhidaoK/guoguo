@@ -13,6 +13,7 @@ namespace GuoGuoCommunity.Domain.Models.Enum
             YeZhuWeiYuanHui = new Department { Name = "业主委员会", Value = "VipOwner" };
             WuYe = new Department { Name = "物业", Value = "Property" };
             JieDaoBan = new Department { Name = "街道办", Value = "StreetOffice" };
+            Shop = new Department { Name = "商户", Value = "Shop" };
         }
 
         public string Name { get; set; }
@@ -39,7 +40,12 @@ namespace GuoGuoCommunity.Domain.Models.Enum
         /// </summary>
         public static Department JieDaoBan { get; set; }
 
-        public static IEnumerable<Department> GetAll() => new List<Department>() { YeZhu, YeZhuWeiYuanHui, WuYe, JieDaoBan };
+        /// <summary>
+        /// 商户
+        /// </summary>
+        public static Department Shop { get; set; }
+
+        public static IEnumerable<Department> GetAll() => new List<Department>() { YeZhu, YeZhuWeiYuanHui, WuYe, JieDaoBan, Shop };
 
         public static IEnumerable<Department> GetAllForVipOwner() => new List<Department>() { WuYe, JieDaoBan };
 

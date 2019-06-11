@@ -143,28 +143,33 @@ namespace GuoGuoCommunity.Domain.Service
         private async Task OnUpdate(GuoGuoCommunityContext db, StreetOffice dto, CancellationToken token = default)
         {
             StreetOfficeIncrementer incrementer = new StreetOfficeIncrementer();
-            ////社区订阅
-            //CommunityRepository communityRepository = new CommunityRepository();
-            //communityRepository.OnSubscribe(incrementer);
-            //小区订阅
-            SmallDistrictRepository smallDistrictRepository = new SmallDistrictRepository();
-            smallDistrictRepository.OnSubscribe(incrementer);
+
             //公告订阅
             AnnouncementRepository announcementRepository = new AnnouncementRepository();
             announcementRepository.OnSubscribe(incrementer);
-            //业主认证记录订阅
-            OwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
-            ownerCertificationRecordRepository.OnSubscribe(incrementer);
+
             //站内信订阅
             StationLetterRepository stationLetterRepository = new StationLetterRepository();
-            ownerCertificationRecordRepository.OnSubscribe(incrementer);
+            stationLetterRepository.OnSubscribe(incrementer);
+
             //投票订阅
             VoteRepository voteRepository = new VoteRepository();
             voteRepository.OnSubscribe(incrementer);
 
+            //用户订阅
+            UserRepository userRepository = new UserRepository();
+            userRepository.OnSubscribe(incrementer);
+
             await incrementer.OnUpdate(db, dto, token);
         }
 
+        /// <summary>
+        /// 删除街道办下级数据检查
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="dto"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         private async Task<bool> OnDelete(GuoGuoCommunityContext db, StreetOfficeDto dto, CancellationToken token = default)
         {
             //社区
@@ -172,31 +177,31 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 return true;
             }
-            //小区
-            if (await db.SmallDistricts.Where(x => x.Community.StreetOfficeId.ToString() == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+
+            //公告
+            if (await db.Announcements.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }
-            //公告
-            //if (await db.Announcements.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
-            //业主认证记录
-            //if (await db.OwnerCertificationRecords.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
+
             //站内信
-            //if (await db.StationLetters.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
+            if (await db.StationLetters.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+
             //投票
-            //if (await db.Votes.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
-            //{
-            //    return true;
-            //}
+            if (await db.Votes.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+
+            //用户
+            if (await db.Users.Where(x => x.StreetOfficeId == dto.Id.ToString() && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+
             return false;
         }
     }

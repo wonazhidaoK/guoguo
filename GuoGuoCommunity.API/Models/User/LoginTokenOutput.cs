@@ -5,7 +5,11 @@
     /// </summary>
     public class LoginTokenOutput
     {
-       
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        public string Id { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -80,5 +84,20 @@
         /// 部门值
         /// </summary>
         public string DepartmentValue { get; set; }
+
+        /// <summary>
+        /// 商店Id
+        /// </summary>
+        public string ShopId { get; set; }
+
+        /// <summary>
+        /// 打印机名称
+        /// </summary>
+        public string PrinterName { get; set; }
+
+        /// <summary>
+        /// 物业公司Id
+        /// </summary>
+        public string PropertyCompanyId { get; set; }
     }
 }

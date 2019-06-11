@@ -14,11 +14,6 @@ namespace GuoGuoCommunity.Domain.Service
     {
         #region 事件
 
-        private async Task OnUpdateAsync(GuoGuoCommunityContext db, IndustryDto dto, CancellationToken token = default)
-        {
-            //await db.Owners.Where(x => x.IndustryId == dto.Id).UpdateAsync(x => new Owner { IndustryName = dto.Name });
-        }
-
         private async Task<bool> OnDeleteAsync(GuoGuoCommunityContext db, IndustryDto dto, CancellationToken token = default)
         {
             //业主信息
@@ -26,33 +21,20 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 return true;
             }
+
+            //业主认证申请记录
+            if (await db.OwnerCertificationRecords.Where(x => x.IndustryId.ToString() == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+
+            //商超用户地址
+            if (await db.ShopUserAddresses.Where(x => x.IndustryId.ToString() == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            {
+                return true;
+            }
+
             return false;
-        }
-
-        public void OnSubscribe(BuildingIncrementer incrementer)
-        {
-            incrementer.BuildingEvent += BuildingChanging;
-        }
-
-        public async void BuildingChanging(GuoGuoCommunityContext dbs, Building building, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                //await db.Industries.Where(x => x.BuildingId == building.Id.ToString()).UpdateAsync(x => new Industry { BuildingName = building.Name });
-            }
-        }
-
-        public void OnSubscribe(BuildingUnitIncrementer incrementer)
-        {
-            incrementer.BuildingUnitEvent += BuildingUnitChanging;
-        }
-
-        public async void BuildingUnitChanging(GuoGuoCommunityContext dbs, BuildingUnit buildingUnit, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                //await db.Industries.Where(x => x.BuildingUnitId == buildingUnit.Id.ToString()).UpdateAsync(x => new Industry { BuildingUnitName = buildingUnit.UnitName });
-            }
         }
 
         #endregion
