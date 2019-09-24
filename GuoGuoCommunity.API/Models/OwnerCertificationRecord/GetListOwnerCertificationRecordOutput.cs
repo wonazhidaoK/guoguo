@@ -31,6 +31,21 @@ namespace GuoGuoCommunity.API.Models
         #region 基础信息
 
         /// <summary>
+        /// 省
+        /// </summary>
+        public string State { get; set; }
+
+        /// <summary>
+        /// 市
+        /// </summary>
+        public string City { get; set; }
+
+        /// <summary>
+        /// 区
+        /// </summary>
+        public string Region { get; set; }
+
+        /// <summary>
         /// 街道办Id
         /// </summary>
         public string StreetOfficeId { get; set; }

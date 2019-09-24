@@ -53,6 +53,9 @@
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Aspose.Cells, Version=19.9.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
+      <HintPath>..\packages\Aspose.Cells.19.9.0\lib\net40\Aspose.Cells.dll</HintPath>
+    </Reference>
     <Reference Include="Autofac, Version=4.9.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.9.2\lib\net45\Autofac.dll</HintPath>
     </Reference>
@@ -105,23 +108,29 @@
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
-    <Reference Include="Senparc.CO2NET, Version=0.7.2.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Senparc.CO2NET.0.7.2.1\lib\net45\Senparc.CO2NET.dll</HintPath>
+    <Reference Include="Senparc.CO2NET, Version=0.9.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Senparc.CO2NET.0.9.1\lib\net45\Senparc.CO2NET.dll</HintPath>
     </Reference>
-    <Reference Include="Senparc.CO2NET.APM, Version=0.3.0.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Senparc.CO2NET.APM.0.3.0.2\lib\net45\Senparc.CO2NET.APM.dll</HintPath>
+    <Reference Include="Senparc.CO2NET.APM, Version=0.4.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Senparc.CO2NET.APM.0.4.4\lib\net45\Senparc.CO2NET.APM.dll</HintPath>
     </Reference>
-    <Reference Include="Senparc.NeuChar, Version=0.6.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Senparc.NeuChar.0.6.8\lib\net45\Senparc.NeuChar.dll</HintPath>
+    <Reference Include="Senparc.NeuChar, Version=0.8.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Senparc.NeuChar.0.8.0.5\lib\net45\Senparc.NeuChar.dll</HintPath>
     </Reference>
-    <Reference Include="Senparc.Weixin, Version=6.4.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Senparc.Weixin.6.4.3\lib\net45\Senparc.Weixin.dll</HintPath>
+    <Reference Include="Senparc.NeuChar.App, Version=0.5.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Senparc.NeuChar.App.0.5.4\lib\net45\Senparc.NeuChar.App.dll</HintPath>
+    </Reference>
+    <Reference Include="Senparc.Weixin, Version=6.4.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Senparc.Weixin.6.4.12\lib\net45\Senparc.Weixin.dll</HintPath>
     </Reference>
     <Reference Include="Senparc.Weixin.MP, Version=16.7.4.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Senparc.Weixin.MP.16.7.4.1\lib\net45\Senparc.Weixin.MP.dll</HintPath>
     </Reference>
     <Reference Include="Senparc.Weixin.Open, Version=4.5.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Senparc.Weixin.Open.4.5.2\lib\net45\Senparc.Weixin.Open.dll</HintPath>
+    </Reference>
+    <Reference Include="Senparc.Weixin.TenPay, Version=1.4.2.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Senparc.Weixin.TenPay.1.4.2.1\lib\net45\Senparc.Weixin.TenPay.dll</HintPath>
     </Reference>
     <Reference Include="Senparc.Weixin.WxOpen, Version=3.4.2.3, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Senparc.Weixin.WxOpen.3.4.2.3\lib\net45\Senparc.Weixin.WxOpen.dll</HintPath>
@@ -231,11 +240,16 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\UnityResolver.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Common\ALiYunQueryBarCode.cs" />
+    <Compile Include="Common\AsposeCellsUtility.cs" />
+    <Compile Include="Common\SaveImageFromWebUtility.cs" />
     <Compile Include="Common\WXCustomMessageHandler.cs" />
     <Compile Include="Common\WXCustomMessageContext.cs" />
     <Compile Include="Common\SignalRServerHub.cs" />
+    <Compile Include="Common\ZFResponseHandler.cs" />
     <Compile Include="Controllers\AnnouncementController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
+    <Compile Include="Controllers\Store\ActivityController.cs" />
     <Compile Include="Controllers\Store\OrderController.cs" />
     <Compile Include="Controllers\Store\PlatformCommodityController.cs" />
     <Compile Include="Controllers\Basis\BuildingController.cs" />
@@ -276,6 +290,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\ALiYun\JsonModel.cs" />
     <Compile Include="Models\Announcement\AddPropertyAnnouncementInput.cs" />
     <Compile Include="Models\Announcement\AddPropertyAnnouncementOutput.cs" />
@@ -437,6 +452,7 @@
     <Compile Include="Models\Shop\GetListShopOutput.cs" />
     <Compile Include="Models\Shop\GetShopOutput.cs" />
     <Compile Include="Models\Shop\UpdateShopInput.cs" />
+    <Compile Include="Models\Shop\UpdateShopSignInput.cs" />
     <Compile Include="Models\SmallDistrictShop\AddSmallDistrictShopInput.cs" />
     <Compile Include="Models\SmallDistrictShop\AddSmallDistrictShopOutput.cs" />
     <Compile Include="Models\SmallDistrictShop\GetAllForPageSmallDistrictShopInput.cs" />
@@ -556,6 +572,8 @@
     <Compile Include="Models\WeiXinPush\OrderPushModel.cs" />
     <Compile Include="Models\WeiXinPush\AnnouncementPushModel.cs" />
     <Compile Include="Models\WeiXinPush\OwnerCertificationRecordPushModel.cs" />
+    <Compile Include="Models\WX\PayModelInput.cs" />
+    <Compile Include="Models\WX\WeixinJsPaySignature.cs" />
     <Compile Include="Models\WX\WXLoginInput.cs" />
     <Compile Include="Models\WX\WXLoginOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -617,8 +635,140 @@
     <Content Include="Scripts\umd\popper.js" />
     <Content Include="Scripts\umd\popper.min.js" />
     <EmbeddedResource Include="swagger.js" />
+    <Content Include="Upload\Announcement\2236381385.jpg" />
+    <Content Include="Upload\Announcement\2236403515.jpg" />
+    <Content Include="Upload\Announcement\95-16060G40F5.jpg" />
+    <Content Include="Upload\Announcement\b21c8701a18b87d6b3ac0db43624953c1e30fd64.jpeg" />
+    <Content Include="Upload\Announcement\tmp_335a8812d4774266f867085dfc23a1704736cc489613b330.jpg" />
+    <Content Include="Upload\Announcement\tmp_82a140ef9380270c06476d5e966cdcc102b46194e9d6f227.jpg" />
+    <Content Include="Upload\Announcement\公告内容-2.png" />
+    <Content Include="Upload\Complaint\20120827163346_tJJtj.jpeg" />
+    <Content Include="Upload\Complaint\tmp_72b733c75e262985d9d3457fd7800436998d4f89e9d9482f.jpg" />
+    <Content Include="Upload\Complaint\tmp_7f5ed75d3b973ac092d59f3d08863cb2b821b91213c280a8.jpg" />
+    <Content Include="Upload\Complaint\tmp_844a0fe946d7043ac0790ad1deeabe143da105a496e6de0e.jpg" />
+    <Content Include="Upload\Complaint\tmp_88e9b1783641080b1ad1c0947caa96f0976c24a2e10403e3.jpg" />
+    <Content Include="Upload\Complaint\tmp_c66a8aeb52f6df47d127e1efce0a2a6a8b752702ebd73a98.jpg" />
+    <Content Include="Upload\Complaint\tmp_e6a637356e8e0082d81fe2293398e45996a759b3f48920e0.jpg" />
+    <Content Include="Upload\Complaint\tmp_e9409671450d146ba9d310ebe59eba61c3dbb36559909a3b.jpg" />
+    <Content Include="Upload\Complaint\tmp_f47058256f5aac992eecb7dbd1f1889a8bd072f9fdb0e2e7.jpg" />
+    <Content Include="Upload\Complaint\tmp_f7f62ec0cd2548ed917c81cba01701ce41564fdcd60ee700.jpg" />
+    <Content Include="Upload\Complaint\公告内容-1.png" />
     <Content Include="Upload\icon-ts-mrpic.png" />
+    <Content Include="Upload\OwnerCertification\tmp_015270e0f0f76a9d937ca8e5f8b0a0c862ecae030281174e.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_037e903619cf765150c194aa56fa28caa0cebece853d7d59.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_045b51fbeb9d2bb7d626d72c1cedf53cba99ddf102789456.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_0998026e39f1d8b08037a3b6a7f9a39638fbdef023492005.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_0fc62be074a0672ae276d5e025f2e85c75497100a754a6d3.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_15efcefa6a6deae2907f475446d349691702cab4a1c90a1a.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_22e4968f287371afc285cbf9d0460f6033f09e822d13b61a.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_26ff2e2ad885f163163f512fb13fbd04b77e182c3d823b7e.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_39fba77fd32ea29db6b8b41a070617397d90fd6134aa3137.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_3c64168c4e28936d02d75eb499b34d2b66e2d40d30901069.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_3efb083ddd2c4ae493deec2336ecd8d8049466554a8c0f40.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_408b3937ba4e1754d0e19dc9ed7c724b9e61f876a4d59f92.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_4262506c1f87e00a4afe81785c1ae009668d9dfa82a0a6de.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_44d237ae3deca1d4fc4434f0309872ca6df32a1ed5d48703.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_48236f48d69cff32adbeb7a705ebc8db6a4c3c959fcc7073.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_5bcb3a7246cd6e92fee72a15119a063af0f45458652da5d4.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_626f692c5d6cdaeb5408edee3e4dff8506181f9af9f3ab15.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_6adbfae948d90ab2c79505e6d953886a3b036883ab8f9be6.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_7281a54bbfd17ad54faaa7ce5236a9b85c0f3139dc288540.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_77f24006ce47e38f67e6ed7c15f8a90b7aeb6462bdbfa365.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_826fd3606003ec4a6f0bea1ecf76c96a0f4edf8f01b06065.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_8273584f789f4b3e5a444a5535b68c8e6dc0254ef71ca53c.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_84c54ee518c644a16c05a55e3f2fee32c0b1b7e023d9f078.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_8d8fa0d5a2a894fd3238336f4c13b5460b8f873eb0fe9830.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_90e0f7682daea2dbc3de2c617d7715764418bbb63995dcde.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_9569cdff0153545529d481975234ba6699b41a49b6c368a6.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_98a91dff7cd2627609da6ee1bd1715ce5755a1e7826e74fc.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_99fabe8d76eb20801c13ca576b9e8fcae32f335f49129a3c.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_9d33ae2313d43c036f1c5e14e694b1bb59abfeb1f0c4572c.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_9f722735d1bfbe65d48673079a77d32b050812233c79e5a1.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_a10ec075133a05283ca1942082ec09be46529ae2e3199ee5.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_a4005e40828a820ca844622b6fb26420ee323ba0d76a2286.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_a42acdf93587ddcd94e3127913659856ea07b5d300b9159f.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_a5cc484c4ec547647cec2c9d1e4cb52c14efe6798058cdbc.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_b93f70668fe0cc401bac77fcf20ab5b960f5bb4bb58a9b1f.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_ba68f26dd716ef88c7ef14cdb987dbe087239f15362a9ea4.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_c0712861a813d6bd953f7cfe2e3154d59c0090910405ace3.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_c0fa4083f5f7c4e18bf6da9e9a29569dcc8eb90efee693f4.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_c345403245451342d4113438944eb6658af974221d176f6a.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_c62ffaa815693438650cd5fc7cdbd023e72e36b248b99b0c.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_c7ab78854aba34274a4567ec0b00ba4213d7fd95fd51c1d1.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_c94c872dc1d69f7922e1224b1585184d9f7dc917072daa47.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_cb9a94efb0abe9748919d34c6eed5c43d23678e899931fb7.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_cc7c96be28e72171cb027b185c907e8ce6670e7940489ca4.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_d05e7458f56253beb889144f7961c3ecb3902932bb3e08bf.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_d2ce2278ea37c69bae903fc7854b7330f99a274b4ce19feb.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_d3f2ff8c165c6ba6ece3090c70052c3305d35998ee10f73c.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_dac51c3f1fdbb2bbf0f7d32591efcb81c9fd844cc79bcd74.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_de7f897310641116cd21b3c54e0f3b47ceb71d37a1d7a2cd.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_e54de23ec8270e287561e50cbb0ce7458af1eab6399b8ac2.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_ef26e28038e9899a27c67ca6857def2ed58c24f7b68e2b6e.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_f20fb0ea3ac9ac4284575092b11c3acb4eba061aee4b7019.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_f324d0b43d30cc6b15d95cb9a2b69a4d2b7e496359f7f276.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_f5ec7b4685f47dfac71214feaf022e95fcf2aabcc150b4e3.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_ff1d8ffba736f784f2abd57cfebb010cac209b5b9e5357ed.jpg" />
+    <Content Include="Upload\OwnerCertification\tmp_ffe086c49617a19da3141a346cc21f28ba7296df6eb278cb.jpg" />
+    <Content Include="Upload\OwnerCertification\wx6cb573824af23c80.o6zAJs_dtu0qtaWGPcSJWhVPFr1w.BhVD0ywFzSKSaf3e8d4849c4d03b6a340b028f407051.jpg" />
+    <Content Include="Upload\OwnerCertification\wx6cb573824af23c80.o6zAJs_dtu0qtaWGPcSJWhVPFr1w.cT7avnfqrD8B001d6f0ff7cc4b517ed5d9ee210146ef.jpg" />
+    <Content Include="Upload\OwnerCertification\wx6cb573824af23c80.o6zAJs_dtu0qtaWGPcSJWhVPFr1w.FNqTUgB6YpHJ001d6f0ff7cc4b517ed5d9ee210146ef.jpg" />
+    <Content Include="Upload\OwnerCertification\wx6cb573824af23c80.o6zAJs_dtu0qtaWGPcSJWhVPFr1w.k9kmYLf7UXoZ217ac8630cd65c52d53ec51c53a5e713.jpg" />
+    <Content Include="Upload\OwnerCertification\wx6cb573824af23c80.o6zAJs_dtu0qtaWGPcSJWhVPFr1w.SM23VEQjlvjo001d6f0ff7cc4b517ed5d9ee210146ef.jpg" />
+    <Content Include="Upload\OwnerCertification\wx6cb573824af23c80.o6zAJs_dtu0qtaWGPcSJWhVPFr1w.wJ3Kdo4jw6Pnaf3e8d4849c4d03b6a340b028f407051.jpg" />
     <Content Include="Upload\PlatformCommodityCertification\gjweixinAvatar.jpg" />
+    <Content Include="Upload\Shop\微信图片_20190521203112.jpg" />
+    <Content Include="Upload\StationLetter\20120827163346_tJJtj.jpeg" />
+    <Content Include="Upload\StationLetter\2236381385.jpg" />
+    <Content Include="Upload\StationLetter\b21c8701a18b87d6b3ac0db43624953c1e30fd64.jpeg" />
+    <Content Include="Upload\StationLetter\公告内容-2.png" />
+    <Content Include="Upload\VipOwnerCertification\tmp_028fde3456966ab734b3364abaeab319dd2b9350012c302d.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_06ff247674c192a996d8a74ca3828c30aa024b4dfafda8b5.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_07860e04f883dc669d84890248f9a3c7c3362aa1836d2c44.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_0bb4026688b78f820cb1bbd609a4b2712c8a1bda198f4098.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_0d711e1aa60cb11f06a4933a3580a971c50976ae8e4f7217.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_1bf648bf98b57d1d8b749100906b5e3860fd8aedfd0d3c61.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_1e777a43f5038add77139b790e0537b3f0a34f02f7f59b69.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_1fef33d9449ed4b05881e10cf4919f0d75233bb5ebdd71ed.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_2563faa5174d6c3a70960ae86d3198cfe35e14a073b7f7c6.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_265fa3065797211477a39f2bf23e25eb8b77181d0538d88b.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_33efd54d02d77653de26899494d99bef45973c5ebf48bc7c.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_36f1277694a813f12c5c3266f32c9fed2f78ddb6913973e8.png" />
+    <Content Include="Upload\VipOwnerCertification\tmp_45ab5352f2db7b6a78063a0a06d3457c808fbf95eb071b9b.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_508f3b8c127ab651ada71edaff9904863ecc1f012d95aa3d.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_518a63e6e5a0361d6c6517723653ef7b13b58625ffab50c3.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_732e5617f761442ed9cbd639ee1177a02b58983ae2a2dbc1.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_747b14a0212d170fecb47613e6bf11749a905782526fe3bf.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_7f0ac9187af56d7bc66a2585e2b79e97dad663786adbf4fe.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_84b0fda79026efca3c9a8566b727415d72fed51cf5dcb17e.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_8da3fe47ed85a3a9ba1913f54be7e5230facded7096c5559.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_8e69e237d3b8b668a5ea7bb4363469599531fc02865ca686.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_9344f8d32ba39296057b64d7f07ae01bcb6fb96e5173094c.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_98d60fec9a28d541cbac5783406a7ec1236a820e91d5c62e.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_aaa272fa48c51ccd12e4a89aa66b0a52eee862e4ba52f783.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_af367a2e5eeae6318e85d0a8f2084a8271a8f376804d77cb.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_b8bcdac0b6ce41d9e3d6426fa65510e32d12be8a675a7416.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_ba7b9e9e525bd2dc7f068fb903ba34375358df7506b5c488.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_bf832b1974639728f93fee38f392fa9d165b95b05e6401e7.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_c17bf1e37df585ad29d3b5bb5c8fe69861298338c2a0b49b.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_c8c23aabccab2172bee3089ed59ac20a7290c3a124a44b76.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_d320e4d2822bc1bfd61eefb7d8e0a62d1e243399d5a79043.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_e899a0e4b976c7d82135c7e9bd91c281216aec690dbe9ca1.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_ebe424692c1f990ad827b914353cd86bd636da48d6e1f1bc.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_ed161e8134005c590507ae46b1b88ec42fc5219f96d376a8.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_f6c8a8bfd7204f98d9aec3d3f364916a4d1c035d8e0d41c6.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_f7f02e08e57e86c54e454690f3ed7ee02d29a9020edc5b56.jpg" />
+    <Content Include="Upload\VipOwnerCertification\tmp_ffdf9c6f8f6d07befb8f1384021d4d58edcd73ac1cfbb776.jpg" />
+    <Content Include="Upload\VipOwnerCertification\wx6cb573824af23c80.o6zAJs_dtu0qtaWGPcSJWhVPFr1w.0x1hABYEJXr27987badc86f9b4a8c3e7fc145cffdf46.jpg" />
+    <Content Include="Upload\VipOwnerCertification\wx6cb573824af23c80.o6zAJs_dtu0qtaWGPcSJWhVPFr1w.ajOuniKN5jF8217ac8630cd65c52d53ec51c53a5e713.jpg" />
+    <Content Include="Upload\VipOwnerCertification\wx6cb573824af23c80.o6zAJs_dtu0qtaWGPcSJWhVPFr1w.xshdTiM3oiEuaf3e8d4849c4d03b6a340b028f407051.jpg" />
+    <Content Include="Upload\Vote\2236381385.jpg" />
+    <Content Include="Upload\Vote\2236403515.jpg" />
+    <Content Include="Upload\Vote\28-1F630142251.jpg" />
+    <Content Include="Upload\Vote\timg.jpg" />
+    <Content Include="Upload\Vote\tmp_9c277e5e3728d28dbc6f9b5418c53a9c80c6a5041e5327bb.jpg" />
+    <Content Include="Upload\Vote\tmp_c6e7326663af7a87e8690a89856312b4683cf2c63728a3d4.jpg" />
+    <Content Include="Upload\Vote\公告内容-2.png" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -651,15 +801,8 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Hangfire\" />
-    <Folder Include="Upload\Announcement\" />
-    <Folder Include="Upload\Complaint\" />
-    <Folder Include="Upload\OwnerCertification\" />
     <Folder Include="Upload\PropertyCompany\" />
     <Folder Include="Upload\ShopCommodity\" />
-    <Folder Include="Upload\Shop\" />
-    <Folder Include="Upload\StationLetter\" />
-    <Folder Include="Upload\VipOwnerCertification\" />
-    <Folder Include="Upload\Vote\" />
     <Folder Include="Views\GoodsType\" />
     <Folder Include="Views\PropertyCompany\" />
     <Folder Include="Views\ShopCommodity\" />
@@ -694,7 +837,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>64177</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

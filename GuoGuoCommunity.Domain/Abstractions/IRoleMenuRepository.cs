@@ -6,17 +6,14 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public interface IRoleMenuRepository
+    public interface IRoleMenuRepository : IIncludeRepository<Role_Menu, RoleMenuDto>
     {
-        Task<List<Role_Menu>> GetAllAsync(CancellationToken token = default);
-
-        Task<Role_Menu> AddAsync(RoleMenuDto dto, CancellationToken token = default);
-
-        Task DeleteAsync(RoleMenuDto dto, CancellationToken token = default);
-
-        Task UpdateAsync(RoleMenuDto dto, CancellationToken token = default);
-
-        Task<List<Role_Menu>> GetByRoleIdAsync(string roleId,CancellationToken token =default);
-
+        /// <summary>
+        /// 根据角色获取角色菜单
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task<List<Role_Menu>> GetByRoleIdAsync(string roleId, CancellationToken token = default);
     }
 }

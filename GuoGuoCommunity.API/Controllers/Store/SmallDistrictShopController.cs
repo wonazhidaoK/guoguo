@@ -1,6 +1,6 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
+using GuoGuoCommunity.Domain.Abstractions.Store;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
 using System;
@@ -17,25 +17,24 @@ namespace GuoGuoCommunity.API.Controllers
     /// </summary>
     public class SmallDistrictShopController : BaseController
     {
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
         private readonly ISmallDistrictShopRepository _smallDistrictShopRepository;
         private readonly IShopRepository _shopRepository;
-        private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
+        private readonly IActivityRepository _activityRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="smallDistrictShopRepository"></param>
-        /// <param name="shopRepository"></param>
-        /// <param name="ownerCertificationRecordRepository"></param>
-        public SmallDistrictShopController(ISmallDistrictShopRepository smallDistrictShopRepository,
+        public SmallDistrictShopController(
+            ISmallDistrictShopRepository smallDistrictShopRepository,
             IShopRepository shopRepository,
-            IOwnerCertificationRecordRepository ownerCertificationRecordRepository)
+            IActivityRepository activityRepository,
+            ITokenRepository tokenRepository)
         {
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
             _smallDistrictShopRepository = smallDistrictShopRepository;
             _shopRepository = shopRepository;
-            _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
+            _activityRepository = activityRepository;
         }
 
         /// <summary>
@@ -61,7 +60,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("排序值介于1-10！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddSmallDistrictShopOutput>(APIResultCode.Unknown, new AddSmallDistrictShopOutput { }, APIResultMessage.TokenError);
@@ -111,7 +110,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("排序值介于1-10！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -156,7 +155,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("商品分类Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -197,7 +196,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllForPageSmallDistrictShopOutput>(APIResultCode.Unknown, new GetAllForPageSmallDistrictShopOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllForPageSmallDistrictShopOutput>(APIResultCode.Unknown, new GetAllForPageSmallDistrictShopOutput { }, APIResultMessage.TokenError);
@@ -254,7 +253,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<List<GetListSmallDistrictShopOutput>>(APIResultCode.Unknown, new List<GetListSmallDistrictShopOutput> { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListSmallDistrictShopOutput>>(APIResultCode.Unknown, new List<GetListSmallDistrictShopOutput> { }, APIResultMessage.TokenError);
@@ -288,44 +287,78 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("smallDistrictShop/getAllForShopUser")]
         public async Task<ApiResult<GetAllForShopUserSmallDistrictShopOutput>> GetAllForShopUser([FromUri]GetAllForShopUserSmallDistrictShopInput input, CancellationToken cancelToken)
         {
-            if (input == null)
-            {
-                return new ApiResult<GetAllForShopUserSmallDistrictShopOutput>(APIResultCode.Success_NoB, new GetAllForShopUserSmallDistrictShopOutput { }, "参数无效");
-            }
-            if (Authorization == null)
-            {
-                return new ApiResult<GetAllForShopUserSmallDistrictShopOutput>(APIResultCode.Unknown, new GetAllForShopUserSmallDistrictShopOutput { }, APIResultMessage.TokenNull);
-            }
-            var user = _tokenManager.GetUser(Authorization);
-            if (user == null)
-            {
-                return new ApiResult<GetAllForShopUserSmallDistrictShopOutput>(APIResultCode.Unknown, new GetAllForShopUserSmallDistrictShopOutput { }, APIResultMessage.TokenError);
-            }
-            if (!(user.DepartmentValue == Department.YeZhu.Value || user.DepartmentValue == Department.YeZhuWeiYuanHui.Value))
-            {
-                throw new NotImplementedException("操作人部门不为业主！");
-            }
+            //if (input == null)
+            //{
+            //    return new ApiResult<GetAllForShopUserSmallDistrictShopOutput>(APIResultCode.Success_NoB, new GetAllForShopUserSmallDistrictShopOutput { }, "参数无效");
+            //}
+
+            //if (string.IsNullOrWhiteSpace(input.SmallDistrictId))
+            //{
+            //    throw new NotImplementedException("小区Id信息为空！");
+            //}
+
+            //if (Authorization == null)
+            //{
+            //    return new ApiResult<GetAllForShopUserSmallDistrictShopOutput>(APIResultCode.Unknown, new GetAllForShopUserSmallDistrictShopOutput { }, APIResultMessage.TokenNull);
+            //}
+            //var user = _tokenRepository.GetUser(Authorization);
+            //if (user == null)
+            //{
+            //    return new ApiResult<GetAllForShopUserSmallDistrictShopOutput>(APIResultCode.Unknown, new GetAllForShopUserSmallDistrictShopOutput { }, APIResultMessage.TokenError);
+            //}
+            //if (!(user.DepartmentValue == Department.YeZhu.Value || user.DepartmentValue == Department.YeZhuWeiYuanHui.Value))
+            //{
+            //    throw new NotImplementedException("操作人部门不为业主！");
+            //}
+
             //if (string.IsNullOrWhiteSpace(user.SmallDistrictId))
             //{
             //    throw new NotImplementedException("操作人小区信息为空！");
             //}
-            var ownerCertificationRecord = await _ownerCertificationRecordRepository.GetIncludeAsync(input.ApplicationRecordId, cancelToken);
-            if (ownerCertificationRecord == null)
-            {
-                throw new NotImplementedException("业主认证记录不存在为空！");
-            }
+            //var ownerCertificationRecord = await _ownerCertificationRecordRepository.GetIncludeAsync(input.ApplicationRecordId, cancelToken);
+            //if (ownerCertificationRecord == null)
+            //{
+            //    throw new NotImplementedException("业主认证记录不存在为空！");
+            //}
+
             var date = await _smallDistrictShopRepository.GetAllIncludeForShopUserAsync(new SmallDistrictShopDto
             {
                 PageIndex = input.PageIndex,
                 PageSize = input.PageSize,
-                SmallDistrictId = ownerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString()
-
+                SmallDistrictId = input.SmallDistrictId
             }, cancelToken);
 
+            List<Activity> activityDate = (await _activityRepository.GetAllActivities(cancelToken)).Select(x => new Activity
+            {
+                Money = x.Money,
+                Off = x.Off,
+                ActivityBeginTime = x.ActivityBeginTime,
+                ActivityEndTime = x.ActivityEndTime,
+                ActivitySource = x.ActivitySource,
+                ActivityType = x.ActivityType,
+                ID = x.ID.ToString(),
+                ShopId = x.ShopId.ToString()
+            }).ToList();
 
             List<GetAllForShopUserSmallDistrictShopOutputModel> list = new List<GetAllForShopUserSmallDistrictShopOutputModel>();
             foreach (var item in date.List)
             {
+                int activitySource = 1;
+                List<Activity> alist = new List<Activity>();
+                if (item.Shop.ActivitySign == "0" || string.IsNullOrEmpty(item.Shop.ActivitySign))
+                {
+                    alist = activityDate.FindAll(a => a.ActivitySource == 2).OrderBy(b=>b.Money).ToList();
+                    activitySource = 2;
+                }
+                else
+                {
+                    alist = activityDate.FindAll(a => a.ShopId == item.ShopId.ToString() && activitySource == 1).OrderBy(b => b.Money).ToList();
+                    if (alist == null || alist.Count() == 0)
+                    {
+                        alist = activityDate.FindAll(a => a.ActivitySource == 2).OrderBy(b => b.Money).ToList();
+                        activitySource = 2;
+                    }
+                }
                 list.Add(new GetAllForShopUserSmallDistrictShopOutputModel
                 {
                     Id = item.Id.ToString(),
@@ -333,7 +366,10 @@ namespace GuoGuoCommunity.API.Controllers
                     Address = item.Shop.Address,
                     LogoImageUrl = item.Shop.LogoImageUrl,
                     PhoneNumber = item.Shop.PhoneNumber,
-                    ShopId = item.Shop.Id.ToString()
+                    ShopId = item.Shop.Id.ToString(),
+                    ShopActivityList = alist,
+                    ActivitySource = activitySource,
+                    Postage = item.Postage
                 });
             }
             return new ApiResult<GetAllForShopUserSmallDistrictShopOutput>(APIResultCode.Success, new GetAllForShopUserSmallDistrictShopOutput
@@ -357,7 +393,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<dynamic>(APIResultCode.Unknown, new { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<dynamic>(APIResultCode.Unknown, new { }, APIResultMessage.TokenError);

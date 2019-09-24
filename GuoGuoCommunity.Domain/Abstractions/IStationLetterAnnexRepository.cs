@@ -1,25 +1,15 @@
 ﻿using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public interface IStationLetterAnnexRepository
+    public interface IStationLetterAnnexRepository : IIncludeRepository<StationLetterAnnex, StationLetterAnnexDto>
     {
-        Task<StationLetterAnnex> AddAsync(StationLetterAnnexDto dto, CancellationToken token = default);
-
-        Task UpdateAsync(StationLetterAnnexDto dto, CancellationToken token = default);
-
-        Task<List<StationLetterAnnex>> GetAllAsync(StationLetterAnnexDto dto, CancellationToken token = default);
-
-        Task DeleteAsync(StationLetterAnnexDto dto, CancellationToken token = default);
-
-        Task<StationLetterAnnex> GetAsync(string id, CancellationToken token = default);
-
+        /// <summary>
+        /// 根据附件Id获取附件url
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         string GetUrl(string id);
-
-        Task<List<StationLetterAnnex>> GetListAsync(StationLetterAnnexDto dto, CancellationToken token = default);
     }
 }

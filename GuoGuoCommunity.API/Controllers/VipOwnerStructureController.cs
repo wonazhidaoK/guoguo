@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using System;
@@ -17,16 +16,15 @@ namespace GuoGuoCommunity.API.Controllers
     public class VipOwnerStructureController : BaseController
     {
         private readonly IVipOwnerStructureRepository _vipOwnerStructureRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="vipOwnerStructureRepository"></param>
-        public VipOwnerStructureController(IVipOwnerStructureRepository vipOwnerStructureRepository)
+        public VipOwnerStructureController(IVipOwnerStructureRepository vipOwnerStructureRepository, ITokenRepository tokenRepository)
         {
             _vipOwnerStructureRepository = vipOwnerStructureRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -54,7 +52,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("职能权重信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddVipOwnerStructureOutput>(APIResultCode.Unknown, new AddVipOwnerStructureOutput { }, APIResultMessage.TokenError);
@@ -89,7 +87,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -104,7 +102,7 @@ namespace GuoGuoCommunity.API.Controllers
                 Weights = input.Weights,
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = user.Id.ToString()
-            });
+            }, cancellationToken);
 
             return new ApiResult();
         }
@@ -128,7 +126,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("社区Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -162,7 +160,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("社区Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetVipOwnerStructureOutput>(APIResultCode.Unknown, new GetVipOwnerStructureOutput { }, APIResultMessage.TokenError);
@@ -203,7 +201,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
             int startRow = (input.PageIndex - 1) * input.PageSize;
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllVipOwnerStructureOutput>(APIResultCode.Unknown, new GetAllVipOwnerStructureOutput { }, APIResultMessage.TokenError);
@@ -247,7 +245,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<List<GetListVipOwnerStructureOutput>>(APIResultCode.Unknown, new List<GetListVipOwnerStructureOutput> { }, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListVipOwnerStructureOutput>>(APIResultCode.Unknown, new List<GetListVipOwnerStructureOutput> { }, APIResultMessage.TokenError);

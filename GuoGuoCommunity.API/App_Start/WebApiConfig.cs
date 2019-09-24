@@ -24,7 +24,7 @@ namespace GuoGuoCommunity.API
             config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
             config.Filters.Add(new LogFilterAttribute());
             config.Filters.Add(new AbnormalFilterAttribute());
-            config.MessageHandlers.Add(new CancelledTaskBugWorkaroundMessageHandler());
+            //config.MessageHandlers.Add(new CancelledTaskBugWorkaroundMessageHandler());
 
             // Web API 路由
             config.MapHttpAttributeRoutes();

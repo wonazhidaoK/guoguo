@@ -318,13 +318,5 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async Task<List<OwnerCertificationRecord>> GetListForIdArrayAsync(List<string> ids, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                var list = await db.OwnerCertificationRecords.Where(x => x.IsDeleted == false).ToListAsync(token);
-                return (from x in list where ids.Contains(x.Id.ToString()) select x).ToList();
-            }
-        }
     }
 }

@@ -53,7 +53,7 @@ namespace GuoGuoCommunity.API
             }
             //throw new NotImplementedException();
         }
-        
+
         /// <summary>
         /// 日志写入
         /// </summary>
@@ -63,7 +63,7 @@ namespace GuoGuoCommunity.API
             var message = new StringBuilder();
 
             /**************************运行日志****************************/
-
+            message.Append("操作时间 : " + DateTime.Now.ToString() + "*********************************************" + Environment.NewLine);
             if (!string.IsNullOrWhiteSpace(record.Message))
             {
                 message.Append("").Append(record.Message + Environment.NewLine);
@@ -71,9 +71,10 @@ namespace GuoGuoCommunity.API
 
             if (record.Request != null)
             {
+
                 if (record.Request.Method != null)
                 {
-                    message.Append("Method : " + record.Request.Method + Environment.NewLine);
+                    message.Append( "请求方法 : " + record.Request.Method + Environment.NewLine);
                 }
 
                 if (record.Request.RequestUri != null)
@@ -81,9 +82,9 @@ namespace GuoGuoCommunity.API
                     message.Append("").Append("URL : " + record.Request.RequestUri + Environment.NewLine);
                 }
 
-                if (record.Request.Headers != null && record.Request.Headers.Contains("Token") && record.Request.Headers.GetValues("Token") != null && record.Request.Headers.GetValues("Token").FirstOrDefault() != null)
+                if (record.Request.Headers != null && record.Request.Headers.Contains("Authorization") && record.Request.Headers.GetValues("Authorization") != null && record.Request.Headers.GetValues("Authorization").FirstOrDefault() != null)
                 {
-                    message.Append("").Append("Token : " + record.Request.Headers.GetValues("Token").FirstOrDefault() + Environment.NewLine);
+                    message.Append("").Append("Token : " + record.Request.Headers.GetValues("Authorization").FirstOrDefault() + Environment.NewLine);
                 }
             }
 

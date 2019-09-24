@@ -1,5 +1,8 @@
 ﻿namespace GuoGuoCommunity.API.Models
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class GetListForShopUserInput
     {
         /// <summary>
@@ -7,9 +10,9 @@
         /// </summary>
         public string TypeId { get; set; }
 
-        /// <summary>
-        /// 业主申请记录Id
-        /// </summary>
-        public string ApplicationRecordId { get; set; }
+        ///// <summary>
+        ///// 业主申请记录Id
+        ///// </summary>
+        //public string ApplicationRecordId { get; set; }
     }
 }

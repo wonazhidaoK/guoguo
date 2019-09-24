@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
@@ -18,19 +17,19 @@ namespace GuoGuoCommunity.API.Controllers
     {
         private readonly IVipOwnerCertificationRecordRepository _vipOwnerCertificationRecordRepository;
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="vipOwnerCertificationRecordRepository"></param>
-        /// <param name="ownerCertificationRecordRepository"></param>
-        public VipOwnerCertificationRecordController(IVipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository,
-            IOwnerCertificationRecordRepository ownerCertificationRecordRepository)
+        public VipOwnerCertificationRecordController(
+            IVipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository,
+            IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
+            ITokenRepository tokenRepository)
         {
             _vipOwnerCertificationRecordRepository = vipOwnerCertificationRecordRepository;
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -57,7 +56,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<GetAllVipOwnerCertificationRecordOutpu>(APIResultCode.Unknown, new GetAllVipOwnerCertificationRecordOutpu { }, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllVipOwnerCertificationRecordOutpu>(APIResultCode.Unknown, new GetAllVipOwnerCertificationRecordOutpu { }, APIResultMessage.TokenError);

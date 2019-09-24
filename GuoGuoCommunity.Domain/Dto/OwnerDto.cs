@@ -36,10 +36,10 @@ namespace GuoGuoCommunity.Domain.Dto
         /// </summary>
         public string IndustryId { get; set; }
 
-        /// <summary>
-        /// 业户名称
-        /// </summary>
-        public string IndustryName { get; set; }
+        ///// <summary>
+        ///// 业户名称
+        ///// </summary>
+        //public string IndustryName { get; set; }
 
         /// <summary>
         /// 操作人Id

@@ -1,6 +1,7 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
+using GuoGuoCommunity.API.Models.Shop;
 using GuoGuoCommunity.Domain.Abstractions;
+using GuoGuoCommunity.Domain.Abstractions.Store;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Dto.Store;
 using GuoGuoCommunity.Domain.Models.Enum;
@@ -20,28 +21,25 @@ namespace GuoGuoCommunity.API.Controllers
     {
         private readonly IShopRepository _shopRepository;
         private readonly ISmallDistrictShopRepository _smallDistrictShopRepository;
-        private readonly IUploadRepository _uploadRepository;
         private readonly IShoppingTrolleyRepository _shoppingTrolleyRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
+        private readonly IActivityRepository _activityRepository;
 
         /// <summary>
         /// 商户信息
         /// </summary>
-        /// <param name="shopRepository"></param>
-        /// <param name="uploadRepository"></param>
-        /// <param name="shoppingTrolleyRepository"></param>
-        /// <param name="smallDistrictShopRepository"></param>
         public ShopController(
             IShopRepository shopRepository,
-            IUploadRepository uploadRepository,
             IShoppingTrolleyRepository shoppingTrolleyRepository,
-            ISmallDistrictShopRepository smallDistrictShopRepository)
+            ISmallDistrictShopRepository smallDistrictShopRepository,
+            IActivityRepository activityRepository,
+            ITokenRepository tokenRepository)
         {
             _shopRepository = shopRepository;
-            _uploadRepository = uploadRepository;
             _shoppingTrolleyRepository = shoppingTrolleyRepository;
             _smallDistrictShopRepository = smallDistrictShopRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
+            _activityRepository = activityRepository;
         }
 
         /// <summary>
@@ -58,7 +56,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<AddShopOutput>(APIResultCode.Unknown, new AddShopOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddShopOutput>(APIResultCode.Unknown, new AddShopOutput { }, APIResultMessage.TokenError);
@@ -131,7 +129,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllShopOutput>(APIResultCode.Unknown, new GetAllShopOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllShopOutput>(APIResultCode.Unknown, new GetAllShopOutput { }, APIResultMessage.TokenError);
@@ -191,7 +189,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("商户Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -220,7 +218,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetShopOutput>(APIResultCode.Unknown, new GetShopOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetShopOutput>(APIResultCode.Unknown, new GetShopOutput { }, APIResultMessage.TokenError);
@@ -278,7 +276,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Success_NoB, "商户名称为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -291,7 +289,7 @@ namespace GuoGuoCommunity.API.Controllers
             ShopDto dto = new ShopDto
             {
                 Id = input.Id,
-                Name=input.Name,
+                Name = input.Name,
                 Address = input.Address,
                 Description = input.Description,
                 MerchantCategoryValue = merchantCategory.Value,
@@ -303,7 +301,7 @@ namespace GuoGuoCommunity.API.Controllers
                 LogoImageUrl = input.LogoImageUrl,
                 QualificationImageUrl = input.QualificationImageUrl
             };
-           
+
             if (await _shopRepository.UpdateAsync(dto, cancelToken) > 0)
             {
                 return new ApiResult(APIResultCode.Success, APIResultMessage.Success);
@@ -324,7 +322,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<List<GetListShopOutput>>(APIResultCode.Unknown, new List<GetListShopOutput> { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListShopOutput>>(APIResultCode.Unknown, new List<GetListShopOutput> { }, APIResultMessage.TokenError);
@@ -354,7 +352,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetForShopUserOutput>(APIResultCode.Unknown, new GetForShopUserOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetForShopUserOutput>(APIResultCode.Unknown, new GetForShopUserOutput { }, APIResultMessage.TokenError);
@@ -367,10 +365,77 @@ namespace GuoGuoCommunity.API.Controllers
 
             var shoppingTrolleyList = await _shoppingTrolleyRepository.GetAllIncludeAsync(new ShoppingTrolleyDto
             {
-                OwnerCertificationRecordId = input.ApplicationRecordId,
+                //OwnerCertificationRecordId = input.ApplicationRecordId,
+                OperationUserId = user.Id.ToString(),
                 ShopId = input.ShopId
             }, cancelToken);
+            List<Activity> alist = new List<Activity>();
+            int activitySource = 1;
+            if (data.Shop.ActivitySign == "0" || string.IsNullOrEmpty(data.Shop.ActivitySign))
+            {
+                alist = (await _activityRepository.GetAllAsync(new Domain.Dto.Store.ActivityDto
+                {
+                    IsSelectByTime = true,
+                    ActivitySource = 2
 
+                }, cancelToken)).Select(x => new Activity
+                {
+                    ActivitySource = x.ActivitySource,
+                    ActivityType = x.ActivityType,
+                    ID = x.ID.ToString(),
+                    Money = x.Money,
+                    Off = x.Off,
+                    ActivityBeginTime = x.ActivityBeginTime,
+                    ActivityEndTime = x.ActivityEndTime,
+                    ShopId = x.ShopId.ToString()
+                }).OrderBy(b => b.Money).ToList();
+                activitySource = 2;
+            }
+            else
+            {
+
+                alist = (await _activityRepository.GetAllAsync(new Domain.Dto.Store.ActivityDto
+                {
+                    ShopId = data.ShopId.ToString(),
+                    IsSelectByTime = true,
+                    ActivitySource = 1
+                }, cancelToken)).Select(x => new Activity
+                {
+                    ActivitySource = x.ActivitySource,
+                    ActivityType = x.ActivityType,
+                    ID = x.ID.ToString(),
+                    Money = x.Money,
+                    Off = x.Off,
+                    ActivityBeginTime = x.ActivityBeginTime,
+                    ActivityEndTime = x.ActivityEndTime,
+                    ShopId = x.ShopId.ToString()
+                }).OrderBy(b => b.Money).ToList();
+                
+                //判断如果没有店铺活动则查询平台活动
+                if (alist == null || alist.Count == 0)
+                {
+                    alist = (await _activityRepository.GetAllAsync(new Domain.Dto.Store.ActivityDto
+                    {
+                        IsSelectByTime = true,
+                        ActivitySource = 2
+
+                    }, cancelToken)).Select(x => new Activity
+                    {
+                        ActivitySource = x.ActivitySource,
+                        ActivityType = x.ActivityType,
+                        ID = x.ID.ToString(),
+                        Money = x.Money,
+                        Off = x.Off,
+                        ActivityBeginTime = x.ActivityBeginTime,
+                        ActivityEndTime = x.ActivityEndTime,
+                        ShopId = x.ShopId.ToString()
+                    }).OrderBy(b => b.Money).ToList();
+                    activitySource = 2;
+                }
+            }
+            
+
+            
             return new ApiResult<GetForShopUserOutput>(APIResultCode.Success, new GetForShopUserOutput
             {
                 Id = data.Id.ToString(),
@@ -379,8 +444,55 @@ namespace GuoGuoCommunity.API.Controllers
                 LogoImageUrl = data.Shop.LogoImageUrl,
                 PhoneNumber = data.Shop.PhoneNumber,
                 IsPresence = shoppingTrolleyList.Any(),
-                Postage = data.Postage
+                Postage = data.Postage,
+                ShopActivityList = alist,
+                ActivitySource = activitySource
             });
+        }
+
+
+        /// <summary>
+        /// 更新店铺开启的活动
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("shop/updateActivitySign")]
+        public async Task<ApiResult> UpdateShopActivitySign([FromBody]UpdateShopSignInput input, CancellationToken cancelToken)
+        {
+            if (Authorization == null)
+            {
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
+            }
+            if (string.IsNullOrWhiteSpace(input.Id))
+            {
+                return new ApiResult(APIResultCode.Success_NoB, "店铺ID无效！");
+            }
+            if (string.IsNullOrWhiteSpace(input.ActivitySign))
+            {
+                return new ApiResult(APIResultCode.Success_NoB, "活动标记无效！");
+            }
+
+            var user = _tokenRepository.GetUser(Authorization);
+            if (user == null)
+            {
+                return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
+            }
+
+            ShopDto dto = new ShopDto
+            {
+                Id = input.Id,
+                ActivitySign = input.ActivitySign,
+                OperationTime = DateTimeOffset.Now,
+                OperationUserId = user.Id.ToString()
+            };
+
+            if (await _shopRepository.UpdateShopActivitySign(dto, cancelToken))
+            {
+                return new ApiResult(APIResultCode.Success, APIResultMessage.Success);
+            }
+            return new ApiResult(APIResultCode.Success_NoB, "数据更新失败！");
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
@@ -21,26 +20,23 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IVipOwnerCertificationAnnexRepository _vipOwnerCertificationAnnexRepository;
         private readonly IVipOwnerCertificationConditionRepository _vipOwnerCertificationConditionRepository;
         private readonly IVipOwnerCertificationRecordRepository _vipOwnerCertificationRecordRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="vipOwnerApplicationRecordRepository"></param>
-        /// <param name="vipOwnerCertificationAnnexRepository"></param>
-        /// <param name="vipOwnerCertificationConditionRepository"></param>
-        /// <param name="vipOwnerCertificationRecordRepository"></param>
         public VipOwnerApplicationRecordController(
             IVipOwnerApplicationRecordRepository vipOwnerApplicationRecordRepository,
             IVipOwnerCertificationAnnexRepository vipOwnerCertificationAnnexRepository,
             IVipOwnerCertificationConditionRepository vipOwnerCertificationConditionRepository,
-            IVipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository)
+            IVipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository,
+            ITokenRepository tokenRepository)
         {
             _vipOwnerCertificationConditionRepository = vipOwnerCertificationConditionRepository;
             _vipOwnerApplicationRecordRepository = vipOwnerApplicationRecordRepository;
             _vipOwnerCertificationAnnexRepository = vipOwnerCertificationAnnexRepository;
             _vipOwnerCertificationRecordRepository = vipOwnerCertificationRecordRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -80,7 +76,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddVipOwnerApplicationOutput>(APIResultCode.Unknown, new AddVipOwnerApplicationOutput { }, APIResultMessage.TokenError);
@@ -139,7 +135,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("小区Id信息为空！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllVipOwnerApplicationRecordOutput>(APIResultCode.Unknown, new GetAllVipOwnerApplicationRecordOutput { }, APIResultMessage.TokenError);
@@ -186,7 +182,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetVipOwnerApplicationRecordOutput>(APIResultCode.Unknown, new GetVipOwnerApplicationRecordOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetVipOwnerApplicationRecordOutput>(APIResultCode.Unknown, new GetVipOwnerApplicationRecordOutput { }, APIResultMessage.TokenError);
@@ -247,7 +243,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -277,7 +273,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<GetAllForWeiXinVipOwnerApplicationRecordOutput>(APIResultCode.Unknown, new GetAllForWeiXinVipOwnerApplicationRecordOutput { }, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllForWeiXinVipOwnerApplicationRecordOutput>(APIResultCode.Unknown, new GetAllForWeiXinVipOwnerApplicationRecordOutput { }, APIResultMessage.TokenError);
@@ -321,7 +317,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<GetAllForHistoryVipOwnerApplicationRecordOutput>(APIResultCode.Unknown, new GetAllForHistoryVipOwnerApplicationRecordOutput { }, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllForHistoryVipOwnerApplicationRecordOutput>(APIResultCode.Unknown, new GetAllForHistoryVipOwnerApplicationRecordOutput { }, APIResultMessage.TokenError);

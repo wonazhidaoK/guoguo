@@ -43,6 +43,11 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public Task<List<Upload>> GetAllIncludeAsync(UploadDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<Upload> GetAsync(string id, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -55,7 +60,17 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public Task<Upload> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<Upload>> GetListAsync(UploadDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Upload>> GetListIncludeAsync(UploadDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }

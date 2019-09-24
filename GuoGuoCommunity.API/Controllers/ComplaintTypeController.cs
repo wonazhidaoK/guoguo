@@ -18,16 +18,15 @@ namespace GuoGuoCommunity.API.Controllers
     public class ComplaintTypeController : BaseController
     {
         private readonly IComplaintTypeRepository _complaintTypeRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="complaintTypeRepository"></param>
-        public ComplaintTypeController(IComplaintTypeRepository complaintTypeRepository)
+        public ComplaintTypeController(IComplaintTypeRepository complaintTypeRepository, ITokenRepository tokenRepository)
         {
             _complaintTypeRepository = complaintTypeRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -57,7 +56,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("投诉类型级别信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddComplaintTypeOutput>(APIResultCode.Unknown, new AddComplaintTypeOutput { }, APIResultMessage.TokenError);
@@ -99,7 +98,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("楼宇单元Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -130,7 +129,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -168,7 +167,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("楼宇Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetComplaintTypeOutput>(APIResultCode.Unknown, new GetComplaintTypeOutput { }, APIResultMessage.TokenError);
@@ -204,7 +203,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<GetAllComplaintTypeOutput>(APIResultCode.Unknown, new GetAllComplaintTypeOutput { }, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllComplaintTypeOutput>(APIResultCode.Unknown, new GetAllComplaintTypeOutput { }, APIResultMessage.TokenError);
@@ -266,7 +265,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("发起部门值信息为空！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Unknown, new List<GetListComplaintTypeOutput> { }, APIResultMessage.TokenError);
@@ -297,7 +296,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Unknown, new List<GetListComplaintTypeOutput> { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListComplaintTypeOutput>>(APIResultCode.Unknown, new List<GetListComplaintTypeOutput> { }, APIResultMessage.TokenError);

@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using System;
@@ -16,15 +15,15 @@ namespace GuoGuoCommunity.API.Controllers
     /// </summary>
     public class GoodsTypeController : BaseController
     {
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
         private readonly IGoodsTypeRepository _goodsTypeRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        public GoodsTypeController(IGoodsTypeRepository goodsTypeRepository)
+        public GoodsTypeController(IGoodsTypeRepository goodsTypeRepository, ITokenRepository tokenRepository)
         {
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
             _goodsTypeRepository = goodsTypeRepository;
         }
 
@@ -51,7 +50,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("排序值介于1-10！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddGoodsTypeOutput>(APIResultCode.Unknown, new AddGoodsTypeOutput { }, APIResultMessage.TokenError);
@@ -88,7 +87,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("商品分类Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -127,7 +126,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("排序值介于1-10！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -164,7 +163,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllForPageGoodsTypeOutput>(APIResultCode.Unknown, new GetAllForPageGoodsTypeOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllForPageGoodsTypeOutput>(APIResultCode.Unknown, new GetAllForPageGoodsTypeOutput { }, APIResultMessage.TokenError);
@@ -212,7 +211,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<List<GetListGoodsTypeOutput>>(APIResultCode.Unknown, new List<GetListGoodsTypeOutput> { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListGoodsTypeOutput>>(APIResultCode.Unknown, new List<GetListGoodsTypeOutput> { }, APIResultMessage.TokenError);

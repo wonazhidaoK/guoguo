@@ -10,10 +10,10 @@
         /// </summary>
         public string ShopCommodityId { get; set; }
 
-        /// <summary>
-        /// 用户认证ID
-        /// </summary>
-        public string OwnerCertificationRecordId { get; set; }
+        ///// <summary>
+        ///// 用户认证ID
+        ///// </summary>
+        //public string OwnerCertificationRecordId { get; set; }
 
         /// <summary>
         /// 商品变更数量
@@ -30,9 +30,10 @@
         /// 店铺
         /// </summary>
         public string ShopId { get; set; }
-        /// <summary>
-        /// 用户认证ID
-        /// </summary>
-        public string OwnerCertificationRecordId { get; set; }
+
+        ///// <summary>
+        ///// 用户认证ID
+        ///// </summary>
+        //public string OwnerCertificationRecordId { get; set; }
     }
 }

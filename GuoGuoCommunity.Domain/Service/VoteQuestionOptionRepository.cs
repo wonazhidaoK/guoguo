@@ -46,7 +46,7 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("该选项不存在！");
                 }
 
-                voteQuestionOption.Votes = voteQuestionOption.Votes + 1;
+                voteQuestionOption.Votes += 1;
 
                 await db.SaveChangesAsync(token);
                 return voteQuestionOption;
@@ -63,6 +63,11 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public Task<List<VoteQuestionOption>> GetAllIncludeAsync(VoteQuestionOptionDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<VoteQuestionOption> GetAsync(string id, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -75,12 +80,22 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public Task<VoteQuestionOption> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<List<VoteQuestionOption>> GetListAsync(VoteQuestionOptionDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
                 return await db.VoteQuestionOptions.Where(x => x.IsDeleted == false && x.VoteId == dto.VoteId && x.VoteQuestionId == dto.VoteQuestionId).ToListAsync(token);
             }
+        }
+
+        public Task<List<VoteQuestionOption>> GetListIncludeAsync(VoteQuestionOptionDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
 
         public Task UpdateAsync(VoteQuestionOptionDto dto, CancellationToken token = default)

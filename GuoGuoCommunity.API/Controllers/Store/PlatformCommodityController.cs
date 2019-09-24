@@ -1,11 +1,12 @@
-﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
+﻿using GuoGuoCommunity.API.Common;
+using GuoGuoCommunity.API.Models;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace GuoGuoCommunity.API.Controllers
@@ -16,15 +17,15 @@ namespace GuoGuoCommunity.API.Controllers
     public class PlatformCommodityController : BaseController
     {
         private readonly IPlatformCommodityRepository _platformCommodityRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        public PlatformCommodityController(IPlatformCommodityRepository platformCommodityRepository)
+        public PlatformCommodityController(IPlatformCommodityRepository platformCommodityRepository, ITokenRepository tokenRepository)
         {
             _platformCommodityRepository = platformCommodityRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("商品条形码信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddBuildingOutput>(APIResultCode.Unknown, new AddBuildingOutput { }, APIResultMessage.TokenError);
@@ -84,7 +85,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -129,7 +130,7 @@ namespace GuoGuoCommunity.API.Controllers
                 PageSize = input.PageSize
             }, cancelToken);
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllPlatformCommodityOutput>(APIResultCode.Unknown, new GetAllPlatformCommodityOutput { }, APIResultMessage.TokenError);
@@ -142,7 +143,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Id = item.Id.ToString(),
                     BarCode = item.BarCode,
                     Name = item.Name,
-                    ImageUrl =  item.ImageUrl,
+                    ImageUrl = item.ImageUrl,
                     //ImageUrl = string.IsNullOrWhiteSpace(item.ImageUrl) ? "../Upload/icon-ts-mrpic.png" : item.ImageUrl,
                     Price = item.Price
                 });
@@ -168,7 +169,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetPlatformCommodityOutput>(APIResultCode.Unknown, new GetPlatformCommodityOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetPlatformCommodityOutput>(APIResultCode.Unknown, new GetPlatformCommodityOutput { }, APIResultMessage.TokenError);
@@ -192,7 +193,6 @@ namespace GuoGuoCommunity.API.Controllers
         /// 更新平台商品
         /// </summary>
         /// <param name="input"></param>
-        /// <param name="dto"></param>
         /// <param name="token"></param>
         /// <returns></returns>
         [HttpPost]
@@ -203,7 +203,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -248,7 +248,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetForBarCodePlatformCommodityOutput>(APIResultCode.Unknown, new GetForBarCodePlatformCommodityOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetForBarCodePlatformCommodityOutput>(APIResultCode.Unknown, new GetForBarCodePlatformCommodityOutput { }, APIResultMessage.TokenError);
@@ -257,9 +257,43 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("条形码为空！");
             }
+
+            // ALiYunQueryBarCode.Query("6902083881405");
+
             var data = await _platformCommodityRepository.GetForBarCodeAsync(barCode, cancelToken);
             if (data == null)
             {
+                var barQueryModel = ALiYunQueryBarCode.Query(barCode);
+                if (!string.IsNullOrWhiteSpace(barQueryModel.GoodsName))
+                {
+                    var url = "";
+                    if (!string.IsNullOrWhiteSpace(barQueryModel.Img))
+                    {
+                        var aa = SaveImageFromWebUtility.SaveImageFromWeb(barQueryModel.Img, HttpContext.Current.Server.MapPath("~/Upload/PlatformCommodityCertification/"), DateTime.Now.ToString("yyyyMMddhhmmssffffff"));
+                        url = "/PlatformCommodityCertification/" + aa;
+                    }
+
+                    var dto = new PlatformCommodityDto
+                    {
+                        Name = barQueryModel.GoodsName,
+                        Price = Convert.ToDecimal(barQueryModel.Price),
+                        BarCode = barCode,
+                        OperationTime = DateTimeOffset.Now,
+                        ImageUrl = url,
+                        OperationUserId = user.Id.ToString()
+                    };
+
+                    var entity = await _platformCommodityRepository.AddAsync(dto, cancelToken);
+
+                    return new ApiResult<GetForBarCodePlatformCommodityOutput>(APIResultCode.Success, new GetForBarCodePlatformCommodityOutput
+                    {
+                        Id = entity.Id.ToString(),
+                        Name = barQueryModel.GoodsName,
+                        BarCode = barCode,
+                        ImageUrl = entity.ImageUrl,
+                        Price = entity.Price
+                    });
+                }
                 return new ApiResult<GetForBarCodePlatformCommodityOutput>(APIResultCode.Success, new GetForBarCodePlatformCommodityOutput { });
             }
             return new ApiResult<GetForBarCodePlatformCommodityOutput>(APIResultCode.Success, new GetForBarCodePlatformCommodityOutput

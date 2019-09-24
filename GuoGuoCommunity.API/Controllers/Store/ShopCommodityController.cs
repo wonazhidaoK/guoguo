@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Dto.Store;
@@ -19,20 +18,19 @@ namespace GuoGuoCommunity.API.Controllers
     {
         private readonly IShopCommodityRepository _shopCommodityRepository;
         private readonly IShoppingTrolleyRepository _shoppingTrolleyRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="shopCommodityRepository"></param>
-        /// <param name="shoppingTrolleyRepository"></param>
         public ShopCommodityController(
             IShopCommodityRepository shopCommodityRepository,
-            IShoppingTrolleyRepository shoppingTrolleyRepository)
+            IShoppingTrolleyRepository shoppingTrolleyRepository,
+            ITokenRepository tokenRepository)
         {
             _shopCommodityRepository = shopCommodityRepository;
             _shoppingTrolleyRepository = shoppingTrolleyRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -66,7 +64,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("商品销售价格不规范！");
             }
-            if (input.Price< input.DiscountPrice)
+            if (input.Price < input.DiscountPrice)
             {
                 throw new NotImplementedException("销售价格即促销价应小于等于商品原价");
             }
@@ -78,7 +76,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("商品类别为空！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddShopCommodityOutput>(APIResultCode.Unknown, new AddShopCommodityOutput { }, APIResultMessage.TokenError);
@@ -146,7 +144,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("商品类别为空！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -189,7 +187,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("商品Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -222,7 +220,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllForPageShopCommodityOutput>(APIResultCode.Unknown, new GetAllForPageShopCommodityOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllForPageShopCommodityOutput>(APIResultCode.Unknown, new GetAllForPageShopCommodityOutput { }, APIResultMessage.TokenError);
@@ -280,7 +278,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetShopCommodityOutput>(APIResultCode.Unknown, new GetShopCommodityOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetShopCommodityOutput>(APIResultCode.Unknown, new GetShopCommodityOutput { }, APIResultMessage.TokenError);
@@ -329,7 +327,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("商品Id为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -366,7 +364,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("商品Id为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -402,16 +400,16 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<List<GetListForShopUserOutput>>(APIResultCode.Unknown, new List<GetListForShopUserOutput> { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListForShopUserOutput>>(APIResultCode.Unknown, new List<GetListForShopUserOutput> { }, APIResultMessage.TokenError);
             }
 
-            if (string.IsNullOrWhiteSpace(input.ApplicationRecordId))
-            {
-                return new ApiResult<List<GetListForShopUserOutput>>(APIResultCode.Success_NoB, new List<GetListForShopUserOutput> { }, "业主认证Id为空");
-            }
+            //if (string.IsNullOrWhiteSpace(input.ApplicationRecordId))
+            //{
+            //    return new ApiResult<List<GetListForShopUserOutput>>(APIResultCode.Success_NoB, new List<GetListForShopUserOutput> { }, "业主认证Id为空");
+            //}
 
             if (string.IsNullOrWhiteSpace(input.TypeId))
             {
@@ -430,7 +428,8 @@ namespace GuoGuoCommunity.API.Controllers
                 var shoppingTrolley = await _shoppingTrolleyRepository.GetForShopCommodityIdAsync(
                     new ShoppingTrolleyDto
                     {
-                        OwnerCertificationRecordId = input.ApplicationRecordId,
+                        //OwnerCertificationRecordId = input.ApplicationRecordId,
+                        OperationUserId = user.Id.ToString(),
                         ShopCommodityId = item.Id.ToString()
                     });
                 list.Add(new GetListForShopUserOutput

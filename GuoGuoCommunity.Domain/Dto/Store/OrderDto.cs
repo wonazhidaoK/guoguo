@@ -88,10 +88,10 @@ namespace GuoGuoCommunity.Domain.Dto
 
         #region 下单人信息
 
-        /// <summary>
-        /// 用户认证ID（外键）
-        /// </summary>
-        public string OwnerCertificationRecordId { get; set; }
+        ///// <summary>
+        ///// 用户认证ID（外键）
+        ///// </summary>
+        //public string OwnerCertificationRecordId { get; set; }
 
         /// <summary>
         /// 小区Id
@@ -116,6 +116,11 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 收货人地址
         /// </summary>
         public string Address { get; set; }
+
+        /// <summary>
+        /// 收货人业户
+        /// </summary>
+        public string IndustryId { get; set; }
 
         #endregion
 

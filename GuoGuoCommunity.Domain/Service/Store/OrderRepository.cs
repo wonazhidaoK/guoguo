@@ -1,6 +1,7 @@
 ﻿using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
+using GuoGuoCommunity.Domain.Models.Store;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -28,11 +29,31 @@ namespace GuoGuoCommunity.Domain.Service.Store
                     {
                         throw new NotImplementedException("该商家不存在！");
                     }
-                    if (!Guid.TryParse(dto.OwnerCertificationRecordId, out var ownerCertificationRecordId))
+                    //if (!Guid.TryParse(dto.OwnerCertificationRecordId, out var ownerCertificationRecordId))
+                    //{
+                    //    throw new NotImplementedException("业主认证Id信息不正确！");
+                    //}
+
+                    var user = await db.Users.Where(x => x.Id.ToString() == dto.OperationUserId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+
+                    if (user == null)
                     {
-                        throw new NotImplementedException("业主认证Id信息不正确！");
+                        throw new NotImplementedException("创建人信息不存在！");
                     }
-                    var list = await db.ShoppingTrolleys.Include(x => x.ShopCommodity.GoodsType.Shop).Where(item => item.ShopCommodity.GoodsType.ShopId == smallDistrictShop.ShopId && item.OwnerCertificationRecordId == ownerCertificationRecordId && item.ShopCommodity.IsDeleted == false).ToListAsync(token);
+
+                    var industry = await db.Industries.Include(x => x.BuildingUnit.Building).Where(x => x.Id.ToString() == dto.IndustryId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+
+                    if (industry == null)
+                    {
+                        throw new NotImplementedException("收货人业户信息不存在！");
+                    }
+
+                    if (industry.BuildingUnit.Building.SmallDistrictId != smallDistrictShop.SmallDistrictId)
+                    {
+                        throw new NotImplementedException("配送地址不在配送范围内！");
+                    }
+
+                    var list = await db.ShoppingTrolleys.Include(x => x.ShopCommodity.GoodsType.Shop).Where(item => item.ShopCommodity.GoodsType.ShopId == smallDistrictShop.ShopId && item.CreateOperationUserId == user.Id && item.ShopCommodity.IsDeleted == false).ToListAsync(token);
 
                     using (var transaction = db.Database.BeginTransaction())
                     {
@@ -41,9 +62,38 @@ namespace GuoGuoCommunity.Domain.Service.Store
                         {
                             throw new NotImplementedException("购物车内无商品！");
                         }
+                        //折扣价
                         var price = list.Sum(x => x.CommodityCount * x.ShopCommodity.DiscountPrice);
+                        //正价
+                        var dcRegularPriced = list.Sum(x => x.CommodityCount * x.ShopCommodity.Price);
+                        //先查询店铺活动是否处于开启状态
+                        Shop shop = db.Shops.Where(x => x.Id == smallDistrictShop.ShopId).FirstOrDefault();
+                        List<Activity> activities = new List<Activity>();
+                        //判断店铺是否开启活动
+                        if (shop.ActivitySign == "0")
+                        {
+                            //查询可用的平台活动
+                            activities = db.Activities.Where(x => x.IsDeleted == false && x.ActivitySource == 2 && x.ActivityBeginTime < DateTime.Now && x.ActivityEndTime <= DateTime.Now).OrderByDescending(b=>b.Money).ToList();
+
+                        }
+                        else
+                        {
+                            activities = db.Activities.Where(x => x.IsDeleted == false && x.ActivitySource == 1 && x.ShopId == smallDistrictShop.Id && x.ActivityBeginTime < DateTime.Now && x.ActivityEndTime <= DateTime.Now).OrderByDescending(b => b.Money).ToList();
+                        }
+                        //list已经倒叙，循环判断第一个小于等于的金额
+                        foreach (Activity item in activities)
+                        {
+                            if (item.Money <= price)
+                            {
+                                price = price - item.Off;
+                                break;
+                            }
+                        }
+
+
                         var entity = db.Orders.Add(new Order
                         {
+                            SmallDistrictShopId = smallDistrictShop.Id,
                             ShopId = smallDistrictShop.ShopId,
                             Address = dto.Address,
                             DeliveryName = dto.DeliveryName,
@@ -53,15 +103,19 @@ namespace GuoGuoCommunity.Domain.Service.Store
                             OrderStatusName = dto.OrderStatusName,
                             ReceiverName = dto.ReceiverName,
                             ReceiverPhone = dto.ReceiverPhone,
-                            OwnerCertificationRecordId = ownerCertificationRecordId,
+                            //OwnerCertificationRecordId = ownerCertificationRecordId,
+                            IndustryId = industry.Id,
                             LastOperationTime = dto.OperationTime,
                             LastOperationUserId = dto.OperationUserId,
                             CreateOperationTime = dto.OperationTime,
-                            CreateOperationUserId = dto.OperationUserId,
+                            CreateOperationUserId = user.Id,
                             ShopCommodityCount = list.Sum(x => x.CommodityCount),
                             ShopCommodityPrice = price,
+                            RegularPriced = dcRegularPriced,
                             Postage = smallDistrictShop.Postage,
-                            PaymentPrice = price + smallDistrictShop.Postage
+                            PaymentPrice = price + smallDistrictShop.Postage,
+                            PaymentStatusValue = PaymentStatus.Unpaid.Value,
+                            PaymentStatusName = PaymentStatus.Unpaid.Name
                         });
                         db.SaveChanges();
                         foreach (var item in list)
@@ -79,9 +133,7 @@ namespace GuoGuoCommunity.Domain.Service.Store
                         }
                         db.SaveChanges();
                         db.ShoppingTrolleys.RemoveRange(list);
-
                         db.SaveChanges();
-
                         //提交事务
                         transaction.Commit();
                         return entity;
@@ -135,7 +187,7 @@ namespace GuoGuoCommunity.Domain.Service.Store
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = db.Orders.Include(x => x.Shop).Where(item =>  item.ShopId.ToString() == dto.ShopId);
+                var list = db.Orders.Include(x => x.Shop).Where(item => item.ShopId.ToString() == dto.ShopId && item.PaymentStatusValue == PaymentStatus.Paid.Value);
                 if (!string.IsNullOrEmpty(dto.OrderStatusValue))
                 {
 
@@ -156,7 +208,7 @@ namespace GuoGuoCommunity.Domain.Service.Store
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = db.Orders.Include(x => x.Shop).Where(item => item.IsDeleted == false && item.OwnerCertificationRecordId.ToString() == dto.OwnerCertificationRecordId);
+                var list = db.Orders.Include(x => x.Shop).Where(item => item.IsDeleted == false && item.CreateOperationUserId.ToString() == dto.OperationUserId);
                 if (!string.IsNullOrEmpty(dto.OrderStatusValue))
                 {
                     if (dto.OrderStatusValue == "All")
@@ -184,7 +236,7 @@ namespace GuoGuoCommunity.Domain.Service.Store
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                var list = db.Orders.Include(x => x.Shop).Where(item => item.OwnerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrictId.ToString() == dto.SmallDistrictId && (item.OrderStatusValue != OrderStatus.WaitingAccept.Value));
+                var list = db.Orders.Include(x => x.Shop).Where(item => item.Industry.BuildingUnit.Building.SmallDistrictId.ToString() == dto.SmallDistrictId && (item.OrderStatusValue != OrderStatus.WaitingAccept.Value)&& item.PaymentStatusValue== PaymentStatus.Paid.Value);
                 if (!string.IsNullOrEmpty(dto.OrderStatusValue))
                 {
                     list = list.Where(item => item.OrderStatusValue == dto.OrderStatusValue);
@@ -217,7 +269,7 @@ namespace GuoGuoCommunity.Domain.Service.Store
                 {
                     throw new NotImplementedException("订单ID无效！");
                 }
-                return await db.Orders.Include(x => x.Shop).Include(x => x.OwnerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(item => item.Id == ID).FirstOrDefaultAsync(token);
+                return await db.Orders.Include(x => x.Shop).Include(x => x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice).Where(item => item.Id == ID).FirstOrDefaultAsync(token);
             }
         }
 
@@ -251,6 +303,33 @@ namespace GuoGuoCommunity.Domain.Service.Store
                 order.LastOperationUserId = dto.OperationUserId;
                 if (await db.SaveChangesAsync(token) <= 0)
                     throw new NotImplementedException("数据执行失败。");
+            }
+        }
+
+        public async Task<Order> UpdatePaymentStatusAsync(string id, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(id, out var ID))
+                {
+                    throw new NotImplementedException("订单ID无效！");
+                }
+                var order = await db.Orders.Where(item => item.Id == ID).FirstOrDefaultAsync(token);
+                if (order == null)
+                {
+                    throw new NotImplementedException("订单不存在！");
+                }
+
+                order.PaymentStatusValue = PaymentStatus.Paid.Value;
+                order.PaymentStatusName = PaymentStatus.Paid.Name;
+                order.OrderStatusName = OrderStatus.WaitingAccept.Name;
+                order.OrderStatusValue = OrderStatus.WaitingAccept.Value;
+
+                if (await db.SaveChangesAsync(token) <= 0)
+                {
+                    throw new NotImplementedException("数据执行失败。"+ id);
+                }
+                return order;
             }
         }
     }

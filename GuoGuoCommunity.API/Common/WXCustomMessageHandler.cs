@@ -3,10 +3,10 @@ using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Service;
 using Hangfire;
+using Senparc.NeuChar.App.AppStore;
 using Senparc.NeuChar.Entities;
 using Senparc.Weixin.Exceptions;
 using Senparc.Weixin.MP.AdvancedAPIs;
-using Senparc.Weixin.MP.AppStore;
 using Senparc.Weixin.MP.Entities;
 using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.MP.MessageHandlers;
@@ -30,22 +30,22 @@ namespace GuoGuoCommunity.API
         /// <param name="postModel"></param>
         /// <param name="maxRecordCount"></param>
         /// <param name="developerInfo"></param>
-        public WXCustomMessageHandler(Stream inputStream, PostModel postModel = null, int maxRecordCount = 0, DeveloperInfo developerInfo = null) : base(inputStream, postModel, maxRecordCount, developerInfo)
+        public WXCustomMessageHandler(Stream inputStream, PostModel postModel = null, int maxRecordCount = 0, DeveloperInfo developerInfo = null) : base(inputStream, postModel, maxRecordCount)
         {
             _weiXinUserRepository = new WeiXinUserRepository();
         }
 
         #region 异步事件处理
 
-       
+
         /// <summary>
         /// 异步关注事件
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <returns></returns>
-        public async override Task<IResponseMessageBase> OnEvent_SubscribeRequestAsync(RequestMessageEvent_Subscribe requestMessage) 
+        public async override Task<IResponseMessageBase> OnEvent_SubscribeRequestAsync(RequestMessageEvent_Subscribe requestMessage)
         {
-            BackgroundJob.Enqueue(() => Console.WriteLine("Fire-and-forget")); 
+            BackgroundJob.Enqueue(() => Console.WriteLine("Fire-and-forget"));
             IResponseMessageBase reponseMessage = null;
             var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
             try
@@ -94,7 +94,7 @@ namespace GuoGuoCommunity.API
         public async override Task<IResponseMessageBase> OnEvent_UnsubscribeRequestAsync(RequestMessageEvent_Unsubscribe requestMessage)
         {
             var userInfo = await UserApi.InfoAsync(WXController.AppId, OpenId);
-            await _weiXinUserRepository.UpdateForUnionIdAsync(new WeiXinUserDto { Unionid = userInfo.unionid , Subscribe=userInfo.subscribe}); 
+            await _weiXinUserRepository.UpdateForUnionIdAsync(new WeiXinUserDto { Unionid = userInfo.unionid, Subscribe = userInfo.subscribe });
             return null;
         }
 

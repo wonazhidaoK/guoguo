@@ -38,12 +38,27 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public Task<List<ComplaintStatusChangeRecording>> GetAllIncludeAsync(ComplaintStatusChangeRecordingDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<ComplaintStatusChangeRecording> GetAsync(string id, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }
 
+        public Task<ComplaintStatusChangeRecording> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<ComplaintStatusChangeRecording>> GetListAsync(ComplaintStatusChangeRecordingDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<ComplaintStatusChangeRecording>> GetListIncludeAsync(ComplaintStatusChangeRecordingDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }

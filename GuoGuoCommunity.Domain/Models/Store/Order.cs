@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 订单
     /// </summary>
-    public class Order : IEntitity
+    public class Order : IDeleted, ILastOperation
     {
         /// <summary>
         /// 主键
@@ -53,6 +53,12 @@ namespace GuoGuoCommunity.Domain.Models
         public Guid ShopId { get; set; }
 
         public Shop Shop { get; set; }
+
+        [Required]
+        [ForeignKey("SmallDistrictShop")]
+        public Guid SmallDistrictShopId { get; set; }
+
+        public SmallDistrictShop SmallDistrictShop { get; set; }
 
         /// <summary>
         /// 店铺邮费
@@ -101,22 +107,26 @@ namespace GuoGuoCommunity.Domain.Models
         /// 应付款金额
         /// </summary>
         public decimal PaymentPrice { get; set; }
+        /// <summary>
+        /// 订单原价
+        /// </summary>
+        public decimal RegularPriced { get; set; }
 
         #endregion
 
         #region 下单人信息
 
-        /// <summary>
-        /// 用户认证ID（外键）
-        /// </summary>
-        [Required]
-        [ForeignKey("OwnerCertificationRecord")]
-        public Guid OwnerCertificationRecordId { get; set; }
+        ///// <summary>
+        ///// 用户认证ID（外键）
+        ///// </summary>
+        //[Required]
+        //[ForeignKey("OwnerCertificationRecord")]
+        //public Guid OwnerCertificationRecordId { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public OwnerCertificationRecord OwnerCertificationRecord { get; set; }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        //public OwnerCertificationRecord OwnerCertificationRecord { get; set; }
 
         #region 收货人地址信息
 
@@ -135,6 +145,14 @@ namespace GuoGuoCommunity.Domain.Models
         /// </summary>
         public string Address { get; set; }
 
+        /// <summary>
+        /// 业户Id
+        /// </summary>
+        public Guid IndustryId { get; set; }
+
+        [ForeignKey("IndustryId")]
+        public Industry Industry { get; set; }
+
         #endregion
 
         #endregion
@@ -143,7 +161,13 @@ namespace GuoGuoCommunity.Domain.Models
 
         public DateTimeOffset? DeletedTime { get; set; }
 
-        public string CreateOperationUserId { get; set; }
+        [ForeignKey("CreateOperationUserId")]
+        public User User { get; set; }
+
+        /// <summary>
+        /// 创建人Id
+        /// </summary>
+        public Guid CreateOperationUserId { get; set; }
 
         public DateTimeOffset? CreateOperationTime { get; set; }
 

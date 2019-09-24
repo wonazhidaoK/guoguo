@@ -20,26 +20,23 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IStationLetterAnnexRepository _stationLetterAnnexRepository;
         private readonly IStationLetterBrowseRecordRepository _stationLetterBrowseRecordRepository;
         private readonly IUserRepository _userRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="stationLetterRepository"></param>
-        /// <param name="stationLetterAnnexRepository"></param>
-        /// <param name="stationLetterBrowseRecordRepository"></param>
-        /// <param name="userRepository"></param>
         public StationLetterController(
             IStationLetterRepository stationLetterRepository,
             IStationLetterAnnexRepository stationLetterAnnexRepository,
             IStationLetterBrowseRecordRepository stationLetterBrowseRecordRepository,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            ITokenRepository tokenRepository)
         {
             _stationLetterRepository = stationLetterRepository;
             _stationLetterAnnexRepository = stationLetterAnnexRepository;
             _stationLetterBrowseRecordRepository = stationLetterBrowseRecordRepository;
             _userRepository = userRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -69,7 +66,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("站内信标题信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddStationLetterOutput>(APIResultCode.Unknown, new AddStationLetterOutput { }, APIResultMessage.TokenError);
@@ -114,7 +111,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllStreetOfficeStationLetterOutput>(APIResultCode.Unknown, new GetAllStreetOfficeStationLetterOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllStreetOfficeStationLetterOutput>(APIResultCode.Unknown, new GetAllStreetOfficeStationLetterOutput { }, APIResultMessage.TokenError);
@@ -193,7 +190,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<GetStationLetterOutput>(APIResultCode.Unknown, new GetStationLetterOutput { }, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
 
             if (user == null)
             {
@@ -257,7 +254,7 @@ namespace GuoGuoCommunity.API.Controllers
 
             int startRow = (input.PageIndex - 1) * input.PageSize;
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllPropertyStationLetterOutput>(APIResultCode.Unknown, new GetAllPropertyStationLetterOutput { }, APIResultMessage.TokenError);
@@ -316,7 +313,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<GetStationLetterOutput>(APIResultCode.Unknown, new GetStationLetterOutput { }, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetStationLetterOutput>(APIResultCode.Unknown, new GetStationLetterOutput { }, APIResultMessage.TokenError);

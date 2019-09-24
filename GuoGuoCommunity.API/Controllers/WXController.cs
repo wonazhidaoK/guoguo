@@ -1,14 +1,19 @@
-﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
+﻿using GuoGuoCommunity.API.Common;
+using GuoGuoCommunity.API.Models;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
+using GuoGuoCommunity.Domain.Models;
+using Newtonsoft.Json;
+using NLog;
 using Senparc.Weixin.MP;
 using Senparc.Weixin.MP.AdvancedAPIs;
 using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
 using Senparc.Weixin.MP.Entities.Request;
+using Senparc.Weixin.TenPay.V3;
 using Senparc.Weixin.WxOpen.AdvancedAPIs.Sns;
 using Senparc.Weixin.WxOpen.Helpers;
 using System;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -26,29 +31,31 @@ namespace GuoGuoCommunity.API.Controllers
     /// </summary>
     public class WXController : BaseController
     {
+        private static readonly Logger AppLogger = LogManager.GetCurrentClassLogger();
+        private const string HttpContext = "MS_HttpContext";
+        private const string RemoteEndpointMessage = "System.ServiceModel.Channels.RemoteEndpointMessageProperty";
+        private const string OwinContext = "MS_OwinContext";
+
         private readonly IUserRepository _userRepository;
         private readonly IWeiXinUserRepository _weiXinUserRepository;
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private readonly IVipOwnerCertificationRecordRepository _vipOwnerCertificationRecordRepository;
         private readonly IVipOwnerApplicationRecordRepository _vipOwnerApplicationRecordRepository;
         private readonly IVipOwnerRepository _vipOwnerRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
+        private readonly IOrderRepository _orderRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="userRepository"></param>
-        /// <param name="weiXinUserRepository"></param>
-        /// <param name="ownerCertificationRecordRepository"></param>
-        /// <param name="vipOwnerCertificationRecordRepository"></param>
-        /// <param name="vipOwnerApplicationRecordRepository"></param>
-        /// <param name="vipOwnerRepository"></param>
         public WXController(IUserRepository userRepository,
             IWeiXinUserRepository weiXinUserRepository,
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
             IVipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository,
             IVipOwnerApplicationRecordRepository vipOwnerApplicationRecordRepository,
-            IVipOwnerRepository vipOwnerRepository)
+            IVipOwnerRepository vipOwnerRepository,
+            ITokenRepository tokenRepository,
+            IOrderRepository orderRepository)
         {
             _userRepository = userRepository;
             _weiXinUserRepository = weiXinUserRepository;
@@ -56,7 +63,8 @@ namespace GuoGuoCommunity.API.Controllers
             _vipOwnerCertificationRecordRepository = vipOwnerCertificationRecordRepository;
             _vipOwnerApplicationRecordRepository = vipOwnerApplicationRecordRepository;
             _vipOwnerRepository = vipOwnerRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
+            _orderRepository = orderRepository;
         }
 
         #region 微信服务器消息接收及处理
@@ -68,7 +76,6 @@ namespace GuoGuoCommunity.API.Controllers
         [Route("WeiXin")]
         public HttpResponseMessage Get(string signature, string timestamp, string nonce, string echostr)
         {
-            //BackgroundJob.Enqueue(() => SendAsync("888"));
             if (CheckSignature.Check(signature, timestamp, nonce, Token))
             {
                 var result = new StringContent(echostr, UTF8Encoding.UTF8, "application/x-www-form-urlencoded");
@@ -114,7 +121,7 @@ namespace GuoGuoCommunity.API.Controllers
             var ss = Request.Content.ReadAsStreamAsync().Result;
             StreamReader reader = new StreamReader(ss, Encoding.GetEncoding("utf-8"));
             var json = reader.ReadToEnd();
-            //BackgroundJob.Enqueue(() => SendAsync(json));
+
             //自定义MessageHandler，对微信请求的详细判断操作都在这里面。
             var messageHandler = new WXCustomMessageHandler(Request.Content.ReadAsStreamAsync().Result, postModel, maxRecordCount);
 
@@ -123,102 +130,20 @@ namespace GuoGuoCommunity.API.Controllers
                 /* 如果需要添加消息去重功能，只需打开OmitRepeatedMessage功能，SDK会自动处理。
                  * 收到重复消息通常是因为微信服务器没有及时收到响应，会持续发送2-5条不等的相同内容的RequestMessage*/
                 messageHandler.OmitRepeatedMessage = true;
-
                 //执行微信处理过程
                 await messageHandler.ExecuteAsync(cancelToken);
-
                 var resMessage = Request.CreateResponse(HttpStatusCode.OK);
-
                 string content = messageHandler.ResponseDocument == null ? string.Empty : messageHandler.ResponseDocument.ToString();
-
                 resMessage.Content = new StringContent(content);
-
                 resMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/xml");
-
                 return resMessage;
             }
             catch (Exception ex)
             {
-                //Log.Logger.Error("处理微信请求出错：", ex);
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "处理微信请求出错，内容：" + ex.Message);
             }
         }
 
-        #endregion
-
-        #region 人机交互
-
-
-
-        /// <summary>
-        /// 员工扫描注册二维码后，向员工发送注册提醒
-        /// </summary>
-        public void SendEmployeeRegisterRemind()
-        {
-            try
-            {
-                //var accessToken = AccessTokenContainer.GetAccessToken(AppId);
-                //更换成你需要的模板消息ID
-                string templateId = "AXA-AqlSepXjKzSldchlUXUFtCaVE9cJaX4pMkuhJ-I";//ConfigurationManager.AppSettings["WXTemplate_EmployeeRegisterRemind"].ToString();
-                                                                                  //更换成对应的模板消息格式
-                var templateData = new
-                {
-                    first = new TemplateDataItem("用户认证通知"),
-                    //  account = new TemplateDataItem(wxNickName),
-                    keyword1 = new TemplateDataItem(DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss\r\n")),
-                    keyword2 = new TemplateDataItem("888"),
-                    keyword3 = new TemplateDataItem(""),
-                    remark = new TemplateDataItem("详情", "#FF0000")
-                };
-
-                var miniProgram = new TempleteModel_MiniProgram()
-                {
-                    appid = GuoGuoCommunity_WxOpenAppId,//ZhiShiHuLian_WxOpenAppId,
-                                                        //pagepath = "pages/editmyinfo/editmyinfo?id=" + employeeID
-                };
-
-                TemplateApi.SendTemplateMessage(AppId, "oTK8q0-mRSd44GbjJeknfz0vLv6I", templateId, null, templateData, miniProgram);
-            }
-            catch (Exception e)
-            {
-                throw new NotImplementedException(e.Message);
-            }
-
-        }
-
-
-        #endregion
-
-        #region 获取手机号
-        /// <summary>
-        /// 获取用户手机号(根据逻辑自己改造)
-        /// </summary>
-        /// <param name="jsonObj">
-        ///     Code    小程序授权码
-        ///     EncryptedData
-        ///     IV
-        /// </param>
-        /// <returns></returns>
-        [Route("GetUserPhone")]
-        [HttpPost]
-        [AllowAnonymous]
-        public ApiResult GetUserPhone([FromBody]dynamic jsonObj)
-        {
-            string code = jsonObj.Code;
-            string encryptedData = jsonObj.EncryptedData;
-            string iv = jsonObj.IV;
-
-            ApiResult apiResult = new ApiResult();
-
-            var openIdResult = SnsApi.JsCode2Json(GuoGuoCommunity_WxOpenAppId, GuoGuoCommunity_WxOpenAppSecret, code);
-            //openIdResult.unionid
-            //   openIdResult.openid
-            //DecodedPhoneNumber decodedPhoneNumber = EncryptHelper.DecryptPhoneNumber(openIdResult.session_key, encryptedData, iv);
-
-            string phoneJson = EncryptHelper.DecodeEncryptedData(openIdResult.session_key, encryptedData, iv);
-
-            return null;
-        }
         #endregion
 
         /// <summary>
@@ -260,7 +185,7 @@ namespace GuoGuoCommunity.API.Controllers
                     }, cancelToken);
                 }
                 //产生 Token
-                var token = _tokenManager.Create(user);
+                var token = _tokenRepository.Create(user);
 
                 //存入数据库
                 await _userRepository.UpdateTokenAsync(
@@ -308,5 +233,215 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<WXLoginOutput>(APIResultCode.Success_NoB, new WXLoginOutput() { }, e.Message);
             }
         }
+
+
+        #region 支付
+
+        #region 获取客户端请求的IP地址
+
+        /// <summary>
+        /// 获取客户端地址
+        /// </summary>
+        /// <param name="request">请求</param>
+        /// <returns>IP地址</returns>
+        private string GetClientIpAddress(HttpRequestMessage request)
+        {
+            if (request.Properties.ContainsKey(HttpContext))
+            {
+                dynamic ctx = request.Properties[HttpContext];
+                if (ctx != null)
+                {
+                    return ctx.Request.UserHostAddress;
+                }
+            }
+
+            if (request.Properties.ContainsKey(RemoteEndpointMessage))
+            {
+                dynamic remoteEndpoint = request.Properties[RemoteEndpointMessage];
+                if (remoteEndpoint != null)
+                {
+                    return remoteEndpoint.Address;
+                }
+            }
+ 
+            if (request.Properties.ContainsKey(OwinContext))
+            {
+                dynamic owinContext = request.Properties[OwinContext];
+                if (owinContext != null)
+                {
+                    return owinContext.Request.RemoteIpAddress;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion
+
+
+        /// <summary>
+        /// 创建订单成功后调起支付
+        /// </summary>
+        ///     json包
+        ///             Code        微信请求时发送的Code
+        ///             Price       微信请求时发送的价格
+        /// <returns></returns>
+        [Route("weixin/pay")]
+        [HttpPost]
+        public async Task<ApiResult<WeixinJsPaySignature>> Pay([FromBody]PayModelInput model, CancellationToken cancelToken)
+        {
+            /*
+             * 接口根据订单id和小程序Code
+             * 获取支付调起参数
+             */
+            if (string.IsNullOrWhiteSpace(model.Id))
+            {
+                throw new NotImplementedException("订单Id信息为空！");
+            }
+
+            //查询订单
+            var data = await _orderRepository.GetIncludeAsync(model.Id, cancelToken);
+
+            ApiResult<WeixinJsPaySignature> apiResult = new ApiResult<WeixinJsPaySignature>();
+            _ = new ApiResult();
+
+            string timeStamp = TenPayV3Util.GetTimestamp();
+            AppLogger.Debug(JsonConvert.SerializeObject("1" + timeStamp), JsonConvert.SerializeObject(timeStamp));
+
+            string nonceStr = TenPayV3Util.GetNoncestr();
+            AppLogger.Debug(JsonConvert.SerializeObject("2" + nonceStr), JsonConvert.SerializeObject(nonceStr));
+
+            string PayV3_TenpayNotify = ConfigurationManager.AppSettings["PayV3_TenpayNotify"];
+            TenPayV3Info tenPayV3Info = new TenPayV3Info(GuoGuoCommunity_WxOpenAppId, GuoGuoCommunity_WxOpenAppSecret, PayV3_MchId, PayV3_Key, string.Empty, string.Empty, PayV3_TenpayNotify, string.Empty);
+            AppLogger.Debug(JsonConvert.SerializeObject(tenPayV3Info), JsonConvert.SerializeObject(tenPayV3Info));
+
+            var openIdResult = SnsApi.JsCode2Json(GuoGuoCommunity_WxOpenAppId, GuoGuoCommunity_WxOpenAppSecret, model.Code);
+            AppLogger.Debug(JsonConvert.SerializeObject(openIdResult), JsonConvert.SerializeObject(openIdResult));
+
+            var xmlDataInfo = new TenPayV3UnifiedorderRequestData(tenPayV3Info.AppId, tenPayV3Info.MchId, "呙呙社区购物", data.Number, Convert.ToInt32(data.PaymentPrice * 100), GetClientIpAddress(Request), tenPayV3Info.TenPayV3Notify, Senparc.Weixin.TenPay.TenPayV3Type.JSAPI, openIdResult.openid, tenPayV3Info.Key, nonceStr, attach: data.Id.ToString());
+
+            AppLogger.Debug(DateTime.Now.ToString("yyyyMMddHHmmss") + "****TenPayV3UnifiedorderRequestData对象" + JsonConvert.SerializeObject(xmlDataInfo), "****TenPayV3UnifiedorderRequestData对象" + JsonConvert.SerializeObject(xmlDataInfo));
+
+            var resultPay = await TenPayV3.UnifiedorderAsync(xmlDataInfo);
+            AppLogger.Debug("****TenPayV3.Unifiedorder返回对象" + JsonConvert.SerializeObject(resultPay), "****TenPayV3.Unifiedorder返回对象" + JsonConvert.SerializeObject(resultPay));
+
+            if (resultPay.return_code.ToUpper() == "SUCCESS")
+            {
+                if (resultPay.result_code.ToUpper() == "SUCCESS")
+                {
+                    //设置支付参数
+                    RequestHandler paySignReqHandler = new RequestHandler(null);
+                    paySignReqHandler.SetParameter("appId", tenPayV3Info.AppId);
+                    paySignReqHandler.SetParameter("timeStamp", timeStamp);
+                    paySignReqHandler.SetParameter("nonceStr", nonceStr);
+                    paySignReqHandler.SetParameter("package", string.Format("prepay_id={0}", resultPay.prepay_id));
+                    paySignReqHandler.SetParameter("signType", "MD5");
+                    paySignReqHandler.SetParameter("nonceStr", nonceStr);
+                    string paySign = paySignReqHandler.CreateMd5Sign("key", tenPayV3Info.Key);
+                    var jsmodel = new WeixinJsPaySignature
+                    {
+                        AppId = tenPayV3Info.AppId,
+                        Timestamp = timeStamp,
+                        NonceStr = nonceStr,
+                        Package = string.Format("prepay_id={0}", resultPay.prepay_id),
+                        PaySign = paySign,
+                        OrderId = data.Number,
+                        SignType = "MD5"
+                    };
+                    apiResult.Data = jsmodel;
+                    return apiResult;
+                }
+                else
+                {
+
+                }
+            }
+            else
+            {
+                throw new NotImplementedException(JsonConvert.SerializeObject(resultPay));
+            }
+
+            return apiResult;
+        }
+
+        /// <summary>
+        /// 支付回调
+        /// 对后台通知交互时，如果微信收到商户的应答不是成功或超时，微信认为通知失败，微信会通过一定的策略定期重新发起通知，尽可能提高通知的成功率，但微信不保证通知最终能成功。 （通知频率为15/15/30/180/1800/1800/1800/1800/3600，单位：秒）
+        /// </summary>
+        /// <returns></returns>
+        [Route("weixin/payNotifyUrl")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> PayNotifyUrl( CancellationToken cancelToken)
+        {
+            ZFResponseHandler resHandler = new ZFResponseHandler(Request);
+            //AppLogger.Debug(DateTime.Now.ToString("yyyyMMddHHmmss") + "****Request" + JsonConvert.SerializeObject(Request), "****Request" + JsonConvert.SerializeObject(Request));
+            AppLogger.Debug(DateTime.Now.ToString("yyyyMMddHHmmss") + "****resHandler" + JsonConvert.SerializeObject(resHandler), "****resHandler" + JsonConvert.SerializeObject(resHandler));
+            string return_code = resHandler.GetParameter("return_code");
+            _ = resHandler.GetParameter("return_msg");
+            //VIPState vip = _icustomer.GetVIPStateByOrderCode("sss");
+            //await VIPCreateResult(vip.CreateDate, vip.VIPEndDate, "ddd");
+
+            string attach = resHandler.GetParameter("attach");
+            AppLogger.Debug(DateTime.Now.ToString("yyyyMMddHHmmss") + "****attach" + JsonConvert.SerializeObject(attach), "****attach" + JsonConvert.SerializeObject(attach));
+            if (string.IsNullOrWhiteSpace(attach))
+            {
+                return new HttpResponseMessage { Content = new StringContent("", Encoding.GetEncoding("UTF-8"), "text/plain") };
+            }
+            resHandler.SetKey(PayV3_Key);
+
+
+            //验证请求是否从微信发过来（安全）
+            if (resHandler.IsTenpaySign() && return_code.ToUpper() == "SUCCESS")
+            {
+                //正确的订单处理
+                string result_code = resHandler.GetParameter("result_code");
+                if (result_code.ToUpper() == "SUCCESS")
+                {
+                    //直到这里，才能认为交易真正成功了，可以进行数据库操作
+
+                    var order=await _orderRepository.UpdatePaymentStatusAsync(attach, cancelToken);
+                    var shopUserList = await _userRepository.GetByShopIdAsync(order.ShopId.ToString(), cancelToken);
+                    foreach (var item in shopUserList)
+                    {
+                        SignalR("2", order.ShopId.ToString(), item.Id.ToString(), order);
+                    }
+                    string content = "Success";
+
+                    return new HttpResponseMessage { Content = new StringContent(content, Encoding.GetEncoding("UTF-8"), "text/plain") };
+                }
+            }
+            else
+            {
+                //错误的订单处理
+
+            }
+
+
+            return new HttpResponseMessage { Content = new StringContent("", Encoding.GetEncoding("UTF-8"), "text/plain") };
+        }
+
+        #endregion
+
+        /// <summary>
+        /// SignalR推送
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="companyID"></param>
+        /// <param name="employeeId"></param>
+        /// <param name="order"></param>
+        private void SignalR(string type, string companyID, string employeeId, Order order)
+        {
+            var conid = SignalRServerHub.ConnectionIds.FirstOrDefault(a => a.Key == type + "@" + companyID + "@" + employeeId).Value;
+            if (!string.IsNullOrEmpty(conid))
+            {
+                SignalRServerHub.ClientList.Client(conid).getorderinfo(new 
+                {
+                    Id = order.Id.ToString(),
+                    CreateOperationTime = order.CreateOperationTime.Value.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss"),
+                    order.ShopCommodityCount
+                });
+            }
+        }
     }
+
 }

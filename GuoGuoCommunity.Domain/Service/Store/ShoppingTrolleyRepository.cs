@@ -17,29 +17,36 @@ namespace GuoGuoCommunity.Domain.Service.Store
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                if (!Guid.TryParse(dto.OwnerCertificationRecordId, out var ocrId))
-                {
-                    throw new NotImplementedException("业主ID无效！");
-                }
+                //if (!Guid.TryParse(dto.OwnerCertificationRecordId, out var ocrId))
+                //{
+                //    throw new NotImplementedException("业主ID无效！");
+                //}
                 if (!Guid.TryParse(dto.ShopCommodityId, out var scId))
                 {
                     throw new NotImplementedException("店铺商品ID无效！");
                 }
-                ShoppingTrolley model = new ShoppingTrolley();
-                var st = await db.ShoppingTrolleys.Where(item => item.ShopCommodityId == scId && item.OwnerCertificationRecordId == ocrId).FirstOrDefaultAsync(token);
-                if (st != null)
+                var user = await db.Users.Where(x => x.Id.ToString() == dto.OperationUserId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+
+                if (user == null)
                 {
-                    st.CommodityCount += dto.CommodityCount;
+                    throw new NotImplementedException("创建人信息不存在！");
+                }
+
+                //ShoppingTrolley model = new ShoppingTrolley();
+                ShoppingTrolley model = await db.ShoppingTrolleys.Where(item => item.ShopCommodityId == scId && item.CreateOperationUserId == user.Id).FirstOrDefaultAsync(token);
+                if (model != null)
+                {
+                    model.CommodityCount += dto.CommodityCount;
                 }
                 else
                 {
                     model = db.ShoppingTrolleys.Add(new ShoppingTrolley
                     {
-                        OwnerCertificationRecordId = ocrId,
+                        //OwnerCertificationRecordId = ocrId,
                         ShopCommodityId = scId,
                         CommodityCount = dto.CommodityCount,
                         CreateOperationTime = dto.OperationTime,
-                        CreateOperationUserId = dto.OperationUserId,
+                        CreateOperationUserId = user.Id,
                         LastOperationTime = dto.OperationTime,
                         LastOperationUserId = dto.OperationUserId
                     });
@@ -64,11 +71,19 @@ namespace GuoGuoCommunity.Domain.Service.Store
                 {
                     throw new NotImplementedException("店铺ID无效！");
                 }
-                if (!Guid.TryParse(dto.OwnerCertificationRecordId, out var ocrId))
+                //if (!Guid.TryParse(dto.OwnerCertificationRecordId, out var ocrId))
+                //{
+                //    throw new NotImplementedException("业主ID无效！");
+                //}
+                var user = await db.Users.Where(x => x.Id.ToString() == dto.OperationUserId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+
+                if (user == null)
                 {
-                    throw new NotImplementedException("业主ID无效！");
+                    throw new NotImplementedException("创建人信息不存在！");
                 }
-                var list = await db.ShoppingTrolleys.Where(item => item.ShopCommodity.GoodsType.ShopId == ShopId && item.OwnerCertificationRecordId == ocrId).ToListAsync(token);
+
+                var list = await db.ShoppingTrolleys.Where(item => item.ShopCommodity.GoodsType.ShopId == ShopId && item.CreateOperationUserId == user.Id).ToListAsync(token);
+
                 db.ShoppingTrolleys.RemoveRange(list);
 
                 if (await db.SaveChangesAsync(token) <= 0)
@@ -93,11 +108,17 @@ namespace GuoGuoCommunity.Domain.Service.Store
                 {
                     throw new NotImplementedException("店铺ID无效！");
                 }
-                if (!Guid.TryParse(dto.OwnerCertificationRecordId, out var ocrId))
+                //if (!Guid.TryParse(dto.OwnerCertificationRecordId, out var ocrId))
+                //{
+                //    throw new NotImplementedException("业主ID无效！");
+                //}
+                var user = await db.Users.Where(x => x.Id.ToString() == dto.OperationUserId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+
+                if (user == null)
                 {
-                    throw new NotImplementedException("业主ID无效！");
+                    throw new NotImplementedException("创建人信息不存在！");
                 }
-                return await db.ShoppingTrolleys.Where(item => item.ShopCommodity.GoodsType.ShopId == ShopId && item.OwnerCertificationRecordId == ocrId && item.ShopCommodity.IsDeleted == false&& item.ShopCommodity.SalesTypeValue== SalesType.Shelf.Value).ToListAsync(token);
+                return await db.ShoppingTrolleys.Where(item => item.ShopCommodity.GoodsType.ShopId == ShopId && item.CreateOperationUserId == user.Id && item.ShopCommodity.IsDeleted == false && item.ShopCommodity.SalesTypeValue == SalesType.Shelf.Value).ToListAsync(token);
             }
         }
 
@@ -111,15 +132,22 @@ namespace GuoGuoCommunity.Domain.Service.Store
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                if (!Guid.TryParse(dto.OwnerCertificationRecordId, out var ocrId))
-                {
-                    throw new NotImplementedException("业主ID无效！");
-                }
+                //if (!Guid.TryParse(dto.OwnerCertificationRecordId, out var ocrId))
+                //{
+                //    throw new NotImplementedException("业主ID无效！");
+                //}
                 if (!Guid.TryParse(dto.ShopCommodityId, out var scId))
                 {
                     throw new NotImplementedException("店铺商品ID无效！");
                 }
-                var model = await db.ShoppingTrolleys.Where(item => item.OwnerCertificationRecordId == ocrId && item.ShopCommodityId == scId).FirstOrDefaultAsync(token);
+                var user = await db.Users.Where(x => x.Id.ToString() == dto.OperationUserId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+
+                if (user == null)
+                {
+                    throw new NotImplementedException("创建人信息不存在！");
+                }
+
+                var model = await db.ShoppingTrolleys.Where(item => item.CreateOperationUserId == user.Id && item.ShopCommodityId == scId).FirstOrDefaultAsync(token);
                 if (model == null)
                 {
                     throw new NotImplementedException("购物车商品不存在！");
@@ -160,11 +188,17 @@ namespace GuoGuoCommunity.Domain.Service.Store
                 {
                     throw new NotImplementedException("店铺ID无效！");
                 }
-                if (!Guid.TryParse(dto.OwnerCertificationRecordId, out var ocrId))
+                //if (!Guid.TryParse(dto.OwnerCertificationRecordId, out var ocrId))
+                //{
+                //    throw new NotImplementedException("业主ID无效！");
+                //}
+                var user = await db.Users.Where(x => x.Id.ToString() == dto.OperationUserId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+
+                if (user == null)
                 {
-                    throw new NotImplementedException("业主ID无效！");
+                    throw new NotImplementedException("创建人信息不存在！");
                 }
-                return await db.ShoppingTrolleys.Include(x => x.ShopCommodity.GoodsType.Shop).Where(item => item.ShopCommodity.GoodsType.ShopId == ShopId && item.OwnerCertificationRecordId == ocrId && item.ShopCommodity.IsDeleted == false && item.ShopCommodity.SalesTypeValue == SalesType.Shelf.Value).ToListAsync(token);
+                return await db.ShoppingTrolleys.Include(x => x.ShopCommodity.GoodsType.Shop).Where(item => item.ShopCommodity.GoodsType.ShopId == ShopId && item.CreateOperationUserId == user.Id && item.ShopCommodity.IsDeleted == false && item.ShopCommodity.SalesTypeValue == SalesType.Shelf.Value).ToListAsync(token);
             }
         }
 
@@ -182,7 +216,13 @@ namespace GuoGuoCommunity.Domain.Service.Store
         {
             using (var db = new GuoGuoCommunityContext())
             {
-                return await db.ShoppingTrolleys.Where(item => item.ShopCommodityId.ToString() == dto.ShopCommodityId && item.OwnerCertificationRecordId.ToString() == dto.OwnerCertificationRecordId).FirstOrDefaultAsync(token);
+                var user = await db.Users.Where(x => x.Id.ToString() == dto.OperationUserId && x.IsDeleted == false).FirstOrDefaultAsync(token);
+
+                if (user == null)
+                {
+                    throw new NotImplementedException("创建人信息不存在！");
+                }
+                return await db.ShoppingTrolleys.Where(item => item.ShopCommodityId.ToString() == dto.ShopCommodityId && item.CreateOperationUserId == user.Id).FirstOrDefaultAsync(token);
             }
         }
     }

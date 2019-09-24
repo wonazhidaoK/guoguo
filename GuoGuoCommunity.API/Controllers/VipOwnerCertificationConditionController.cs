@@ -18,16 +18,15 @@ namespace GuoGuoCommunity.API.Controllers
     public class VipOwnerCertificationConditionController : BaseController
     {
         private readonly IVipOwnerCertificationConditionRepository _vipOwnerCertificationConditionRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="vipOwnerCertificationConditionRepository"></param>
-        public VipOwnerCertificationConditionController(IVipOwnerCertificationConditionRepository vipOwnerCertificationConditionRepository)
+        public VipOwnerCertificationConditionController(IVipOwnerCertificationConditionRepository vipOwnerCertificationConditionRepository, ITokenRepository tokenRepository)
         {
             _vipOwnerCertificationConditionRepository = vipOwnerCertificationConditionRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -53,7 +52,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("附件类型值信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddVipOwnerCertificationConditionOutput>(APIResultCode.Unknown, new AddVipOwnerCertificationConditionOutput { }, APIResultMessage.TokenError);
@@ -85,7 +84,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<List<GetListVipOwnerCertificationConditionOutpu>>(APIResultCode.Unknown, new List<GetListVipOwnerCertificationConditionOutpu> { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListVipOwnerCertificationConditionOutpu>>(APIResultCode.Unknown, new List<GetListVipOwnerCertificationConditionOutpu> { }, APIResultMessage.TokenError);

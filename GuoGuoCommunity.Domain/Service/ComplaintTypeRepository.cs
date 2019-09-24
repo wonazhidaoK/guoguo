@@ -87,6 +87,11 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public Task<List<ComplaintType>> GetAllIncludeAsync(ComplaintTypeDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<ComplaintType> GetAsync(string id, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -97,6 +102,11 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 throw new NotImplementedException("该投诉类型不正确！");
             }
+        }
+
+        public Task<ComplaintType> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<List<ComplaintType>> GetListAsync(ComplaintTypeDto dto, CancellationToken token = default)
@@ -110,6 +120,11 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 return list;
             }
+        }
+
+        public Task<List<ComplaintType>> GetListIncludeAsync(ComplaintTypeDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task UpdateAsync(ComplaintTypeDto dto, CancellationToken token = default)

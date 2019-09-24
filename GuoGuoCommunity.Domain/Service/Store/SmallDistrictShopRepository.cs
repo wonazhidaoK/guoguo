@@ -140,17 +140,17 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async Task<SmallDistrictShop> GetIncludeForShopUserAsync(SmallDistrictShopDto dto, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                //if (Guid.TryParse(id, out var uid))
-                //{
-                return await db.SmallDistrictShops.Where(x => x.ShopId.ToString() == dto.ShopId).FirstOrDefaultAsync(token);
-                //}
-                // throw new NotImplementedException("该商户Id信息不正确！");
-            }
-        }
+        //public async Task<SmallDistrictShop> GetIncludeForShopUserAsync(SmallDistrictShopDto dto, CancellationToken token = default)
+        //{
+        //    using (var db = new GuoGuoCommunityContext())
+        //    {
+        //        //if (Guid.TryParse(id, out var uid))
+        //        //{
+        //        return await db.SmallDistrictShops.Where(x => x.ShopId.ToString() == dto.ShopId).FirstOrDefaultAsync(token);
+        //        //}
+        //        // throw new NotImplementedException("该商户Id信息不正确！");
+        //    }
+        //}
 
         public async Task<List<SmallDistrictShop>> GetListAsync(SmallDistrictShopDto dto, CancellationToken token = default)
         {

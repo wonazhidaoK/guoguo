@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
@@ -23,35 +22,27 @@ namespace GuoGuoCommunity.API.Controllers
     {
         private readonly IAnnouncementRepository _announcementRepository;
         private readonly IAnnouncementAnnexRepository _announcementAnnexRepository;
-        private readonly IUploadRepository _uploadRepository;
         private readonly ISmallDistrictRepository _smallDistrictRepository;
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private readonly IUserRepository _userRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 公告信息管理
         /// </summary>
-        /// <param name="announcementRepository"></param>
-        /// <param name="announcementAnnexRepository"></param>
-        /// <param name="uploadRepository"></param>
-        /// <param name="ownerCertificationRecordRepository"></param>
-        /// <param name="smallDistrictRepository"></param>
-        /// <param name="userRepository"></param>
         public AnnouncementController(IAnnouncementRepository announcementRepository,
             IAnnouncementAnnexRepository announcementAnnexRepository,
-            IUploadRepository uploadRepository,
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
             ISmallDistrictRepository smallDistrictRepository,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            ITokenRepository tokenRepository)
         {
             _announcementRepository = announcementRepository;
             _announcementAnnexRepository = announcementAnnexRepository;
-            _uploadRepository = uploadRepository;
             _smallDistrictRepository = smallDistrictRepository;
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _userRepository = userRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -81,7 +72,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("业主认证Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddVipOwnerAnnouncementOutput>(APIResultCode.Unknown, new AddVipOwnerAnnouncementOutput { }, APIResultMessage.TokenError);
@@ -148,7 +139,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("公告标题信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddPropertyAnnouncementOutput>(APIResultCode.Unknown, new AddPropertyAnnouncementOutput { }, APIResultMessage.TokenError);
@@ -224,7 +215,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("公告小区信息为空！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddStreetOfficeAnnouncementOutput>(APIResultCode.Unknown, new AddStreetOfficeAnnouncementOutput { }, APIResultMessage.TokenError);
@@ -298,7 +289,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("楼宇Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -334,7 +325,7 @@ namespace GuoGuoCommunity.API.Controllers
             //{
             //    throw new NotImplementedException("业主认证Id信息为空！");
             //}
-            //var user = _tokenManager.GetUser(Authorization);
+            //var user = _tokenRepository.GetUser(Authorization);
             //if (user == null)
             //{
             //    return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Unknown, new GetAllAnnouncementOutput { }, APIResultMessage.TokenError);
@@ -411,7 +402,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
             int startRow = (input.PageIndex - 1) * input.PageSize;
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Unknown, new GetAllAnnouncementOutput { }, APIResultMessage.TokenError);
@@ -479,7 +470,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
             int startRow = (input.PageIndex - 1) * input.PageSize;
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllAnnouncementOutput>(APIResultCode.Unknown, new GetAllAnnouncementOutput { }, APIResultMessage.TokenError);
@@ -546,7 +537,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
             int startRow = (input.PageIndex - 1) * input.PageSize;
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetListStreetOfficeAnnouncementOutput>(APIResultCode.Unknown, new GetListStreetOfficeAnnouncementOutput { }, APIResultMessage.TokenError);
@@ -647,7 +638,7 @@ namespace GuoGuoCommunity.API.Controllers
             }
             int startRow = (input.PageIndex - 1) * input.PageSize;
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
 
             if (user == null)
             {

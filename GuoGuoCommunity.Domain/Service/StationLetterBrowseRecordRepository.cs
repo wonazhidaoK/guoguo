@@ -37,6 +37,11 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public Task<List<StationLetterBrowseRecord>> GetAllIncludeAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<StationLetterBrowseRecord> GetAsync(string id, CancellationToken token = default)
         {
             throw new NotImplementedException();
@@ -50,12 +55,22 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public Task<StationLetterBrowseRecord> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<List<StationLetterBrowseRecord>> GetListAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
             {
                 return await db.StationLetterBrowseRecords.Where(x => x.StationLetterId == dto.StationLetterId && x.CreateOperationUserId == dto.OperationUserId).ToListAsync(token);
             }
+        }
+
+        public Task<List<StationLetterBrowseRecord>> GetListIncludeAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
 
         public Task UpdateAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default)

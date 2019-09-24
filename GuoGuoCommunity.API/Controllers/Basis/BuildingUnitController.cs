@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using System;
@@ -17,16 +16,15 @@ namespace GuoGuoCommunity.API.Controllers
     public class BuildingUnitController : BaseController
     {
         private readonly IBuildingUnitRepository _buildingUnitRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="buildingUnitRepository"></param>
-        public BuildingUnitController(IBuildingUnitRepository buildingUnitRepository)
+        public BuildingUnitController(IBuildingUnitRepository buildingUnitRepository, ITokenRepository tokenRepository)
         {
             _buildingUnitRepository = buildingUnitRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -56,7 +54,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("楼宇Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddBuildingUnitOutput>(APIResultCode.Unknown, new AddBuildingUnitOutput { }, APIResultMessage.TokenError);
@@ -93,7 +91,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("楼宇单元Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -123,7 +121,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -154,7 +152,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetBuildingUnitOutput>(APIResultCode.Unknown, new GetBuildingUnitOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetBuildingUnitOutput>(APIResultCode.Unknown, new GetBuildingUnitOutput { }, APIResultMessage.TokenError);
@@ -187,7 +185,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllBuildingUnitOutput>(APIResultCode.Unknown, new GetAllBuildingUnitOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllBuildingUnitOutput>(APIResultCode.Unknown, new GetAllBuildingUnitOutput { }, APIResultMessage.TokenError);
@@ -241,7 +239,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<List<GetListBuildingUnitOutput>>(APIResultCode.Unknown, new List<GetListBuildingUnitOutput> { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListBuildingUnitOutput>>(APIResultCode.Unknown, new List<GetListBuildingUnitOutput> { }, APIResultMessage.TokenError);

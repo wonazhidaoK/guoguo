@@ -47,6 +47,11 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public Task<List<AnnouncementAnnex>> GetAllIncludeAsync(AnnouncementAnnexDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<AnnouncementAnnex> GetAsync(string id, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -63,32 +68,22 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public Task<AnnouncementAnnex> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<AnnouncementAnnex>> GetListAsync(AnnouncementAnnexDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }
 
-        public string GetUrl(string id)
+        public Task<List<AnnouncementAnnex>> GetListIncludeAsync(AnnouncementAnnexDto dto, CancellationToken token = default)
         {
-            try
-            {
-                using (var db = new GuoGuoCommunityContext())
-                {
-                    var entity = db.AnnouncementAnnices.Where(x => x.AnnouncementId == id).FirstOrDefault();
-                    if (!Guid.TryParse(entity.AnnexContent, out var annexContent))
-                    {
-                        throw new NotImplementedException("公告附件id信息不正确！");
-                    }
-                    var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
-                    return upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
-                }
-            }
-            catch (Exception)
-            {
-                return "";
-            }
-
+            throw new NotImplementedException();
         }
+
+      
 
         public Task UpdateAsync(AnnouncementAnnexDto dto, CancellationToken token = default)
         {

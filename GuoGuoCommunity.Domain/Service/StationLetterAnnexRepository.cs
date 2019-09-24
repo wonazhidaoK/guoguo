@@ -37,12 +37,27 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public Task<List<StationLetterAnnex>> GetAllIncludeAsync(StationLetterAnnexDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<StationLetterAnnex> GetAsync(string id, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }
 
+        public Task<StationLetterAnnex> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<StationLetterAnnex>> GetListAsync(StationLetterAnnexDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<StationLetterAnnex>> GetListIncludeAsync(StationLetterAnnexDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }

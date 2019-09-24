@@ -14,11 +14,11 @@ namespace GuoGuoCommunity.Domain.Service
     {
         #region 事件
 
-
         private async Task<bool> OnDelete(GuoGuoCommunityContext db, OwnerDto dto, CancellationToken token = default)
         {
+           
             //业主认证申请信息
-            if (await db.OwnerCertificationRecords.Where(x => x.Owner.ToString() == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
+            if (await db.OwnerCertificationRecords.Where(x => x.OwnerId.ToString() == dto.Id && x.IsDeleted == false).FirstOrDefaultAsync(token) != null)
             {
                 return true;
             }

@@ -194,5 +194,27 @@ namespace GuoGuoCommunity.Domain.Service
                 return await db.BuildingUnits.Include(x => x.Building.SmallDistrict.Community.StreetOffice).Where(x => x.IsDeleted == false && x.BuildingId.ToString() == dto.BuildingId).ToListAsync(token);
             }
         }
+
+      public async  Task<BuildingUnit> UpdateNumberOfLayersAsync(BuildingUnitDto dto, CancellationToken token)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("楼宇单元Id信息不正确！");
+                }
+                var buildingUnit = await db.BuildingUnits.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (buildingUnit == null)
+                {
+                    throw new NotImplementedException("该楼宇单元信息不存在！");
+                }
+
+                buildingUnit.NumberOfLayers = dto.NumberOfLayers;
+                buildingUnit.LastOperationTime = dto.OperationTime;
+                buildingUnit.LastOperationUserId = dto.OperationUserId;
+                await db.SaveChangesAsync(token);
+                return buildingUnit;
+            }
+        }
     }
 }

@@ -101,6 +101,16 @@ namespace GuoGuoCommunity.API
         public static readonly string GuoGuoCommunity_WxOpenAppSecret = ConfigurationManager.AppSettings["GuoGuoCommunity_WxOpenAppSecret"];
 
         /// <summary>
+        /// 支付Id
+        /// </summary>
+        public string PayV3_MchId = ConfigurationManager.AppSettings["PayV3_MchId"];
+
+        /// <summary>
+        /// 支付key
+        /// </summary>
+        public string PayV3_Key = ConfigurationManager.AppSettings["PayV3_Key"];
+
+        /// <summary>
         /// 
         /// </summary>
         public static string Authorization = "";

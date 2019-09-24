@@ -1,11 +1,10 @@
 ﻿using GuoGuoCommunity.API.Common;
 using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
+using GuoGuoCommunity.Domain.Abstractions.Store;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
 using GuoGuoCommunity.Domain.Models.Enum;
-using GuoGuoCommunity.Domain.Service;
 using Senparc.Weixin.MP.AdvancedAPIs;
 using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
 using System;
@@ -22,38 +21,42 @@ namespace GuoGuoCommunity.API.Controllers
     /// </summary>
     public class OrderController : BaseController
     {
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IOrdeItemRepository _ordeItemRepository;
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private readonly IShopUserAddressRepository _shopUserAddressRepository;
         private readonly IUserRepository _userRepository;
         private readonly ISmallDistrictRepository _smallDistrictRepository;
+        private readonly IIndustryRepository _industryRepository;
+        private readonly IWeiXinUserRepository _weiXinUserRepository;
+        private readonly IActivityRepository _activityRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="ownerCertificationRecordRepository"></param>
-        /// <param name="orderRepository"></param>
-        /// <param name="shopUserAddressRepository"></param>
-        /// <param name="ordeItemRepository"></param>
-        /// <param name="userRepository"></param>
-        /// <param name="smallDistrictRepository"></param>
         public OrderController(
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
             IOrderRepository orderRepository,
             IShopUserAddressRepository shopUserAddressRepository,
             IOrdeItemRepository ordeItemRepository,
             IUserRepository userRepository,
-            ISmallDistrictRepository smallDistrictRepository)
+            ISmallDistrictRepository smallDistrictRepository,
+            ITokenRepository tokenRepository,
+            IIndustryRepository industryRepository,
+            IWeiXinUserRepository weiXinUserRepository,
+            IActivityRepository activityRepository)
         {
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
             _orderRepository = orderRepository;
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _shopUserAddressRepository = shopUserAddressRepository;
             _ordeItemRepository = ordeItemRepository;
             _userRepository = userRepository;
             _smallDistrictRepository = smallDistrictRepository;
+            _industryRepository = industryRepository;
+            _weiXinUserRepository = weiXinUserRepository;
+            _activityRepository = activityRepository;
         }
 
         #region 业主小程序
@@ -73,10 +76,10 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<AddOrderOutput>(APIResultCode.Unknown, new AddOrderOutput { }, APIResultMessage.TokenNull);
             }
 
-            if (string.IsNullOrWhiteSpace(input.ApplicationRecordId))
-            {
-                throw new NotImplementedException("业主认证Id为空！");
-            }
+            //if (string.IsNullOrWhiteSpace(input.ApplicationRecordId))
+            //{
+            //    throw new NotImplementedException("业主认证Id为空！");
+            //}
 
             if (string.IsNullOrWhiteSpace(input.AddressId))
             {
@@ -88,33 +91,33 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("商铺Id为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddOrderOutput>(APIResultCode.Unknown, new AddOrderOutput { }, APIResultMessage.TokenError);
             }
-            var ownerCertificationRecord = await _ownerCertificationRecordRepository.GetIncludeAsync(input.ApplicationRecordId, cancelToken);
-            if (ownerCertificationRecord == null)
-            {
-                throw new NotImplementedException("业主认证信息不正确！");
-            }
+            //var ownerCertificationRecord = await _industryRepository.GetIncludeAsync(input.i, cancelToken);
+            ////if (ownerCertificationRecord == null)
+            ////{
+            ////    throw new NotImplementedException("业主认证信息不正确！");
+            ////}
             var shopUserAddress = await _shopUserAddressRepository.GetIncludeAsync(input.AddressId, cancelToken);
             if (shopUserAddress == null)
             {
                 throw new NotImplementedException("收货地址信息不正确！");
             }
-            if (ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.PropertyCompany == null)
+            if (shopUserAddress.Industry.BuildingUnit.Building.SmallDistrict.PropertyCompany == null)
             {
                 throw new NotImplementedException("当前小区未配置服务物业不能进行下单！");
             }
             var entity = await _orderRepository.AddAsync(new OrderDto
             {
                 ShopId = input.ShopId,
-                DeliveryPhone = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.PropertyCompany.Phone,
-                DeliveryName = ownerCertificationRecord.Industry.BuildingUnit.Building.SmallDistrict.PropertyCompany.Name,
-                OrderStatusValue = OrderStatus.WaitingAccept.Value,
-                OrderStatusName = OrderStatus.WaitingAccept.Name,
-                OwnerCertificationRecordId = input.ApplicationRecordId,
+                DeliveryPhone = shopUserAddress.Industry.BuildingUnit.Building.SmallDistrict.PropertyCompany.Phone,
+                DeliveryName = shopUserAddress.Industry.BuildingUnit.Building.SmallDistrict.PropertyCompany.Name,
+                OrderStatusValue = OrderStatus.Unpaid.Value,
+                OrderStatusName = OrderStatus.Unpaid.Name,
+                //OwnerCertificationRecordId = input.ApplicationRecordId,
                 ReceiverName = shopUserAddress.ReceiverName,
                 ReceiverPhone = shopUserAddress.ReceiverPhone,
                 Address = shopUserAddress.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.State +
@@ -123,29 +126,30 @@ namespace GuoGuoCommunity.API.Controllers
                 shopUserAddress.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name +
                 shopUserAddress.Industry.BuildingUnit.Building.SmallDistrict.Community.Name +
                 shopUserAddress.Industry.BuildingUnit.Building.SmallDistrict.Name +
-                shopUserAddress.Industry.BuildingUnit.Building.Name +
+                shopUserAddress.Industry.BuildingUnit.Building.Name + 
                 shopUserAddress.Industry.BuildingUnit.UnitName +
-                shopUserAddress.Industry.NumberOfLayers +
+                shopUserAddress.Industry.NumberOfLayers + "," +
                 shopUserAddress.Industry.Name,
+                IndustryId = shopUserAddress.IndustryId.ToString(),
                 Number = GenerateCode(""),
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = user.Id.ToString()
             }, cancelToken);
 
-            try
-            {
-                var shopUserList = await _userRepository.GetByShopIdAsync(entity.ShopId.ToString(), cancelToken);
-                foreach (var item in shopUserList)
-                {
-                    SignalR("2", entity.ShopId.ToString(), item.Id.ToString(), entity);
-                }
+            //try
+            //{
+            //    var shopUserList = await _userRepository.GetByShopIdAsync(entity.ShopId.ToString(), cancelToken);
+            //    foreach (var item in shopUserList)
+            //    {
+            //        SignalR("2", entity.ShopId.ToString(), item.Id.ToString(), entity);
+            //    }
 
-            }
-            catch (Exception)
-            {
+            //}
+            //catch (Exception)
+            //{
 
 
-            }
+            //}
 
             return new ApiResult<AddOrderOutput>(APIResultCode.Success, new AddOrderOutput { Id = entity.Id.ToString() });
         }
@@ -196,22 +200,22 @@ namespace GuoGuoCommunity.API.Controllers
         private void SignalR(string type, string companyID, string employeeId, Order order)
         {
             var conid = SignalRServerHub.ConnectionIds.FirstOrDefault(a => a.Key == type + "@" + companyID + "@" + employeeId).Value;
-            //if (conid.Any())
-            //{
-            //    foreach (var item in conid)
-            //    {
-                    SignalRServerHub.ClientList.Client(conid).getorderinfo(new Model
-                    {
-                        Id = order.Id.ToString(),
-                        CreateOperationTime = order.CreateOperationTime.Value.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss"),
-                        ShopCommodityCount = order.ShopCommodityCount
-                    });//order.Id.ToString() + "@" + order.CreateOperationTime + "@" + order.ShopCommodityCount) ;
-            //    }
-                
+            if (!string.IsNullOrEmpty(conid))
+            {
+                //    foreach (var item in conid)
+                //    {
+                SignalRServerHub.ClientList.Client(conid).getorderinfo(new Model
+                {
+                    Id = order.Id.ToString(),
+                    CreateOperationTime = order.CreateOperationTime.Value.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss"),
+                    ShopCommodityCount = order.ShopCommodityCount
+                });//order.Id.ToString() + "@" + order.CreateOperationTime + "@" + order.ShopCommodityCount) ;
+            }
+
             //}
             //if (!string.IsNullOrEmpty(conid))
             //{
-               
+
             //}
             //else
             //{
@@ -240,21 +244,22 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllForPageOutput>(APIResultCode.Unknown, new GetAllForPageOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllForPageOutput>(APIResultCode.Unknown, new GetAllForPageOutput { }, APIResultMessage.TokenError);
             }
-            if (string.IsNullOrWhiteSpace(input.ApplicationRecordId))
-            {
-                return new ApiResult<GetAllForPageOutput>(APIResultCode.Success_NoB, new GetAllForPageOutput { }, "业主认证Id为空");
-            }
+            //if (string.IsNullOrWhiteSpace(input.ApplicationRecordId))
+            //{
+            //    return new ApiResult<GetAllForPageOutput>(APIResultCode.Success_NoB, new GetAllForPageOutput { }, "业主认证Id为空");
+            //}
             var date = await _orderRepository.GetAllIncludeForPageAsync(new OrderDto
             {
                 PageIndex = input.PageIndex,
                 PageSize = input.PageSize,
                 OrderStatusValue = input.OrderStatusValue,
-                OwnerCertificationRecordId = input.ApplicationRecordId
+                OperationUserId = user.Id.ToString()
+                //OwnerCertificationRecordId = input.ApplicationRecordId
             }, cancelToken);
             var ordeItemList = await _ordeItemRepository.GetListIncludeForOrderIdsAsync(date.List.Select(x => x.Id.ToString()).ToList(), cancelToken);
 
@@ -288,7 +293,10 @@ namespace GuoGuoCommunity.API.Controllers
                     ShopId = item.ShopId.ToString(),
                     ShopName = item.Shop.Name,
                     LogoUrl = item.Shop.LogoImageUrl,
-                    List = itemList
+                    List = itemList,
+                    SmallDistrictShopId = item.SmallDistrictShopId.ToString(),
+                    PaymentStatusName = item.PaymentStatusName,
+                    PaymentStatusValue = item.PaymentStatusValue
                 });
             }
             return new ApiResult<GetAllForPageOutput>(APIResultCode.Success, new GetAllForPageOutput
@@ -312,7 +320,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetOrderOutput>(APIResultCode.Unknown, new GetOrderOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetOrderOutput>(APIResultCode.Unknown, new GetOrderOutput { }, APIResultMessage.TokenError);
@@ -332,6 +340,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 itemList.Add(new OrdeItemModel
                 {
+                    OriginalPrice = ordeItem.Price,
                     CommodityCount = ordeItem.CommodityCount,
                     DiscountPrice = ordeItem.DiscountPrice,
                     ImageUrl = ordeItem.ImageUrl,
@@ -339,6 +348,80 @@ namespace GuoGuoCommunity.API.Controllers
                     Price = ordeItem.Price
                 });
             }
+            List<Activity> alist = new List<Activity>();
+            int activitySource = 1;
+            if (data.Shop != null && !string.IsNullOrEmpty(data.Shop.ActivitySign) && data.Shop.ActivitySign != "0")
+            {
+                alist = (await _activityRepository.GetAllAsync(new Domain.Dto.Store.ActivityDto
+                {
+                    IsSelectByTime = true,
+                    ActivitySource = 2
+
+                }, cancelToken)).Select(x => new Activity
+                {
+                    ActivitySource = x.ActivitySource,
+                    ActivityType = x.ActivityType,
+                    ID = x.ID.ToString(),
+                    Money = x.Money,
+                    Off = x.Off,
+                    ActivityBeginTime = x.ActivityBeginTime,
+                    ActivityEndTime = x.ActivityEndTime,
+                    ShopId = x.ShopId.ToString()
+                }).OrderBy(b => b.Money).ToList();
+                activitySource = 2;
+            }
+            alist = (await _activityRepository.GetAllAsync(new Domain.Dto.Store.ActivityDto
+            {
+                ShopId = data.ShopId.ToString(),
+                IsSelectByTime = true,
+                ActivitySource = 1
+            }, cancelToken)).Select(x => new Activity
+            {
+                ActivitySource = x.ActivitySource,
+                ActivityType = x.ActivityType,
+                ID = x.ID.ToString(),
+                Money = x.Money,
+                Off = x.Off,
+                ActivityBeginTime = x.ActivityBeginTime,
+                ActivityEndTime = x.ActivityEndTime,
+                ShopId = x.ShopId.ToString()
+            }).OrderByDescending(b => b.Money).ToList();
+
+            //判断如果没有店铺活动则查询平台活动
+            if (alist == null || alist.Count == 0)
+            {
+                alist = (await _activityRepository.GetAllAsync(new Domain.Dto.Store.ActivityDto
+                {
+                    IsSelectByTime = true,
+                    ActivitySource = 2
+
+                }, cancelToken)).Select(x => new Activity
+                {
+                    ActivitySource = x.ActivitySource,
+                    ActivityType = x.ActivityType,
+                    ID = x.ID.ToString(),
+                    Money = x.Money,
+                    Off = x.Off,
+                    ActivityBeginTime = x.ActivityBeginTime,
+                    ActivityEndTime = x.ActivityEndTime,
+                    ShopId = x.ShopId.ToString()
+                }).OrderByDescending(b => b.Money).ToList();
+                activitySource = 2;
+            }
+            decimal shopCommodityRealPrice = data.ShopCommodityPrice;
+            decimal paymentRealPrice = data.PaymentPrice;
+            decimal off = 0;
+            foreach (Activity item in alist)
+            {
+                if (item.Money <= data.PaymentPrice)
+                {
+                    shopCommodityRealPrice = data.ShopCommodityPrice - item.Off;
+                    paymentRealPrice = data.PaymentPrice - item.Off;
+                    off = item.Off;
+                    break;
+                }
+            }
+
             return new ApiResult<GetOrderOutput>(APIResultCode.Success, new GetOrderOutput
             {
                 Id = data.Id.ToString(),
@@ -347,10 +430,10 @@ namespace GuoGuoCommunity.API.Controllers
                 Number = data.Number,
                 OrderStatusName = data.OrderStatusName,
                 OrderStatusValue = data.OrderStatusValue,
-                PaymentPrice = data.PaymentPrice,
+                PaymentPrice = paymentRealPrice,
                 Postage = data.Postage,
                 ShopCommodityCount = data.ShopCommodityCount,
-                ShopCommodityPrice = data.ShopCommodityPrice,
+                ShopCommodityPrice = shopCommodityRealPrice,
                 ShopId = data.ShopId.ToString(),
                 ShopName = data.Shop.Name,
                 LogoUrl = data.Shop.LogoImageUrl,
@@ -358,7 +441,10 @@ namespace GuoGuoCommunity.API.Controllers
                 CreateTime = data.CreateOperationTime.Value,
                 Address = data.Address,
                 ReceiverName = data.ReceiverName,
-                ReceiverPhone = data.ReceiverPhone
+                ReceiverPhone = data.ReceiverPhone,
+                PaymentStatusValue=data.PaymentStatusValue,
+                PaymentStatusName=data.PaymentStatusName,
+                Off = off
             });
         }
 
@@ -381,7 +467,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("商品分类Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -411,7 +497,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -456,7 +542,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllOutput>(APIResultCode.Unknown, new GetAllOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllOutput>(APIResultCode.Unknown, new GetAllOutput { }, APIResultMessage.TokenError);
@@ -518,7 +604,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -579,7 +665,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllOutput>(APIResultCode.Unknown, new GetAllOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllOutput>(APIResultCode.Unknown, new GetAllOutput { }, APIResultMessage.TokenError);
@@ -641,7 +727,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -680,7 +766,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -701,7 +787,7 @@ namespace GuoGuoCommunity.API.Controllers
 
             });
 
-            var propertyUserList = await _userRepository.GetAllPropertyAsync(new UserDto { SmallDistrictId = data.OwnerCertificationRecord.Owner.Industry.BuildingUnit.Building.SmallDistrictId.ToString() }, cancellationToken);
+            var propertyUserList = await _userRepository.GetAllPropertyAsync(new UserDto { SmallDistrictId = data.Industry.BuildingUnit.Building.SmallDistrictId.ToString() }, cancellationToken);
 
             foreach (var item in propertyUserList)
             {
@@ -717,7 +803,7 @@ namespace GuoGuoCommunity.API.Controllers
                 Number = data.Number,
                 PaymentPrice = data.PaymentPrice,
                 ReceiverName = data.ReceiverName
-            }, data.OwnerCertificationRecordId.ToString());
+            }, data.CreateOperationUserId.ToString());
 
             return new ApiResult();
         }
@@ -728,25 +814,14 @@ namespace GuoGuoCommunity.API.Controllers
         /// 发送推送消息
         /// </summary>
         /// <param name="model"></param>
-        /// <param name="ownerCertificationId"></param>
-        public static async Task OrderPushRemind(OrderPushModel model, string ownerCertificationId)
+        /// <param name="userId"></param>
+        public async Task OrderPushRemind(OrderPushModel model, string userId)
         {
-            IOwnerCertificationRecordRepository ownerCertificationRecordRepository = new OwnerCertificationRecordRepository();
-            IUserRepository userRepository = new UserRepository();
-            var ownerCertificationRecord = await ownerCertificationRecordRepository.GetAsync(ownerCertificationId);
-            //IOwnerRepository ownerRepository = new OwnerRepository();
+            var userEntity = await _userRepository.GetForIdAsync(userId);
+            var weiXinUser = await _weiXinUserRepository.GetAsync(userEntity.UnionId);
 
-            //var owner = await ownerRepository.GetForOwnerCertificationRecordIdAsync(new OwnerDto { OwnerCertificationRecordId = ownerCertificationRecord.Id.ToString() });
-            var userEntity = await userRepository.GetForIdAsync(ownerCertificationRecord.UserId);
-            IWeiXinUserRepository weiXinUserRepository = new WeiXinUserRepository();
-            var weiXinUser = await weiXinUserRepository.GetAsync(userEntity.UnionId);
-
-            //foreach (var item in userIdList)
-            //{
             try
             {
-                //var user = userList.Where(x => x.Id.ToString() == item).FirstOrDefault();
-                //var weiXinUser = weiXinUserList.Where(x => x.Unionid == user?.UnionId).FirstOrDefault();
                 var templateData = new
                 {
                     first = new TemplateDataItem("您好，您的订单" + model.Type),
@@ -759,15 +834,14 @@ namespace GuoGuoCommunity.API.Controllers
                 var miniProgram = new TempleteModel_MiniProgram()
                 {
                     appid = GuoGuoCommunity_WxOpenAppId,
-                    //pagepath = "pages/orderDetail/orderDetail?id=" + model.Id
+                    pagepath = "pages/orderDetail/orderDetail?id=" + model.Id
                 };
                 TemplateApi.SendTemplateMessage(AppId, weiXinUser?.OpenId, OrderTemplateId, null, templateData, miniProgram);
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
-            //}
         }
     }
 }

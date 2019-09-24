@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
@@ -32,41 +31,31 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IOwnerRepository _ownerRepository;
         private readonly IIndustryRepository _industryRepository;
         private readonly IIDCardPhotoRecordRepository _iDCardPhotoRecordRepository;
-        private readonly ISmallDistrictRepository _smallDistrictRepository;
         private readonly IVipOwnerRepository _vipOwnerRepository;
         private readonly IVipOwnerCertificationRecordRepository _vipOwnerCertificationRecordRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="ownerCertificationRecordRepository"></param>
-        /// <param name="ownerCertificationAnnexRepository"></param>
-        /// <param name="ownerRepository"></param>
-        /// <param name="industryRepository"></param>
-        /// <param name="iDCardPhotoRecordRepository"></param>
-        /// <param name="vipOwnerCertificationRecordRepository"></param>
-        /// <param name="smallDistrictRepository"></param>
-        /// <param name="vipOwnerRepository"></param>
         public OwnerCertificationRecordController(
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
             IOwnerCertificationAnnexRepository ownerCertificationAnnexRepository,
             IOwnerRepository ownerRepository,
             IIndustryRepository industryRepository,
             IIDCardPhotoRecordRepository iDCardPhotoRecordRepository,
-             IVipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository,
-            ISmallDistrictRepository smallDistrictRepository,
-            IVipOwnerRepository vipOwnerRepository)
+            IVipOwnerCertificationRecordRepository vipOwnerCertificationRecordRepository,
+            IVipOwnerRepository vipOwnerRepository,
+            ITokenRepository tokenRepository)
         {
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _ownerCertificationAnnexRepository = ownerCertificationAnnexRepository;
             _ownerRepository = ownerRepository;
             _industryRepository = industryRepository;
             _iDCardPhotoRecordRepository = iDCardPhotoRecordRepository;
-            _smallDistrictRepository = smallDistrictRepository;
-            _vipOwnerCertificationRecordRepository = vipOwnerCertificationRecordRepository ?? throw new ArgumentNullException(nameof(vipOwnerCertificationRecordRepository));
+            _vipOwnerCertificationRecordRepository = vipOwnerCertificationRecordRepository;
             _vipOwnerRepository = vipOwnerRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -114,7 +103,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("提交附件信息不准确！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddOwnerCertificationRecordOutput>(APIResultCode.Unknown, new AddOwnerCertificationRecordOutput { }, APIResultMessage.TokenError);
@@ -171,7 +160,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordOutput { }, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordOutput { }, APIResultMessage.TokenError);
@@ -204,6 +193,9 @@ namespace GuoGuoCommunity.API.Controllers
                 }
                 list.Add(new GetOwnerCertificationRecordOutput
                 {
+                    City = item.Industry.BuildingUnit.Building.SmallDistrict.City,
+                    Region = item.Industry.BuildingUnit.Building.SmallDistrict.Region,
+                    State = item.Industry.BuildingUnit.Building.SmallDistrict.State,
                     BuildingId = item.Industry.BuildingUnit.BuildingId.ToString(),
                     BuildingName = item.Industry.BuildingUnit.Building.Name,
                     BuildingUnitId = item.Industry.BuildingUnitId.ToString(),
@@ -528,7 +520,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordOutput { }, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordOutput { }, APIResultMessage.TokenError);

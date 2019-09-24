@@ -1,25 +1,18 @@
 ﻿using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public interface IVoteRecordRepository
+    public interface IVoteRecordRepository : IIncludeRepository<VoteRecord, VoteRecordDto>
     {
-        Task<VoteRecord> AddAsync(VoteRecordDto dto, CancellationToken token = default);
-
-        Task UpdateAsync(VoteRecordDto dto, CancellationToken token = default);
-
-        Task<List<VoteRecord>> GetAllAsync(VoteRecordDto dto, CancellationToken token = default);
-
-        Task DeleteAsync(VoteRecordDto dto, CancellationToken token = default);
-
-        Task<VoteRecord> GetAsync(string id, CancellationToken token = default);
-
+        /// <summary>
+        /// 根据业主认证Id查询投票详情
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<VoteRecord> GetForOwnerCertificationIdAsync(VoteRecordDto dto, CancellationToken token = default);
-
-        Task<List<VoteRecord>> GetListAsync(VoteRecordDto dto, CancellationToken token = default);
     }
 }

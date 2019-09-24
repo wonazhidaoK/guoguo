@@ -51,11 +51,6 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("高级认证申请条件不存在！");
                 }
 
-                if (OnDeleteAsync(db, dto, token))
-                {
-                    throw new NotImplementedException("高级认证申请条件存在下级数据！");
-                }
-
                 vipOwnerCertificationCondition.LastOperationTime = dto.OperationTime;
                 vipOwnerCertificationCondition.LastOperationUserId = dto.OperationUserId;
                 vipOwnerCertificationCondition.DeletedTime = dto.OperationTime;
@@ -123,23 +118,29 @@ namespace GuoGuoCommunity.Domain.Service
                 vipOwnerCertificationCondition.Description = dto.Description;
                 vipOwnerCertificationCondition.LastOperationTime = dto.OperationTime;
                 vipOwnerCertificationCondition.LastOperationUserId = dto.OperationUserId;
-                OnUpdateAsync(db, dto, token);
+
                 await db.SaveChangesAsync(token);
             }
         }
 
-
-
-        private void OnUpdateAsync(GuoGuoCommunityContext db, VipOwnerCertificationConditionDto dto, CancellationToken token = default)
+        public Task<List<VipOwnerCertificationCondition>> GetAllIncludeAsync(VipOwnerCertificationConditionDto dto, CancellationToken token = default)
         {
-
-
+            throw new NotImplementedException();
         }
 
-        private bool OnDeleteAsync(GuoGuoCommunityContext db, VipOwnerCertificationConditionDto dto, CancellationToken token = default)
+        public Task<VipOwnerCertificationCondition> GetIncludeAsync(string id, CancellationToken token = default)
         {
+            throw new NotImplementedException();
+        }
 
-            return false;
+        public Task<List<VipOwnerCertificationCondition>> GetListIncludeAsync(VipOwnerCertificationConditionDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<VipOwnerCertificationCondition>> GetListAsync(VipOwnerCertificationConditionDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

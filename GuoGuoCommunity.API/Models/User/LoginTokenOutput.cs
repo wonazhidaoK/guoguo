@@ -99,5 +99,10 @@
         /// 物业公司Id
         /// </summary>
         public string PropertyCompanyId { get; set; }
+
+        /// <summary>
+        /// 活动开启标记 ,0未开启活动，1开启满减活动，1,2开启满减和某其他活动 一次类推
+        /// </summary>
+        public string ActivitySign { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models
     /// <summary>
     /// 商超用户地址
     /// </summary>
-    public class ShopUserAddress: IEntitity
+    public class ShopUserAddress: ILastOperation,IDeleted
     {
         /// <summary>
         /// 主键
@@ -17,15 +17,14 @@ namespace GuoGuoCommunity.Domain.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        /// <summary>
-        /// 申请Id
-        /// </summary>
-        [Required]
-       
-        public Guid ApplicationRecordId { get; set; }
+        ///// <summary>
+        ///// 申请Id
+        ///// </summary>
+        //[Required]
+        //public Guid ApplicationRecordId { get; set; }
 
-        [ForeignKey("ApplicationRecordId")]
-        public OwnerCertificationRecord OwnerCertificationRecord { get; set; }
+        //[ForeignKey("ApplicationRecordId")]
+        //public OwnerCertificationRecord OwnerCertificationRecord { get; set; }
 
         /// <summary>
         /// 收货人姓名
@@ -40,7 +39,7 @@ namespace GuoGuoCommunity.Domain.Models
         /// <summary>
         /// 业户Id
         /// </summary>
-        [ForeignKey("Industry")]
+        //[ForeignKey("Industry")]
         public Guid IndustryId { get; set; }
 
         [ForeignKey("IndustryId")]
@@ -55,7 +54,13 @@ namespace GuoGuoCommunity.Domain.Models
 
         public DateTimeOffset? DeletedTime { get; set; }
 
-        public string CreateOperationUserId { get; set; }
+        [ForeignKey("CreateOperationUserId")]
+        public User User { get; set; }
+
+        /// <summary>
+        /// 创建人Id
+        /// </summary>
+        public Guid CreateOperationUserId { get; set; }
 
         public DateTimeOffset? CreateOperationTime { get; set; }
 

@@ -10,10 +10,10 @@
         /// </summary>
         public string OrderStatusValue { get; set; }
 
-        // <summary>
-        /// 业主认证申请Id(getListId)
-        /// </summary>
-        public string ApplicationRecordId { get; set; }
+        ///// <summary>
+        ///// 业主认证申请Id(getListId)
+        ///// </summary>
+        //public string ApplicationRecordId { get; set; }
 
         /// <summary>
         /// 

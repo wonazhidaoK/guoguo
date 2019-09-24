@@ -83,11 +83,6 @@ namespace GuoGuoCommunity.Domain.Service
                     throw new NotImplementedException("微信用户不存在！");
                 }
 
-                if (OnDeleteAsync(db, dto, token))
-                {
-                    throw new NotImplementedException("该微信用户存在下级数据！");
-                }
-
                 weiXinUser.LastOperationTime = dto.OperationTime;
                 weiXinUser.LastOperationUserId = dto.OperationUserId;
                 weiXinUser.DeletedTime = dto.OperationTime;
@@ -151,20 +146,8 @@ namespace GuoGuoCommunity.Domain.Service
                 weiXinUser.Tagid_list = dto.Tagid_list;
                 weiXinUser.LastOperationTime = dto.OperationTime;
                 weiXinUser.LastOperationUserId = dto.OperationUserId;
-                OnUpdateAsync(db, dto, token);
                 await db.SaveChangesAsync(token);
             }
-        }
-
-        private void OnUpdateAsync(GuoGuoCommunityContext db, WeiXinUserDto dto, CancellationToken token = default)
-        {
-
-        }
-
-        private bool OnDeleteAsync(GuoGuoCommunityContext db, WeiXinUserDto dto, CancellationToken token = default)
-        {
-
-            return false;
         }
 
         public async Task UpdateForUnionIdAsync(WeiXinUserDto dto, CancellationToken token = default)
@@ -182,7 +165,6 @@ namespace GuoGuoCommunity.Domain.Service
                 }
 
                 weiXinUser.Subscribe = dto.Subscribe;
-                OnUpdateAsync(db, dto, token);
                 await db.SaveChangesAsync(token);
             }
         }
@@ -193,6 +175,21 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 return await db.WeiXinUsers.Where(x => ids.Contains(x.Unionid)).ToListAsync(token);
             }
+        }
+
+        public Task<List<WeiXinUser>> GetAllIncludeAsync(WeiXinUserDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<WeiXinUser> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<WeiXinUser>> GetListIncludeAsync(WeiXinUserDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

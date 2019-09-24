@@ -154,5 +154,25 @@ namespace GuoGuoCommunity.Domain.Service
                 return await db.VipOwnerCertificationRecords.Where(x => x.IsDeleted == false && ids.Contains(x.VipOwnerId.ToString())).ToListAsync(token);
             }
         }
+
+        public Task<List<VipOwnerCertificationRecord>> GetAllIncludeAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<VipOwnerCertificationRecord> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<VipOwnerCertificationRecord>> GetListIncludeAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<VipOwnerCertificationRecord>> GetAllAsync(VipOwnerCertificationRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

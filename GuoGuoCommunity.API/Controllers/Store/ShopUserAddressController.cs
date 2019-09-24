@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto.Store;
 using GuoGuoCommunity.Domain.Models.Enum;
@@ -17,16 +16,15 @@ namespace GuoGuoCommunity.API.Controllers
     /// </summary>
     public class ShopUserAddressController : BaseController
     {
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
         private readonly IShopUserAddressRepository _shopUserAddressRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="shopUserAddressRepository"></param>
-        public ShopUserAddressController(IShopUserAddressRepository shopUserAddressRepository)
+        public ShopUserAddressController(IShopUserAddressRepository shopUserAddressRepository, ITokenRepository tokenRepository)
         {
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
             _shopUserAddressRepository = shopUserAddressRepository;
         }
 
@@ -56,11 +54,11 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("业户Id为空！");
             }
-            if (string.IsNullOrWhiteSpace(input.ApplicationRecordId))
-            {
-                throw new NotImplementedException("业户认证申请Id为空！");
-            }
-            var user = _tokenManager.GetUser(Authorization);
+            //if (string.IsNullOrWhiteSpace(input.ApplicationRecordId))
+            //{
+            //    throw new NotImplementedException("业户认证申请Id为空！");
+            //}
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddShopUserAddressOutput>(APIResultCode.Unknown, new AddShopUserAddressOutput { }, APIResultMessage.TokenError);
@@ -74,7 +72,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 IndustryId = input.IndustryId,
                 ReceiverPhone = input.Phone,
-                ApplicationRecordId = input.ApplicationRecordId,
+                //ApplicationRecordId = input.ApplicationRecordId,
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = user.Id.ToString(),
                 ReceiverName = input.Name,
@@ -103,7 +101,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("商品分类Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -145,7 +143,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("业户Id为空！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -166,36 +164,36 @@ namespace GuoGuoCommunity.API.Controllers
         }
 
         /// <summary>
-        /// 根据业主申请Id获取地址列表
+        /// 根据用户获取地址列表
         /// </summary>
-        /// <param name="applicationRecordId"></param>
         /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("shopUserAddress/getList")]
-        public async Task<ApiResult<List<GetListShopUserAddressOutput>>> GetList([FromUri]string applicationRecordId, CancellationToken cancelToken)
+        public async Task<ApiResult<List<GetListShopUserAddressOutput>>> GetList(CancellationToken cancelToken)
         {
             if (Authorization == null)
             {
                 return new ApiResult<List<GetListShopUserAddressOutput>>(APIResultCode.Unknown, new List<GetListShopUserAddressOutput> { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListShopUserAddressOutput>>(APIResultCode.Unknown, new List<GetListShopUserAddressOutput> { }, APIResultMessage.TokenError);
             }
-            if (string.IsNullOrWhiteSpace(applicationRecordId))
-            {
-                throw new NotImplementedException("业主申请Id为空！");
-            }
-            var data = (await _shopUserAddressRepository.GetAllIncludeAsync(new ShopUserAddressDto { ApplicationRecordId = applicationRecordId }, cancelToken)).Select(x => new GetListShopUserAddressOutput
+            //if (string.IsNullOrWhiteSpace(applicationRecordId))
+            //{
+            //    throw new NotImplementedException("业主申请Id为空！");
+            //}
+            var data = (await _shopUserAddressRepository.GetAllIncludeAsync(new ShopUserAddressDto { OperationUserId = user.Id.ToString() }, cancelToken)).Select(x => new GetListShopUserAddressOutput
             {
                 Id = x.Id.ToString(),
                 Name = x.ReceiverName,
                 Phone = x.ReceiverPhone,
                 IsDefault = x.IsDefault,
                 Address = x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.State + x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.City +
-              x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Region + x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name + x.Industry.BuildingUnit.Building.SmallDistrict.Community.Name + x.Industry.BuildingUnit.Building.SmallDistrict.Name
+              x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Region + x.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name + x.Industry.BuildingUnit.Building.SmallDistrict.Community.Name + x.Industry.BuildingUnit.Building.SmallDistrict.Name,
+                SmallDistrictId = x.Industry.BuildingUnit.Building.SmallDistrictId.ToString()
             }).ToList();
             if (data.Any())
             {
@@ -223,7 +221,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetShopUserAddressOutput>(APIResultCode.Unknown, new GetShopUserAddressOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetShopUserAddressOutput>(APIResultCode.Unknown, new GetShopUserAddressOutput { }, APIResultMessage.TokenError);
@@ -241,14 +239,23 @@ namespace GuoGuoCommunity.API.Controllers
                 //Address = data.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.State + data.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.City +
                 //data.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Region + data.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name + data.Industry.BuildingUnit.Building.SmallDistrict.Community.Name + data.Industry.BuildingUnit.Building.SmallDistrict.Name,
                 Phone = data.ReceiverPhone,
-                BuildingUnitId = data.Industry.BuildingUnitId.ToString(),
+                IsDefault = data.IsDefault,
+                State = data.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.State,
+                City = data.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.City,
+                Region = data.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Region,
+                StreetOfficeId = data.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOfficeId.ToString(),
+                StreetOfficeName = data.Industry.BuildingUnit.Building.SmallDistrict.Community.StreetOffice.Name,
+                CommunityId = data.Industry.BuildingUnit.Building.SmallDistrict.CommunityId.ToString(),
+                CommunityName = data.Industry.BuildingUnit.Building.SmallDistrict.Community.Name,
+                SmallDistrictId = data.Industry.BuildingUnit.Building.SmallDistrictId.ToString(),
+                SmallDistrictName = data.Industry.BuildingUnit.Building.SmallDistrict.Name,
                 BuildingId = data.Industry.BuildingUnit.BuildingId.ToString(),
                 BuildingName = data.Industry.BuildingUnit.Building.Name,
+                BuildingUnitId = data.Industry.BuildingUnitId.ToString(),
                 BuildingUnitName = data.Industry.BuildingUnit.UnitName,
                 NumberOfLayers = data.Industry.NumberOfLayers,
                 IndustryId = data.IndustryId.ToString(),
-                IndustryName = data.Industry.Name,
-                IsDefault = data.IsDefault
+                IndustryName = data.Industry.Name
             });
         }
     }

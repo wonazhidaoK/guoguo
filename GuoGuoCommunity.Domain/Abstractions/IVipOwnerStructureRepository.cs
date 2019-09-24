@@ -6,18 +6,13 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public interface IVipOwnerStructureRepository
+    public interface IVipOwnerStructureRepository : IIncludeRepository<VipOwnerStructure, VipOwnerStructureDto>
     {
-        Task<VipOwnerStructure> AddAsync(VipOwnerStructureDto dto, CancellationToken token = default);
-
-        Task UpdateAsync(VipOwnerStructureDto dto, CancellationToken token = default);
-
-        Task<List<VipOwnerStructure>> GetAllAsync(VipOwnerStructureDto dto, CancellationToken token = default);
-
-        Task DeleteAsync(VipOwnerStructureDto dto, CancellationToken token = default);
-
-        Task<VipOwnerStructure> GetAsync(string id, CancellationToken token = default);
-
+        /// <summary>
+        /// 查询所有业委会架构
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<List<VipOwnerStructure>> GetListAsync(CancellationToken token = default);
     }
 }

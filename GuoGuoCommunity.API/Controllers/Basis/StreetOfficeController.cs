@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using System;
@@ -17,16 +16,15 @@ namespace GuoGuoCommunity.API.Controllers
     public class StreetOfficeController : BaseController
     {
         private readonly IStreetOfficeRepository _streetOfficeRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 街道办
         /// </summary>
-        /// <param name="streetOfficeRepository"></param>
-        public StreetOfficeController(IStreetOfficeRepository streetOfficeRepository)
+        public StreetOfficeController(IStreetOfficeRepository streetOfficeRepository, ITokenRepository tokenRepository)
         {
             _streetOfficeRepository = streetOfficeRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -59,7 +57,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("街道办城市信息为空！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddStreetOfficeOutput>(APIResultCode.Unknown, new AddStreetOfficeOutput { }, APIResultMessage.TokenError);
@@ -100,7 +98,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("街道办名称信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -135,7 +133,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("街道办Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -168,7 +166,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("街道办Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetStreetOfficeOutput>(APIResultCode.Unknown, new GetStreetOfficeOutput { }, APIResultMessage.TokenError);
@@ -208,7 +206,7 @@ namespace GuoGuoCommunity.API.Controllers
                 input.PageSize = 10;
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllStreetOfficeOutput>(APIResultCode.Unknown, new GetAllStreetOfficeOutput { }, APIResultMessage.TokenError);
@@ -266,7 +264,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("街道办省信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListStreetOfficeOutput>>(APIResultCode.Unknown, new List<GetListStreetOfficeOutput> { }, APIResultMessage.TokenError);

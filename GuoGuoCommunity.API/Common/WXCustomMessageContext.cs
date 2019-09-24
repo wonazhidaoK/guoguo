@@ -1,4 +1,6 @@
-﻿using Senparc.NeuChar.Context;
+﻿using System.Xml.Linq;
+using Senparc.NeuChar;
+using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
 
 namespace GuoGuoCommunity.API
@@ -15,6 +17,16 @@ namespace GuoGuoCommunity.API
         public WXCustomMessageContext()
         {
             base.MessageContextRemoved += CustomMessageContext_MessageContextRemoved;
+        }
+
+        public override IRequestMessageBase GetRequestEntityMappingResult(RequestMsgType requestMsgType, XDocument doc = null)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override IResponseMessageBase GetResponseEntityMappingResult(ResponseMsgType responseMsgType, XDocument doc = null)
+        {
+            throw new System.NotImplementedException();
         }
 
         /// <summary>

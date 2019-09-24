@@ -8,7 +8,7 @@ namespace GuoGuoCommunity.Domain.Models.Store
     /// <summary>
     /// 购物车
     /// </summary>
-    public class ShoppingTrolley : ICreateOperation, ILastOperation
+    public class ShoppingTrolley : ILastOperation
     {
         /// <summary>
         /// 主键
@@ -29,17 +29,17 @@ namespace GuoGuoCommunity.Domain.Models.Store
         /// </summary>
         public ShopCommodity ShopCommodity { get; set; }
 
-        /// <summary>
-        /// 用户认证ID（外键）
-        /// </summary>
-        [Required]
-        [ForeignKey("OwnerCertificationRecord")]
-        public Guid OwnerCertificationRecordId { get; set; }
+        ///// <summary>
+        ///// 用户认证ID（外键）
+        ///// </summary>
+        //[Required]
+        //[ForeignKey("OwnerCertificationRecord")]
+        //public Guid OwnerCertificationRecordId { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public OwnerCertificationRecord OwnerCertificationRecord { get; set; }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        //public OwnerCertificationRecord OwnerCertificationRecord { get; set; }
 
         /// <summary>
         /// 商品数量
@@ -50,7 +50,13 @@ namespace GuoGuoCommunity.Domain.Models.Store
 
         public DateTimeOffset? LastOperationTime { get; set; }
 
-        public string CreateOperationUserId { get; set; }
+        [ForeignKey("CreateOperationUserId")]
+        public User User { get; set; }
+
+        /// <summary>
+        /// 创建人Id
+        /// </summary>
+        public Guid CreateOperationUserId { get; set; }
 
         public DateTimeOffset? CreateOperationTime { get; set; }
     }

@@ -10,10 +10,10 @@
         /// </summary>
         public string ShopId { get; set; }
 
-        /// <summary>
-        /// 用户认证ID
-        /// </summary>
-        public string OwnerCertificationRecordId { get; set; }
+        ///// <summary>
+        ///// 用户认证ID
+        ///// </summary>
+        //public string OwnerCertificationRecordId { get; set; }
 
     }
 }

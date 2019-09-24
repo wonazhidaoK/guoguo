@@ -6,20 +6,14 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public  interface IComplaintFollowUpRepository
+    public interface IComplaintFollowUpRepository : IIncludeRepository<ComplaintFollowUp, ComplaintFollowUpDto>
     {
-        Task<ComplaintFollowUp> AddAsync(ComplaintFollowUpDto dto, CancellationToken token = default);
-
-        Task UpdateAsync(ComplaintFollowUpDto dto, CancellationToken token = default);
-
-        Task<List<ComplaintFollowUp>> GetAllAsync(ComplaintFollowUpDto dto, CancellationToken token = default);
-
-        Task DeleteAsync(ComplaintFollowUpDto dto, CancellationToken token = default);
-
-        Task<ComplaintFollowUp> GetAsync(string id, CancellationToken token = default);
-
-        Task<List<ComplaintFollowUp>> GetListAsync(ComplaintFollowUpDto dto, CancellationToken token = default);
-
+        /// <summary>
+        /// 根据投诉Id获取跟进详情集合
+        /// </summary>
+        /// <param name="complaintId"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<List<ComplaintFollowUp>> GetListForComplaintIdAsync(string complaintId, CancellationToken token = default);
     }
 }

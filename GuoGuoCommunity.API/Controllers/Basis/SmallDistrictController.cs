@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using System;
@@ -17,16 +16,15 @@ namespace GuoGuoCommunity.API.Controllers
     public class SmallDistrictController : BaseController
     {
         private readonly ISmallDistrictRepository _smallDistrictRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="smallDistrictRepository"></param>
-        public SmallDistrictController(ISmallDistrictRepository smallDistrictRepository)
+        public SmallDistrictController(ISmallDistrictRepository smallDistrictRepository, ITokenRepository tokenRepository)
         {
             _smallDistrictRepository = smallDistrictRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -67,7 +65,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("小区Id信息为空！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddSmallDistrictOutput>(APIResultCode.Unknown, new AddSmallDistrictOutput { }, APIResultMessage.TokenError);
@@ -112,7 +110,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("小区名称信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -149,7 +147,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("小区Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -183,7 +181,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("街道办Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetSmallDistrictOutput>(APIResultCode.Unknown, new GetSmallDistrictOutput { }, APIResultMessage.TokenError);
@@ -230,7 +228,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 input.PageSize = 10;
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllSmallDistrictOutput>(APIResultCode.Unknown, new GetAllSmallDistrictOutput { }, APIResultMessage.TokenError);
@@ -290,7 +288,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("小区社区信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListSmallDistrictOutput>>(APIResultCode.Unknown, new List<GetListSmallDistrictOutput> { }, APIResultMessage.TokenError);
@@ -323,7 +321,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<GetAllSmallDistrictOutput>(APIResultCode.Unknown, new GetAllSmallDistrictOutput { }, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllSmallDistrictOutput>(APIResultCode.Unknown, new GetAllSmallDistrictOutput { }, APIResultMessage.TokenError);

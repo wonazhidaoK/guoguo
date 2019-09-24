@@ -61,6 +61,11 @@ namespace GuoGuoCommunity.Domain.Models
         /// 打印机名称
         /// </summary>
         public string PrinterName { get; set; }
+        /// <summary>
+        /// 商家开启的活动标记 0不开启活动，1开启满减活动，1,2开启满减和某其他活动
+        /// </summary>
+        [StringLength(20)]
+        public string ActivitySign { get; set; }
 
         public bool IsDeleted { get; set; }
 

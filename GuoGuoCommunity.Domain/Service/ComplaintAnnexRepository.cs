@@ -121,13 +121,7 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async Task<ComplaintAnnex> GetByFollowUpIdAsync(string id, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                return await db.ComplaintAnnices.Where(x => x.ComplaintFollowUpId.ToString() == id).FirstOrDefaultAsync(token);
-            }
-        }
+     
 
         public async Task<List<ComplaintAnnex>> GetByFollowUpIdsAsync(List<string> ids, CancellationToken token = default)
         {
@@ -152,47 +146,6 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public string GetUrl(string id)
-        {
-            try
-            {
-                using (var db = new GuoGuoCommunityContext())
-                {
-                    var entity = db.ComplaintAnnices.Include(x => x.ComplaintFollowUp.Complaint).Where(x => x.ComplaintFollowUp.ComplaintId.ToString() == id).FirstOrDefault();
-                    if (!Guid.TryParse(entity.AnnexContent, out var annexContent))
-                    {
-                        throw new NotImplementedException("投诉附件id信息不正确！");
-                    }
-                    var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
-                    return upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
-                }
-            }
-            catch (Exception)
-            {
-                return "";
-            }
-        }
-
-        public string GetUrlForFollowUpId(string id)
-        {
-            try
-            {
-                using (var db = new GuoGuoCommunityContext())
-                {
-                    var entity = db.ComplaintAnnices.Where(x => x.ComplaintFollowUpId.ToString() == id).FirstOrDefault();
-                    if (!Guid.TryParse(entity.AnnexContent, out var annexContent))
-                    {
-                        throw new NotImplementedException("投诉跟进附件id信息不正确！");
-                    }
-                    var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
-                    return upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
-                }
-            }
-            catch (Exception)
-            {
-                return "";
-            }
-        }
 
         public Task UpdateAsync(ComplaintAnnexDto dto, CancellationToken token = default)
         {

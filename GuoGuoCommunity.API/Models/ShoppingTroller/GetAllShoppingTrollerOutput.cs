@@ -21,6 +21,10 @@ namespace GuoGuoCommunity.API.Models
         /// 商品总价格
         /// </summary>
         public decimal Price { get; set; }
+        /// <summary>
+        /// 优惠金额
+        /// </summary>
+        public decimal DiscountAmount { get; set; }
     }
 
     /// <summary>
@@ -52,7 +56,12 @@ namespace GuoGuoCommunity.API.Models
         /// 商品价格
         /// </summary>
         public decimal CommodityPrice { get; set; }
+        /// <summary>
+        /// 折扣价格
+        /// </summary>
+        public decimal OriginalPrice { get; set; }
 
-        
+
+
     }
 }

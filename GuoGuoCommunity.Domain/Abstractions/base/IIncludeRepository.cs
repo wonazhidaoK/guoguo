@@ -4,6 +4,10 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
+    /*
+     * 抽象化的基类 
+     * Include定义含义为：https://www.cnblogs.com/nlh774/p/3588286.html
+     */
     public interface IIncludeRepository<T, Dto> : IRepository<T, Dto>
     {
         Task<List<T>> GetAllIncludeAsync(Dto dto, CancellationToken token = default);

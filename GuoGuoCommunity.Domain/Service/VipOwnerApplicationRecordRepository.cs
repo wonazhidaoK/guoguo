@@ -256,5 +256,25 @@ namespace GuoGuoCommunity.Domain.Service
         {
             throw new NotImplementedException();
         }
+
+        public Task<List<VipOwnerApplicationRecord>> GetAllIncludeAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<VipOwnerApplicationRecord> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<VipOwnerApplicationRecord>> GetListIncludeAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<VipOwnerApplicationRecord>> GetListAsync(VipOwnerApplicationRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

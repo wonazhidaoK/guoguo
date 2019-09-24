@@ -1,4 +1,5 @@
 ﻿using GuoGuoCommunity.Domain;
+using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -14,19 +15,18 @@ namespace GuoGuoCommunity.API.Controllers
     [RoutePrefix("api/token")]
     public class TokenController : ApiController
     {
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        public TokenController()
+        public TokenController(ITokenRepository tokenRepository)
         {
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         //记录 Refresh Token，需记录在资料库
-        private static Dictionary<string, User> refreshTokens =
-            new Dictionary<string, User>();
+        private static readonly Dictionary<string, User> refreshTokens = new Dictionary<string, User>();
 
         /// <summary>
         /// 登陆
@@ -48,7 +48,7 @@ namespace GuoGuoCommunity.API.Controllers
 
             };
             //产生 Token
-            var token = _tokenManager.Create(user);
+            var token = _tokenRepository.Create(user);
             //需存入数据库
             refreshTokens.Add(token.Refresh_token, user);
             return token;
@@ -71,7 +71,7 @@ namespace GuoGuoCommunity.API.Controllers
             //需查询资料库
             var user = refreshTokens[refreshToken];
             //产生一组新的 Token 和 Refresh Token
-            var token = _tokenManager.Create(user);
+            var token = _tokenRepository.Create(user);
             //删除旧的
             refreshTokens.Remove(refreshToken);
             //存入新的
@@ -88,7 +88,7 @@ namespace GuoGuoCommunity.API.Controllers
         public bool IsAuthenticated()
         {
             var token = HttpContext.Current.Request.Headers["Authorization"];
-            var user = _tokenManager.GetUser(token);
+            var user = _tokenRepository.GetUser(token);
             if (user == null)
             {
                 return false;

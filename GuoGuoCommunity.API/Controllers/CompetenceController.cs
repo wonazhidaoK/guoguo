@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
@@ -23,24 +22,19 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IStationLetterRepository _stationLetterRepository;
         private readonly ISmallDistrictRepository _smallDistrictRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 权限
         /// </summary>
-        /// <param name="menuRepository"></param>
-        /// <param name="roleRepository"></param>
-        /// <param name="roleMenuRepository"></param>
-        /// <param name="userRepository"></param>
-        /// <param name="stationLetterRepository"></param>
-        /// <param name="smallDistrictRepository"></param>
         public CompetenceController(
             IMenuRepository menuRepository,
             IRoleRepository roleRepository,
             IRoleMenuRepository roleMenuRepository,
             IUserRepository userRepository,
             IStationLetterRepository stationLetterRepository,
-            ISmallDistrictRepository smallDistrictRepository)
+            ISmallDistrictRepository smallDistrictRepository,
+            ITokenRepository tokenRepository)
         {
             _menuRepository = menuRepository;
             _roleRepository = roleRepository;
@@ -48,7 +42,7 @@ namespace GuoGuoCommunity.API.Controllers
             _userRepository = userRepository;
             _stationLetterRepository = stationLetterRepository;
             _smallDistrictRepository = smallDistrictRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -68,7 +62,7 @@ namespace GuoGuoCommunity.API.Controllers
             });
 
             //产生 Token
-            var token = _tokenManager.Create(user);
+            var token = _tokenRepository.Create(user);
             //存入数据库
 
             await _userRepository.UpdateTokenAsync(new UserDto
@@ -135,6 +129,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
             }
             string printerName = "";
+            string activitySign = "";
             if (user.DepartmentValue == Department.Shop.Value)
             {
                 if (user.Shop.IsDeleted)
@@ -142,6 +137,7 @@ namespace GuoGuoCommunity.API.Controllers
                     return new ApiResult<LoginOutput>(APIResultCode.Success_NoB, new LoginOutput { }, "商铺为注销状态，不允许登陆!");
                 }
                 printerName = user.Shop.PrinterName;
+                activitySign = user.Shop.ActivitySign;
             }
 
             return new ApiResult<LoginOutput>(APIResultCode.Success, new LoginOutput
@@ -165,7 +161,8 @@ namespace GuoGuoCommunity.API.Controllers
                 ShopId = user.ShopId.ToString(),
                 PropertyCompanyId = PropertyCompanyId,
                 Id = user.Id.ToString(),
-                PrinterName = printerName
+                PrinterName = printerName,
+                ActivitySign = activitySign
             });
 
         }
@@ -183,7 +180,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<LoginTokenOutput>(APIResultCode.Unknown, new LoginTokenOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 throw new NotImplementedException("token无效！");
@@ -241,6 +238,7 @@ namespace GuoGuoCommunity.API.Controllers
                 }
             }
             string printerName = "";
+            string activitySign = "";
             if (user.DepartmentValue == Department.Shop.Value)
             {
                 if (user.Shop.IsDeleted)
@@ -253,6 +251,7 @@ namespace GuoGuoCommunity.API.Controllers
                     Password = user.Password
                 });
                 printerName = users.Shop.PrinterName;
+                activitySign = users.Shop.ActivitySign;
             }
             return new ApiResult<LoginTokenOutput>(APIResultCode.Success, new LoginTokenOutput
             {
@@ -274,7 +273,8 @@ namespace GuoGuoCommunity.API.Controllers
                 ShopId = user.ShopId.ToString(),
                 PropertyCompanyId = PropertyCompanyId,
                 Id = user.Id.ToString(),
-                PrinterName = printerName
+                PrinterName = printerName,
+                ActivitySign = activitySign
             });
         }
 
@@ -294,7 +294,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetUserOutput>(APIResultCode.Unknown, new GetUserOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 throw new NotImplementedException("token无效！");
@@ -348,7 +348,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Success_NoB, new AddStreetOfficeUserOutput { }, "账户名称为空！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddStreetOfficeUserOutput>(APIResultCode.Unknown, new AddStreetOfficeUserOutput { }, APIResultMessage.TokenError);
@@ -389,7 +389,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllStreetOfficeUserOutput>(APIResultCode.Unknown, new GetAllStreetOfficeUserOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 throw new NotImplementedException("token无效！");
@@ -457,7 +457,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -503,7 +503,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, "账户名称输入格式不正确");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddPropertyUserOutput>(APIResultCode.Unknown, new AddPropertyUserOutput { }, APIResultMessage.TokenError);
@@ -542,7 +542,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllPropertyUserOutput>(APIResultCode.Unknown, new GetAllPropertyUserOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllPropertyUserOutput>(APIResultCode.Unknown, new GetAllPropertyUserOutput { }, APIResultMessage.TokenError);
@@ -613,7 +613,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -654,7 +654,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("用户Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -711,7 +711,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<AddPropertyUserOutput>(APIResultCode.Success_NoB, new AddPropertyUserOutput { }, "账户名称输入格式不正确");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddPropertyUserOutput>(APIResultCode.Unknown, new AddPropertyUserOutput { }, APIResultMessage.TokenError);
@@ -748,7 +748,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -782,7 +782,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllShopUserOutput>(APIResultCode.Unknown, new GetAllShopUserOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllShopUserOutput>(APIResultCode.Unknown, new GetAllShopUserOutput { }, APIResultMessage.TokenError);
@@ -846,7 +846,7 @@ namespace GuoGuoCommunity.API.Controllers
         //        throw new NotImplementedException("用户Id信息为空！");
         //    }
 
-        //    var user = _tokenManager.GetUser(Authorization);
+        //    var user = _tokenRepository.GetUser(Authorization);
         //    if (user == null)
         //    {
         //        return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -895,7 +895,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<AddMenuOutput>(APIResultCode.Unknown, new AddMenuOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddMenuOutput>(APIResultCode.Unknown, new AddMenuOutput { }, APIResultMessage.TokenError);
@@ -926,7 +926,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<List<GetAllMenuOutput>>(APIResultCode.Unknown, new List<GetAllMenuOutput> { }, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetAllMenuOutput>>(APIResultCode.Unknown, new List<GetAllMenuOutput> { }, APIResultMessage.TokenError);
@@ -963,7 +963,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("菜单Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -995,7 +995,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<AddRoleOutput>(APIResultCode.Unknown, new AddRoleOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddRoleOutput>(APIResultCode.Unknown, new AddRoleOutput { }, APIResultMessage.TokenError);
@@ -1037,7 +1037,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllRoleOutput>(APIResultCode.Unknown, new GetAllRoleOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllRoleOutput>(APIResultCode.Unknown, new GetAllRoleOutput { }, APIResultMessage.TokenError);
@@ -1085,7 +1085,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<List<GetRoleOutput>>(APIResultCode.Unknown, new List<GetRoleOutput> { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetRoleOutput>>(APIResultCode.Unknown, new List<GetRoleOutput> { }, APIResultMessage.TokenError);
@@ -1114,7 +1114,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<List<GetRoleOutput>>(APIResultCode.Unknown, new List<GetRoleOutput> { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetRoleOutput>>(APIResultCode.Unknown, new List<GetRoleOutput> { }, APIResultMessage.TokenError);
@@ -1143,7 +1143,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<List<GetRoleOutput>>(APIResultCode.Unknown, new List<GetRoleOutput> { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetRoleOutput>>(APIResultCode.Unknown, new List<GetRoleOutput> { }, APIResultMessage.TokenError);
@@ -1179,7 +1179,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("菜单Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -1221,7 +1221,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult<AddRoleMenuOutput>(APIResultCode.Unknown, new AddRoleMenuOutput { }, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddRoleMenuOutput>(APIResultCode.Unknown, new AddRoleMenuOutput { }, APIResultMessage.TokenError);
@@ -1260,7 +1260,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("角色Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -1291,7 +1291,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<List<GetRoleMenusOutput>>(APIResultCode.Unknown, new List<GetRoleMenusOutput> { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetRoleMenusOutput>>(APIResultCode.Unknown, new List<GetRoleMenusOutput> { }, APIResultMessage.TokenError);

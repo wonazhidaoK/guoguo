@@ -63,6 +63,16 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public Task<List<Menu>> GetAllIncludeAsync(MenuDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Menu> GetAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<Menu> GetByIdAsync(string id, CancellationToken token = default)
         {
 
@@ -82,6 +92,21 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 return await (from x in db.Menus where ids.Contains(x.Id.ToString()) select x).ToListAsync(token);
             }
+        }
+
+        public Task<Menu> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Menu>> GetListAsync(MenuDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Menu>> GetListIncludeAsync(MenuDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
 
         public Task UpdateAsync(MenuDto dto, CancellationToken token = default)

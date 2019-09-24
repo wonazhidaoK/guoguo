@@ -13,14 +13,17 @@ namespace GuoGuoCommunity.Domain.Dto.Store
         /// 店铺关联外键
         /// </summary>
         public string ShopId { get; set; }
+
         /// <summary>
         /// 店铺商品ID（外键）
         /// </summary>
         public string ShopCommodityId { get; set; }
-        /// <summary>
-        /// 用户认证ID（外键）
-        /// </summary>
-        public string OwnerCertificationRecordId { get; set; }
+
+        ///// <summary>
+        ///// 用户认证ID（外键）
+        ///// </summary>
+        //public string OwnerCertificationRecordId { get; set; }
+
         /// <summary>
         /// 商品数量
         /// </summary>

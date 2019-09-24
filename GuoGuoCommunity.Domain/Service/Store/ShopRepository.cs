@@ -204,5 +204,30 @@ namespace GuoGuoCommunity.Domain.Service
 
             return false;
         }
+        /// <summary>
+        /// 更新店铺开启的活动
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateShopActivitySign(ShopDto dto, CancellationToken token = default)
+        {
+            using (var db = new GuoGuoCommunityContext())
+            {
+                if (!Guid.TryParse(dto.Id, out var uid))
+                {
+                    throw new NotImplementedException("商户信息不正确！");
+                }
+                var shop = await db.Shops.Where(x => x.Id == uid).FirstOrDefaultAsync(token);
+                if (shop == null)
+                {
+                    throw new NotImplementedException("该商户不存在！");
+                }
+                shop.ActivitySign = dto.ActivitySign;
+                shop.LastOperationTime = dto.OperationTime;
+                shop.LastOperationUserId = dto.OperationUserId;
+                return await db.SaveChangesAsync(token) > 0;
+            }
+        }
     }
 }

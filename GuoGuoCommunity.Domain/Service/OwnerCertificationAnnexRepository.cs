@@ -51,6 +51,11 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public Task<List<OwnerCertificationAnnex>> GetAllIncludeAsync(OwnerCertificationAnnexDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<OwnerCertificationAnnex> GetAsync(string id, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -59,7 +64,17 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public Task<OwnerCertificationAnnex> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<OwnerCertificationAnnex>> GetListAsync(OwnerCertificationAnnexDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<OwnerCertificationAnnex>> GetListIncludeAsync(OwnerCertificationAnnexDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }
@@ -93,26 +108,7 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public string GetUrl(string id)
-        {
-            try
-            {
-                using (var db = new GuoGuoCommunityContext())
-                {
-                    var entity = db.OwnerCertificationAnnices.Where(x => x.ApplicationRecordId.ToString() == id).FirstOrDefault();
-                    if (!Guid.TryParse(entity.AnnexContent, out var annexContent))
-                    {
-                        throw new NotImplementedException("认证附件id信息不正确！");
-                    }
-                    var upload = db.Uploads.Where(x => x.Id == annexContent).FirstOrDefault();
-                    return upload.Agreement + upload.Host + upload.Domain + upload.Directory + upload.File;
-                }
-            }
-            catch (Exception)
-            {
-                return "";
-            }
-        }
+
 
         public Task UpdateAsync(OwnerCertificationAnnexDto dto, CancellationToken token = default)
         {

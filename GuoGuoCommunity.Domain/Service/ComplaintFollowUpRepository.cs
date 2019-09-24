@@ -68,6 +68,11 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public Task<List<ComplaintFollowUp>> GetAllIncludeAsync(ComplaintFollowUpDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<ComplaintFollowUp> GetAsync(string id, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -78,6 +83,11 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 throw new NotImplementedException("该投诉Id信息不正确！");
             }
+        }
+
+        public Task<ComplaintFollowUp> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<List<ComplaintFollowUp>> GetListAsync(ComplaintFollowUpDto dto, CancellationToken token = default)
@@ -95,6 +105,11 @@ namespace GuoGuoCommunity.Domain.Service
                 var a = await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId.ToString() == complaintId).ToListAsync(token);
                 return await db.ComplaintFollowUps.Where(x => x.IsDeleted == false && x.ComplaintId.ToString() == complaintId).ToListAsync(token);
             }
+        }
+
+        public Task<List<ComplaintFollowUp>> GetListIncludeAsync(ComplaintFollowUpDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
 
         public Task UpdateAsync(ComplaintFollowUpDto dto, CancellationToken token = default)

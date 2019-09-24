@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using System;
@@ -17,16 +16,15 @@ namespace GuoGuoCommunity.API.Controllers
     public class CommunityController : BaseController
     {
         private readonly ICommunityRepository _communityRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 社区
         /// </summary>
-        /// <param name="communityRepository"></param>
-        public CommunityController(ICommunityRepository communityRepository)
+        public CommunityController(ICommunityRepository communityRepository, ITokenRepository tokenRepository)
         {
             _communityRepository = communityRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -63,7 +61,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("街道办信息为空！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddCommunityOutput>(APIResultCode.Unknown, new AddCommunityOutput { }, APIResultMessage.TokenError);
@@ -98,7 +96,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -113,7 +111,7 @@ namespace GuoGuoCommunity.API.Controllers
                 Name = input.Name,
                 OperationTime = DateTimeOffset.Now,
                 OperationUserId = user.Id.ToString()
-            });
+            }, cancellationToken);
 
             return new ApiResult();
         }
@@ -137,7 +135,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("社区Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -172,7 +170,7 @@ namespace GuoGuoCommunity.API.Controllers
                 {
                     throw new NotImplementedException("社区Id信息为空！");
                 }
-                var user = _tokenManager.GetUser(Authorization);
+                var user = _tokenRepository.GetUser(Authorization);
                 if (user == null)
                 {
                     return new ApiResult<GetCommunityOutput>(APIResultCode.Unknown, new GetCommunityOutput { }, APIResultMessage.TokenError);
@@ -231,7 +229,7 @@ namespace GuoGuoCommunity.API.Controllers
                 Region = input?.Region,
                 StreetOfficeId = input?.StreetOfficeId
             }, cancelToken);
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllCommunityOutput>(APIResultCode.Unknown, new GetAllCommunityOutput { }, APIResultMessage.TokenError);
@@ -282,7 +280,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("街道办区信息为空！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListCommunityOutput>>(APIResultCode.Unknown, new List<GetListCommunityOutput> { }, APIResultMessage.TokenError);

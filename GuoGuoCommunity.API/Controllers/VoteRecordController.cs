@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using System;
@@ -21,28 +20,24 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IVoteQuestionOptionRepository _voteQuestionOptionRepository;
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
         private readonly IVoteAssociationVipOwnerRepository _voteAssociationVipOwnerRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="voteRecordRepository"></param>
-        /// <param name="voteRecordDetailRepository"></param>
-        /// <param name="voteQuestionOptionRepository"></param>
-        /// <param name="ownerCertificationRecordRepository"></param>
-        /// <param name="voteAssociationVipOwnerRepository"></param>
         public VoteRecordController(IVoteRecordRepository voteRecordRepository,
             IVoteRecordDetailRepository voteRecordDetailRepository,
             IVoteQuestionOptionRepository voteQuestionOptionRepository,
             IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
-            IVoteAssociationVipOwnerRepository voteAssociationVipOwnerRepository)
+            IVoteAssociationVipOwnerRepository voteAssociationVipOwnerRepository,
+            ITokenRepository tokenRepository)
         {
             _voteRecordRepository = voteRecordRepository;
             _voteRecordDetailRepository = voteRecordDetailRepository;
             _voteQuestionOptionRepository = voteQuestionOptionRepository;
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _voteAssociationVipOwnerRepository = voteAssociationVipOwnerRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -72,7 +67,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("请勾选选项再进行投票！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddVoteRecordOutput>(APIResultCode.Unknown, new AddVoteRecordOutput { }, APIResultMessage.TokenError);
@@ -132,7 +127,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("请勾选选项再进行投票！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddVoteRecordOutput>(APIResultCode.Unknown, new AddVoteRecordOutput { }, APIResultMessage.TokenError);
@@ -194,7 +189,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 input.PageSize = 10;
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllFeedbackOutput>(APIResultCode.Unknown, new GetAllFeedbackOutput { }, APIResultMessage.TokenError);

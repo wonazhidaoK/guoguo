@@ -24,6 +24,16 @@ namespace GuoGuoCommunity.API.Models
         public string OrderStatusValue { get; set; }
 
         /// <summary>
+        /// 付款状态名称
+        /// </summary>
+        public string PaymentStatusName { get; set; }
+
+        /// <summary>
+        /// 付款状态值
+        /// </summary>
+        public string PaymentStatusValue { get; set; }
+
+        /// <summary>
         /// 订单创建时间
         /// </summary>
         public DateTimeOffset CreateTime { get; set; }
@@ -87,6 +97,10 @@ namespace GuoGuoCommunity.API.Models
         /// 商品列表
         /// </summary>
         public List<OrdeItemModel> List { get; set; }
+        /// <summary>
+        /// 满减金额
+        /// </summary>
+        public decimal Off { get; set; }
 
         #region 收货人相关
 

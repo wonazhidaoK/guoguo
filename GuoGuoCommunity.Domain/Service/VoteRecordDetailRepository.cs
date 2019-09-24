@@ -72,7 +72,17 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public Task<List<VoteRecordDetail>> GetAllIncludeAsync(VoteRecordDetailDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<VoteRecordDetail> GetAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<VoteRecordDetail> GetIncludeAsync(string id, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }
@@ -83,6 +93,11 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 return await db.VoteRecordDetails.Where(x => x.IsDeleted == false && x.VoteId == dto.VoteId && x.CreateOperationUserId == dto.OperationUserId).ToListAsync(token);
             }
+        }
+
+        public Task<List<VoteRecordDetail>> GetListIncludeAsync(VoteRecordDetailDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
 
         public Task UpdateAsync(VoteRecordDetailDto dto, CancellationToken token = default)

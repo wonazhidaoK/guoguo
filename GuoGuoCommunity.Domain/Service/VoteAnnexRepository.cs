@@ -80,5 +80,20 @@ namespace GuoGuoCommunity.Domain.Service
         {
             throw new NotImplementedException();
         }
+
+        public Task<List<VoteAnnex>> GetAllIncludeAsync(VoteAnnexDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<VoteAnnex> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<VoteAnnex>> GetListIncludeAsync(VoteAnnexDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

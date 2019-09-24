@@ -20,8 +20,10 @@ namespace Logs
         {
             GlobalConfiguration.Configuration.Services.Replace(typeof(ITraceWriter), new AppLog());
             var trace = GlobalConfiguration.Configuration.Services.GetTraceWriter();
-            trace.Info(actionContext.Request, "Controller : " + actionContext.ControllerContext.ControllerDescriptor.ControllerType.FullName + Environment.NewLine + "Action : " + actionContext.ActionDescriptor.ActionName, "JSON", actionContext.ActionArguments);
-            //base.OnActionExecuting(actionContext);
+            trace.Warn(actionContext.Request, "控制器 : " + actionContext.ControllerContext.ControllerDescriptor.ControllerType.FullName + Environment.NewLine + "方法 : " + actionContext.ActionDescriptor.ActionName, "JSON", actionContext.ActionArguments);
+            //ActionArguments
+            //if()
+            base.OnActionExecuting(actionContext);
         }
     }
 }

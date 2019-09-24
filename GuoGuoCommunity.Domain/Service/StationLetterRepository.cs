@@ -140,5 +140,20 @@ namespace GuoGuoCommunity.Domain.Service
                 return list;
             }
         }
+
+        public Task<List<StationLetter>> GetAllIncludeAsync(StationLetterDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<StationLetter> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<StationLetter>> GetListIncludeAsync(StationLetterDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

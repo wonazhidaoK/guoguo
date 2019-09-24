@@ -4,6 +4,10 @@ using System.Text;
 
 namespace GuoGuoCommunity.Domain
 {
+    /*
+     * 这里是Token的加密方法  
+     * 加密规则不重要，如果有更好解决方案可以随时替换
+     */
     public static class TokenCrypto
     {
         //产生 HMACSHA256 杂凑

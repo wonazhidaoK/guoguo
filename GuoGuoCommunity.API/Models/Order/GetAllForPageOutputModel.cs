@@ -38,6 +38,16 @@ namespace GuoGuoCommunity.API.Models
         /// </summary>
         public string OrderStatusValue { get; set; }
 
+        /// <summary>
+        /// 付款状态名称
+        /// </summary>
+        public string PaymentStatusName { get; set; }
+
+        /// <summary>
+        /// 付款状态值
+        /// </summary>
+        public string PaymentStatusValue { get; set; }
+
         #region 配送方相关
 
         /// <summary>
@@ -66,6 +76,11 @@ namespace GuoGuoCommunity.API.Models
         /// 店铺Id
         /// </summary>
         public string ShopId { get; set; }
+
+        /// <summary>
+        /// 小区商铺关联id
+        /// </summary>
+        public string SmallDistrictShopId { get; set; }
 
         /// <summary>
         /// 店铺邮费
@@ -127,5 +142,10 @@ namespace GuoGuoCommunity.API.Models
         /// 商品数量
         /// </summary>
         public int CommodityCount { get; set; }
+
+        /// <summary>
+        /// 折扣价格
+        /// </summary>
+        public decimal OriginalPrice { get; set; }
     }
 }

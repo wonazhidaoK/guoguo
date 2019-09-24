@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
@@ -22,28 +21,24 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly IComplaintFollowUpRepository _complaintFollowUpRepository;
         private readonly IComplaintStatusChangeRecordingRepository _complaintStatusChangeRecordingRepository;
         private readonly IOwnerCertificationRecordRepository _ownerCertificationRecordRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="complaintRepository"></param>
-        /// <param name="complaintAnnexRepository"></param>
-        /// <param name="complaintFollowUpRepository"></param>
-        /// <param name="complaintStatusChangeRecordingRepository"></param>
-        /// <param name="ownerCertificationRecordRepository"></param>
         public ComplaintController(IComplaintRepository complaintRepository,
             IComplaintAnnexRepository complaintAnnexRepository,
             IComplaintFollowUpRepository complaintFollowUpRepository,
             IComplaintStatusChangeRecordingRepository complaintStatusChangeRecordingRepository,
-            IOwnerCertificationRecordRepository ownerCertificationRecordRepository)
+            IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
+            ITokenRepository tokenRepository)
         {
             _complaintRepository = complaintRepository;
             _complaintAnnexRepository = complaintAnnexRepository;
             _complaintFollowUpRepository = complaintFollowUpRepository;
             _complaintStatusChangeRecordingRepository = complaintStatusChangeRecordingRepository;
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         #region 业主端
@@ -79,7 +74,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("投诉描述信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddComplaintOutput>(APIResultCode.Unknown, new AddComplaintOutput { }, APIResultMessage.TokenError);
@@ -157,7 +152,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("投诉Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -221,7 +216,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 input.PageSize = 10;
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllComplaintOutput>(APIResultCode.Unknown, new GetAllComplaintOutput { }, APIResultMessage.TokenError);
@@ -280,7 +275,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("投诉Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -359,7 +354,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("投诉描述信息为空！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddComplaintOutput>(APIResultCode.Unknown, new AddComplaintOutput { }, APIResultMessage.TokenError);
@@ -438,7 +433,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("投诉Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -495,7 +490,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllComplaintForVipOwnerOutput>(APIResultCode.Unknown, new GetAllComplaintForVipOwnerOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllComplaintForVipOwnerOutput>(APIResultCode.Unknown, new GetAllComplaintForVipOwnerOutput { }, APIResultMessage.TokenError);
@@ -562,7 +557,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("投诉Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -620,7 +615,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("投诉Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
 
             if (user == null)
             {
@@ -687,7 +682,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("投诉Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -747,7 +742,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllComplaintForStreetOfficeOutput>(APIResultCode.Unknown, new GetAllComplaintForStreetOfficeOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllComplaintForStreetOfficeOutput>(APIResultCode.Unknown, new GetAllComplaintForStreetOfficeOutput { }, APIResultMessage.TokenError);
@@ -861,7 +856,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("投诉Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -926,7 +921,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("投诉Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -981,7 +976,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllComplaintForPropertyOutput>(APIResultCode.Unknown, new GetAllComplaintForPropertyOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllComplaintForPropertyOutput>(APIResultCode.Unknown, new GetAllComplaintForPropertyOutput { }, APIResultMessage.TokenError);
@@ -1081,7 +1076,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("投诉Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -1142,7 +1137,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("投诉Id信息为空！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);

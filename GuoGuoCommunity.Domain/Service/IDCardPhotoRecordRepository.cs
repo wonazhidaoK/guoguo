@@ -38,7 +38,17 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public Task<List<IDCardPhotoRecord>> GetAllIncludeAsync(IDCardPhotoRecordDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<IDCardPhotoRecord> GetAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IDCardPhotoRecord> GetIncludeAsync(string id, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }
@@ -48,7 +58,7 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
-        public string GetUrl(string id)
+        public Task<List<IDCardPhotoRecord>> GetListIncludeAsync(IDCardPhotoRecordDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }

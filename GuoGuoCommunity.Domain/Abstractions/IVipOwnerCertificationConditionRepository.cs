@@ -6,18 +6,13 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public  interface IVipOwnerCertificationConditionRepository
+    public  interface IVipOwnerCertificationConditionRepository : IIncludeRepository<VipOwnerCertificationCondition, VipOwnerCertificationConditionDto>
     {
-        Task<VipOwnerCertificationCondition> AddAsync(VipOwnerCertificationConditionDto dto, CancellationToken token = default);
-
-        Task UpdateAsync(VipOwnerCertificationConditionDto dto, CancellationToken token = default);
-
-        Task<List<VipOwnerCertificationCondition>> GetAllAsync(VipOwnerCertificationConditionDto dto, CancellationToken token = default);
-
-        Task DeleteAsync(VipOwnerCertificationConditionDto dto, CancellationToken token = default);
-
-        Task<VipOwnerCertificationCondition> GetAsync(string id, CancellationToken token = default);
-
+        /// <summary>
+        /// 获取所有认证申请条件
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<List<VipOwnerCertificationCondition>> GetListAsync(CancellationToken token = default);
     }
 }

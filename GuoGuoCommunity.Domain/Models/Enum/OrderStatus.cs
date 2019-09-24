@@ -9,6 +9,7 @@ namespace GuoGuoCommunity.Domain.Models
     {
         static OrderStatus()
         {
+            Unpaid = new OrderStatus { Value = "Unpaid", Name = "未付款" };
             WaitingAccept = new OrderStatus { Name = "待接单", Value = "WaitingAccept" };
             WaitingSend = new OrderStatus { Name = "待配送", Value = "WaitingSend" };
             WaitingTake = new OrderStatus { Name = "待取货", Value = "WaitingTake" };
@@ -21,6 +22,11 @@ namespace GuoGuoCommunity.Domain.Models
         public string Name { get; set; }
 
         public string Value { get; set; }
+
+        /// <summary>
+        /// 未付款
+        /// </summary>
+        public static OrderStatus Unpaid { get; set; }
 
         /// <summary>
         /// 待接单

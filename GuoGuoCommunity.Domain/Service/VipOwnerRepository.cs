@@ -56,10 +56,7 @@ namespace GuoGuoCommunity.Domain.Service
                 {
                     throw new NotImplementedException("该业委会不存在！");
                 }
-                if (OnDeleteAsync(db, dto, token))
-                {
-                    throw new NotImplementedException("该业委会存在下级数据！");
-                }
+                
                 vipOwners.LastOperationTime = dto.OperationTime;
                 vipOwners.LastOperationUserId = dto.OperationUserId;
                 vipOwners.DeletedTime = dto.OperationTime;
@@ -155,12 +152,6 @@ namespace GuoGuoCommunity.Domain.Service
             vipOwnerCertificationRecordRepository.OnSubscribe(incrementer);
 
             await incrementer.OnUpdate(db, dto, token);
-        }
-
-        private bool OnDeleteAsync(GuoGuoCommunityContext db, VipOwnerDto dto, CancellationToken token = default)
-        {
-
-            return false;
         }
 
         public async Task<List<VipOwner>> GetListForStreetOfficeIdAsync(VipOwnerDto dto, CancellationToken token = default)
@@ -266,6 +257,21 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 return await db.VipOwners.Where(x => ids.Contains( x.SmallDistrictId.ToString()) && x.IsValid == true).ToListAsync(token);
             }
+        }
+
+        public Task<List<VipOwner>> GetAllIncludeAsync(VipOwnerDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<VipOwner> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<VipOwner>> GetListIncludeAsync(VipOwnerDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

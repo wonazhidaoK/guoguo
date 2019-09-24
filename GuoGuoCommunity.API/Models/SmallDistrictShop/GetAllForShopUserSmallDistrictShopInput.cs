@@ -5,10 +5,16 @@
     /// </summary>
     public class GetAllForShopUserSmallDistrictShopInput
     {
+        ///// <summary>
+        ///// 业主认证申请Id(getListId)
+        ///// </summary>
+        //public string ApplicationRecordId { get; set; }
+
         /// <summary>
-        /// 业主认证申请Id(getListId)
+        /// 小区Id
         /// </summary>
-        public string ApplicationRecordId { get; set; }
+        public string SmallDistrictId { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

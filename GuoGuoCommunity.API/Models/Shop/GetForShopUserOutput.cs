@@ -1,4 +1,6 @@
-﻿namespace GuoGuoCommunity.API.Models
+﻿using System.Collections.Generic;
+
+namespace GuoGuoCommunity.API.Models
 {
     /// <summary>
     /// 
@@ -40,5 +42,13 @@
         /// 配送费
         /// </summary>
         public decimal Postage { get; set; }
+        /// <summary>
+        /// 店铺活动列表
+        /// </summary>
+        public List<Activity> ShopActivityList { get; set; }
+        ///<summary>
+        /// 活动来源 1店铺，2平台 
+        /// </summary>
+        public int ActivitySource { get; set; }
     }
 }

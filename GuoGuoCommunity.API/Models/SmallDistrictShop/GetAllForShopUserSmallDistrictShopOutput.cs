@@ -48,6 +48,21 @@ namespace GuoGuoCommunity.API.Models
         /// </summary>
         public string LogoImageUrl { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string ShopId { get; set; }
+        /// <summary>
+        /// 店铺活动列表
+        /// </summary>
+        public List<Activity> ShopActivityList { get; set; }
+        /// <summary>
+        /// 活动来源
+        /// </summary>
+        public int ActivitySource { get; set; }
+        /// <summary>
+        /// 配送费用
+        /// </summary>
+        public decimal Postage { get; set; }
     }
 }

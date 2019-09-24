@@ -238,6 +238,26 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public Task<List<Announcement>> GetAllIncludeAsync(AnnouncementDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Announcement> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Announcement>> GetListIncludeAsync(AnnouncementDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Announcement>> GetListAsync(AnnouncementDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
     }

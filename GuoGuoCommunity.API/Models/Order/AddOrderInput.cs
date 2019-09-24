@@ -5,10 +5,10 @@
     /// </summary>
     public class AddOrderInput
     {
-        /// <summary>
-        /// 业主认证申请Id(getListId)
-        /// </summary>
-        public string ApplicationRecordId { get; set; }
+        ///// <summary>
+        ///// 业主认证申请Id(getListId)
+        ///// </summary>
+        //public string ApplicationRecordId { get; set; }
 
         /// <summary>
         /// 店铺Id

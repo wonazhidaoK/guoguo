@@ -64,15 +64,37 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async Task<List<Role_Menu>> GetAllAsync(CancellationToken token = default)
+        public Task UpdateAsync(RoleMenuDto dto, CancellationToken token = default)
         {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                return await db.Role_Menus.ToListAsync(token);
-            }
+            throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(RoleMenuDto dto, CancellationToken token = default)
+        public Task<List<Role_Menu>> GetAllIncludeAsync(RoleMenuDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Role_Menu> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Role_Menu>> GetListIncludeAsync(RoleMenuDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Role_Menu>> GetAllAsync(RoleMenuDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Role_Menu> GetAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Role_Menu>> GetListAsync(RoleMenuDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }

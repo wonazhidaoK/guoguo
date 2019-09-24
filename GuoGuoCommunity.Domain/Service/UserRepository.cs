@@ -181,22 +181,7 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
-        public async Task<User> GetAsync(UserDto dto, CancellationToken token = default)
-        {
-            using (var db = new GuoGuoCommunityContext())
-            {
-                var user = await db.Users.Where(x => (x.Account == dto.Name || x.PhoneNumber == dto.Name) && x.IsDeleted == false).FirstOrDefaultAsync(token);
-                if (user == null)
-                {
-                    throw new NotImplementedException("该用户不存在！");
-                }
-                if (user.Password != dto.Password)
-                {
-                    throw new NotImplementedException("密码不正确！");
-                }
-                return user;
-            }
-        }
+       
 
         public async Task<List<User>> GetAllPropertyAsync(UserDto dto, CancellationToken token = default)
         {
@@ -563,6 +548,36 @@ namespace GuoGuoCommunity.Domain.Service
             {
                 return await db.Users.Where(x => x.ShopId.ToString() == shopId).ToListAsync(token);
             }
+        }
+
+        public Task<List<User>> GetAllIncludeAsync(UserDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<User>> GetListIncludeAsync(UserDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User> AddAsync(UserDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<User>> GetAllAsync(UserDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User> GetAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<User>> GetListAsync(UserDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

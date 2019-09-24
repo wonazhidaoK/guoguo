@@ -29,5 +29,10 @@
         /// 地址
         /// </summary>
         public string Address { get; set; }
+
+        /// <summary>
+        /// 小区Id
+        /// </summary>
+        public string SmallDistrictId { get; set; }
     }
 }

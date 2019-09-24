@@ -27,7 +27,7 @@ namespace GuoGuoCommunity.API
             //GlobalConfiguration.Configuration.DependencyResolver =
             //    new SimpleInjectorWebApiDependencyResolver(container);
             GlobalConfiguration.Configure(WebApiConfig.Register);
-            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            // FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
@@ -39,7 +39,7 @@ namespace GuoGuoCommunity.API
             var senparcWeixinSetting = SenparcWeixinSetting.BuildFromWebConfig(isWeixinDebug);
             register.UseSenparcWeixin(senparcWeixinSetting, senparcSetting);////微信全局注册，必须
 
-            AccessTokenContainer.Register(WXController.AppId, "5e6bc09d33684d9c41dccb6c8eec230b");
+            AccessTokenContainer.RegisterAsync(WXController.AppId, "5e6bc09d33684d9c41dccb6c8eec230b");
 
         }
     }

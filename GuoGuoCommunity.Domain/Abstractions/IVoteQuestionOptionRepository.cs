@@ -1,25 +1,18 @@
 ﻿using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public interface IVoteQuestionOptionRepository
+    public interface IVoteQuestionOptionRepository : IIncludeRepository<VoteQuestionOption, VoteQuestionOptionDto>
     {
-        Task<VoteQuestionOption> AddAsync(VoteQuestionOptionDto dto, CancellationToken token = default);
-
-        Task UpdateAsync(VoteQuestionOptionDto dto, CancellationToken token = default);
-
-        Task<List<VoteQuestionOption>> GetAllAsync(VoteQuestionOptionDto dto, CancellationToken token = default);
-
-        Task DeleteAsync(VoteQuestionOptionDto dto, CancellationToken token = default);
-
-        Task<VoteQuestionOption> GetAsync(string id, CancellationToken token = default);
-
-        Task<List<VoteQuestionOption>> GetListAsync(VoteQuestionOptionDto dto, CancellationToken token = default);
-
+        /// <summary>
+        /// 更改投票次数
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<VoteQuestionOption> AddCountAsync(string id, CancellationToken token = default);
     }
 }

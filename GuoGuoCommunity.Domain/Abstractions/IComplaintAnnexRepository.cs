@@ -8,28 +8,36 @@ namespace GuoGuoCommunity.Domain.Abstractions
 {
     public interface IComplaintAnnexRepository : IIncludeRepository<ComplaintAnnex, ComplaintAnnexDto>
     {
-        //Task<ComplaintAnnex> AddAsync(ComplaintAnnexDto dto, CancellationToken token = default);
-
+        /// <summary>
+        /// 根据投诉跟进id 获取投诉附件
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<ComplaintAnnex> AddForFollowUpIdAsync(ComplaintAnnexDto dto, CancellationToken token = default);
 
-        //Task UpdateAsync(ComplaintAnnexDto dto, CancellationToken token = default);
-
-        //Task<List<ComplaintAnnex>> GetAllAsync(ComplaintAnnexDto dto, CancellationToken token = default);
-
-        //Task DeleteAsync(ComplaintAnnexDto dto, CancellationToken token = default);
-
+        /// <summary>
+        /// 根据投诉Id获取投诉附件信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<ComplaintAnnex> GetByComplaintIdIncludeAsync(string id, CancellationToken token = default);
 
+        /// <summary>
+        /// 根据投诉Id集合获取投诉附件集合
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<List<ComplaintAnnex>> GetByComplaintIdsAsync(List<string> ids, CancellationToken token = default);
 
-        Task<ComplaintAnnex> GetByFollowUpIdAsync(string id, CancellationToken token = default);
-
+        /// <summary>
+        /// 根据投诉跟进Id集合获取投诉附件集合
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<List<ComplaintAnnex>> GetByFollowUpIdsAsync(List<string> ids, CancellationToken token = default);
-
-        //Task<List<ComplaintAnnex>> GetListAsync(ComplaintAnnexDto dto, CancellationToken token = default);
-
-        string GetUrl(string id);
-
-        string GetUrlForFollowUpId(string id);
     }
 }

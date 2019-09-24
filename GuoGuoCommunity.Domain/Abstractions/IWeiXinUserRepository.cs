@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public interface IWeiXinUserRepository
+    public interface IWeiXinUserRepository : IIncludeRepository<WeiXinUser, WeiXinUserDto>
     {
-        Task<WeiXinUser> AddAsync(WeiXinUserDto dto, CancellationToken token = default);
-
-        Task UpdateAsync(WeiXinUserDto dto, CancellationToken token = default);
-
+        /// <summary>
+        /// 根据UnionId更改用微信用户信息(这里是取关事件调用，但是一直没有生效)
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task UpdateForUnionIdAsync(WeiXinUserDto dto, CancellationToken token = default);
 
-        Task<List<WeiXinUser>> GetAllAsync(WeiXinUserDto dto, CancellationToken token = default);
-
-        Task DeleteAsync(WeiXinUserDto dto, CancellationToken token = default);
-
-        Task<WeiXinUser> GetAsync(string unionid, CancellationToken token = default);
-
+        /// <summary>
+        /// 根据UnionIds集合获取微信用户集合
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<List<WeiXinUser>> GetForUnionIdsAsync(List<string> ids, CancellationToken token = default);
-
-        Task<List<WeiXinUser>> GetListAsync(WeiXinUserDto dto, CancellationToken token = default);
     }
 }

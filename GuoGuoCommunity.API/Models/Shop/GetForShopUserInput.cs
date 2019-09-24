@@ -10,9 +10,9 @@
         /// </summary>
         public string ShopId { get; set; }
 
-        /// <summary>
-        /// 业主申请记录Id
-        /// </summary>
-        public string ApplicationRecordId { get; set; }
+        ///// <summary>
+        ///// 业主申请记录Id
+        ///// </summary>
+        //public string ApplicationRecordId { get; set; }
     }
 }

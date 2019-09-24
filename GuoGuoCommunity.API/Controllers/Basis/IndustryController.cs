@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using System;
@@ -17,16 +16,15 @@ namespace GuoGuoCommunity.API.Controllers
     public class IndustryController : BaseController
     {
         private readonly IIndustryRepository _industryRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="industryRepository"></param>
-        public IndustryController(IIndustryRepository industryRepository)
+        public IndustryController(IIndustryRepository industryRepository, ITokenRepository tokenRepository)
         {
             _industryRepository = industryRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -68,7 +66,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("业户楼宇单元id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddIndustryOutput>(APIResultCode.Unknown, new AddIndustryOutput { }, APIResultMessage.TokenError);
@@ -110,7 +108,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("业户Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -141,7 +139,7 @@ namespace GuoGuoCommunity.API.Controllers
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenNull);
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -178,7 +176,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("业户Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetIndustryOutput>(APIResultCode.Unknown, new GetIndustryOutput { }, APIResultMessage.TokenError);
@@ -214,7 +212,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllIndustryOutput>(APIResultCode.Unknown, new GetAllIndustryOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllIndustryOutput>(APIResultCode.Unknown, new GetAllIndustryOutput { }, APIResultMessage.TokenError);
@@ -277,7 +275,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("楼宇单元Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListIndustryOutput>>(APIResultCode.Unknown, new List<GetListIndustryOutput> { }, APIResultMessage.TokenError);

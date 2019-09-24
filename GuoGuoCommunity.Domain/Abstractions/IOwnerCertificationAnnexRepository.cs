@@ -1,27 +1,15 @@
 ﻿using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public interface IOwnerCertificationAnnexRepository
+    public interface IOwnerCertificationAnnexRepository : IIncludeRepository<OwnerCertificationAnnex, OwnerCertificationAnnexDto>
     {
-        Task<OwnerCertificationAnnex> AddAsync(OwnerCertificationAnnexDto dto, CancellationToken token = default);
-
-        Task UpdateAsync(OwnerCertificationAnnexDto dto, CancellationToken token = default);
-
-        Task<List<OwnerCertificationAnnex>> GetAllAsync(OwnerCertificationAnnexDto dto, CancellationToken token = default);
-
-        Task DeleteAsync(OwnerCertificationAnnexDto dto, CancellationToken token = default);
-
-        Task<OwnerCertificationAnnex> GetAsync(string id, CancellationToken token = default);
-
-        Task<List<OwnerCertificationAnnex>> GetListAsync(OwnerCertificationAnnexDto dto, CancellationToken token = default);
-
-        string GetUrl(string id);
-
+        /// <summary>
+        /// 根据附件Id查询附件地址
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         string GetPath(string id);
     }
 }

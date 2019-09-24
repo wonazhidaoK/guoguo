@@ -35,6 +35,10 @@ namespace GuoGuoCommunity.Domain.Dto
         /// 资质图片Url 
         /// </summary>
         public string QualificationImageUrl { get; set; }
+        /// <summary>
+        /// 商家开启的活动标记 0不开启活动，1开启满减活动，1,2开启满减和某其他活动
+        /// </summary>
+        public string ActivitySign { get; set; }
 
         /// <summary>
         /// Logo图片Url

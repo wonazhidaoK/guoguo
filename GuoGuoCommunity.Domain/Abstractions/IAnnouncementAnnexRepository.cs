@@ -6,22 +6,14 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public interface IAnnouncementAnnexRepository
+    public interface IAnnouncementAnnexRepository : IIncludeRepository<AnnouncementAnnex, AnnouncementAnnexDto>
     {
-        Task<AnnouncementAnnex> AddAsync(AnnouncementAnnexDto dto, CancellationToken token = default);
-
-        Task UpdateAsync(AnnouncementAnnexDto dto, CancellationToken token = default);
-
-        Task<List<AnnouncementAnnex>> GetAllAsync(AnnouncementAnnexDto dto, CancellationToken token = default);
-
-        Task DeleteAsync(AnnouncementAnnexDto dto, CancellationToken token = default);
-
-        Task<AnnouncementAnnex> GetAsync(string id, CancellationToken token = default);
-
+        /// <summary>
+        /// 根据公告Id查询公告附件
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<List<AnnouncementAnnex>> GetForAnnouncementIdsAsync(List<string> ids, CancellationToken token = default);
-
-        string GetUrl(string id);
-
-        Task<List<AnnouncementAnnex>> GetListAsync(AnnouncementAnnexDto dto, CancellationToken token = default);
     }
 }

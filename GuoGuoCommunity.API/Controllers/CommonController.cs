@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using GuoGuoCommunity.Domain.Models.Enum;
@@ -21,25 +20,22 @@ namespace GuoGuoCommunity.API.Controllers
         private readonly ISmallDistrictRepository _smallDistrictRepository;
         private readonly IOwnerRepository _ownerRepository;
         private readonly IIndustryRepository _industryRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="ownerCertificationRecordRepository"></param>
-        /// <param name="smallDistrictRepository"></param>
-        /// <param name="ownerRepository"></param>
-        /// <param name="industryRepository"></param>
         public CommonController(IOwnerCertificationRecordRepository ownerCertificationRecordRepository,
             ISmallDistrictRepository smallDistrictRepository,
             IOwnerRepository ownerRepository,
-            IIndustryRepository industryRepository)
+            IIndustryRepository industryRepository,
+            ITokenRepository tokenRepository)
         {
             _ownerCertificationRecordRepository = ownerCertificationRecordRepository;
             _smallDistrictRepository = smallDistrictRepository;
             _ownerRepository = ownerRepository;
             _industryRepository = industryRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -55,7 +51,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<List<GetListForUserIdOutput>>(APIResultCode.Unknown, new List<GetListForUserIdOutput> { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListForUserIdOutput>>(APIResultCode.Unknown, new List<GetListForUserIdOutput> { }, APIResultMessage.TokenError);
@@ -97,7 +93,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetListOwnerCertificationRecordOutput>(APIResultCode.Unknown, new GetListOwnerCertificationRecordOutput { }, APIResultMessage.TokenError);

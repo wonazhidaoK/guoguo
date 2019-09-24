@@ -264,16 +264,27 @@ namespace GuoGuoCommunity.Domain
         /// 订单项
         /// </summary>
         public DbSet<OrderItem>  OrdeItems { get; set; }
+        /// <summary>
+        /// 活动
+        /// </summary>
+        public DbSet<Activity> Activities { get; set; }
 
         #endregion
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            /*
+             * ef code first 建外键引发异常 在这里编辑约束特性
+             * 特定情况下的表设计才会引发的异常
+             * 参考文章相见https://blog.csdn.net/anjingshen/article/details/73522353
+             */
             var shopUserAddress = modelBuilder.Entity<ShopUserAddress>();
             shopUserAddress
                 .HasRequired(t => t.Industry).WithMany().WillCascadeOnDelete(false);
             var ordeItem = modelBuilder.Entity<OrderItem>();
             ordeItem.HasRequired(t => t.ShopCommodity).WithMany().WillCascadeOnDelete(false);
+            var order = modelBuilder.Entity<Order>();
+            order.HasRequired(t => t.SmallDistrictShop).WithMany().WillCascadeOnDelete(false);
             base.OnModelCreating(modelBuilder);
         }
     }

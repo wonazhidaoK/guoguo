@@ -6,20 +6,14 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public interface IStationLetterBrowseRecordRepository
+    public interface IStationLetterBrowseRecordRepository : IIncludeRepository<StationLetterBrowseRecord, StationLetterBrowseRecordDto>
     {
-        Task<StationLetterBrowseRecord> AddAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default);
-
-        Task UpdateAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default);
-
-        Task<List<StationLetterBrowseRecord>> GetAllAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default);
-
-        Task DeleteAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default);
-
-        Task<StationLetterBrowseRecord> GetAsync(string id, CancellationToken token = default);
-
-        Task<List<StationLetterBrowseRecord>> GetListAsync(StationLetterBrowseRecordDto dto, CancellationToken token = default);
-
+        /// <summary>
+        /// 根据站内信Id获取站内信浏览记录
+        /// </summary>
+        /// <param name="stationLetterIds"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<List<StationLetterBrowseRecord>> GetForStationLetterIdsAsync(List<string> stationLetterIds, CancellationToken token = default);
     }
 }

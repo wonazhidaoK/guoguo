@@ -416,5 +416,25 @@ namespace GuoGuoCommunity.Domain.Service
                 return list;
             }
         }
+
+        public Task<List<Vote>> GetAllIncludeAsync(VoteDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Vote> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Vote>> GetListIncludeAsync(VoteDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Vote>> GetAllAsync(VoteDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

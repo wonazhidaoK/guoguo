@@ -6,18 +6,16 @@ using System.Threading.Tasks;
 
 namespace GuoGuoCommunity.Domain.Abstractions
 {
-    public interface IMenuRepository
+    public interface IMenuRepository : IIncludeRepository<Menu, MenuDto>
     {
-        Task<List<Menu>> GetAllAsync(MenuDto dto, CancellationToken token = default);
-
-        Task<Menu> AddAsync(MenuDto dto, CancellationToken token = default);
-
-        Task DeleteAsync(MenuDto dto, CancellationToken token = default);
-
-        Task UpdateAsync(MenuDto dto, CancellationToken token = default);
-
         Task<Menu> GetByIdAsync(string id, CancellationToken token = default);
 
+        /// <summary>
+        /// 根据菜单Id集合查询菜单集合
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<List<Menu>> GetByIdsAsync(List<string> ids, CancellationToken token = default);
     }
 }

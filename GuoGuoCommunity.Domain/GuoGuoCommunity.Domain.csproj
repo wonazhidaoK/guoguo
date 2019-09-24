@@ -113,6 +113,7 @@
     <Compile Include="Abstractions\IRoleMenuRepository.cs" />
     <Compile Include="Abstractions\IRoleRepository.cs" />
     <Compile Include="Abstractions\ISmallDistrictRepository.cs" />
+    <Compile Include="Abstractions\Store\IActivityRepository.cs" />
     <Compile Include="Abstractions\Store\IOrdeItemRepository.cs" />
     <Compile Include="Abstractions\Store\IOrderRepository.cs" />
     <Compile Include="Abstractions\Store\IShopUserAddressRepository.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="Abstractions\Store\IShopCommodityRepository.cs" />
     <Compile Include="Abstractions\Store\IShoppingTrolleyRepository.cs" />
     <Compile Include="Abstractions\Store\IShopRepository.cs" />
+    <Compile Include="Abstractions\Token\ITokenRepository.cs" />
     <Compile Include="Dto\AnnouncementAnnexDto.cs" />
     <Compile Include="Dto\AnnouncementDto.cs" />
     <Compile Include="Dto\BuildingDto.cs" />
@@ -173,6 +175,7 @@
     <Compile Include="Dto\OwnerCertificationRecordDto.cs" />
     <Compile Include="Dto\OwnerDto.cs" />
     <Compile Include="Dto\PropertyCompanyDto.cs" />
+    <Compile Include="Dto\Store\ActivityDto.cs" />
     <Compile Include="Dto\Store\GoodsTypeDto.cs" />
     <Compile Include="Dto\Store\OrdeItemDto.cs" />
     <Compile Include="Dto\Store\OrderDto.cs" />
@@ -310,6 +313,22 @@
     <Compile Include="Migrations\201905310150534_update-Shop-PrinterName.Designer.cs">
       <DependentUpon>201905310150534_update-Shop-PrinterName.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201906110710109_Order-add-SmallDistrictShopId.cs" />
+    <Compile Include="Migrations\201906110710109_Order-add-SmallDistrictShopId.designer.cs">
+      <DependentUpon>201906110710109_Order-add-SmallDistrictShopId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906170112492_Update_ShopUserAddresses_User.cs" />
+    <Compile Include="Migrations\201906170112492_Update_ShopUserAddresses_User.designer.cs">
+      <DependentUpon>201906170112492_Update_ShopUserAddresses_User.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906180148522_Update-ShoppingTrolleys-User.cs" />
+    <Compile Include="Migrations\201906180148522_Update-ShoppingTrolleys-User.designer.cs">
+      <DependentUpon>201906180148522_Update-ShoppingTrolleys-User.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906190333009_update-Order-user.cs" />
+    <Compile Include="Migrations\201906190333009_update-Order-user.designer.cs">
+      <DependentUpon>201906190333009_update-Order-user.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Enum\MerchantCategory.cs" />
     <Compile Include="Models\Enum\OrderStatus.cs" />
     <Compile Include="Models\Enum\OwnerCertification.cs" />
@@ -317,6 +336,7 @@
     <Compile Include="Models\Enum\PaymentType.cs" />
     <Compile Include="Models\Enum\SalesType.cs" />
     <Compile Include="Models\PropertyCompany.cs" />
+    <Compile Include="Models\Store\Activity.cs" />
     <Compile Include="Models\Store\GoodsType.cs" />
     <Compile Include="Models\Store\OrdeItem.cs" />
     <Compile Include="Models\Store\Order.cs" />
@@ -381,6 +401,8 @@
     <Compile Include="Models\Store\ShoppingTrolley.cs" />
     <Compile Include="Models\Store\ShopUserAddress.cs" />
     <Compile Include="Models\Store\SmallDistrictShop.cs" />
+    <Compile Include="Models\Token\Payload.cs" />
+    <Compile Include="Models\Token\Token.cs" />
     <Compile Include="Models\Upload.cs" />
     <Compile Include="Models\Building.cs" />
     <Compile Include="Models\BuildingUnit.cs" />
@@ -422,6 +444,7 @@
     <Compile Include="Service\ComplaintStatusChangeRecordingRepository.cs" />
     <Compile Include="Service\IDCardPhotoRecordRepository.cs" />
     <Compile Include="Service\PropertyCompanyRepository.cs" />
+    <Compile Include="Service\Store\ActivityRepository.cs" />
     <Compile Include="Service\Store\OrdeItemRepository.cs" />
     <Compile Include="Service\Store\OrderRepository.cs" />
     <Compile Include="Service\Store\ShopRepository.cs" />
@@ -434,6 +457,7 @@
     <Compile Include="Service\Store\GoodsTypeRepository.cs" />
     <Compile Include="Service\Store\ShopCommodityRepository.cs" />
     <Compile Include="Service\Store\ShoppingTrolleyRepository.cs" />
+    <Compile Include="Service\TokenRepository.cs" />
     <Compile Include="Service\VoteAnnexRepository.cs" />
     <Compile Include="Service\VoteAssociationVipOwnerRepository.cs" />
     <Compile Include="Service\VoteQuestionOptionRepository.cs" />
@@ -442,7 +466,6 @@
     <Compile Include="Service\VoteRecordRepository.cs" />
     <Compile Include="Service\VoteRepository.cs" />
     <Compile Include="Service\VoteResultRecordRepository.cs" />
-    <Compile Include="Token\Payload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\BuildingRepository.cs" />
     <Compile Include="Service\BuildingUnitRepository.cs" />
@@ -468,7 +491,6 @@
     <Compile Include="Service\VipOwnerRepository.cs" />
     <Compile Include="Service\VipOwnerStructureRepository.cs" />
     <Compile Include="Service\WeiXinUserRepository.cs" />
-    <Compile Include="Token\Token.cs" />
     <Compile Include="Token\TokenCrypto.cs" />
     <Compile Include="Token\TokenManager.cs" />
   </ItemGroup>
@@ -585,6 +607,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201905310150534_update-Shop-PrinterName.resx">
       <DependentUpon>201905310150534_update-Shop-PrinterName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906110710109_Order-add-SmallDistrictShopId.resx">
+      <DependentUpon>201906110710109_Order-add-SmallDistrictShopId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906170112492_Update_ShopUserAddresses_User.resx">
+      <DependentUpon>201906170112492_Update_ShopUserAddresses_User.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906180148522_Update-ShoppingTrolleys-User.resx">
+      <DependentUpon>201906180148522_Update-ShoppingTrolleys-User.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906190333009_update-Order-user.resx">
+      <DependentUpon>201906190333009_update-Order-user.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

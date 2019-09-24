@@ -1,5 +1,4 @@
 ﻿using GuoGuoCommunity.API.Models;
-using GuoGuoCommunity.Domain;
 using GuoGuoCommunity.Domain.Abstractions;
 using GuoGuoCommunity.Domain.Dto;
 using System;
@@ -17,16 +16,15 @@ namespace GuoGuoCommunity.API.Controllers
     public class PropertyCompanyController : BaseController
     {
         private readonly IPropertyCompanyRepository _propertyCompanyRepository;
-        private readonly TokenManager _tokenManager;
+        private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="propertyCompanyRepository"></param>
-        public PropertyCompanyController(IPropertyCompanyRepository propertyCompanyRepository)
+        public PropertyCompanyController(IPropertyCompanyRepository propertyCompanyRepository, ITokenRepository tokenRepository)
         {
             _propertyCompanyRepository = propertyCompanyRepository;
-            _tokenManager = new TokenManager();
+            _tokenRepository = tokenRepository;
         }
 
         /// <summary>
@@ -56,7 +54,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("物业地址信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<AddPropertyCompanyOutput>(APIResultCode.Unknown, new AddPropertyCompanyOutput { }, APIResultMessage.TokenError);
@@ -102,7 +100,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 throw new NotImplementedException("物业地址信息为空！");
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -142,7 +140,7 @@ namespace GuoGuoCommunity.API.Controllers
                 throw new NotImplementedException("商品Id信息为空！");
             }
 
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult(APIResultCode.Unknown, APIResultMessage.TokenError);
@@ -175,7 +173,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetAllPropertyCompanyForPageOutput>(APIResultCode.Unknown, new GetAllPropertyCompanyForPageOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetAllPropertyCompanyForPageOutput>(APIResultCode.Unknown, new GetAllPropertyCompanyForPageOutput { }, APIResultMessage.TokenError);
@@ -223,14 +221,14 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<GetPropertyCompanyOutput>(APIResultCode.Unknown, new GetPropertyCompanyOutput { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<GetPropertyCompanyOutput>(APIResultCode.Unknown, new GetPropertyCompanyOutput { }, APIResultMessage.TokenError);
             }
             if (string.IsNullOrWhiteSpace(id))
             {
-                throw new NotImplementedException("商户Id信息为空！");
+                throw new NotImplementedException("物业公司Id信息为空！");
             }
             var data = await _propertyCompanyRepository.GetAsync(id, cancelToken);
 
@@ -259,7 +257,7 @@ namespace GuoGuoCommunity.API.Controllers
             {
                 return new ApiResult<List<GetListPropertyCompanyOutput>>(APIResultCode.Unknown, new List<GetListPropertyCompanyOutput> { }, APIResultMessage.TokenNull);
             }
-            var user = _tokenManager.GetUser(Authorization);
+            var user = _tokenRepository.GetUser(Authorization);
             if (user == null)
             {
                 return new ApiResult<List<GetListPropertyCompanyOutput>>(APIResultCode.Unknown, new List<GetListPropertyCompanyOutput> { }, APIResultMessage.TokenError);

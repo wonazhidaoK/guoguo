@@ -73,6 +73,11 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public Task<List<User_Role>> GetAllIncludeAsync(RoleDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<User_Role> GetAsync(string id, CancellationToken token = default)
         {
             using (var db = new GuoGuoCommunityContext())
@@ -83,6 +88,21 @@ namespace GuoGuoCommunity.Domain.Service
                 }
                 throw new NotImplementedException("该角色Id信息不正确！");
             }
+        }
+
+        public Task<User_Role> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<User_Role>> GetListAsync(RoleDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<User_Role>> GetListIncludeAsync(RoleDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
         }
 
         public Task UpdateAsync(RoleDto dto, CancellationToken token = default)

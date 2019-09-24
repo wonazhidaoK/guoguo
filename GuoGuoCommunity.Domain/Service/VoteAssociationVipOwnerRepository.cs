@@ -39,6 +39,11 @@ namespace GuoGuoCommunity.Domain.Service
             throw new NotImplementedException();
         }
 
+        public Task<List<VoteAssociationVipOwner>> GetAllIncludeAsync(VoteAssociationVipOwnerDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<VoteAssociationVipOwner> GetAsync(string id, CancellationToken token = default)
         {
             throw new NotImplementedException();
@@ -53,7 +58,17 @@ namespace GuoGuoCommunity.Domain.Service
             }
         }
 
+        public Task<VoteAssociationVipOwner> GetIncludeAsync(string id, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<VoteAssociationVipOwner>> GetListAsync(VoteAssociationVipOwnerDto dto, CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<VoteAssociationVipOwner>> GetListIncludeAsync(VoteAssociationVipOwnerDto dto, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }

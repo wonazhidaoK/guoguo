@@ -28,10 +28,10 @@ namespace GuoGuoCommunity.Domain.Dto.Store
         /// </summary>
         public string IndustryId { get; set; }
 
-        /// <summary>
-        /// 业主申请记录
-        /// </summary>
-        public string ApplicationRecordId { get; set; }
+        ///// <summary>
+        ///// 业主申请记录
+        ///// </summary>
+        //public string ApplicationRecordId { get; set; }
 
         /// <summary>
         /// 操作人Id
